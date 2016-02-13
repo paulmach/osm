@@ -1,0 +1,144 @@
+package osm;
+
+option go_package = "osmpb";
+
+message Changeset {
+  required sint64 id = 1;
+
+  // Parallel arrays.
+  repeated uint32 keys = 2 [packed = true];
+  repeated uint32 vals = 3 [packed = true];
+
+  // contains the tag strings for everything in this changeset.
+  repeated string strings = 4;
+
+  optional sint64 uid = 5;
+  optional uint32 user = 6; // String ID
+  optional sint64 created_at = 7;
+  required sint64 closed_at = 8;
+
+  optional Bounds bounds = 9;
+  required Change change = 10;
+}
+
+message Change {
+  optional Bounds bounds = 1;
+
+  repeated OSM creates = 2;
+  repeated OSM modifies = 3;
+  repeated OSM deletes = 4;
+}
+
+message Bounds {
+	required sint64 min_lng = 1;
+	required sint64 max_lng = 2;
+	required sint64 min_lat = 3;
+	required sint64 max_lat = 4;
+}
+
+message OSM {
+  repeated Node       nodes = 1;
+  optional DenseNodes dense = 2;
+  repeated Way        ways = 3;
+  repeated Relation   relations = 4;
+}
+
+// The message defined below are adapted from the OSM PBF format
+// http://wiki.openstreetmap.org/wiki/PBF_Format
+
+message Node {
+  required sint64 id = 1;
+
+  // Parallel arrays.
+  repeated uint32 keys = 2 [packed = true]; // String IDs.
+  repeated uint32 vals = 3 [packed = true]; // String IDs.
+
+  optional Info info = 4;
+
+  required sint64 lat = 8;
+  required sint64 lng = 9;
+}
+
+message Info {
+  optional sint64 version = 1 [default = -1];
+  optional sint64 timestamp = 2;
+
+  // these will be omitted if the object represents one changeset
+  // and these will be all the same.
+  optional sint64 changeset = 3;
+  optional sint64 uid = 4;
+  optional uint32 user = 5; // String ID
+
+  // The visible flag is used to store history information. It indicates that
+  // the current object version has been created by a delete operation on the
+  // OSM API. This info may be omitted if it can be inferred from it's group
+  // ie. create, modify, delete.
+  optional bool visible = 6;
+}
+
+message DenseNodes {
+  repeated sint64 id = 1 [packed = true]; // DELTA coded
+
+  optional DenseInfo dense_info = 5;
+
+  repeated sint64 lat = 8 [packed = true]; // DELTA coded
+  repeated sint64 lon = 9 [packed = true]; // DELTA coded
+
+  // Special packing of keys and vals into one array. We use a single stringid
+  // of 0 to delimit when the tags of a node ends and the tags of the next node
+  // begin. The storage pattern is: ((<keyid> <valid>)* '0' )* As an exception,
+  // if no node in the current block has any key/value pairs, this array does
+  // not contain any delimiters, but is simply empty.
+  repeated uint32 keys_vals = 10 [packed = true];
+}
+
+message DenseInfo {
+  repeated sint64 versions = 1 [packed = true]; // DELTA coded
+  repeated sint64 timestamps = 2 [packed = true]; // DELTA coded
+
+  // these will be omitted if the object represents one changeset
+  // and these will be all the same.
+  repeated sint64 changesets = 3 [packed = true]; // DELTA coded
+  repeated sint64 uids = 4 [packed = true]; // DELTA coded
+  repeated sint32 users = 5 [packed = true]; // String IDs for usernames. DELTA coded
+
+  // The visible flag is used to store history information. It indicates that
+  // the current object version has been created by a delete operation on the
+  // OSM API. This info may be omitted if it can be inferred from it's group
+  // ie. create, modify, delete.
+  repeated bool visibles = 6 [packed = true];
+}
+
+message Way {
+  required sint64 id = 1;
+
+  // Parallel arrays.
+  repeated uint32 keys = 2 [packed = true];
+  repeated uint32 vals = 3 [packed = true];
+
+  optional Info info = 4;
+
+  repeated sint64 refs = 8 [packed = true];  // DELTA coded
+}
+
+message Relation {
+  enum MemberType {
+    NODE = 0;
+    WAY = 1;
+    RELATION = 2;
+  }
+
+  required sint64 id = 1;
+
+  // Parallel arrays.
+  repeated uint32 keys = 2 [packed = true];
+  repeated uint32 vals = 3 [packed = true];
+
+  optional Info info = 4;
+
+  // Parallel arrays
+  repeated uint32 roles = 8 [packed = true]; // String IDs. DELTA coded
+  repeated sint64 refs = 9 [packed = true]; // DELTA encoded
+  repeated MemberType types = 10 [packed = true];
+}
+
