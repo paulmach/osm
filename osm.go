@@ -6,10 +6,10 @@ import (
 )
 
 type OSM struct {
-	Bounds    *Bounds    `xml:"bounds"`
-	Nodes     []Node     `xml:"node"`
-	Ways      []Way      `xml:"way"`
-	Relations []Relation `xml:"relation"`
+	Bounds    *Bounds     `xml:"bounds"`
+	Nodes     []*Node     `xml:"node"`
+	Ways      []*Way      `xml:"way"`
+	Relations []*Relation `xml:"relation"`
 }
 
 type Bounds struct {
@@ -40,15 +40,15 @@ type NodeRef struct {
 }
 
 type Way struct {
-	ID         int       `xml:"id,attr"`
-	User       string    `xml:"user,attr"`
-	UserID     int       `xml:"uid,attr"`
-	Visible    bool      `xml:"visible,attr"`
-	Version    int       `xml:"version,attr"`
-	ChangsetID int       `xml:"changeset,attr"`
-	Timestamp  time.Time `xml:"timestamp,attr"`
-	NodeRefs   []NodeRef `xml:"nd"`
-	Tags       Tags      `xml:"tag"`
+	ID         int        `xml:"id,attr"`
+	User       string     `xml:"user,attr"`
+	UserID     int        `xml:"uid,attr"`
+	Visible    bool       `xml:"visible,attr"`
+	Version    int        `xml:"version,attr"`
+	ChangsetID int        `xml:"changeset,attr"`
+	Timestamp  time.Time  `xml:"timestamp,attr"`
+	NodeRefs   []*NodeRef `xml:"nd"`
+	Tags       Tags       `xml:"tag"`
 }
 
 type Relation struct {

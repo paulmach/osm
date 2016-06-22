@@ -8,8 +8,8 @@ import (
 )
 
 type Changesets struct {
-	XMLName    xml.Name    `xml:"osm"`
-	Changesets []Changeset `xml:"changeset"`
+	XMLName    xml.Name     `xml:"osm"`
+	Changesets []*Changeset `xml:"changeset"`
 }
 
 type Changeset struct {
@@ -29,34 +29,34 @@ type Changeset struct {
 	Tags          Tags      `xml:"tag"`
 }
 
-func (c Changeset) Bound() *geo.Bound {
+func (c *Changeset) Bound() *geo.Bound {
 	return geo.NewBound(c.MinLng, c.MaxLng, c.MinLat, c.MaxLat)
 }
 
-func (c Changeset) Comment() string {
+func (c *Changeset) Comment() string {
 	return c.Tags.Find("comment")
 }
 
-func (c Changeset) CreatedBy() string {
+func (c *Changeset) CreatedBy() string {
 	return c.Tags.Find("created_by")
 }
 
-func (c Changeset) Locale() string {
+func (c *Changeset) Locale() string {
 	return c.Tags.Find("locale")
 }
 
-func (c Changeset) Host() string {
+func (c *Changeset) Host() string {
 	return c.Tags.Find("host")
 }
 
-func (c Changeset) ImageryUsed() string {
+func (c *Changeset) ImageryUsed() string {
 	return c.Tags.Find("imagery_used")
 }
 
-func (c Changeset) Source() string {
+func (c *Changeset) Source() string {
 	return c.Tags.Find("source")
 }
 
-func (c Changeset) Bot() bool {
+func (c *Changeset) Bot() bool {
 	return c.Tags.Find("bot") == "yes"
 }
