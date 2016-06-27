@@ -51,3 +51,41 @@ func TestNode(t *testing.T) {
 		t.Errorf("incorrect lng, got %v", v)
 	}
 }
+
+func TestNodesActiveAt(t *testing.T) {
+	nodes := Nodes{
+		{ID: 1, Timestamp: time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)},
+		{ID: 2, Timestamp: time.Date(2016, 2, 1, 0, 0, 0, 0, time.UTC)},
+		{ID: 3, Timestamp: time.Date(2016, 3, 1, 0, 0, 0, 0, time.UTC)},
+		{ID: 4, Timestamp: time.Date(2016, 4, 1, 0, 0, 0, 0, time.UTC)},
+	}
+
+	type testCase struct {
+		ID   int
+		Time time.Time
+	}
+
+	tests := []testCase{
+		{0, time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC)},
+		{1, time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)},
+		{1, time.Date(2016, 1, 10, 0, 0, 0, 0, time.UTC)},
+		{2, time.Date(2016, 2, 5, 0, 0, 0, 0, time.UTC)},
+		{4, time.Date(2017, 1, 10, 0, 0, 0, 0, time.UTC)},
+	}
+
+	for i, test := range tests {
+		n := nodes.ActiveAt(test.Time)
+		if n == nil && test.ID != 0 {
+			t.Errorf("test %d: expected nil, got %d", i, test.ID)
+			continue
+		}
+
+		if n == nil {
+			continue
+		}
+
+		if test.ID != n.ID {
+			t.Errorf("test %d: expect %d, got %d", i, test.ID, n.ID)
+		}
+	}
+}

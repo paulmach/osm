@@ -81,6 +81,24 @@ func TestChangeset(t *testing.T) {
 	}
 }
 
+func TestChangesetOpen(t *testing.T) {
+	data := []byte(`
+<changeset id="40309372" user="Bahntech" uid="3619264" created_at="2016-06-26T21:26:41Z" open="true" min_lat="51.484563" min_lon="12.0995042" max_lat="51.484563" max_lon="12.0995042" comments_count="0">
+	<tag k="comment" v="updated fire hydrant details with OsmHydrant"/>
+	<tag k="created_by" v="OsmHydrant / http://yapafo.net v0.3"/>
+</changeset>`)
+
+	var c Changeset
+	err := xml.Unmarshal(data, &c)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if !c.ClosedAt.IsZero() {
+		t.Errorf("closed at should be zero for open changesets")
+	}
+}
+
 func TestChangesetTags(t *testing.T) {
 	data := []byte(`
 <changeset id="123123">
@@ -150,5 +168,55 @@ func TestChangesetBound(t *testing.T) {
 	)
 	if !b.Equals(expected) {
 		t.Errorf("incorrect bound, got %v", b)
+	}
+}
+
+func TestChangesetComment(t *testing.T) {
+	data := []byte(`
+<changeset id="40303151" user="Glen Bundrick" uid="4173877" created_at="2016-06-26T15:37:47Z" closed_at="2016-06-26T15:37:48Z" open="false" min_lat="34.6591676" min_lon="-81.8789825" max_lat="34.6594167" max_lon="-81.8788142" comments_count="3">
+  <tag k="comment" v="Recent Doublewide addition"/>
+  <tag k="locale" v="en-US"/>
+  <tag k="host" v="https://www.openstreetmap.org/id"/>
+  <tag k="imagery_used" v="Bing"/>
+  <tag k="created_by" v="iD 1.9.6"/>
+  <discussion>
+    <comment date="2016-06-26T17:22:27Z" uid="5359" user="user_5359">
+      <text>Welcome to OSM! We didn't paint the whole width of a street. One line is enough. I have done some changes on your work, please take a look. </text>
+    </comment>
+    <comment date="2016-06-26T20:56:11Z" uid="4173877" user="Glen Bundrick">
+      <text>OK New to this and learning
+</text>
+    </comment>
+    <comment date="2016-06-26T21:37:40Z" uid="5359" user="user_5359">
+      <text>No problem. If you need help, you are welcome!</text>
+    </comment>
+  </discussion>
+</changeset>`)
+
+	var c Changeset
+	err := xml.Unmarshal(data, &c)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if l := len(c.Discussion.Comments); l != 3 {
+		t.Errorf("incorrect number of comments, got %v", l)
+	}
+
+	com := c.Discussion.Comments[0]
+	if v := com.CreatedAt; v != time.Date(2016, 6, 26, 17, 22, 27, 0, time.UTC) {
+		t.Errorf("incorrect created at, got %v", v)
+	}
+
+	if v := com.User; v != "user_5359" {
+		t.Errorf("incorrect user, got %v", v)
+	}
+
+	if v := com.UserID; v != 5359 {
+		t.Errorf("incorrect username, got %v", v)
+	}
+
+	if v := com.Text; v != "Welcome to OSM! We didn't paint the whole width of a street. One line is enough. I have done some changes on your work, please take a look. " {
+		t.Errorf("incorrect text, got %v", v)
 	}
 }
