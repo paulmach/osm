@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/paulmach/go.geo"
+	"github.com/paulmach/orb/geo"
 )
 
 func TestChangeset(t *testing.T) {
@@ -25,7 +25,7 @@ func TestChangeset(t *testing.T) {
   </changeset>
 </osm>`)
 
-	cs := Changesets{}
+	cs := OSM{}
 	err := xml.Unmarshal(data, &cs)
 	if err != nil {
 		t.Fatalf("unmarshal error: %v", err)
@@ -166,7 +166,7 @@ func TestChangesetBound(t *testing.T) {
 		geo.NewPoint(c.MinLng, c.MinLat),
 		geo.NewPoint(c.MaxLng, c.MaxLat),
 	)
-	if !b.Equals(expected) {
+	if !b.Equal(expected) {
 		t.Errorf("incorrect bound, got %v", b)
 	}
 }

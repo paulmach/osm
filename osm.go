@@ -2,16 +2,24 @@ package osm
 
 import (
 	"encoding/xml"
-	"time"
+
+	"github.com/paulmach/orb/geo"
 )
 
+// OSM represents the core osm data.
+// I designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
-	Bounds    *Bounds   `xml:"bounds"`
+	Bound     *Bounds   `xml:"bounds"`
 	Nodes     Nodes     `xml:"node"`
 	Ways      Ways      `xml:"way"`
 	Relations Relations `xml:"relation"`
+
+	// Changesets will normally only be populated when returning
+	// a list of changesets.
+	Changesets Changesets `xml:"changeset"`
 }
 
+// Bounds are the bounds of osm data as defined in the xml file.
 type Bounds struct {
 	XMLName xml.Name `xml:"bounds"`
 	MinLat  float64  `xml:"minlat,attr"`
@@ -20,37 +28,7 @@ type Bounds struct {
 	MaxLng  float64  `xml:"maxlon,attr"`
 }
 
-type Ways []*Way
-
-type Way struct {
-	ID         int        `xml:"id,attr"`
-	User       string     `xml:"user,attr"`
-	UserID     int        `xml:"uid,attr"`
-	Visible    bool       `xml:"visible,attr"`
-	Version    int        `xml:"version,attr"`
-	ChangsetID int        `xml:"changeset,attr"`
-	Timestamp  time.Time  `xml:"timestamp,attr"`
-	NodeRefs   []*NodeRef `xml:"nd"`
-	Tags       Tags       `xml:"tag"`
-}
-
-type Relations []*Relation
-
-type Relation struct {
-	ID         int       `xml:"id,attr"`
-	User       string    `xml:"user,attr"`
-	UserID     int       `xml:"uid,attr"`
-	Visible    bool      `xml:"visible,attr"`
-	Version    int       `xml:"version,attr"`
-	ChangsetID int       `xml:"changeset,attr"`
-	Timestamp  time.Time `xml:"timestamp,attr"`
-
-	Members []Member `xml:"member"`
-}
-
-type Member struct {
-	XMLName xml.Name `xml:"member"`
-	Type    string   `xml:"type,attr"`
-	Ref     int      `xml:"ref,attr"`
-	Role    int      `xml:"role,attr"`
+// Bound returns a geo bound object from the struct/xml definition.
+func (b *Bounds) Bound() geo.Bound {
+	return geo.NewBound(b.MinLng, b.MaxLng, b.MinLat, b.MaxLat)
 }

@@ -3,7 +3,7 @@ package osm;
 option go_package = "osmpb";
 
 message Changeset {
-  required sint64 id = 1;
+  required int64 id = 1;
 
   // Parallel arrays.
   repeated uint32 keys = 2 [packed = true];
@@ -12,10 +12,10 @@ message Changeset {
   // contains the tag strings for everything in this changeset.
   repeated string strings = 4;
 
-  optional sint64 uid = 5;
-  optional uint32 user = 6; // String ID
-  optional sint64 created_at = 7;
-  required sint64 closed_at = 8;
+  optional sint32 uid = 5;
+  optional uint32 user_sid = 6;
+  optional sint64 created_at = 7; // epoch time
+  required sint64 closed_at = 8; // epoch time
 
   optional Bounds bounds = 9;
   required Change change = 10;
@@ -43,8 +43,9 @@ message OSM {
   repeated Relation   relations = 4;
 }
 
-// The message defined below are adapted from the OSM PBF format
-// http://wiki.openstreetmap.org/wiki/PBF_Format
+// The message defined below are trying to match the official osm pdf
+// see http://wiki.openstreetmap.org/wiki/PBF_Format
+// and https://github.com/scrosby/OSM-binary/blob/master/src/osmformat.proto
 
 message Node {
   required sint64 id = 1;
@@ -60,18 +61,18 @@ message Node {
 }
 
 message Info {
-  optional sint64 version = 1 [default = -1];
-  optional sint64 timestamp = 2;
+  optional int32 version = 1 [default = -1];
+  optional int64 timestamp = 2; // Epoch
 
   // these will be omitted if the object represents one changeset
-  // and these will be all the same.
-  optional sint64 changeset = 3;
-  optional sint64 uid = 4;
-  optional uint32 user = 5; // String ID
+  // since they will be all the same.
+  optional int64 changeset = 3;
+  optional int32 uid = 4;
+  optional uint32 user_sid = 5; // String ID
 
   // The visible flag is used to store history information. It indicates that
   // the current object version has been created by a delete operation on the
-  // OSM API. This info may be omitted if it can be inferred from it's group
+  // OSM API. This info may be omitted if it can be inferred from its group
   // ie. create, modify, delete.
   optional bool visible = 6;
 }
@@ -81,26 +82,26 @@ message DenseNodes {
 
   optional DenseInfo dense_info = 5;
 
-  repeated sint64 lat = 8 [packed = true]; // DELTA coded
-  repeated sint64 lon = 9 [packed = true]; // DELTA coded
+  repeated sint64 lats = 8 [packed = true]; // DELTA coded
+  repeated sint64 lngs = 9 [packed = true]; // DELTA coded
 
   // Special packing of keys and vals into one array. We use a single stringid
   // of 0 to delimit when the tags of a node ends and the tags of the next node
   // begin. The storage pattern is: ((<keyid> <valid>)* '0' )* As an exception,
   // if no node in the current block has any key/value pairs, this array does
   // not contain any delimiters, but is simply empty.
-  repeated uint32 keys_vals = 10 [packed = true];
+  repeated int32 keys_vals = 10 [packed = true];
 }
 
 message DenseInfo {
-  repeated sint64 versions = 1 [packed = true]; // DELTA coded
-  repeated sint64 timestamps = 2 [packed = true]; // DELTA coded
+  repeated int32 version = 1 [packed = true]; // DELTA coded
+  repeated sint64 timestamp = 2 [packed = true]; // DELTA coded
 
   // these will be omitted if the object represents one changeset
   // and these will be all the same.
-  repeated sint64 changesets = 3 [packed = true]; // DELTA coded
-  repeated sint64 uids = 4 [packed = true]; // DELTA coded
-  repeated sint32 users = 5 [packed = true]; // String IDs for usernames. DELTA coded
+  repeated sint64 changeset = 3 [packed = true]; // DELTA coded
+  repeated sint32 uid = 4 [packed = true]; // DELTA coded
+  repeated sint32 user_sid = 5 [packed = true]; // String IDs for usernames. DELTA coded
 
   // The visible flag is used to store history information. It indicates that
   // the current object version has been created by a delete operation on the

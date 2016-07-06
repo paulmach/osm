@@ -31,6 +31,10 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+const _ = proto.ProtoPackageIsVersion1
+
 type Relation_MemberType int32
 
 const (
@@ -66,16 +70,17 @@ func (x *Relation_MemberType) UnmarshalJSON(data []byte) error {
 	*x = Relation_MemberType(value)
 	return nil
 }
+func (Relation_MemberType) EnumDescriptor() ([]byte, []int) { return fileDescriptor0, []int{9, 0} }
 
 type Changeset struct {
-	Id *int64 `protobuf:"zigzag64,1,req,name=id" json:"id,omitempty"`
+	Id *int64 `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
 	// Parallel arrays.
 	Keys []uint32 `protobuf:"varint,2,rep,packed,name=keys" json:"keys,omitempty"`
 	Vals []uint32 `protobuf:"varint,3,rep,packed,name=vals" json:"vals,omitempty"`
 	// contains the tag strings for everything in this changeset.
 	Strings          []string `protobuf:"bytes,4,rep,name=strings" json:"strings,omitempty"`
-	Uid              *int64   `protobuf:"zigzag64,5,opt,name=uid" json:"uid,omitempty"`
-	User             *uint32  `protobuf:"varint,6,opt,name=user" json:"user,omitempty"`
+	Uid              *int32   `protobuf:"zigzag32,5,opt,name=uid" json:"uid,omitempty"`
+	UserSid          *uint32  `protobuf:"varint,6,opt,name=user_sid" json:"user_sid,omitempty"`
 	CreatedAt        *int64   `protobuf:"zigzag64,7,opt,name=created_at" json:"created_at,omitempty"`
 	ClosedAt         *int64   `protobuf:"zigzag64,8,req,name=closed_at" json:"closed_at,omitempty"`
 	Bounds           *Bounds  `protobuf:"bytes,9,opt,name=bounds" json:"bounds,omitempty"`
@@ -83,9 +88,10 @@ type Changeset struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *Changeset) Reset()         { *m = Changeset{} }
-func (m *Changeset) String() string { return proto.CompactTextString(m) }
-func (*Changeset) ProtoMessage()    {}
+func (m *Changeset) Reset()                    { *m = Changeset{} }
+func (m *Changeset) String() string            { return proto.CompactTextString(m) }
+func (*Changeset) ProtoMessage()               {}
+func (*Changeset) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
 func (m *Changeset) GetId() int64 {
 	if m != nil && m.Id != nil {
@@ -115,16 +121,16 @@ func (m *Changeset) GetStrings() []string {
 	return nil
 }
 
-func (m *Changeset) GetUid() int64 {
+func (m *Changeset) GetUid() int32 {
 	if m != nil && m.Uid != nil {
 		return *m.Uid
 	}
 	return 0
 }
 
-func (m *Changeset) GetUser() uint32 {
-	if m != nil && m.User != nil {
-		return *m.User
+func (m *Changeset) GetUserSid() uint32 {
+	if m != nil && m.UserSid != nil {
+		return *m.UserSid
 	}
 	return 0
 }
@@ -165,9 +171,10 @@ type Change struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *Change) Reset()         { *m = Change{} }
-func (m *Change) String() string { return proto.CompactTextString(m) }
-func (*Change) ProtoMessage()    {}
+func (m *Change) Reset()                    { *m = Change{} }
+func (m *Change) String() string            { return proto.CompactTextString(m) }
+func (*Change) ProtoMessage()               {}
+func (*Change) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 func (m *Change) GetBounds() *Bounds {
 	if m != nil {
@@ -205,9 +212,10 @@ type Bounds struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Bounds) Reset()         { *m = Bounds{} }
-func (m *Bounds) String() string { return proto.CompactTextString(m) }
-func (*Bounds) ProtoMessage()    {}
+func (m *Bounds) Reset()                    { *m = Bounds{} }
+func (m *Bounds) String() string            { return proto.CompactTextString(m) }
+func (*Bounds) ProtoMessage()               {}
+func (*Bounds) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 func (m *Bounds) GetMinLng() int64 {
 	if m != nil && m.MinLng != nil {
@@ -245,9 +253,10 @@ type OSM struct {
 	XXX_unrecognized []byte      `json:"-"`
 }
 
-func (m *OSM) Reset()         { *m = OSM{} }
-func (m *OSM) String() string { return proto.CompactTextString(m) }
-func (*OSM) ProtoMessage()    {}
+func (m *OSM) Reset()                    { *m = OSM{} }
+func (m *OSM) String() string            { return proto.CompactTextString(m) }
+func (*OSM) ProtoMessage()               {}
+func (*OSM) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 func (m *OSM) GetNodes() []*Node {
 	if m != nil {
@@ -288,9 +297,10 @@ type Node struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *Node) Reset()         { *m = Node{} }
-func (m *Node) String() string { return proto.CompactTextString(m) }
-func (*Node) ProtoMessage()    {}
+func (m *Node) Reset()                    { *m = Node{} }
+func (m *Node) String() string            { return proto.CompactTextString(m) }
+func (*Node) ProtoMessage()               {}
+func (*Node) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
 func (m *Node) GetId() int64 {
 	if m != nil && m.Id != nil {
@@ -335,28 +345,29 @@ func (m *Node) GetLng() int64 {
 }
 
 type Info struct {
-	Version   *int64 `protobuf:"zigzag64,1,opt,name=version,def=-1" json:"version,omitempty"`
-	Timestamp *int64 `protobuf:"zigzag64,2,opt,name=timestamp" json:"timestamp,omitempty"`
+	Version   *int32 `protobuf:"varint,1,opt,name=version,def=-1" json:"version,omitempty"`
+	Timestamp *int64 `protobuf:"varint,2,opt,name=timestamp" json:"timestamp,omitempty"`
 	// these will be omitted if the object represents one changeset
-	// and these will be all the same.
-	Changeset *int64  `protobuf:"zigzag64,3,opt,name=changeset" json:"changeset,omitempty"`
-	Uid       *int64  `protobuf:"zigzag64,4,opt,name=uid" json:"uid,omitempty"`
-	User      *uint32 `protobuf:"varint,5,opt,name=user" json:"user,omitempty"`
+	// since they will be all the same.
+	Changeset *int64  `protobuf:"varint,3,opt,name=changeset" json:"changeset,omitempty"`
+	Uid       *int32  `protobuf:"varint,4,opt,name=uid" json:"uid,omitempty"`
+	UserSid   *uint32 `protobuf:"varint,5,opt,name=user_sid" json:"user_sid,omitempty"`
 	// The visible flag is used to store history information. It indicates that
 	// the current object version has been created by a delete operation on the
-	// OSM API. This info may be omitted if it can be inferred from it's group
+	// OSM API. This info may be omitted if it can be inferred from its group
 	// ie. create, modify, delete.
 	Visible          *bool  `protobuf:"varint,6,opt,name=visible" json:"visible,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Info) Reset()         { *m = Info{} }
-func (m *Info) String() string { return proto.CompactTextString(m) }
-func (*Info) ProtoMessage()    {}
+func (m *Info) Reset()                    { *m = Info{} }
+func (m *Info) String() string            { return proto.CompactTextString(m) }
+func (*Info) ProtoMessage()               {}
+func (*Info) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
-const Default_Info_Version int64 = -1
+const Default_Info_Version int32 = -1
 
-func (m *Info) GetVersion() int64 {
+func (m *Info) GetVersion() int32 {
 	if m != nil && m.Version != nil {
 		return *m.Version
 	}
@@ -377,16 +388,16 @@ func (m *Info) GetChangeset() int64 {
 	return 0
 }
 
-func (m *Info) GetUid() int64 {
+func (m *Info) GetUid() int32 {
 	if m != nil && m.Uid != nil {
 		return *m.Uid
 	}
 	return 0
 }
 
-func (m *Info) GetUser() uint32 {
-	if m != nil && m.User != nil {
-		return *m.User
+func (m *Info) GetUserSid() uint32 {
+	if m != nil && m.UserSid != nil {
+		return *m.UserSid
 	}
 	return 0
 }
@@ -401,20 +412,21 @@ func (m *Info) GetVisible() bool {
 type DenseNodes struct {
 	Id        []int64    `protobuf:"zigzag64,1,rep,packed,name=id" json:"id,omitempty"`
 	DenseInfo *DenseInfo `protobuf:"bytes,5,opt,name=dense_info" json:"dense_info,omitempty"`
-	Lat       []int64    `protobuf:"zigzag64,8,rep,packed,name=lat" json:"lat,omitempty"`
-	Lon       []int64    `protobuf:"zigzag64,9,rep,packed,name=lon" json:"lon,omitempty"`
+	Lats      []int64    `protobuf:"zigzag64,8,rep,packed,name=lats" json:"lats,omitempty"`
+	Lngs      []int64    `protobuf:"zigzag64,9,rep,packed,name=lngs" json:"lngs,omitempty"`
 	// Special packing of keys and vals into one array. We use a single stringid
 	// of 0 to delimit when the tags of a node ends and the tags of the next node
 	// begin. The storage pattern is: ((<keyid> <valid>)* '0' )* As an exception,
 	// if no node in the current block has any key/value pairs, this array does
 	// not contain any delimiters, but is simply empty.
-	KeysVals         []uint32 `protobuf:"varint,10,rep,packed,name=keys_vals" json:"keys_vals,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	KeysVals         []int32 `protobuf:"varint,10,rep,packed,name=keys_vals" json:"keys_vals,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *DenseNodes) Reset()         { *m = DenseNodes{} }
-func (m *DenseNodes) String() string { return proto.CompactTextString(m) }
-func (*DenseNodes) ProtoMessage()    {}
+func (m *DenseNodes) Reset()                    { *m = DenseNodes{} }
+func (m *DenseNodes) String() string            { return proto.CompactTextString(m) }
+func (*DenseNodes) ProtoMessage()               {}
+func (*DenseNodes) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 func (m *DenseNodes) GetId() []int64 {
 	if m != nil {
@@ -430,21 +442,21 @@ func (m *DenseNodes) GetDenseInfo() *DenseInfo {
 	return nil
 }
 
-func (m *DenseNodes) GetLat() []int64 {
+func (m *DenseNodes) GetLats() []int64 {
 	if m != nil {
-		return m.Lat
+		return m.Lats
 	}
 	return nil
 }
 
-func (m *DenseNodes) GetLon() []int64 {
+func (m *DenseNodes) GetLngs() []int64 {
 	if m != nil {
-		return m.Lon
+		return m.Lngs
 	}
 	return nil
 }
 
-func (m *DenseNodes) GetKeysVals() []uint32 {
+func (m *DenseNodes) GetKeysVals() []int32 {
 	if m != nil {
 		return m.KeysVals
 	}
@@ -452,13 +464,13 @@ func (m *DenseNodes) GetKeysVals() []uint32 {
 }
 
 type DenseInfo struct {
-	Versions   []int64 `protobuf:"zigzag64,1,rep,packed,name=versions" json:"versions,omitempty"`
-	Timestamps []int64 `protobuf:"zigzag64,2,rep,packed,name=timestamps" json:"timestamps,omitempty"`
+	Version   []int32 `protobuf:"varint,1,rep,packed,name=version" json:"version,omitempty"`
+	Timestamp []int64 `protobuf:"zigzag64,2,rep,packed,name=timestamp" json:"timestamp,omitempty"`
 	// these will be omitted if the object represents one changeset
 	// and these will be all the same.
-	Changesets []int64 `protobuf:"zigzag64,3,rep,packed,name=changesets" json:"changesets,omitempty"`
-	Uids       []int64 `protobuf:"zigzag64,4,rep,packed,name=uids" json:"uids,omitempty"`
-	Users      []int32 `protobuf:"zigzag32,5,rep,packed,name=users" json:"users,omitempty"`
+	Changeset []int64 `protobuf:"zigzag64,3,rep,packed,name=changeset" json:"changeset,omitempty"`
+	Uid       []int32 `protobuf:"zigzag32,4,rep,packed,name=uid" json:"uid,omitempty"`
+	UserSid   []int32 `protobuf:"zigzag32,5,rep,packed,name=user_sid" json:"user_sid,omitempty"`
 	// The visible flag is used to store history information. It indicates that
 	// the current object version has been created by a delete operation on the
 	// OSM API. This info may be omitted if it can be inferred from it's group
@@ -467,41 +479,42 @@ type DenseInfo struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *DenseInfo) Reset()         { *m = DenseInfo{} }
-func (m *DenseInfo) String() string { return proto.CompactTextString(m) }
-func (*DenseInfo) ProtoMessage()    {}
+func (m *DenseInfo) Reset()                    { *m = DenseInfo{} }
+func (m *DenseInfo) String() string            { return proto.CompactTextString(m) }
+func (*DenseInfo) ProtoMessage()               {}
+func (*DenseInfo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
-func (m *DenseInfo) GetVersions() []int64 {
+func (m *DenseInfo) GetVersion() []int32 {
 	if m != nil {
-		return m.Versions
+		return m.Version
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetTimestamps() []int64 {
+func (m *DenseInfo) GetTimestamp() []int64 {
 	if m != nil {
-		return m.Timestamps
+		return m.Timestamp
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetChangesets() []int64 {
+func (m *DenseInfo) GetChangeset() []int64 {
 	if m != nil {
-		return m.Changesets
+		return m.Changeset
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetUids() []int64 {
+func (m *DenseInfo) GetUid() []int32 {
 	if m != nil {
-		return m.Uids
+		return m.Uid
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetUsers() []int32 {
+func (m *DenseInfo) GetUserSid() []int32 {
 	if m != nil {
-		return m.Users
+		return m.UserSid
 	}
 	return nil
 }
@@ -523,9 +536,10 @@ type Way struct {
 	XXX_unrecognized []byte   `json:"-"`
 }
 
-func (m *Way) Reset()         { *m = Way{} }
-func (m *Way) String() string { return proto.CompactTextString(m) }
-func (*Way) ProtoMessage()    {}
+func (m *Way) Reset()                    { *m = Way{} }
+func (m *Way) String() string            { return proto.CompactTextString(m) }
+func (*Way) ProtoMessage()               {}
+func (*Way) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
 
 func (m *Way) GetId() int64 {
 	if m != nil && m.Id != nil {
@@ -575,9 +589,10 @@ type Relation struct {
 	XXX_unrecognized []byte                `json:"-"`
 }
 
-func (m *Relation) Reset()         { *m = Relation{} }
-func (m *Relation) String() string { return proto.CompactTextString(m) }
-func (*Relation) ProtoMessage()    {}
+func (m *Relation) Reset()                    { *m = Relation{} }
+func (m *Relation) String() string            { return proto.CompactTextString(m) }
+func (*Relation) ProtoMessage()               {}
+func (*Relation) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 func (m *Relation) GetId() int64 {
 	if m != nil && m.Id != nil {
@@ -629,5 +644,59 @@ func (m *Relation) GetTypes() []Relation_MemberType {
 }
 
 func init() {
+	proto.RegisterType((*Changeset)(nil), "osm.Changeset")
+	proto.RegisterType((*Change)(nil), "osm.Change")
+	proto.RegisterType((*Bounds)(nil), "osm.Bounds")
+	proto.RegisterType((*OSM)(nil), "osm.OSM")
+	proto.RegisterType((*Node)(nil), "osm.Node")
+	proto.RegisterType((*Info)(nil), "osm.Info")
+	proto.RegisterType((*DenseNodes)(nil), "osm.DenseNodes")
+	proto.RegisterType((*DenseInfo)(nil), "osm.DenseInfo")
+	proto.RegisterType((*Way)(nil), "osm.Way")
+	proto.RegisterType((*Relation)(nil), "osm.Relation")
 	proto.RegisterEnum("osm.Relation_MemberType", Relation_MemberType_name, Relation_MemberType_value)
+}
+
+var fileDescriptor0 = []byte{
+	// 627 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x93, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0x86, 0xb1, 0xd7, 0x8e, 0xed, 0x09, 0x6d, 0x93, 0xe5, 0xcb, 0x80, 0x84, 0x22, 0x9f, 0x2c,
+	0xa1, 0x56, 0xa2, 0x47, 0x6e, 0x2d, 0xed, 0xa1, 0x52, 0x3f, 0x24, 0xa8, 0x84, 0xe0, 0x12, 0x9c,
+	0x7a, 0x1b, 0x2c, 0xfc, 0x11, 0xbc, 0x4e, 0x4a, 0xc4, 0x4f, 0xe0, 0xaf, 0x71, 0xe4, 0x07, 0x31,
+	0x33, 0xb6, 0x13, 0x5b, 0x5c, 0x38, 0xf4, 0x96, 0x3c, 0x33, 0x3b, 0xb3, 0xef, 0xbb, 0xaf, 0xc1,
+	0x2b, 0x74, 0x76, 0xb0, 0x28, 0x8b, 0xaa, 0x90, 0x02, 0x7f, 0x06, 0xbf, 0x0d, 0xf0, 0xde, 0x7d,
+	0x8d, 0xf2, 0xb9, 0xd2, 0xaa, 0x92, 0x00, 0x66, 0x12, 0xfb, 0xc6, 0xc4, 0x0c, 0x85, 0x1c, 0x81,
+	0xf5, 0x4d, 0xad, 0xb5, 0x6f, 0x4e, 0x44, 0xb8, 0x73, 0x6c, 0x8e, 0x0c, 0x22, 0xab, 0x28, 0xd5,
+	0xbe, 0xd8, 0x90, 0x3d, 0x70, 0x74, 0x55, 0x26, 0xf9, 0x5c, 0xfb, 0x16, 0x42, 0x4f, 0x0e, 0x41,
+	0x2c, 0x71, 0x82, 0x3d, 0x31, 0xc2, 0x31, 0xf6, 0xbb, 0x4b, 0xad, 0xca, 0xa9, 0x46, 0x32, 0x40,
+	0xb2, 0x23, 0x71, 0xc1, 0x4d, 0xa9, 0xa2, 0x4a, 0xc5, 0xd3, 0xa8, 0xf2, 0x1d, 0x64, 0x52, 0x8e,
+	0xc1, 0xbb, 0x49, 0x0b, 0x5d, 0x23, 0x17, 0x57, 0x4b, 0xf9, 0x12, 0x06, 0xb3, 0x62, 0x99, 0xc7,
+	0xda, 0xf7, 0xb0, 0x65, 0x78, 0x38, 0x3c, 0xa0, 0x5b, 0x1f, 0x33, 0xa2, 0xe2, 0x0d, 0x5f, 0xd8,
+	0x07, 0x6c, 0x6e, 0x8b, 0xb5, 0x86, 0xe0, 0x0e, 0x06, 0xf5, 0xaf, 0xce, 0x0c, 0xe3, 0xdf, 0x19,
+	0xcf, 0xc1, 0xa9, 0xef, 0x51, 0xcb, 0x1b, 0x1e, 0xba, 0x5c, 0xbd, 0xfa, 0x70, 0x21, 0x5f, 0x80,
+	0x9b, 0x15, 0x71, 0x72, 0x9b, 0xa8, 0x5a, 0x68, 0xb7, 0x86, 0xc7, 0x62, 0x95, 0x2a, 0x3a, 0x66,
+	0xf5, 0x4b, 0xc1, 0x39, 0x0c, 0x9a, 0xd9, 0xe8, 0x49, 0x96, 0xe4, 0xd3, 0x34, 0x9f, 0xb3, 0x91,
+	0x92, 0x41, 0xf4, 0x83, 0x81, 0xb9, 0x01, 0xd4, 0x81, 0x7a, 0x45, 0xaf, 0x03, 0x81, 0x45, 0x20,
+	0x58, 0x83, 0xa0, 0x7d, 0x3e, 0xd8, 0x79, 0x11, 0x2b, 0x92, 0x40, 0xdb, 0x3c, 0xde, 0x76, 0x89,
+	0x44, 0xbe, 0x02, 0x3b, 0x56, 0xb9, 0x56, 0x38, 0x91, 0xc4, 0xed, 0x71, 0xe5, 0x84, 0x08, 0x95,
+	0xb5, 0x7c, 0x0a, 0xd6, 0x5d, 0xb4, 0xee, 0x2b, 0xf8, 0x18, 0xad, 0xe5, 0x04, 0xbc, 0x52, 0xe1,
+	0x9e, 0xa4, 0xc8, 0x5b, 0x0d, 0x3b, 0x5c, 0x7c, 0xdf, 0xd0, 0x20, 0x01, 0x8b, 0x37, 0x6c, 0xa3,
+	0x20, 0xff, 0x2b, 0x0a, 0xcf, 0xc0, 0x4a, 0xf2, 0xdb, 0x02, 0x87, 0x1a, 0x9b, 0xab, 0x9e, 0x21,
+	0xa0, 0x48, 0xa4, 0x9b, 0x97, 0xa5, 0x3f, 0xe8, 0x83, 0xc7, 0x2a, 0xbf, 0x83, 0xc5, 0x1d, 0x8f,
+	0xc0, 0x59, 0xa9, 0x52, 0xe3, 0x76, 0x7e, 0x2b, 0xfb, 0xad, 0xb9, 0xff, 0x86, 0x62, 0x51, 0x25,
+	0x99, 0xd2, 0x55, 0x94, 0x2d, 0x58, 0xa5, 0xe0, 0xa4, 0xb4, 0x51, 0xc5, 0xcd, 0x84, 0x9a, 0xbc,
+	0xd1, 0x52, 0xbb, 0x97, 0x37, 0x9b, 0xf3, 0x86, 0xc6, 0xae, 0x12, 0x9d, 0xcc, 0x52, 0xc5, 0x01,
+	0x74, 0x83, 0x9f, 0x00, 0x1d, 0x97, 0x76, 0x1b, 0x8d, 0x22, 0x94, 0xac, 0x21, 0x00, 0x60, 0x57,
+	0xa7, 0xac, 0xc4, 0x66, 0x25, 0xbb, 0x5b, 0x6b, 0xf9, 0xb2, 0xa8, 0x1c, 0xe5, 0x68, 0xd4, 0xd3,
+	0x9e, 0x22, 0x42, 0x5f, 0x80, 0xb7, 0x21, 0x4f, 0xc0, 0x23, 0xbf, 0xa6, 0x6c, 0x11, 0x20, 0xb6,
+	0x09, 0x07, 0xbf, 0xf0, 0x5b, 0xdb, 0x0e, 0xea, 0xa9, 0x6e, 0x5a, 0xe8, 0x64, 0x57, 0x75, 0x67,
+	0x60, 0x57, 0x79, 0x8b, 0xf7, 0x5a, 0xf5, 0x22, 0x1c, 0x33, 0x78, 0xdc, 0x73, 0xa0, 0x43, 0x1b,
+	0x17, 0x34, 0xda, 0x20, 0x42, 0x97, 0x6f, 0xf3, 0x05, 0x04, 0x25, 0xe2, 0xde, 0xde, 0x19, 0x5b,
+	0x4b, 0x75, 0xdb, 0x31, 0x26, 0xf8, 0x63, 0x80, 0xdb, 0xe6, 0xea, 0xfe, 0xf6, 0x8c, 0xc1, 0x2e,
+	0x0b, 0x92, 0xe2, 0x76, 0x4f, 0xf3, 0xea, 0xed, 0x0b, 0xbc, 0x06, 0xbb, 0x5a, 0x2f, 0x54, 0xed,
+	0xfe, 0xee, 0xa1, 0xdf, 0xcb, 0xf8, 0xc1, 0x85, 0xca, 0x66, 0xaa, 0xbc, 0xc6, 0x06, 0xbe, 0xe7,
+	0x3e, 0xc0, 0x96, 0x48, 0x17, 0x3f, 0x80, 0xab, 0x93, 0xd3, 0xd1, 0x03, 0xe9, 0xa0, 0x43, 0x47,
+	0x9f, 0x70, 0xda, 0x43, 0xd4, 0x71, 0x7a, 0x7e, 0x74, 0x7d, 0x76, 0x75, 0x39, 0x32, 0x8f, 0x9d,
+	0xcf, 0x36, 0x4e, 0x5b, 0xcc, 0xfe, 0x06, 0x00, 0x00, 0xff, 0xff, 0x5e, 0xd8, 0xda, 0xe9, 0x4c,
+	0x05, 0x00, 0x00,
 }

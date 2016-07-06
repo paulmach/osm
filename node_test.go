@@ -19,8 +19,8 @@ func TestNode(t *testing.T) {
 		t.Errorf("incorrect id, got %v", v)
 	}
 
-	if v := n.ChangsetID; v != 456 {
-		t.Errorf("incorrect changset, got %v", v)
+	if v := n.ChangesetID; v != 456 {
+		t.Errorf("incorrect changeset, got %v", v)
 	}
 
 	if v := n.Timestamp; v != time.Date(2014, 4, 10, 0, 43, 05, 0, time.UTC) {
@@ -61,7 +61,7 @@ func TestNodesActiveAt(t *testing.T) {
 	}
 
 	type testCase struct {
-		ID   int
+		ID   NodeID
 		Time time.Time
 	}
 
