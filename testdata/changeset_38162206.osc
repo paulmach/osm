@@ -1,0 +1,1161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmChange version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+  <create>
+    <way id="406567335" changeset="38162206" timestamp="2016-03-30T09:25:31Z" version="1" visible="true" user="grah735" uid="2744209">
+      <nd ref="1088206870"/>
+      <nd ref="2973947976"/>
+      <nd ref="2973947977"/>
+      <nd ref="269430268"/>
+      <tag k="highway" v="secondary"/>
+      <tag k="name" v="Генерала Острякова проспект"/>
+      <tag k="name:en" v="Henerala Ostriakova Avenue"/>
+      <tag k="name:ru" v="Генерала Острякова проспект"/>
+      <tag k="name:uk" v="Генерала Острякова проспект"/>
+      <tag k="trolley_wire" v="yes"/>
+    </way>
+  </create>
+  <create>
+    <relation id="6091239" changeset="38162206" timestamp="2016-03-30T09:25:31Z" version="1" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="406567027" role="from"/>
+      <member type="node" ref="1088206870" role="via"/>
+      <member type="way" ref="406567027" role="to"/>
+      <tag k="restriction" v="no_u_turn"/>
+      <tag k="type" v="restriction"/>
+    </relation>
+  </create>
+  <create>
+    <relation id="6091240" changeset="38162206" timestamp="2016-03-30T09:25:32Z" version="1" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="406567027" role="from"/>
+      <member type="node" ref="1088206870" role="via"/>
+      <member type="way" ref="43707707" role="to"/>
+      <tag k="restriction" v="no_left_turn"/>
+      <tag k="type" v="restriction"/>
+    </relation>
+  </create>
+  <modify>
+    <way id="406567027" changeset="38162206" timestamp="2016-03-30T09:25:32Z" version="2" visible="true" user="grah735" uid="2744209">
+      <nd ref="2424596089"/>
+      <nd ref="2973947973"/>
+      <nd ref="307662572"/>
+      <nd ref="2973947974"/>
+      <nd ref="1088206870"/>
+      <tag k="highway" v="secondary"/>
+      <tag k="name" v="Генерала Острякова проспект"/>
+      <tag k="name:en" v="Henerala Ostriakova Avenue"/>
+      <tag k="name:ru" v="Генерала Острякова проспект"/>
+      <tag k="name:uk" v="Генерала Острякова проспект"/>
+      <tag k="trolley_wire" v="yes"/>
+    </way>
+  </modify>
+  <modify>
+    <relation id="5465998" changeset="38162206" timestamp="2016-03-30T09:25:32Z" version="13" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="24444099" role=""/>
+      <member type="way" ref="27711595" role=""/>
+      <member type="way" ref="24444325" role=""/>
+      <member type="way" ref="406446765" role=""/>
+      <member type="way" ref="24444323" role=""/>
+      <member type="way" ref="368200219" role=""/>
+      <member type="way" ref="367724155" role=""/>
+      <member type="way" ref="291333367" role=""/>
+      <member type="way" ref="368200222" role=""/>
+      <member type="way" ref="24733815" role=""/>
+      <member type="way" ref="24447784" role=""/>
+      <member type="way" ref="31114465" role=""/>
+      <member type="way" ref="368112020" role=""/>
+      <member type="way" ref="368112018" role=""/>
+      <member type="way" ref="24444276" role=""/>
+      <member type="way" ref="27824459" role=""/>
+      <member type="way" ref="27802030" role=""/>
+      <member type="way" ref="236908145" role=""/>
+      <member type="way" ref="27802036" role=""/>
+      <member type="way" ref="236907651" role=""/>
+      <member type="way" ref="27802137" role=""/>
+      <member type="way" ref="367724150" role=""/>
+      <member type="way" ref="367713582" role=""/>
+      <member type="way" ref="27802047" role=""/>
+      <member type="way" ref="27802140" role=""/>
+      <member type="way" ref="24799569" role=""/>
+      <member type="way" ref="239733821" role=""/>
+      <member type="way" ref="24799570" role=""/>
+      <member type="way" ref="236843970" role=""/>
+      <member type="way" ref="236843969" role=""/>
+      <member type="way" ref="406561964" role=""/>
+      <member type="way" ref="406561966" role=""/>
+      <member type="way" ref="406561965" role=""/>
+      <member type="way" ref="24799571" role=""/>
+      <member type="way" ref="24785455" role=""/>
+      <member type="way" ref="406562108" role=""/>
+      <member type="way" ref="403448988" role=""/>
+      <member type="way" ref="403448987" role=""/>
+      <member type="way" ref="403448986" role=""/>
+      <member type="way" ref="354896035" role=""/>
+      <member type="way" ref="28007766" role=""/>
+      <member type="way" ref="24444394" role=""/>
+      <member type="way" ref="24799640" role=""/>
+      <member type="way" ref="24799643" role=""/>
+      <member type="way" ref="93668909" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №2: 5-й километр - Стрелецкая бухта"/>
+      <tag k="operator" v="Севэлектроавтотранс"/>
+      <tag k="ref" v="2"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5468262" changeset="38162206" timestamp="2016-03-30T09:25:32Z" version="13" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367898585" role=""/>
+      <member type="way" ref="367898578" role=""/>
+      <member type="way" ref="87635420" role=""/>
+      <member type="way" ref="87635423" role=""/>
+      <member type="way" ref="39895955" role=""/>
+      <member type="way" ref="367724154" role=""/>
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="24444099" role=""/>
+      <member type="way" ref="367724152" role=""/>
+      <member type="way" ref="24777677" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="27786216" role=""/>
+      <member type="way" ref="367898582" role=""/>
+      <member type="way" ref="367713597" role=""/>
+      <member type="way" ref="367898583" role=""/>
+      <member type="way" ref="24933711" role=""/>
+      <member type="way" ref="25048897" role=""/>
+      <member type="way" ref="367713580" role=""/>
+      <member type="way" ref="24732332" role=""/>
+      <member type="way" ref="367713586" role=""/>
+      <member type="way" ref="105001633" role=""/>
+      <member type="way" ref="27738440" role=""/>
+      <member type="way" ref="24732339" role=""/>
+      <member type="way" ref="406558709" role=""/>
+      <member type="way" ref="27718600" role=""/>
+      <member type="way" ref="367724157" role=""/>
+      <member type="way" ref="27802047" role=""/>
+      <member type="way" ref="27802140" role=""/>
+      <member type="way" ref="24799569" role=""/>
+      <member type="way" ref="239733821" role=""/>
+      <member type="way" ref="24799570" role=""/>
+      <member type="way" ref="236843970" role=""/>
+      <member type="way" ref="236843969" role=""/>
+      <member type="way" ref="406561964" role=""/>
+      <member type="way" ref="406561966" role=""/>
+      <member type="way" ref="406561965" role=""/>
+      <member type="way" ref="24799571" role=""/>
+      <member type="way" ref="24785455" role=""/>
+      <member type="way" ref="406562108" role=""/>
+      <member type="way" ref="403448988" role=""/>
+      <member type="way" ref="403448987" role=""/>
+      <member type="way" ref="403448986" role=""/>
+      <member type="way" ref="354896035" role=""/>
+      <member type="way" ref="28007766" role=""/>
+      <member type="way" ref="24444394" role=""/>
+      <member type="way" ref="24799640" role=""/>
+      <member type="way" ref="24799643" role=""/>
+      <member type="way" ref="93668909" role=""/>
+      <tag k="name" v="Маршрут автобуса №2: по. Кальфа - Стрелецкая бухта"/>
+      <tag k="ref" v="2"/>
+      <tag k="route" v="bus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5468261" changeset="38162206" timestamp="2016-03-30T09:25:32Z" version="14" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367713584" role=""/>
+      <member type="way" ref="24799643" role=""/>
+      <member type="way" ref="27872498" role=""/>
+      <member type="way" ref="367713569" role=""/>
+      <member type="way" ref="291438579" role=""/>
+      <member type="way" ref="291438578" role=""/>
+      <member type="way" ref="24444367" role=""/>
+      <member type="way" ref="354896035" role=""/>
+      <member type="way" ref="403448986" role=""/>
+      <member type="way" ref="403448987" role=""/>
+      <member type="way" ref="403448988" role=""/>
+      <member type="way" ref="406562108" role=""/>
+      <member type="way" ref="24785455" role=""/>
+      <member type="way" ref="24799571" role=""/>
+      <member type="way" ref="406561965" role=""/>
+      <member type="way" ref="406561966" role=""/>
+      <member type="way" ref="406561964" role=""/>
+      <member type="way" ref="236843969" role=""/>
+      <member type="way" ref="236843970" role=""/>
+      <member type="way" ref="24799570" role=""/>
+      <member type="way" ref="239733821" role=""/>
+      <member type="way" ref="24799569" role=""/>
+      <member type="way" ref="27802138" role=""/>
+      <member type="way" ref="367713583" role=""/>
+      <member type="way" ref="367724150" role=""/>
+      <member type="way" ref="27802045" role=""/>
+      <member type="way" ref="27718600" role=""/>
+      <member type="way" ref="406558709" role=""/>
+      <member type="way" ref="367713578" role=""/>
+      <member type="way" ref="367713580" role=""/>
+      <member type="way" ref="25048897" role=""/>
+      <member type="way" ref="24933743" role=""/>
+      <member type="way" ref="367713596" role=""/>
+      <member type="way" ref="24933776" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="27792977" role=""/>
+      <member type="way" ref="24733700" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="367724154" role=""/>
+      <member type="way" ref="39895955" role=""/>
+      <member type="way" ref="87635423" role=""/>
+      <member type="way" ref="87635420" role=""/>
+      <member type="way" ref="367898578" role=""/>
+      <member type="way" ref="367898579" role=""/>
+      <tag k="name" v="Маршрут автобуса №2: Стрелецкая бухта пос. Кальфа"/>
+      <tag k="ref" v="2"/>
+      <tag k="route" v="bus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472253" changeset="38162206" timestamp="2016-03-30T09:25:33Z" version="13" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="24444099" role=""/>
+      <member type="way" ref="367724152" role=""/>
+      <member type="way" ref="24777677" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="27786216" role=""/>
+      <member type="way" ref="367898582" role=""/>
+      <member type="way" ref="25048855" role=""/>
+      <member type="way" ref="113511391" role=""/>
+      <member type="way" ref="28294600" role=""/>
+      <member type="way" ref="27718359" role=""/>
+      <member type="way" ref="27718361" role=""/>
+      <member type="way" ref="24799410" role=""/>
+      <member type="way" ref="24732477" role=""/>
+      <member type="way" ref="24444114" role=""/>
+      <member type="way" ref="233439979" role=""/>
+      <member type="way" ref="27803553" role=""/>
+      <member type="way" ref="318559010" role=""/>
+      <member type="way" ref="318559007" role=""/>
+      <member type="way" ref="233439978" role=""/>
+      <member type="way" ref="367898574" role=""/>
+      <member type="way" ref="406553021" role=""/>
+      <member type="way" ref="301445398" role=""/>
+      <member type="way" ref="27803554" role=""/>
+      <member type="way" ref="24779791" role=""/>
+      <member type="way" ref="406553023" role=""/>
+      <member type="way" ref="404536649" role=""/>
+      <member type="way" ref="404536721" role=""/>
+      <member type="way" ref="406553247" role=""/>
+      <member type="way" ref="406553392" role=""/>
+      <member type="way" ref="301445397" role=""/>
+      <member type="way" ref="367898576" role=""/>
+      <member type="way" ref="367713598" role=""/>
+      <member type="way" ref="367713588" role=""/>
+      <member type="way" ref="24779808" role=""/>
+      <member type="way" ref="292322817" role=""/>
+      <member type="way" ref="311811621" role=""/>
+      <member type="way" ref="368112014" role=""/>
+      <member type="way" ref="154198039" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №17: 5-й километр - улица Горпищенко"/>
+      <tag k="ref" v="17"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472254" changeset="38162206" timestamp="2016-03-30T09:25:33Z" version="13" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="368112016" role=""/>
+      <member type="way" ref="311811621" role=""/>
+      <member type="way" ref="292322817" role=""/>
+      <member type="way" ref="24779808" role=""/>
+      <member type="way" ref="367713588" role=""/>
+      <member type="way" ref="367713589" role=""/>
+      <member type="way" ref="367898576" role=""/>
+      <member type="way" ref="301445397" role=""/>
+      <member type="way" ref="406553392" role=""/>
+      <member type="way" ref="406553247" role=""/>
+      <member type="way" ref="404536721" role=""/>
+      <member type="way" ref="404536649" role=""/>
+      <member type="way" ref="24779791" role=""/>
+      <member type="way" ref="406553023" role=""/>
+      <member type="way" ref="27803554" role=""/>
+      <member type="way" ref="301445398" role=""/>
+      <member type="way" ref="406553021" role=""/>
+      <member type="way" ref="233485308" role=""/>
+      <member type="way" ref="367898573" role=""/>
+      <member type="way" ref="27803551" role=""/>
+      <member type="way" ref="318559011" role=""/>
+      <member type="way" ref="318559008" role=""/>
+      <member type="way" ref="24444121" role=""/>
+      <member type="way" ref="24732477" role=""/>
+      <member type="way" ref="27710765" role=""/>
+      <member type="way" ref="93712571" role=""/>
+      <member type="way" ref="293749902" role=""/>
+      <member type="way" ref="27718358" role=""/>
+      <member type="way" ref="367713594" role=""/>
+      <member type="way" ref="28294600" role=""/>
+      <member type="way" ref="113511391" role=""/>
+      <member type="way" ref="25048879" role=""/>
+      <member type="way" ref="367898583" role=""/>
+      <member type="way" ref="367898584" role=""/>
+      <member type="way" ref="367713596" role=""/>
+      <member type="way" ref="24933776" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="27792977" role=""/>
+      <member type="way" ref="24733700" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="131594096" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №17: улица Горпищенко - 5-й километр"/>
+      <tag k="ref" v="17"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5465999" changeset="38162206" timestamp="2016-03-30T09:25:33Z" version="15" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367713584" role=""/>
+      <member type="way" ref="24799643" role=""/>
+      <member type="way" ref="27872498" role=""/>
+      <member type="way" ref="367713569" role=""/>
+      <member type="way" ref="291438579" role=""/>
+      <member type="way" ref="291438578" role=""/>
+      <member type="way" ref="24444367" role=""/>
+      <member type="way" ref="354896035" role=""/>
+      <member type="way" ref="403448986" role=""/>
+      <member type="way" ref="403448987" role=""/>
+      <member type="way" ref="403448988" role=""/>
+      <member type="way" ref="406562108" role=""/>
+      <member type="way" ref="24785455" role=""/>
+      <member type="way" ref="24799571" role=""/>
+      <member type="way" ref="406561965" role=""/>
+      <member type="way" ref="406561966" role=""/>
+      <member type="way" ref="406561964" role=""/>
+      <member type="way" ref="236843969" role=""/>
+      <member type="way" ref="236843970" role=""/>
+      <member type="way" ref="24799570" role=""/>
+      <member type="way" ref="239733821" role=""/>
+      <member type="way" ref="24799569" role=""/>
+      <member type="way" ref="27802138" role=""/>
+      <member type="way" ref="367713583" role=""/>
+      <member type="way" ref="367724150" role=""/>
+      <member type="way" ref="27802045" role=""/>
+      <member type="way" ref="27718600" role=""/>
+      <member type="way" ref="406558709" role=""/>
+      <member type="way" ref="367713578" role=""/>
+      <member type="way" ref="367713580" role=""/>
+      <member type="way" ref="25048897" role=""/>
+      <member type="way" ref="24933743" role=""/>
+      <member type="way" ref="367713596" role=""/>
+      <member type="way" ref="24933776" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="27792977" role=""/>
+      <member type="way" ref="24733700" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="131594096" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №2: Стрелецкая бухта - 5-й километр"/>
+      <tag k="operator" v="Севэлектроавтотранс"/>
+      <tag k="ref" v="2"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472255" changeset="38162206" timestamp="2016-03-30T09:25:33Z" version="13" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="24444099" role=""/>
+      <member type="way" ref="367724152" role=""/>
+      <member type="way" ref="24777677" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="27786216" role=""/>
+      <member type="way" ref="367898582" role=""/>
+      <member type="way" ref="25048855" role=""/>
+      <member type="way" ref="113511391" role=""/>
+      <member type="way" ref="28294600" role=""/>
+      <member type="way" ref="27718359" role=""/>
+      <member type="way" ref="27718361" role=""/>
+      <member type="way" ref="24799410" role=""/>
+      <member type="way" ref="24732477" role=""/>
+      <member type="way" ref="24444114" role=""/>
+      <member type="way" ref="233439979" role=""/>
+      <member type="way" ref="27803553" role=""/>
+      <member type="way" ref="318559010" role=""/>
+      <member type="way" ref="318559007" role=""/>
+      <member type="way" ref="233439978" role=""/>
+      <member type="way" ref="367898574" role=""/>
+      <member type="way" ref="406553021" role=""/>
+      <member type="way" ref="301445398" role=""/>
+      <member type="way" ref="27803554" role=""/>
+      <member type="way" ref="24779791" role=""/>
+      <member type="way" ref="406553023" role=""/>
+      <member type="way" ref="404536649" role=""/>
+      <member type="way" ref="404536721" role=""/>
+      <member type="way" ref="406553247" role=""/>
+      <member type="way" ref="406553392" role=""/>
+      <member type="way" ref="154286445" role=""/>
+      <member type="way" ref="368200203" role=""/>
+      <member type="way" ref="32805245" role=""/>
+      <member type="way" ref="312124531" role=""/>
+      <member type="way" ref="112400854" role=""/>
+      <member type="way" ref="312124532" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №20: 5-й километр - просп. Победы"/>
+      <tag k="ref" v="20"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472256" changeset="38162206" timestamp="2016-03-30T09:25:34Z" version="13" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="112400853" role=""/>
+      <member type="way" ref="312124531" role=""/>
+      <member type="way" ref="32805245" role=""/>
+      <member type="way" ref="368200203" role=""/>
+      <member type="way" ref="154286445" role=""/>
+      <member type="way" ref="406553392" role=""/>
+      <member type="way" ref="406553247" role=""/>
+      <member type="way" ref="404536721" role=""/>
+      <member type="way" ref="404536649" role=""/>
+      <member type="way" ref="24779791" role=""/>
+      <member type="way" ref="406553023" role=""/>
+      <member type="way" ref="27803554" role=""/>
+      <member type="way" ref="301445398" role=""/>
+      <member type="way" ref="406553021" role=""/>
+      <member type="way" ref="233485308" role=""/>
+      <member type="way" ref="367898573" role=""/>
+      <member type="way" ref="27803551" role=""/>
+      <member type="way" ref="318559011" role=""/>
+      <member type="way" ref="318559008" role=""/>
+      <member type="way" ref="24444121" role=""/>
+      <member type="way" ref="24732477" role=""/>
+      <member type="way" ref="27710765" role=""/>
+      <member type="way" ref="93712571" role=""/>
+      <member type="way" ref="293749902" role=""/>
+      <member type="way" ref="27718358" role=""/>
+      <member type="way" ref="367713594" role=""/>
+      <member type="way" ref="28294600" role=""/>
+      <member type="way" ref="113511391" role=""/>
+      <member type="way" ref="25048879" role=""/>
+      <member type="way" ref="367898583" role=""/>
+      <member type="way" ref="367898584" role=""/>
+      <member type="way" ref="367713596" role=""/>
+      <member type="way" ref="24933776" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="27792977" role=""/>
+      <member type="way" ref="24733700" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="131594096" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №20: просп. Победы - 5-й километр"/>
+      <tag k="ref" v="20"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472247" changeset="38162206" timestamp="2016-03-30T09:25:34Z" version="8" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367713592" role=""/>
+      <member type="way" ref="25048969" role=""/>
+      <member type="way" ref="367713593" role=""/>
+      <member type="way" ref="25049014" role=""/>
+      <member type="way" ref="28323041" role=""/>
+      <member type="way" ref="25048897" role=""/>
+      <member type="way" ref="24933743" role=""/>
+      <member type="way" ref="367713596" role=""/>
+      <member type="way" ref="24933776" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="27792977" role=""/>
+      <member type="way" ref="24733700" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="131594096" role=""/>
+      <tag k="name" v="Маршрут роллейбуса №12: Центр - 5-й километр"/>
+      <tag k="ref" v="12"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472249" changeset="38162206" timestamp="2016-03-30T09:25:34Z" version="8" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="24444099" role=""/>
+      <member type="way" ref="367724152" role=""/>
+      <member type="way" ref="24777677" role=""/>
+      <member type="way" ref="367724151" role=""/>
+      <member type="way" ref="406447220" role=""/>
+      <member type="way" ref="406447221" role=""/>
+      <member type="way" ref="406447588" role=""/>
+      <member type="way" ref="406447589" role=""/>
+      <member type="way" ref="406447590" role=""/>
+      <member type="way" ref="406447591" role=""/>
+      <member type="way" ref="201627791" role=""/>
+      <member type="way" ref="24933591" role=""/>
+      <member type="way" ref="27804130" role=""/>
+      <member type="way" ref="368112012" role=""/>
+      <member type="way" ref="368112013" role=""/>
+      <member type="way" ref="27959636" role=""/>
+      <member type="way" ref="24508472" role=""/>
+      <member type="way" ref="24799387" role=""/>
+      <member type="way" ref="27786216" role=""/>
+      <member type="way" ref="367898582" role=""/>
+      <member type="way" ref="25048855" role=""/>
+      <member type="way" ref="113511391" role=""/>
+      <member type="way" ref="28294600" role=""/>
+      <member type="way" ref="367713594" role=""/>
+      <member type="way" ref="368112017" role=""/>
+      <member type="way" ref="27738445" role=""/>
+      <member type="way" ref="168249516" role=""/>
+      <member type="way" ref="24785436" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №12: 5-й километр - Центр"/>
+      <tag k="ref" v="12"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472050" changeset="38162206" timestamp="2016-03-30T09:25:34Z" version="14" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="131594096" role=""/>
+      <member type="way" ref="367724154" role=""/>
+      <member type="way" ref="39895955" role=""/>
+      <member type="way" ref="406566796" role=""/>
+      <member type="way" ref="130103829" role=""/>
+      <member type="way" ref="91825037" role=""/>
+      <member type="way" ref="131319900" role=""/>
+      <member type="way" ref="64713542" role=""/>
+      <member type="way" ref="368112023" role=""/>
+      <member type="way" ref="27785101" role=""/>
+      <member type="way" ref="64713501" role=""/>
+      <member type="way" ref="368200211" role=""/>
+      <member type="way" ref="368200209" role=""/>
+      <member type="way" ref="186759501" role=""/>
+      <member type="way" ref="178772180" role=""/>
+      <member type="way" ref="111506312" role=""/>
+      <member type="way" ref="368200218" role=""/>
+      <member type="way" ref="368112042" role=""/>
+      <member type="way" ref="368112032" role=""/>
+      <member type="way" ref="368112046" role=""/>
+      <member type="way" ref="35595625" role=""/>
+      <member type="way" ref="107779476" role=""/>
+      <member type="way" ref="178772135" role=""/>
+      <member type="way" ref="368126245" role=""/>
+      <member type="way" ref="368126244" role=""/>
+      <member type="way" ref="291320998" role=""/>
+      <member type="way" ref="27868023" role=""/>
+      <member type="way" ref="24933419" role=""/>
+      <member type="way" ref="406120249" role=""/>
+      <member type="way" ref="406120248" role=""/>
+      <member type="way" ref="368112011" role=""/>
+      <member type="way" ref="406563312" role=""/>
+      <member type="way" ref="406120137" role=""/>
+      <member type="way" ref="349459660" role=""/>
+      <member type="way" ref="27872502" role=""/>
+      <member type="way" ref="368112053" role=""/>
+      <member type="way" ref="27872501" role=""/>
+      <member type="way" ref="24444268" role=""/>
+      <member type="way" ref="265714006" role=""/>
+      <member type="way" ref="403624517" role=""/>
+      <member type="way" ref="403858157" role=""/>
+      <member type="way" ref="406120871" role=""/>
+      <member type="way" ref="406121489" role=""/>
+      <member type="way" ref="31114465" role=""/>
+      <member type="way" ref="24447784" role=""/>
+      <member type="way" ref="24733815" role=""/>
+      <member type="way" ref="291333368" role=""/>
+      <member type="way" ref="368200219" role=""/>
+      <member type="way" ref="24444323" role=""/>
+      <member type="way" ref="27711597" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №8: 5-й км - проспект Ген.Острякова - 5-й км (кольцевой)"/>
+      <tag k="ref" v="8"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472252" changeset="38162206" timestamp="2016-03-30T09:25:35Z" version="16" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="92446421" role=""/>
+      <member type="way" ref="27873349" role=""/>
+      <member type="way" ref="27873347" role=""/>
+      <member type="way" ref="291293524" role=""/>
+      <member type="way" ref="368126237" role=""/>
+      <member type="way" ref="406564784" role=""/>
+      <member type="way" ref="24933482" role=""/>
+      <member type="way" ref="291320992" role=""/>
+      <member type="way" ref="329033634" role=""/>
+      <member type="way" ref="24933417" role=""/>
+      <member type="way" ref="406563800" role=""/>
+      <member type="way" ref="406563612" role=""/>
+      <member type="way" ref="24933419" role=""/>
+      <member type="way" ref="406120249" role=""/>
+      <member type="way" ref="406120248" role=""/>
+      <member type="way" ref="368112011" role=""/>
+      <member type="way" ref="406563312" role=""/>
+      <member type="way" ref="406120137" role=""/>
+      <member type="way" ref="349459660" role=""/>
+      <member type="way" ref="27872502" role=""/>
+      <member type="way" ref="368112053" role=""/>
+      <member type="way" ref="27872501" role=""/>
+      <member type="way" ref="24444268" role=""/>
+      <member type="way" ref="265714006" role=""/>
+      <member type="way" ref="403624517" role=""/>
+      <member type="way" ref="403858157" role=""/>
+      <member type="way" ref="406120871" role=""/>
+      <member type="way" ref="406121489" role=""/>
+      <member type="way" ref="31114465" role=""/>
+      <member type="way" ref="24447784" role=""/>
+      <member type="way" ref="24733815" role=""/>
+      <member type="way" ref="291333368" role=""/>
+      <member type="way" ref="368200219" role=""/>
+      <member type="way" ref="24444323" role=""/>
+      <member type="way" ref="27711597" role=""/>
+      <member type="way" ref="368200206" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="131594096" role=""/>
+      <tag k="name" v="Маршрут троллейбуса №14: Камышовая бухта - 5-й километр"/>
+      <tag k="ref" v="14"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="5472248" changeset="38162206" timestamp="2016-03-30T09:25:35Z" version="17" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="367724153" role=""/>
+      <member type="way" ref="24444306" role=""/>
+      <member type="way" ref="130103828" role=""/>
+      <member type="way" ref="404542927" role=""/>
+      <member type="way" ref="406446187" role=""/>
+      <member type="way" ref="406567027" role=""/>
+      <member type="way" ref="406567335" role=""/>
+      <member type="way" ref="406446154" role=""/>
+      <member type="way" ref="24732297" role=""/>
+      <member type="way" ref="27793639" role=""/>
+      <member type="way" ref="24444099" role=""/>
+      <member type="way" ref="27711595" role=""/>
+      <member type="way" ref="24444325" role=""/>
+      <member type="way" ref="406446765" role=""/>
+      <member type="way" ref="24444323" role=""/>
+      <member type="way" ref="368200219" role=""/>
+      <member type="way" ref="367724155" role=""/>
+      <member type="way" ref="291333367" role=""/>
+      <member type="way" ref="368200222" role=""/>
+      <member type="way" ref="24733815" role=""/>
+      <member type="way" ref="24447784" role=""/>
+      <member type="way" ref="31114465" role=""/>
+      <member type="way" ref="406121489" role=""/>
+      <member type="way" ref="406120871" role=""/>
+      <member type="way" ref="403858157" role=""/>
+      <member type="way" ref="403624517" role=""/>
+      <member type="way" ref="265714006" role=""/>
+      <member type="way" ref="24933496" role=""/>
+      <member type="way" ref="93726774" role=""/>
+      <member type="way" ref="27875710" role=""/>
+      <member type="way" ref="368112056" role=""/>
+      <member type="way" ref="24933957" role=""/>
+      <member type="way" ref="349459660" role=""/>
+      <member type="way" ref="406120137" role=""/>
+      <member type="way" ref="406563312" role=""/>
+      <member type="way" ref="368112011" role=""/>
+      <member type="way" ref="406120248" role=""/>
+      <member type="way" ref="406120249" role=""/>
+      <member type="way" ref="24933419" role=""/>
+      <member type="way" ref="406563612" role=""/>
+      <member type="way" ref="406563800" role=""/>
+      <member type="way" ref="24933417" role=""/>
+      <member type="way" ref="24933436" role=""/>
+      <member type="way" ref="368112064" role=""/>
+      <member type="way" ref="24933435" role=""/>
+      <member type="way" ref="24933459" role=""/>
+      <member type="way" ref="406564784" role=""/>
+      <member type="way" ref="368126237" role=""/>
+      <member type="way" ref="291293524" role=""/>
+      <member type="way" ref="27873347" role=""/>
+      <member type="way" ref="92446411" role=""/>
+      <tag k="name" v="Маршрут троллейбуса № 14: 5-й километр - Камышовая бухта"/>
+      <tag k="ref" v="14"/>
+      <tag k="route" v="trolleybus"/>
+      <tag k="type" v="route"/>
+    </relation>
+  </modify>
+  <modify>
+    <relation id="3044849" changeset="38162206" timestamp="2016-03-30T09:25:35Z" version="26" visible="true" user="grah735" uid="2744209">
+      <member type="way" ref="241138377" role="street"/>
+      <member type="way" ref="406566098" role="street"/>
+      <member type="way" ref="406566094" role="street"/>
+      <member type="way" ref="406566095" role="street"/>
+      <member type="way" ref="130103828" role="street"/>
+      <member type="way" ref="404542927" role="street"/>
+      <member type="way" ref="406446187" role="street"/>
+      <member type="way" ref="24732297" role="street"/>
+      <member type="way" ref="406446154" role="street"/>
+      <member type="way" ref="406567027" role="street"/>
+      <member type="way" ref="406567335" role="street"/>
+      <member type="way" ref="27793639" role="street"/>
+      <member type="way" ref="368200206" role="street"/>
+      <member type="way" ref="24733700" role="street"/>
+      <member type="way" ref="27792977" role="street"/>
+      <member type="way" ref="24777677" role="street"/>
+      <member type="way" ref="367724151" role="street"/>
+      <member type="way" ref="406447220" role="street"/>
+      <member type="way" ref="406447221" role="street"/>
+      <member type="way" ref="406447588" role="street"/>
+      <member type="way" ref="406447589" role="street"/>
+      <member type="way" ref="406447590" role="street"/>
+      <member type="way" ref="406447591" role="street"/>
+      <member type="way" ref="24444099" role="street"/>
+      <member type="way" ref="367724152" role="street"/>
+      <member type="way" ref="91971706" role="house"/>
+      <member type="way" ref="91971655" role="house"/>
+      <member type="way" ref="91971508" role="house"/>
+      <member type="way" ref="189080542" role="house"/>
+      <member type="way" ref="189080395" role="house"/>
+      <member type="way" ref="91971685" role="house"/>
+      <member type="way" ref="91971573" role="house"/>
+      <member type="way" ref="91971670" role="house"/>
+      <member type="way" ref="91971519" role="house"/>
+      <member type="way" ref="91971492" role="house"/>
+      <member type="way" ref="91971614" role="house"/>
+      <member type="way" ref="91971715" role="house"/>
+      <member type="way" ref="91971732" role="house"/>
+      <member type="way" ref="189080742" role="house"/>
+      <member type="way" ref="91971615" role="house"/>
+      <member type="way" ref="91971740" role="house"/>
+      <member type="way" ref="91971737" role="house"/>
+      <member type="way" ref="91971515" role="house"/>
+      <member type="way" ref="91971683" role="house"/>
+      <member type="way" ref="91971736" role="house"/>
+      <member type="way" ref="91971531" role="house"/>
+      <member type="way" ref="91971509" role="house"/>
+      <member type="way" ref="91971532" role="house"/>
+      <member type="way" ref="91971592" role="house"/>
+      <member type="way" ref="91971744" role="house"/>
+      <member type="way" ref="91971652" role="house"/>
+      <member type="way" ref="91971539" role="house"/>
+      <member type="way" ref="91971671" role="house"/>
+      <member type="way" ref="91971660" role="house"/>
+      <member type="way" ref="91971721" role="house"/>
+      <member type="way" ref="91971584" role="house"/>
+      <member type="way" ref="91971727" role="house"/>
+      <member type="way" ref="91971719" role="house"/>
+      <member type="way" ref="91971676" role="house"/>
+      <member type="way" ref="91971629" role="house"/>
+      <member type="way" ref="91971723" role="house"/>
+      <member type="way" ref="91971606" role="house"/>
+      <member type="way" ref="91971675" role="house"/>
+      <member type="way" ref="91971664" role="house"/>
+      <member type="way" ref="91971612" role="house"/>
+      <member type="way" ref="91971562" role="house"/>
+      <member type="way" ref="91971682" role="house"/>
+      <member type="way" ref="91971503" role="house"/>
+      <member type="way" ref="91971513" role="house"/>
+      <member type="way" ref="91971484" role="house"/>
+      <member type="way" ref="91971767" role="house"/>
+      <member type="way" ref="91971743" role="house"/>
+      <member type="way" ref="91971770" role="house"/>
+      <member type="way" ref="91971748" role="house"/>
+      <member type="way" ref="91971647" role="house"/>
+      <member type="way" ref="91971687" role="house"/>
+      <member type="way" ref="91971577" role="house"/>
+      <member type="way" ref="111863633" role="house"/>
+      <member type="way" ref="92040316" role="house"/>
+      <member type="way" ref="91971522" role="house"/>
+      <member type="way" ref="92039095" role="house"/>
+      <member type="way" ref="91971500" role="house"/>
+      <member type="way" ref="91971564" role="house"/>
+      <member type="way" ref="92039068" role="house"/>
+      <member type="way" ref="92039081" role="house"/>
+      <member type="way" ref="91971698" role="house"/>
+      <member type="way" ref="91971599" role="house"/>
+      <member type="way" ref="91971700" role="house"/>
+      <member type="way" ref="91971630" role="house"/>
+      <member type="way" ref="92039028" role="house"/>
+      <member type="way" ref="91971688" role="house"/>
+      <member type="way" ref="92039067" role="house"/>
+      <member type="way" ref="91971604" role="house"/>
+      <member type="way" ref="92039056" role="house"/>
+      <member type="way" ref="91971650" role="house"/>
+      <member type="way" ref="92039062" role="house"/>
+      <member type="way" ref="91971714" role="house"/>
+      <member type="way" ref="91971644" role="house"/>
+      <member type="way" ref="92039041" role="house"/>
+      <member type="way" ref="92039057" role="house"/>
+      <member type="way" ref="92040275" role="house"/>
+      <member type="way" ref="92039082" role="house"/>
+      <member type="way" ref="92040315" role="house"/>
+      <member type="way" ref="92039074" role="house"/>
+      <member type="way" ref="92039088" role="house"/>
+      <member type="way" ref="92039031" role="house"/>
+      <member type="way" ref="92040291" role="house"/>
+      <member type="way" ref="92039034" role="house"/>
+      <member type="way" ref="92039020" role="house"/>
+      <member type="way" ref="92039096" role="house"/>
+      <member type="way" ref="92039016" role="house"/>
+      <member type="way" ref="92039083" role="house"/>
+      <member type="way" ref="92040277" role="house"/>
+      <member type="way" ref="92039089" role="house"/>
+      <member type="way" ref="92039023" role="house"/>
+      <member type="way" ref="131483764" role="house"/>
+      <member type="way" ref="92040319" role="house"/>
+      <member type="way" ref="92039100" role="house"/>
+      <member type="way" ref="92039107" role="house"/>
+      <member type="way" ref="261145059" role="house"/>
+      <member type="way" ref="92039104" role="house"/>
+      <member type="way" ref="92040326" role="house"/>
+      <member type="way" ref="92039019" role="house"/>
+      <member type="way" ref="92044471" role="house"/>
+      <member type="way" ref="92039022" role="house"/>
+      <member type="way" ref="92039092" role="house"/>
+      <member type="way" ref="92044504" role="house"/>
+      <member type="way" ref="166889595" role="house"/>
+      <member type="way" ref="240858444" role="house"/>
+      <member type="way" ref="92039059" role="house"/>
+      <member type="way" ref="92039051" role="house"/>
+      <member type="way" ref="166889584" role="house"/>
+      <member type="way" ref="131478174" role="house"/>
+      <member type="way" ref="131478173" role="house"/>
+      <member type="way" ref="92039021" role="house"/>
+      <member type="way" ref="131478175" role="house"/>
+      <member type="way" ref="131478167" role="house"/>
+      <member type="way" ref="131478172" role="house"/>
+      <member type="way" ref="131478176" role="house"/>
+      <member type="way" ref="166889588" role="house"/>
+      <member type="way" ref="95633363" role="house"/>
+      <member type="way" ref="131478165" role="house"/>
+      <member type="way" ref="131478171" role="house"/>
+      <member type="way" ref="92039060" role="house"/>
+      <member type="way" ref="131478169" role="house"/>
+      <member type="way" ref="92039103" role="house"/>
+      <member type="way" ref="131478166" role="house"/>
+      <member type="way" ref="92039098" role="house"/>
+      <member type="way" ref="131478170" role="house"/>
+      <member type="way" ref="95632526" role="house"/>
+      <member type="way" ref="131480798" role="house"/>
+      <member type="way" ref="131481373" role="house"/>
+      <member type="way" ref="131473755" role="house"/>
+      <member type="way" ref="131473749" role="house"/>
+      <member type="way" ref="131472966" role="house"/>
+      <member type="way" ref="131480797" role="house"/>
+      <member type="way" ref="131472970" role="house"/>
+      <member type="way" ref="131472969" role="house"/>
+      <member type="way" ref="95633371" role="house"/>
+      <member type="way" ref="131472972" role="house"/>
+      <member type="way" ref="131480795" role="house"/>
+      <member type="way" ref="131473757" role="house"/>
+      <member type="way" ref="131473753" role="house"/>
+      <member type="way" ref="131480794" role="house"/>
+      <member type="way" ref="131473747" role="house"/>
+      <member type="way" ref="118020175" role="house"/>
+      <member type="way" ref="131473209" role="house"/>
+      <member type="way" ref="131473204" role="house"/>
+      <member type="way" ref="131473205" role="house"/>
+      <member type="way" ref="118020174" role="house"/>
+      <member type="way" ref="131473203" role="house"/>
+      <member type="way" ref="131473211" role="house"/>
+      <member type="way" ref="131473201" role="house"/>
+      <member type="way" ref="131473206" role="house"/>
+      <member type="way" ref="95631571" role="house"/>
+      <member type="way" ref="240992276" role="house"/>
+      <member type="way" ref="131472973" role="house"/>
+      <member type="way" ref="131472963" role="house"/>
+      <member type="way" ref="95631506" role="house"/>
+      <member type="way" ref="95631524" role="house"/>
+      <member type="way" ref="131472967" role="house"/>
+      <member type="way" ref="131472971" role="house"/>
+      <member type="way" ref="240992275" role="house"/>
+      <member type="way" ref="95631493" role="house"/>
+      <member type="way" ref="240992274" role="house"/>
+      <member type="way" ref="240992277" role="house"/>
+      <member type="way" ref="131472975" role="house"/>
+      <member type="way" ref="240992278" role="house"/>
+      <member type="way" ref="240992279" role="house"/>
+      <member type="way" ref="240992280" role="house"/>
+      <member type="way" ref="240992282" role="house"/>
+      <member type="way" ref="131472961" role="house"/>
+      <member type="way" ref="240992283" role="house"/>
+      <member type="way" ref="131479742" role="house"/>
+      <member type="way" ref="240992281" role="house"/>
+      <member type="way" ref="131479764" role="house"/>
+      <member type="way" ref="93714120" role="house"/>
+      <member type="way" ref="240992286" role="house"/>
+      <member type="way" ref="172531685" role="house"/>
+      <member type="way" ref="240992287" role="house"/>
+      <member type="way" ref="93714112" role="house"/>
+      <member type="way" ref="240992289" role="house"/>
+      <member type="way" ref="172530096" role="house"/>
+      <member type="way" ref="240992291" role="house"/>
+      <member type="way" ref="172530097" role="house"/>
+      <member type="way" ref="172530098" role="house"/>
+      <member type="way" ref="172530099" role="house"/>
+      <member type="way" ref="131487191" role="house"/>
+      <member type="way" ref="131479768" role="house"/>
+      <member type="way" ref="131479760" role="house"/>
+      <member type="way" ref="131479766" role="house"/>
+      <member type="way" ref="131487193" role="house"/>
+      <member type="way" ref="172530100" role="house"/>
+      <member type="way" ref="131472968" role="house"/>
+      <member type="way" ref="131472962" role="house"/>
+      <member type="way" ref="131487190" role="house"/>
+      <member type="way" ref="95632537" role="house"/>
+      <member type="way" ref="131486328" role="house"/>
+      <member type="way" ref="131486327" role="house"/>
+      <member type="way" ref="131486343" role="house"/>
+      <member type="way" ref="131486338" role="house"/>
+      <member type="way" ref="131486936" role="house"/>
+      <member type="way" ref="95632521" role="house"/>
+      <member type="way" ref="131486939" role="house"/>
+      <member type="way" ref="131478940" role="house"/>
+      <member type="way" ref="131486940" role="house"/>
+      <member type="way" ref="131478944" role="house"/>
+      <member type="way" ref="233929540" role="house"/>
+      <member type="way" ref="131478951" role="house"/>
+      <member type="way" ref="131478950" role="house"/>
+      <member type="way" ref="131478952" role="house"/>
+      <member type="way" ref="131486923" role="house"/>
+      <member type="way" ref="172530101" role="house"/>
+      <member type="way" ref="131486922" role="house"/>
+      <member type="way" ref="131486926" role="house"/>
+      <member type="way" ref="172641860" role="house"/>
+      <member type="way" ref="131486934" role="house"/>
+      <member type="way" ref="292475523" role="house"/>
+      <member type="way" ref="292475524" role="house"/>
+      <member type="way" ref="292475525" role="house"/>
+      <member type="way" ref="292475526" role="house"/>
+      <member type="way" ref="131486924" role="house"/>
+      <member type="way" ref="131486938" role="house"/>
+      <member type="way" ref="240966697" role="house"/>
+      <member type="way" ref="131486941" role="house"/>
+      <member type="way" ref="240966691" role="house"/>
+      <member type="way" ref="240966692" role="house"/>
+      <member type="way" ref="240966693" role="house"/>
+      <member type="way" ref="131486927" role="house"/>
+      <member type="way" ref="131486932" role="house"/>
+      <member type="way" ref="118020173" role="house"/>
+      <member type="way" ref="131594101" role="house"/>
+      <member type="way" ref="233929479" role="house"/>
+      <member type="way" ref="237824539" role="house"/>
+      <member type="way" ref="237824696" role="house"/>
+      <member type="way" ref="237824885" role="house"/>
+      <member type="way" ref="237825222" role="house"/>
+      <member type="way" ref="218816081" role="house"/>
+      <member type="way" ref="131473215" role="house"/>
+      <member type="way" ref="131479758" role="house"/>
+      <member type="way" ref="240992284" role="house"/>
+      <member type="way" ref="95631567" role="house"/>
+      <tag k="name" v="Генерала Острякова проспект"/>
+      <tag k="name:en" v="Henerala Ostriakova Avenue"/>
+      <tag k="name:ru" v="Генерала Острякова проспект"/>
+      <tag k="name:uk" v="Генерала Острякова проспект"/>
+      <tag k="type" v="associatedStreet"/>
+    </relation>
+  </modify>
+</osmChange>

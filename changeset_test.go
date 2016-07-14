@@ -25,7 +25,7 @@ func TestChangeset(t *testing.T) {
   </changeset>
 </osm>`)
 
-	cs := OSM{}
+	cs := OSMChangesets{}
 	err := xml.Unmarshal(data, &cs)
 	if err != nil {
 		t.Fatalf("unmarshal error: %v", err)

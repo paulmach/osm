@@ -1,7 +1,6 @@
 package osm
 
 import (
-	"encoding/xml"
 	"time"
 
 	"github.com/paulmach/orb/geo"
@@ -13,7 +12,6 @@ type NodeID int
 
 // Node is an osm point and allows for marshalling to/from osm xml.
 type Node struct {
-	XMLName     xml.Name    `xml:"node"`
 	ID          NodeID      `xml:"id,attr"`
 	Lat         float64     `xml:"lat,attr"`
 	Lng         float64     `xml:"lon,attr"`
@@ -29,12 +27,6 @@ type Node struct {
 // Point returns a geo.Point for the node location.
 func (n Node) Point() geo.Point {
 	return geo.NewPoint(n.Lng, n.Lat)
-}
-
-// NodeRef is a short node used as part of ways and relations in the osm xml.
-type NodeRef struct {
-	XMLName xml.Name `xml:"nd"`
-	Ref     NodeID   `xml:"ref,attr"`
 }
 
 // Nodes is a set of nodes with helper functions on top.

@@ -15,8 +15,13 @@ type Way struct {
 	Version     int         `xml:"version,attr"`
 	ChangesetID ChangesetID `xml:"changeset,attr"`
 	Timestamp   time.Time   `xml:"timestamp,attr"`
-	NodeRefs    []*NodeRef  `xml:"nd"`
+	NodeRefs    []NodeRef   `xml:"nd"`
 	Tags        Tags        `xml:"tag"`
+}
+
+// NodeRef is a short node used as part of ways and relations in the osm xml.
+type NodeRef struct {
+	Ref NodeID `xml:"ref,attr"`
 }
 
 // Ways is a set of osm ways with some helper functions attached.

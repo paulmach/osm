@@ -12,21 +12,25 @@ message Changeset {
   // contains the tag strings for everything in this changeset.
   repeated string strings = 4;
 
-  optional sint32 uid = 5;
+  optional int32 uid = 5;
   optional uint32 user_sid = 6;
-  optional sint64 created_at = 7; // epoch time
-  required sint64 closed_at = 8; // epoch time
+  optional int64 created_at = 7; // epoch time
+  optional int64 closed_at = 8; // epoch time
 
   optional Bounds bounds = 9;
-  required Change change = 10;
+  optional Change change = 10;
 }
 
 message Change {
-  optional Bounds bounds = 1;
+  // not encoded, yet?
+  // optional Bounds bounds = 1;
 
-  repeated OSM creates = 2;
-  repeated OSM modifies = 3;
-  repeated OSM deletes = 4;
+  // contains the tag strings if this is the root of the data.
+  repeated string strings = 2;
+
+  optional OSM create = 3;
+  optional OSM modify = 4;
+  optional OSM delete = 5;
 }
 
 message Bounds {
@@ -37,10 +41,17 @@ message Bounds {
 }
 
 message OSM {
-  repeated Node       nodes = 1;
-  optional DenseNodes dense = 2;
-  repeated Way        ways = 3;
-  repeated Relation   relations = 4;
+  optional Bounds bounds = 1;
+
+  // contains the tag strings if this is the root of the data.
+  repeated string strings = 2;
+
+  // an encoded should have either nodes or a dense_nodes, but not both.
+  repeated Node       nodes = 3;
+  optional DenseNodes dense_nodes = 4;
+
+  repeated Way        ways = 5;
+  repeated Relation   relations = 6;
 }
 
 // The message defined below are trying to match the official osm pdf
@@ -48,7 +59,7 @@ message OSM {
 // and https://github.com/scrosby/OSM-binary/blob/master/src/osmformat.proto
 
 message Node {
-  required sint64 id = 1;
+  required int64 id = 1;
 
   // Parallel arrays.
   repeated uint32 keys = 2 [packed = true]; // String IDs.
@@ -61,7 +72,7 @@ message Node {
 }
 
 message Info {
-  optional int32 version = 1 [default = -1];
+  optional int32 version = 1;
   optional int64 timestamp = 2; // Epoch
 
   // these will be omitted if the object represents one changeset
@@ -82,36 +93,36 @@ message DenseNodes {
 
   optional DenseInfo dense_info = 5;
 
-  repeated sint64 lats = 8 [packed = true]; // DELTA coded
-  repeated sint64 lngs = 9 [packed = true]; // DELTA coded
+  repeated sint64 lat = 8 [packed = true]; // DELTA coded
+  repeated sint64 lng = 9 [packed = true]; // DELTA coded
 
   // Special packing of keys and vals into one array. We use a single stringid
   // of 0 to delimit when the tags of a node ends and the tags of the next node
   // begin. The storage pattern is: ((<keyid> <valid>)* '0' )* As an exception,
   // if no node in the current block has any key/value pairs, this array does
   // not contain any delimiters, but is simply empty.
-  repeated int32 keys_vals = 10 [packed = true];
+  repeated uint32 keys_vals = 10 [packed = true];
 }
 
 message DenseInfo {
-  repeated int32 version = 1 [packed = true]; // DELTA coded
+  repeated int32 version = 1 [packed = true];
   repeated sint64 timestamp = 2 [packed = true]; // DELTA coded
 
   // these will be omitted if the object represents one changeset
   // and these will be all the same.
   repeated sint64 changeset = 3 [packed = true]; // DELTA coded
   repeated sint32 uid = 4 [packed = true]; // DELTA coded
-  repeated sint32 user_sid = 5 [packed = true]; // String IDs for usernames. DELTA coded
+  repeated int32 user_sid = 5 [packed = true]; // String IDs for usernames. DELTA coded
 
   // The visible flag is used to store history information. It indicates that
   // the current object version has been created by a delete operation on the
   // OSM API. This info may be omitted if it can be inferred from it's group
   // ie. create, modify, delete.
-  repeated bool visibles = 6 [packed = true];
+  repeated bool visible = 6 [packed = true];
 }
 
 message Way {
-  required sint64 id = 1;
+  required int64 id = 1;
 
   // Parallel arrays.
   repeated uint32 keys = 2 [packed = true];
@@ -129,7 +140,7 @@ message Relation {
     RELATION = 2;
   }
 
-  required sint64 id = 1;
+  required int64 id = 1;
 
   // Parallel arrays.
   repeated uint32 keys = 2 [packed = true];
@@ -138,7 +149,7 @@ message Relation {
   optional Info info = 4;
 
   // Parallel arrays
-  repeated uint32 roles = 8 [packed = true]; // String IDs. DELTA coded
+  repeated uint32 roles = 8 [packed = true]; // String IDs.
   repeated sint64 refs = 9 [packed = true]; // DELTA encoded
   repeated MemberType types = 10 [packed = true];
 }

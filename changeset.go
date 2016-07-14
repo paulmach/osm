@@ -15,7 +15,6 @@ type Changesets []*Changeset
 
 // A Changeset is a set of metadata around a set of osm changes.
 type Changeset struct {
-	XMLName       xml.Name            `xml:"changeset"`
 	ID            ChangesetID         `xml:"id,attr"`
 	User          string              `xml:"user,attr"`
 	UserID        UserID              `xml:"uid,attr"`

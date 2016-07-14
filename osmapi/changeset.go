@@ -25,7 +25,7 @@ func getChangeset(ctx context.Context, id osm.ChangesetID, disc bool) (*osm.Chan
 		url = fmt.Sprintf("%s/changeset/%d", host, id)
 	}
 
-	css := &osm.OSM{}
+	css := &osm.OSMChangesets{}
 	if err := getFromAPI(ctx, url, &css); err != nil {
 		return nil, err
 	}

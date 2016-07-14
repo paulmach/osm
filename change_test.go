@@ -62,43 +62,43 @@ func TestChange(t *testing.T) {
 		t.Fatalf("unmarshal error: %v", err)
 	}
 
-	if l := len(c.Creates); l != 3 {
+	if l := len(c.Create); l != 3 {
 		t.Errorf("incorrect number of creates, got %v", l)
 	}
 
-	if v := c.Creates[0].Nodes[0].ID; v != 2780675158 {
+	if v := c.Create[0].Nodes[0].ID; v != 2780675158 {
 		t.Errorf("incorrect node id, got %v", v)
 	}
 
-	if v := c.Creates[1].Nodes[0].ID; v != 2780675159 {
+	if v := c.Create[1].Nodes[0].ID; v != 2780675159 {
 		t.Errorf("incorrect node id, got %v", v)
 	}
 
-	if v := c.Creates[2].Ways[0].ID; v != 273193870 {
+	if v := c.Create[2].Ways[0].ID; v != 273193870 {
 		t.Errorf("incorrect way id, got %v", v)
 	}
 
-	if l := len(c.Modifies); l != 1 {
+	if l := len(c.Modify); l != 1 {
 		t.Errorf("incorrect number of modifies, got %v", l)
 	}
 
-	if v := c.Modifies[0].Ways[0].ID; v != 24830559 {
+	if v := c.Modify[0].Ways[0].ID; v != 24830559 {
 		t.Errorf("incorrect way id, got %v", v)
 	}
 
-	if l := len(c.Deletes); l != 3 {
+	if l := len(c.Delete); l != 3 {
 		t.Errorf("incorrect number of deletes, got %v", l)
 	}
 
-	if v := c.Deletes[0].Ways[0].ID; v != 252107750 {
+	if v := c.Delete[0].Ways[0].ID; v != 252107750 {
 		t.Errorf("incorrect way id, got %v", v)
 	}
 
-	if v := c.Deletes[1].Ways[0].ID; v != 252107748 {
+	if v := c.Delete[1].Ways[0].ID; v != 252107748 {
 		t.Errorf("incorrect way id, got %v", v)
 	}
 
-	if v := c.Deletes[2].Nodes[0].ID; v != 301847601 {
+	if v := c.Delete[2].Nodes[0].ID; v != 301847601 {
 		t.Errorf("incorrect node id, got %v", v)
 	}
 }
