@@ -1,6 +1,9 @@
 package osm
 
-import "time"
+import (
+	"sort"
+	"time"
+)
 
 // WayID is the primary key of a way.
 // A way is uniquely identifiable by the id + version.
@@ -26,3 +29,18 @@ type NodeRef struct {
 
 // Ways is a set of osm ways with some helper functions attached.
 type Ways []*Way
+
+type waysSort Ways
+
+func (ws Ways) SortByIDVersion() {
+	sort.Sort(waysSort(ws))
+}
+func (ws waysSort) Len() int      { return len(ws) }
+func (ws waysSort) Swap(i, j int) { ws[i], ws[j] = ws[j], ws[i] }
+func (ws waysSort) Less(i, j int) bool {
+	if ws[i].ID == ws[j].ID {
+		return ws[i].Version < ws[j].Version
+	}
+
+	return ws[i].ID < ws[j].ID
+}

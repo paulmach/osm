@@ -36,7 +36,7 @@ func (b *Bounds) Bound() geo.Bound {
 }
 
 // Marshal encodes the osm data using protocol buffers.
-func (o OSM) Marshal() ([]byte, error) {
+func (o *OSM) Marshal() ([]byte, error) {
 	ss := &stringSet{}
 	encoded := marshalOSM(o, ss, true)
 	encoded.Strings = ss.Strings()
@@ -46,8 +46,11 @@ func (o OSM) Marshal() ([]byte, error) {
 
 // includeChangeset can be set to false to not repeat the changeset
 // info for every item, if this comes from osm change data.
-func marshalOSM(o OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
+func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 	encoded := &osmpb.OSM{}
+	if o == nil {
+		return nil
+	}
 
 	if len(o.Nodes) > 0 {
 		encoded.DenseNodes = marshalNodes(o.Nodes, ss, includeChangeset)
@@ -79,11 +82,14 @@ func marshalOSM(o OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 	return encoded
 }
 
-func unmarshalOSM(encoded *osmpb.OSM, ss []string) (OSM, error) {
-	o := OSM{}
+func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
+	if encoded == nil {
+		return nil, nil
+	}
 
+	o := &OSM{}
 	if len(encoded.Nodes) != 0 && encoded.DenseNodes != nil {
-		return OSM{}, errors.New("found both nodes and dense nodes")
+		return nil, errors.New("found both nodes and dense nodes")
 	}
 
 	if len(encoded.Nodes) != 0 {
@@ -91,7 +97,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (OSM, error) {
 		for i, en := range encoded.Nodes {
 			n, err := unmarshalNode(en, ss)
 			if err != nil {
-				return OSM{}, err
+				return nil, err
 			}
 
 			o.Nodes[i] = n
@@ -102,7 +108,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (OSM, error) {
 		var err error
 		o.Nodes, err = unmarshalNodes(encoded.DenseNodes, ss)
 		if err != nil {
-			return OSM{}, err
+			return nil, err
 		}
 	}
 
@@ -111,7 +117,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (OSM, error) {
 		for i, ew := range encoded.Ways {
 			w, err := unmarshalWay(ew, ss)
 			if err != nil {
-				return OSM{}, err
+				return nil, err
 			}
 
 			o.Ways[i] = w
@@ -123,7 +129,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (OSM, error) {
 		for i, er := range encoded.Relations {
 			r, err := unmarshalRelation(er, ss)
 			if err != nil {
-				return OSM{}, err
+				return nil, err
 			}
 
 			o.Relations[i] = r

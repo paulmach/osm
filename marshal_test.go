@@ -30,7 +30,7 @@ func TestChangeCompare(t *testing.T) {
 
 func TestProtobufNode(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	n1 := c.CreatedNodes()[12]
+	n1 := c.Create.Nodes[12]
 
 	// verify it's a good test
 	if len(n1.Tags) == 0 {
@@ -54,7 +54,7 @@ func TestProtobufNode(t *testing.T) {
 
 func TestProtobufNodeRoundoff(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	n1 := c.CreatedNodes()[194]
+	n1 := c.Create.Nodes[194]
 
 	ss := &stringSet{}
 	pbnode := marshalNode(n1, ss, true)
@@ -73,7 +73,7 @@ func TestProtobufNodeRoundoff(t *testing.T) {
 
 func TestProtobufNodes(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	ns1 := c.CreatedNodes()
+	ns1 := c.Create.Nodes
 
 	ss := &stringSet{}
 	pbnodes := marshalNodes(ns1, ss, true)
@@ -98,7 +98,7 @@ func TestProtobufNodes(t *testing.T) {
 
 func TestProtobufWay(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	w1 := c.CreatedWays()[5]
+	w1 := c.Create.Ways[5]
 
 	// verify it's a good test
 	if len(w1.Tags) == 0 {
@@ -122,7 +122,7 @@ func TestProtobufWay(t *testing.T) {
 
 func TestProtobufRelation(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
-	r1 := c.CreatedRelations()[0]
+	r1 := c.Create.Relations[0]
 
 	// verify it's a good test
 	if len(r1.Tags) == 0 {

@@ -1,6 +1,9 @@
 package osm
 
-import "time"
+import (
+	"sort"
+	"time"
+)
 
 // RelationID is the primary key of a relation.
 // A relation is uniquely identifiable by the id + version.
@@ -23,6 +26,21 @@ type Relation struct {
 
 // Relations is a collection with some helper functions attached.
 type Relations []*Relation
+
+type relationsSort Relations
+
+func (rs Relations) SortByIDVersion() {
+	sort.Sort(relationsSort(rs))
+}
+func (rs relationsSort) Len() int      { return len(rs) }
+func (rs relationsSort) Swap(i, j int) { rs[i], rs[j] = rs[j], rs[i] }
+func (rs relationsSort) Less(i, j int) bool {
+	if rs[i].ID == rs[j].ID {
+		return rs[i].Version < rs[j].Version
+	}
+
+	return rs[i].ID < rs[j].ID
+}
 
 // Member is a member of a relation.
 type Member struct {
