@@ -29,7 +29,7 @@ func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
 		Vals: vals,
 		Info: &osmpb.Info{
 			Version:   proto.Int32(int32(node.Version)),
-			Timestamp: proto.Int64(node.Timestamp.Unix()),
+			Timestamp: timeToUnix(node.Timestamp),
 			Visible:   proto.Bool(node.Visible),
 		},
 		// geoToInt64
@@ -60,7 +60,7 @@ func unmarshalNode(encoded *osmpb.Node, ss []string) (*Node, error) {
 		Visible:     info.GetVisible(),
 		Version:     int(info.GetVersion()),
 		ChangesetID: ChangesetID(info.GetChangeset()),
-		Timestamp:   time.Unix(info.GetTimestamp(), 0).UTC(),
+		Timestamp:   unixToTime(info.GetTimestamp()),
 		Tags:        tags,
 		Lat:         float64(encoded.GetLat()) / locMultiple,
 		Lng:         float64(encoded.GetLng()) / locMultiple,
@@ -112,7 +112,7 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string) (Nodes, error) {
 			Lng:       float64(encoded.Lng[i]) / locMultiple,
 			Visible:   encoded.DenseInfo.Visible[i],
 			Version:   int(encoded.DenseInfo.Version[i]),
-			Timestamp: time.Unix(encoded.DenseInfo.Timestamp[i], 0).UTC(),
+			Timestamp: unixToTime(encoded.DenseInfo.Timestamp[i]),
 		}
 
 		if len(encoded.DenseInfo.Changeset) > 0 {
@@ -155,7 +155,7 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 		Vals: vals,
 		Info: &osmpb.Info{
 			Version:   proto.Int32(int32(way.Version)),
-			Timestamp: proto.Int64(way.Timestamp.Unix()),
+			Timestamp: timeToUnix(way.Timestamp),
 			Visible:   proto.Bool(way.Visible),
 		},
 		Refs: encodeNodeRef(way.NodeRefs),
@@ -184,7 +184,7 @@ func unmarshalWay(encoded *osmpb.Way, ss []string) (*Way, error) {
 		Visible:     info.GetVisible(),
 		Version:     int(info.GetVersion()),
 		ChangesetID: ChangesetID(info.GetChangeset()),
-		Timestamp:   time.Unix(info.GetTimestamp(), 0).UTC(),
+		Timestamp:   unixToTime(info.GetTimestamp()),
 		NodeRefs:    decodeNodeRef(encoded.GetRefs()),
 		Tags:        tags,
 	}, nil
@@ -209,7 +209,7 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 		Vals: vals,
 		Info: &osmpb.Info{
 			Version:   proto.Int32(int32(relation.Version)),
-			Timestamp: proto.Int64(relation.Timestamp.Unix()),
+			Timestamp: timeToUnix(relation.Timestamp),
 			Visible:   proto.Bool(relation.Visible),
 		},
 		Roles: roles,
@@ -240,30 +240,80 @@ func unmarshalRelation(encoded *osmpb.Relation, ss []string) (*Relation, error) 
 		Visible:     info.GetVisible(),
 		Version:     int(info.GetVersion()),
 		ChangesetID: ChangesetID(info.GetChangeset()),
-		Timestamp:   time.Unix(info.GetTimestamp(), 0).UTC(),
+		Timestamp:   unixToTime(info.GetTimestamp()),
 		Members:     decodeMembers(ss, encoded.GetRoles(), encoded.GetRefs(), encoded.GetTypes()),
 		Tags:        tags,
 	}, nil
 }
 
-func geoToInt64(l float64) int64 {
-	// on rounding errors
-	//
-	// It is the case that 32.850314 * 10e6 = 32850313.999999996
-	// Simpily casting this as an int will truncate towards zero
-	// and result in an off by one. The true solution is to round
-	// the scaled result, like so:
-	//
-	// int64(math.Floor(stream.BaseData[i][0]*factor + 0.5))
-	//
-	// However, the code below does the same thing in this context,
-	// and is twice as fast:
-	sign := 0.5
-	if l < 0 {
-		sign = -0.5
+type denseNodesResult struct {
+	IDs        []int64
+	Lats       []int64
+	Lngs       []int64
+	Timestamps []int64
+	Versions   []int32
+	Visibles   []bool
+	TagCount   int
+}
+
+func denseNodesValues(ns Nodes) denseNodesResult {
+	l := len(ns)
+	ds := denseNodesResult{
+		IDs:        make([]int64, l, l),
+		Lats:       make([]int64, l, l),
+		Lngs:       make([]int64, l, l),
+		Timestamps: make([]int64, l, l),
+		Versions:   make([]int32, l, l),
+		Visibles:   make([]bool, l, l),
 	}
 
-	return int64(l*locMultiple + sign)
+	for i, n := range ns {
+		ds.IDs[i] = int64(n.ID)
+		ds.Lats[i] = geoToInt64(n.Lat)
+		ds.Lngs[i] = geoToInt64(n.Lng)
+		ds.Timestamps[i] = n.Timestamp.Unix()
+		ds.Versions[i] = int32(n.Version)
+		ds.Visibles[i] = n.Visible
+		ds.TagCount += len(n.Tags)
+	}
+
+	return ds
+}
+
+func encodeNodesTags(ns Nodes, ss *stringSet, count int) []uint32 {
+	r := make([]uint32, 0, 2*count+len(ns))
+	for _, n := range ns {
+		for _, t := range n.Tags {
+			r = append(r, ss.Add(t.Key))
+			r = append(r, ss.Add(t.Value))
+		}
+		r = append(r, 0)
+	}
+
+	return r
+}
+
+type changesetInfoResult struct {
+	Changesets []int64
+	Uids       []int32
+	UserSid    []int32
+}
+
+func nodesChangesetInfo(ns Nodes, ss *stringSet) changesetInfoResult {
+	l := len(ns)
+	cs := changesetInfoResult{
+		Changesets: make([]int64, l, l),
+		Uids:       make([]int32, l, l),
+		UserSid:    make([]int32, l, l),
+	}
+
+	for i, n := range ns {
+		cs.Changesets[i] = int64(n.ChangesetID)
+		cs.Uids[i] = int32(n.UserID)
+		cs.UserSid[i] = int32(ss.Add(n.User))
+	}
+
+	return cs
 }
 
 func encodeNodeRef(refs []NodeRef) []int64 {
@@ -343,72 +393,39 @@ func decodeInt64(vals []int64) []int64 {
 	return vals
 }
 
-type denseNodesResult struct {
-	IDs        []int64
-	Lats       []int64
-	Lngs       []int64
-	Timestamps []int64
-	Versions   []int32
-	Visibles   []bool
-	TagCount   int
+func geoToInt64(l float64) int64 {
+	// on rounding errors
+	//
+	// It is the case that 32.850314 * 10e6 = 32850313.999999996
+	// Simpily casting this as an int will truncate towards zero
+	// and result in an off by one. The true solution is to round
+	// the scaled result, like so:
+	//
+	// int64(math.Floor(stream.BaseData[i][0]*factor + 0.5))
+	//
+	// However, the code below does the same thing in this context,
+	// and is twice as fast:
+	sign := 0.5
+	if l < 0 {
+		sign = -0.5
+	}
+
+	return int64(l*locMultiple + sign)
 }
 
-func denseNodesValues(ns Nodes) denseNodesResult {
-	l := len(ns)
-	ds := denseNodesResult{
-		IDs:        make([]int64, l, l),
-		Lats:       make([]int64, l, l),
-		Lngs:       make([]int64, l, l),
-		Timestamps: make([]int64, l, l),
-		Versions:   make([]int32, l, l),
-		Visibles:   make([]bool, l, l),
+func timeToUnix(t time.Time) *int64 {
+	u := t.Unix()
+	if u <= 0 {
+		return nil
 	}
 
-	for i, n := range ns {
-		ds.IDs[i] = int64(n.ID)
-		ds.Lats[i] = geoToInt64(n.Lat)
-		ds.Lngs[i] = geoToInt64(n.Lng)
-		ds.Timestamps[i] = n.Timestamp.Unix()
-		ds.Versions[i] = int32(n.Version)
-		ds.Visibles[i] = n.Visible
-		ds.TagCount += len(n.Tags)
-	}
-
-	return ds
+	return &u
 }
 
-func encodeNodesTags(ns Nodes, ss *stringSet, count int) []uint32 {
-	r := make([]uint32, 0, 2*count+len(ns))
-	for _, n := range ns {
-		for _, t := range n.Tags {
-			r = append(r, ss.Add(t.Key))
-			r = append(r, ss.Add(t.Value))
-		}
-		r = append(r, 0)
+func unixToTime(u int64) time.Time {
+	if u <= 0 {
+		return time.Time{}
 	}
 
-	return r
-}
-
-type changesetInfoResult struct {
-	Changesets []int64
-	Uids       []int32
-	UserSid    []int32
-}
-
-func nodesChangesetInfo(ns Nodes, ss *stringSet) changesetInfoResult {
-	l := len(ns)
-	cs := changesetInfoResult{
-		Changesets: make([]int64, l, l),
-		Uids:       make([]int32, l, l),
-		UserSid:    make([]int32, l, l),
-	}
-
-	for i, n := range ns {
-		cs.Changesets[i] = int64(n.ChangesetID)
-		cs.Uids[i] = int32(n.UserID)
-		cs.UserSid[i] = int32(ss.Add(n.User))
-	}
-
-	return cs
+	return time.Unix(u, 0).UTC()
 }

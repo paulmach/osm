@@ -1,8 +1,6 @@
 package osm
 
 import (
-	"encoding/xml"
-
 	"github.com/golang/protobuf/proto"
 	"github.com/paulmach/go.osm/osmpb"
 )
@@ -11,10 +9,9 @@ import (
 // uploaded or downloaded from the server.
 // See: http://wiki.openstreetmap.org/wiki/OsmChange
 type Change struct {
-	XMLName xml.Name `xml:"osmChange"`
-	Create  *OSM     `xml:"create"`
-	Modify  *OSM     `xml:"modify"`
-	Delete  *OSM     `xml:"delete"`
+	Create *OSM `xml:"create"`
+	Modify *OSM `xml:"modify"`
+	Delete *OSM `xml:"delete"`
 }
 
 // Marshal encodes the osm data using protocol buffers.
@@ -26,35 +23,28 @@ func (c *Change) Marshal() ([]byte, error) {
 	return proto.Marshal(encoded)
 }
 
-func (c *Change) Unmarshal(data []byte) error {
+// UnmarshalChange will unmarshal the data into a Change object.
+func UnmarshalChange(data []byte) (*Change, error) {
 
 	pbf := &osmpb.Change{}
 	err := proto.Unmarshal(data, pbf)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	change, err := unmarshalChange(pbf, pbf.GetStrings())
-	if err != nil {
-		return err
-	}
-
-	*c = *change
-	return nil
+	return unmarshalChange(pbf, pbf.GetStrings())
 }
 
 func marshalChange(c *Change, ss *stringSet, includeChangeset bool) *osmpb.Change {
-	encoded := &osmpb.Change{}
+	if c == nil {
+		return nil
+	}
 
-	// TODO: make so only need to scan creates once.
-
-	encoded.Create = marshalOSM(c.Create, ss, includeChangeset)
-	encoded.Modify = marshalOSM(c.Modify, ss, includeChangeset)
-	encoded.Delete = marshalOSM(c.Delete, ss, includeChangeset)
-
-	// TODO: bound?
-
-	return encoded
+	return &osmpb.Change{
+		Create: marshalOSM(c.Create, ss, includeChangeset),
+		Modify: marshalOSM(c.Modify, ss, includeChangeset),
+		Delete: marshalOSM(c.Delete, ss, includeChangeset),
+	}
 }
 
 func unmarshalChange(encoded *osmpb.Change, ss []string) (*Change, error) {

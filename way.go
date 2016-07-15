@@ -32,6 +32,8 @@ type Ways []*Way
 
 type waysSort Ways
 
+// SortByIDVersion will sort the set of ways first by id and then version
+// in ascending order.
 func (ws Ways) SortByIDVersion() {
 	sort.Sort(waysSort(ws))
 }

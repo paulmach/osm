@@ -54,6 +54,8 @@ func (ns Nodes) ActiveAt(t time.Time) *Node {
 
 type nodesSort Nodes
 
+// SortByIDVersion will sort the set of nodes first by id and then version
+// in ascending order.
 func (ns Nodes) SortByIDVersion() {
 	sort.Sort(nodesSort(ns))
 }

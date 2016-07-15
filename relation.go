@@ -29,6 +29,8 @@ type Relations []*Relation
 
 type relationsSort Relations
 
+// SortByIDVersion will sort the set of relations first by id and then version
+// in ascending order.
 func (rs Relations) SortByIDVersion() {
 	sort.Sort(relationsSort(rs))
 }

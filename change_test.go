@@ -119,13 +119,11 @@ func TestChangeMarshal(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	c2 := &Change{}
-	err = c2.Unmarshal(data)
+	c2, err := UnmarshalChange(data)
 	if err != nil {
 		t.Fatalf("unmarshal error: %v", err)
 	}
 
-	c1.XMLName = xml.Name{}
 	if !reflect.DeepEqual(c1, c2) {
 		t.Errorf("changes are not equal")
 		t.Logf("%+v", c1)
@@ -139,13 +137,11 @@ func TestChangeMarshal(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	c2 = &Change{}
-	err = c2.Unmarshal(data)
+	c2, err = UnmarshalChange(data)
 	if err != nil {
 		t.Fatalf("unmarshal error: %v", err)
 	}
 
-	c1.XMLName = xml.Name{}
 	if !reflect.DeepEqual(c1, c2) {
 		t.Errorf("changes are not equal")
 		t.Logf("%+v", c1)

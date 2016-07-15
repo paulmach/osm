@@ -16,21 +16,10 @@ message Changeset {
   optional uint32 user_sid = 6;
   optional int64 created_at = 7; // epoch time
   optional int64 closed_at = 8; // epoch time
+  optional bool open = 9;
 
-  optional Bounds bounds = 9;
-  optional Change change = 10;
-}
-
-message Change {
-  // not encoded, yet?
-  // optional Bounds bounds = 1;
-
-  // contains the tag strings if this is the root of the data.
-  repeated string strings = 2;
-
-  optional OSM create = 3;
-  optional OSM modify = 4;
-  optional OSM delete = 5;
+  optional Bounds bounds = 10;
+  optional Change change = 11;
 }
 
 message Bounds {
@@ -40,18 +29,26 @@ message Bounds {
 	required sint64 max_lat = 4;
 }
 
+message Change {
+  optional OSM create = 1;
+  optional OSM modify = 2;
+  optional OSM delete = 3;
+
+  // contains the tag strings if this is the root of the data.
+  repeated string strings = 4;
+}
+
 message OSM {
   optional Bounds bounds = 1;
 
-  // contains the tag strings if this is the root of the data.
-  repeated string strings = 2;
-
   // an encoded should have either nodes or a dense_nodes, but not both.
-  repeated Node       nodes = 3;
-  optional DenseNodes dense_nodes = 4;
+  repeated Node       nodes = 2;
+  optional DenseNodes dense_nodes = 3;
+  repeated Way        ways = 4;
+  repeated Relation   relations = 5;
 
-  repeated Way        ways = 5;
-  repeated Relation   relations = 6;
+  // contains the tag strings if this is the root of the data.
+  repeated string strings = 6;
 }
 
 // The message defined below are trying to match the official osm pdf

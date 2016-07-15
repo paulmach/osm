@@ -1,9 +1,10 @@
 package osm
 
 import (
-	"encoding/xml"
 	"time"
 
+	"github.com/golang/protobuf/proto"
+	"github.com/paulmach/go.osm/osmpb"
 	"github.com/paulmach/orb/geo"
 )
 
@@ -29,6 +30,8 @@ type Changeset struct {
 	CommentsCount int                 `xml:"comments_count,attr"`
 	Tags          Tags                `xml:"tag"`
 	Discussion    ChangesetDiscussion `xml:"discussion"`
+
+	Change *Change
 }
 
 // Bound returns a geo.Bound for the bounds in the changeset xml.
@@ -72,6 +75,47 @@ func (c *Changeset) Bot() bool {
 	return c.Tags.Find("bot") == "yes"
 }
 
+// Marshal encodes the changeset data using protocol buffers.
+// Does not encode the changeset discussion.
+func (c *Changeset) Marshal() ([]byte, error) {
+	ss := &stringSet{}
+
+	userSid := ss.Add(c.User)
+	keys, vals := c.Tags.KeyValues(ss)
+
+	encoded := &osmpb.Changeset{
+		Id:        proto.Int64(int64(c.ID)),
+		Keys:      keys,
+		Vals:      vals,
+		Uid:       proto.Int32(int32(c.UserID)),
+		UserSid:   &userSid,
+		CreatedAt: timeToUnix(c.CreatedAt),
+		ClosedAt:  timeToUnix(c.ClosedAt),
+		Open:      proto.Bool(c.Open),
+	}
+
+	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLng != 0 || c.MaxLng != 0 {
+		encoded.Bounds = &osmpb.Bounds{
+			MinLat: proto.Int64(geoToInt64(c.MinLat)),
+			MaxLat: proto.Int64(geoToInt64(c.MaxLat)),
+			MinLng: proto.Int64(geoToInt64(c.MinLng)),
+			MaxLng: proto.Int64(geoToInt64(c.MaxLng)),
+		}
+	}
+
+	if c.Change != nil {
+		encoded.Change = marshalChange(c.Change, ss, false)
+	}
+
+	encoded.Strings = ss.Strings()
+	return proto.Marshal(encoded)
+}
+
+func UnmarshalChangeset(data []byte) (*Changeset, error) {
+	return nil, nil
+
+}
+
 // IDs returns the ids of the changesets in the slice.
 func (cs Changesets) IDs() []ChangesetID {
 	if len(cs) == 0 {
@@ -88,13 +132,11 @@ func (cs Changesets) IDs() []ChangesetID {
 
 // ChangesetDiscussion is a conversation about a changeset.
 type ChangesetDiscussion struct {
-	xml.Name `xml:"discussion"`
 	Comments []*ChangesetComment `xml:"comment"`
 }
 
 // ChangesetComment is a specific comment in a changeset discussion.
 type ChangesetComment struct {
-	xml.Name  `xml:"comment"`
 	User      string    `xml:"user,attr"`
 	UserID    UserID    `xml:"uid,attr"`
 	CreatedAt time.Time `xml:"date,attr"`

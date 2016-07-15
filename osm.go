@@ -11,19 +11,18 @@ import (
 // OSM represents the core osm data.
 // I designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
-	Bound     *Bounds   `xml:"bounds"`
+	Bound     *Bound    `xml:"bounds"`
 	Nodes     Nodes     `xml:"node"`
 	Ways      Ways      `xml:"way"`
 	Relations Relations `xml:"relation"`
-}
 
-// OSMChangesets decodes a list of changesets in osm xml.
-type OSMChangesets struct {
+	// Changesets will typically not be included with actually data,
+	// but all this stuff is technically all under the osm xml
 	Changesets Changesets `xml:"changeset"`
 }
 
-// Bounds are the bounds of osm data as defined in the xml file.
-type Bounds struct {
+// Bound are the bounds of osm data as defined in the xml file.
+type Bound struct {
 	MinLat float64 `xml:"minlat,attr"`
 	MaxLat float64 `xml:"maxlat,attr"`
 	MinLng float64 `xml:"minlon,attr"`
@@ -31,7 +30,7 @@ type Bounds struct {
 }
 
 // Bound returns a geo bound object from the struct/xml definition.
-func (b *Bounds) Bound() geo.Bound {
+func (b *Bound) Bound() geo.Bound {
 	return geo.NewBound(b.MinLng, b.MaxLng, b.MinLat, b.MaxLat)
 }
 
@@ -42,6 +41,18 @@ func (o *OSM) Marshal() ([]byte, error) {
 	encoded.Strings = ss.Strings()
 
 	return proto.Marshal(encoded)
+}
+
+// UnmarshalOSM will unmarshal the data into a OSM object.
+func UnmarshalOSM(data []byte) (*OSM, error) {
+
+	pbf := &osmpb.OSM{}
+	err := proto.Unmarshal(data, pbf)
+	if err != nil {
+		return nil, err
+	}
+
+	return unmarshalOSM(pbf, pbf.GetStrings())
 }
 
 // includeChangeset can be set to false to not repeat the changeset
@@ -137,11 +148,11 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
 	}
 
 	if encoded.Bounds != nil {
-		o.Bound = &Bounds{
-			MinLat: float64(o.Bound.MinLat / locMultiple),
-			MaxLat: float64(o.Bound.MinLat / locMultiple),
-			MinLng: float64(o.Bound.MaxLng / locMultiple),
-			MaxLng: float64(o.Bound.MaxLng / locMultiple),
+		o.Bound = &Bound{
+			MinLat: float64(encoded.Bounds.GetMinLat() / locMultiple),
+			MaxLat: float64(encoded.Bounds.GetMaxLat() / locMultiple),
+			MinLng: float64(encoded.Bounds.GetMinLng() / locMultiple),
+			MaxLng: float64(encoded.Bounds.GetMaxLng() / locMultiple),
 		}
 	}
 
