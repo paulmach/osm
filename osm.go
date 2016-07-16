@@ -5,7 +5,6 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/paulmach/go.osm/osmpb"
-	"github.com/paulmach/orb/geo"
 )
 
 // OSM represents the core osm data.
@@ -27,11 +26,6 @@ type Bound struct {
 	MaxLat float64 `xml:"maxlat,attr"`
 	MinLng float64 `xml:"minlon,attr"`
 	MaxLng float64 `xml:"maxlon,attr"`
-}
-
-// Bound returns a geo bound object from the struct/xml definition.
-func (b *Bound) Bound() geo.Bound {
-	return geo.NewBound(b.MinLng, b.MaxLng, b.MinLat, b.MaxLat)
 }
 
 // Marshal encodes the osm data using protocol buffers.

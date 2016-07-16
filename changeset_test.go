@@ -4,8 +4,6 @@ import (
 	"encoding/xml"
 	"testing"
 	"time"
-
-	"github.com/paulmach/orb/geo"
 )
 
 func TestChangeset(t *testing.T) {
@@ -159,15 +157,6 @@ func TestChangesetBound(t *testing.T) {
 	err := xml.Unmarshal(data, &c)
 	if err != nil {
 		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	b := c.Bound()
-	expected := geo.NewBoundFromPoints(
-		geo.NewPoint(c.MinLng, c.MinLat),
-		geo.NewPoint(c.MaxLng, c.MaxLat),
-	)
-	if !b.Equal(expected) {
-		t.Errorf("incorrect bound, got %v", b)
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/paulmach/go.osm/osmpb"
-	"github.com/paulmach/orb/geo"
 )
 
 // ChangesetID is the primary key for a osm changeset.
@@ -32,11 +31,6 @@ type Changeset struct {
 	Discussion    ChangesetDiscussion `xml:"discussion"`
 
 	Change *Change
-}
-
-// Bound returns a geo.Bound for the bounds in the changeset xml.
-func (c *Changeset) Bound() geo.Bound {
-	return geo.NewBound(c.MinLng, c.MaxLng, c.MinLat, c.MaxLat)
 }
 
 // Comment is a helper and returns the changeset comment from the tag.

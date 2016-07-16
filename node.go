@@ -3,8 +3,6 @@ package osm
 import (
 	"sort"
 	"time"
-
-	"github.com/paulmach/orb/geo"
 )
 
 // NodeID corresponds the primary key of a node.
@@ -23,11 +21,6 @@ type Node struct {
 	ChangesetID ChangesetID `xml:"changeset,attr"`
 	Timestamp   time.Time   `xml:"timestamp,attr"`
 	Tags        Tags        `xml:"tag"`
-}
-
-// Point returns a geo.Point for the node location.
-func (n Node) Point() geo.Point {
-	return geo.NewPoint(n.Lng, n.Lat)
 }
 
 // Nodes is a set of nodes with helper functions on top.
