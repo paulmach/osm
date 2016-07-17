@@ -144,7 +144,83 @@ func TestProtobufRelation(t *testing.T) {
 	}
 }
 
-func loadChange(t *testing.T, filename string) *Change {
+func BenchmarkMarshalXML(b *testing.B) {
+	filename := "testdata/changeset_38162206.osc"
+	data := readFile(b, filename)
+
+	c := &Change{}
+	err := xml.Unmarshal(data, c)
+	if err != nil {
+		b.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_, err := xml.Marshal(c)
+		if err != nil {
+			b.Fatalf("unable to marshal: %v", err)
+		}
+	}
+}
+
+func BenchmarkMarshalProto(b *testing.B) {
+	cs := &Changeset{
+		ID:     38162206,
+		UserID: 2744209,
+		User:   "grah735",
+		Change: loadChange(b, "testdata/changeset_38162206.osc"),
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_, err := cs.Marshal()
+		if err != nil {
+			b.Fatalf("unable to marshal: %v", err)
+		}
+	}
+}
+
+func BenchmarkUnmarshalXML(b *testing.B) {
+	filename := "testdata/changeset_38162206.osc"
+	data := readFile(b, filename)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		c := &Change{}
+		err := xml.Unmarshal(data, c)
+		if err != nil {
+			b.Fatalf("unable to unmarshal: %v", err)
+		}
+	}
+}
+
+func BenchmarkUnmarshalProto(b *testing.B) {
+	cs := &Changeset{
+		ID:     38162206,
+		UserID: 2744209,
+		User:   "grah735",
+		Change: loadChange(b, "testdata/changeset_38162206.osc"),
+	}
+
+	data, err := cs.Marshal()
+	if err != nil {
+		b.Fatalf("unable to marshal: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_, err := UnmarshalChangeset(data)
+		if err != nil {
+			b.Fatalf("unable to unmarshal: %v", err)
+		}
+	}
+}
+
+func loadChange(t testing.TB, filename string) *Change {
 	data := readFile(t, filename)
 
 	c := &Change{}
@@ -156,7 +232,7 @@ func loadChange(t *testing.T, filename string) *Change {
 	return c
 }
 
-func readFile(t *testing.T, filename string) []byte {
+func readFile(t testing.TB, filename string) []byte {
 	f, err := os.Open(filename)
 	if err != nil {
 		t.Fatalf("unable to open %s: %v", filename, err)
