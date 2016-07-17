@@ -26,6 +26,25 @@ type Node struct {
 // Nodes is a set of nodes with helper functions on top.
 type Nodes []*Node
 
+// Marshal encodes the nodes using protocol buffers.
+func (ns Nodes) Marshal() ([]byte, error) {
+	o := OSM{
+		Nodes: ns,
+	}
+
+	return o.Marshal()
+}
+
+// UnmarshalNodes will unmarshal the data into a list of nodes.
+func UnmarshalNodes(data []byte) (Nodes, error) {
+	o, err := UnmarshalOSM(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return o.Nodes, nil
+}
+
 // ActiveAt returns the active node at the give time for a history of nodes.
 // These nodes should normally be returned from a /nodes/:id/history api call.
 func (ns Nodes) ActiveAt(t time.Time) *Node {

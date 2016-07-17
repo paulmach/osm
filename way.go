@@ -30,6 +30,25 @@ type NodeRef struct {
 // Ways is a set of osm ways with some helper functions attached.
 type Ways []*Way
 
+// Marshal encodes the ways using protocol buffers.
+func (ws Ways) Marshal() ([]byte, error) {
+	o := OSM{
+		Ways: ws,
+	}
+
+	return o.Marshal()
+}
+
+// UnmarshalWays will unmarshal the data into a list of ways.
+func UnmarshalWays(data []byte) (Ways, error) {
+	o, err := UnmarshalOSM(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return o.Ways, nil
+}
+
 type waysSort Ways
 
 // SortByIDVersion will sort the set of ways first by id and then version

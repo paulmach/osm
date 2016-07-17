@@ -27,6 +27,25 @@ type Relation struct {
 // Relations is a collection with some helper functions attached.
 type Relations []*Relation
 
+// Marshal encodes the relations using protocol buffers.
+func (rs Relations) Marshal() ([]byte, error) {
+	o := OSM{
+		Relations: rs,
+	}
+
+	return o.Marshal()
+}
+
+// UnmarshalRelations will unmarshal the data into a list of relations.
+func UnmarshalRelations(data []byte) (Relations, error) {
+	o, err := UnmarshalOSM(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return o.Relations, nil
+}
+
 type relationsSort Relations
 
 // SortByIDVersion will sort the set of relations first by id and then version

@@ -68,9 +68,6 @@ message Node {
 
   required sint64 lat = 8;
   required sint64 lng = 9;
-
-  // include only if this is the top most element in the data.
-  repeated string strings = 20;
 }
 
 message Info {
@@ -104,9 +101,6 @@ message DenseNodes {
   // if no node in the current block has any key/value pairs, this array does
   // not contain any delimiters, but is simply empty.
   repeated uint32 keys_vals = 10 [packed = true];
-
-  // include only if this is the top most element in the data.
-  repeated string strings = 20;
 }
 
 message DenseInfo {
@@ -136,9 +130,6 @@ message Way {
   optional Info info = 4;
 
   repeated sint64 refs = 8 [packed = true];  // DELTA coded
-
-  // include only if this is the top most element in the data.
-  repeated string strings = 20;
 }
 
 message Relation {
@@ -162,8 +153,5 @@ message Relation {
   repeated uint32 roles = 8 [packed = true]; // String IDs.
   repeated sint64 refs = 9 [packed = true]; // DELTA encoded
   repeated MemberType types = 10 [packed = true];
-
-  // include only if this is the top most element in the data.
-  repeated string strings = 20;
 }
 
