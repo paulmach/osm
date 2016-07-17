@@ -141,13 +141,8 @@ func fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
 	}
 	defer gzReader.Close()
 
-	data, err := ioutil.ReadAll(gzReader)
-	if err != nil {
-		return nil, err
-	}
-
 	change := &osm.Change{}
-	err = xml.Unmarshal(data, &change)
+	err = xml.NewDecoder(gzReader).Decode(change)
 	return change, err
 }
 
