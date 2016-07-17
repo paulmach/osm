@@ -141,19 +141,21 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 			}
 		}
 
-		if encoded.KeysVals[tagLoc] == 0 {
-			tagLoc++
-		} else {
-			for encoded.KeysVals[tagLoc] != 0 {
-				// TODO: bound check these key-values
-				n.Tags = append(n.Tags, Tag{
-					Key:   ss[encoded.KeysVals[tagLoc]],
-					Value: ss[encoded.KeysVals[tagLoc+1]],
-				})
+		if encoded.KeysVals != nil {
+			if encoded.KeysVals[tagLoc] == 0 {
+				tagLoc++
+			} else {
+				for encoded.KeysVals[tagLoc] != 0 {
+					// TODO: bound check these key-values
+					n.Tags = append(n.Tags, Tag{
+						Key:   ss[encoded.KeysVals[tagLoc]],
+						Value: ss[encoded.KeysVals[tagLoc+1]],
+					})
 
-				tagLoc += 2
+					tagLoc += 2
+				}
+				tagLoc++
 			}
-			tagLoc++
 		}
 		nodes = append(nodes, n)
 	}
@@ -359,8 +361,11 @@ func encodeNodeRef(refs []NodeRef) []int64 {
 }
 
 func decodeMembers(ss []string, roles []uint32, refs []int64, types []osmpb.Relation_MemberType) []Member {
-	result := make([]Member, len(roles), len(roles))
+	if len(roles) == 0 {
+		return nil
+	}
 
+	result := make([]Member, len(roles), len(roles))
 	decodeInt64(refs)
 	for i := range roles {
 		result[i].Role = ss[roles[i]]
@@ -392,6 +397,10 @@ func encodeInt64(vals []int64) []int64 {
 }
 
 func decodeNodeRef(diff []int64) []NodeRef {
+	if len(diff) == 0 {
+		return nil
+	}
+
 	result := make([]NodeRef, 0, len(diff))
 	var prev NodeID
 

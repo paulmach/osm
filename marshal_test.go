@@ -94,6 +94,31 @@ func TestProtobufNodes(t *testing.T) {
 			t.Logf("%+v", ns2[i])
 		}
 	}
+
+	// nodes with no tags
+	for _, n := range ns1 {
+		n.Tags = nil
+	}
+
+	ss = &stringSet{}
+	pbnodes = marshalNodes(ns1, ss, true)
+
+	ns2, err = unmarshalNodes(pbnodes, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if len(ns1) != len(ns2) {
+		t.Fatalf("different number of nodes: %d != %d", len(ns1), len(ns2))
+	}
+
+	for i := range ns1 {
+		if !reflect.DeepEqual(ns1[i], ns2[i]) {
+			t.Errorf("nodes %d are not equal", i)
+			t.Logf("%+v", ns1[i])
+			t.Logf("%+v", ns2[i])
+		}
+	}
 }
 
 func TestProtobufWay(t *testing.T) {

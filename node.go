@@ -71,6 +71,7 @@ type nodesSort Nodes
 func (ns Nodes) SortByIDVersion() {
 	sort.Sort(nodesSort(ns))
 }
+
 func (ns nodesSort) Len() int      { return len(ns) }
 func (ns nodesSort) Swap(i, j int) { ns[i], ns[j] = ns[j], ns[i] }
 func (ns nodesSort) Less(i, j int) bool {
