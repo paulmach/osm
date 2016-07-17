@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/paulmach/go.osm/osmpb"
+	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 const locMultiple = 10000000.0
@@ -38,33 +38,41 @@ func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
 	}
 
 	if includeChangeset {
-		encoded.Info.Changeset = proto.Int64(int64(node.ChangesetID))
-		encoded.Info.Uid = proto.Int32(int32(node.UserID))
+		encoded.Info.ChangesetId = proto.Int64(int64(node.ChangesetID))
+		encoded.Info.UserId = proto.Int32(int32(node.UserID))
 		encoded.Info.UserSid = proto.Uint32(ss.Add(node.User))
 	}
 
 	return encoded
 }
 
-func unmarshalNode(encoded *osmpb.Node, ss []string) (*Node, error) {
+func unmarshalNode(encoded *osmpb.Node, ss []string, cs *Changeset) (*Node, error) {
 	tags, err := tagsFromStrings(ss, encoded.GetKeys(), encoded.GetVals())
 	if err != nil {
 		return nil, err
 	}
 
 	info := encoded.GetInfo()
-	return &Node{
+	n := &Node{
 		ID:          NodeID(encoded.GetId()),
 		User:        ss[info.GetUserSid()],
-		UserID:      UserID(info.GetUid()),
+		UserID:      UserID(info.GetUserId()),
 		Visible:     info.GetVisible(),
 		Version:     int(info.GetVersion()),
-		ChangesetID: ChangesetID(info.GetChangeset()),
+		ChangesetID: ChangesetID(info.GetChangesetId()),
 		Timestamp:   unixToTime(info.GetTimestamp()),
 		Tags:        tags,
 		Lat:         float64(encoded.GetLat()) / locMultiple,
 		Lng:         float64(encoded.GetLng()) / locMultiple,
-	}, nil
+	}
+
+	if cs != nil {
+		n.ChangesetID = cs.ID
+		n.UserID = cs.UserID
+		n.User = cs.User
+	}
+
+	return n, nil
 }
 
 func marshalNodes(nodes Nodes, ss *stringSet, includeChangeset bool) *osmpb.DenseNodes {
@@ -86,21 +94,21 @@ func marshalNodes(nodes Nodes, ss *stringSet, includeChangeset bool) *osmpb.Dens
 
 	if includeChangeset {
 		csinfo := nodesChangesetInfo(nodes, ss)
-		encoded.DenseInfo.Changeset = encodeInt64(csinfo.Changesets)
-		encoded.DenseInfo.Uid = encodeInt32(csinfo.Uids)
+		encoded.DenseInfo.ChangesetId = encodeInt64(csinfo.Changesets)
+		encoded.DenseInfo.UserId = encodeInt32(csinfo.UserIDs)
 		encoded.DenseInfo.UserSid = encodeInt32(csinfo.UserSid)
 	}
 
 	return encoded
 }
 
-func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string) (Nodes, error) {
+func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Nodes, error) {
 	encoded.Id = decodeInt64(encoded.Id)
 	encoded.Lat = decodeInt64(encoded.Lat)
 	encoded.Lng = decodeInt64(encoded.Lng)
 	encoded.DenseInfo.Timestamp = decodeInt64(encoded.DenseInfo.Timestamp)
-	encoded.DenseInfo.Changeset = decodeInt64(encoded.DenseInfo.Changeset)
-	encoded.DenseInfo.Uid = decodeInt32(encoded.DenseInfo.Uid)
+	encoded.DenseInfo.ChangesetId = decodeInt64(encoded.DenseInfo.ChangesetId)
+	encoded.DenseInfo.UserId = decodeInt32(encoded.DenseInfo.UserId)
 	encoded.DenseInfo.UserSid = decodeInt32(encoded.DenseInfo.UserSid)
 
 	tagLoc := 0
@@ -115,16 +123,22 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string) (Nodes, error) {
 			Timestamp: unixToTime(encoded.DenseInfo.Timestamp[i]),
 		}
 
-		if len(encoded.DenseInfo.Changeset) > 0 {
-			n.ChangesetID = ChangesetID(encoded.DenseInfo.Changeset[i])
-		}
+		if cs != nil {
+			n.ChangesetID = cs.ID
+			n.UserID = cs.UserID
+			n.User = cs.User
+		} else {
+			if len(encoded.DenseInfo.ChangesetId) > 0 {
+				n.ChangesetID = ChangesetID(encoded.DenseInfo.ChangesetId[i])
+			}
 
-		if len(encoded.DenseInfo.Uid) > 0 {
-			n.UserID = UserID(encoded.DenseInfo.Uid[i])
-		}
+			if len(encoded.DenseInfo.UserId) > 0 {
+				n.UserID = UserID(encoded.DenseInfo.UserId[i])
+			}
 
-		if len(encoded.DenseInfo.UserSid) > 0 {
-			n.User = ss[encoded.DenseInfo.UserSid[i]]
+			if len(encoded.DenseInfo.UserSid) > 0 {
+				n.User = ss[encoded.DenseInfo.UserSid[i]]
+			}
 		}
 
 		if encoded.KeysVals[tagLoc] == 0 {
@@ -162,32 +176,40 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 	}
 
 	if includeChangeset {
-		encoded.Info.Changeset = proto.Int64(int64(way.ChangesetID))
-		encoded.Info.Uid = proto.Int32(int32(way.UserID))
+		encoded.Info.ChangesetId = proto.Int64(int64(way.ChangesetID))
+		encoded.Info.UserId = proto.Int32(int32(way.UserID))
 		encoded.Info.UserSid = proto.Uint32(ss.Add(way.User))
 	}
 
 	return encoded
 }
 
-func unmarshalWay(encoded *osmpb.Way, ss []string) (*Way, error) {
+func unmarshalWay(encoded *osmpb.Way, ss []string, cs *Changeset) (*Way, error) {
 	tags, err := tagsFromStrings(ss, encoded.GetKeys(), encoded.GetVals())
 	if err != nil {
 		return nil, err
 	}
 
 	info := encoded.GetInfo()
-	return &Way{
+	w := &Way{
 		ID:          WayID(encoded.GetId()),
 		User:        ss[info.GetUserSid()],
-		UserID:      UserID(info.GetUid()),
+		UserID:      UserID(info.GetUserId()),
 		Visible:     info.GetVisible(),
 		Version:     int(info.GetVersion()),
-		ChangesetID: ChangesetID(info.GetChangeset()),
+		ChangesetID: ChangesetID(info.GetChangesetId()),
 		Timestamp:   unixToTime(info.GetTimestamp()),
 		NodeRefs:    decodeNodeRef(encoded.GetRefs()),
 		Tags:        tags,
-	}, nil
+	}
+
+	if cs != nil {
+		w.ChangesetID = cs.ID
+		w.UserID = cs.UserID
+		w.User = cs.User
+	}
+
+	return w, nil
 }
 
 func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *osmpb.Relation {
@@ -218,32 +240,40 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 	}
 
 	if includeChangeset {
-		encoded.Info.Changeset = proto.Int64(int64(relation.ChangesetID))
-		encoded.Info.Uid = proto.Int32(int32(relation.UserID))
+		encoded.Info.ChangesetId = proto.Int64(int64(relation.ChangesetID))
+		encoded.Info.UserId = proto.Int32(int32(relation.UserID))
 		encoded.Info.UserSid = proto.Uint32(ss.Add(relation.User))
 	}
 
 	return encoded
 }
 
-func unmarshalRelation(encoded *osmpb.Relation, ss []string) (*Relation, error) {
+func unmarshalRelation(encoded *osmpb.Relation, ss []string, cs *Changeset) (*Relation, error) {
 	tags, err := tagsFromStrings(ss, encoded.GetKeys(), encoded.GetVals())
 	if err != nil {
 		return nil, err
 	}
 
 	info := encoded.GetInfo()
-	return &Relation{
+	r := &Relation{
 		ID:          RelationID(encoded.GetId()),
 		User:        ss[info.GetUserSid()],
-		UserID:      UserID(info.GetUid()),
+		UserID:      UserID(info.GetUserId()),
 		Visible:     info.GetVisible(),
 		Version:     int(info.GetVersion()),
-		ChangesetID: ChangesetID(info.GetChangeset()),
+		ChangesetID: ChangesetID(info.GetChangesetId()),
 		Timestamp:   unixToTime(info.GetTimestamp()),
 		Members:     decodeMembers(ss, encoded.GetRoles(), encoded.GetRefs(), encoded.GetTypes()),
 		Tags:        tags,
-	}, nil
+	}
+
+	if cs != nil {
+		r.ChangesetID = cs.ID
+		r.UserID = cs.UserID
+		r.User = cs.User
+	}
+
+	return r, nil
 }
 
 type denseNodesResult struct {
@@ -295,7 +325,7 @@ func encodeNodesTags(ns Nodes, ss *stringSet, count int) []uint32 {
 
 type changesetInfoResult struct {
 	Changesets []int64
-	Uids       []int32
+	UserIDs    []int32
 	UserSid    []int32
 }
 
@@ -303,13 +333,13 @@ func nodesChangesetInfo(ns Nodes, ss *stringSet) changesetInfoResult {
 	l := len(ns)
 	cs := changesetInfoResult{
 		Changesets: make([]int64, l, l),
-		Uids:       make([]int32, l, l),
+		UserIDs:    make([]int32, l, l),
 		UserSid:    make([]int32, l, l),
 	}
 
 	for i, n := range ns {
 		cs.Changesets[i] = int64(n.ChangesetID)
-		cs.Uids[i] = int32(n.UserID)
+		cs.UserIDs[i] = int32(n.UserID)
 		cs.UserSid[i] = int32(ss.Add(n.User))
 	}
 

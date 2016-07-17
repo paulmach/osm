@@ -9,10 +9,8 @@ message Changeset {
   repeated uint32 keys = 2 [packed = true];
   repeated uint32 vals = 3 [packed = true];
 
-  // contains the tag strings for everything in this changeset.
-  repeated string strings = 4;
 
-  optional int32 uid = 5;
+  optional int32 user_id = 5;
   optional uint32 user_sid = 6;
   optional int64 created_at = 7; // epoch time
   optional int64 closed_at = 8; // epoch time
@@ -20,6 +18,10 @@ message Changeset {
 
   optional Bounds bounds = 10;
   optional Change change = 11;
+
+  // contains the tag strings for everything
+  // in this entire changeset.
+  repeated string strings = 20;
 }
 
 message Bounds {
@@ -35,7 +37,7 @@ message Change {
   optional OSM delete = 3;
 
   // contains the tag strings if this is the root of the data.
-  repeated string strings = 4;
+  repeated string strings = 20;
 }
 
 message OSM {
@@ -48,7 +50,7 @@ message OSM {
   repeated Relation   relations = 5;
 
   // contains the tag strings if this is the root of the data.
-  repeated string strings = 6;
+  repeated string strings = 20;
 }
 
 // The message defined below are trying to match the official osm pdf
@@ -66,6 +68,9 @@ message Node {
 
   required sint64 lat = 8;
   required sint64 lng = 9;
+
+  // include only if this is the top most element in the data.
+  repeated string strings = 20;
 }
 
 message Info {
@@ -74,8 +79,8 @@ message Info {
 
   // these will be omitted if the object represents one changeset
   // since they will be all the same.
-  optional int64 changeset = 3;
-  optional int32 uid = 4;
+  optional int64 changeset_id = 3;
+  optional int32 user_id = 4;
   optional uint32 user_sid = 5; // String ID
 
   // The visible flag is used to store history information. It indicates that
@@ -99,6 +104,9 @@ message DenseNodes {
   // if no node in the current block has any key/value pairs, this array does
   // not contain any delimiters, but is simply empty.
   repeated uint32 keys_vals = 10 [packed = true];
+
+  // include only if this is the top most element in the data.
+  repeated string strings = 20;
 }
 
 message DenseInfo {
@@ -107,9 +115,9 @@ message DenseInfo {
 
   // these will be omitted if the object represents one changeset
   // and these will be all the same.
-  repeated sint64 changeset = 3 [packed = true]; // DELTA coded
-  repeated sint32 uid = 4 [packed = true]; // DELTA coded
-  repeated int32 user_sid = 5 [packed = true]; // String IDs for usernames. DELTA coded
+  repeated sint64 changeset_id = 3 [packed = true]; // DELTA coded
+  repeated sint32 user_id = 4 [packed = true]; // DELTA coded
+  repeated sint32 user_sid = 5 [packed = true]; // String IDs for usernames. DELTA coded
 
   // The visible flag is used to store history information. It indicates that
   // the current object version has been created by a delete operation on the
@@ -128,6 +136,9 @@ message Way {
   optional Info info = 4;
 
   repeated sint64 refs = 8 [packed = true];  // DELTA coded
+
+  // include only if this is the top most element in the data.
+  repeated string strings = 20;
 }
 
 message Relation {
@@ -146,8 +157,13 @@ message Relation {
   optional Info info = 4;
 
   // Parallel arrays
+  // Roles has been changed int32 -> uint32 form the osm proto,
+  // this is for consistency and backwards compatible.
   repeated uint32 roles = 8 [packed = true]; // String IDs.
   repeated sint64 refs = 9 [packed = true]; // DELTA encoded
   repeated MemberType types = 10 [packed = true];
+
+  // include only if this is the top most element in the data.
+  repeated string strings = 20;
 }
 

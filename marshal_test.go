@@ -40,7 +40,7 @@ func TestProtobufNode(t *testing.T) {
 	ss := &stringSet{}
 	pbnode := marshalNode(n1, ss, true)
 
-	n2, err := unmarshalNode(pbnode, ss.Strings())
+	n2, err := unmarshalNode(pbnode, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -59,7 +59,7 @@ func TestProtobufNodeRoundoff(t *testing.T) {
 	ss := &stringSet{}
 	pbnode := marshalNode(n1, ss, true)
 
-	n2, err := unmarshalNode(pbnode, ss.Strings())
+	n2, err := unmarshalNode(pbnode, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestProtobufNodes(t *testing.T) {
 	ss := &stringSet{}
 	pbnodes := marshalNodes(ns1, ss, true)
 
-	ns2, err := unmarshalNodes(pbnodes, ss.Strings())
+	ns2, err := unmarshalNodes(pbnodes, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -108,7 +108,7 @@ func TestProtobufWay(t *testing.T) {
 	ss := &stringSet{}
 	pbway := marshalWay(w1, ss, true)
 
-	w2, err := unmarshalWay(pbway, ss.Strings())
+	w2, err := unmarshalWay(pbway, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -132,7 +132,7 @@ func TestProtobufRelation(t *testing.T) {
 	ss := &stringSet{}
 	pbrelation := marshalRelation(r1, ss, true)
 
-	r2, err := unmarshalRelation(pbrelation, ss.Strings())
+	r2, err := unmarshalRelation(pbrelation, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}

@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/paulmach/go.osm/osmpb"
+	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 // ChangesetID is the primary key for a osm changeset.
@@ -81,7 +81,7 @@ func (c *Changeset) Marshal() ([]byte, error) {
 		Id:        proto.Int64(int64(c.ID)),
 		Keys:      keys,
 		Vals:      vals,
-		Uid:       proto.Int32(int32(c.UserID)),
+		UserId:    proto.Int32(int32(c.UserID)),
 		UserSid:   &userSid,
 		CreatedAt: timeToUnix(c.CreatedAt),
 		ClosedAt:  timeToUnix(c.ClosedAt),
@@ -105,9 +105,45 @@ func (c *Changeset) Marshal() ([]byte, error) {
 	return proto.Marshal(encoded)
 }
 
+// UnmarshalChangeset will unmarshal the data into a OSM object.
 func UnmarshalChangeset(data []byte) (*Changeset, error) {
-	return nil, nil
+	encoded := &osmpb.Changeset{}
+	err := proto.Unmarshal(data, encoded)
+	if err != nil {
+		return nil, err
+	}
 
+	ss := encoded.GetStrings()
+	tags, err := tagsFromStrings(ss, encoded.GetKeys(), encoded.GetVals())
+	if err != nil {
+		return nil, err
+	}
+
+	cs := &Changeset{
+		ID:        ChangesetID(encoded.GetId()),
+		UserID:    UserID(encoded.GetUserId()),
+		User:      ss[encoded.GetUserSid()],
+		CreatedAt: unixToTime(encoded.GetCreatedAt()),
+		ClosedAt:  unixToTime(encoded.GetClosedAt()),
+		Open:      encoded.GetOpen(),
+		Tags:      tags,
+	}
+
+	if encoded.Bounds != nil {
+		cs.MinLat = float64(encoded.Bounds.GetMinLat()) / locMultiple
+		cs.MaxLat = float64(encoded.Bounds.GetMaxLat()) / locMultiple
+		cs.MinLng = float64(encoded.Bounds.GetMinLng()) / locMultiple
+		cs.MaxLng = float64(encoded.Bounds.GetMaxLng()) / locMultiple
+	}
+
+	if encoded.Change != nil {
+		cs.Change, err = unmarshalChange(encoded.Change, ss, cs)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return cs, nil
 }
 
 // IDs returns the ids of the changesets in the slice.

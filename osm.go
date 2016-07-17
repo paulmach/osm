@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/paulmach/go.osm/osmpb"
+	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 // OSM represents the core osm data.
@@ -46,7 +46,7 @@ func UnmarshalOSM(data []byte) (*OSM, error) {
 		return nil, err
 	}
 
-	return unmarshalOSM(pbf, pbf.GetStrings())
+	return unmarshalOSM(pbf, pbf.GetStrings(), nil)
 }
 
 // includeChangeset can be set to false to not repeat the changeset
@@ -87,7 +87,7 @@ func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 	return encoded
 }
 
-func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
+func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) {
 	if encoded == nil {
 		return nil, nil
 	}
@@ -100,7 +100,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
 	if len(encoded.Nodes) != 0 {
 		o.Nodes = make([]*Node, len(encoded.Nodes), len(encoded.Nodes))
 		for i, en := range encoded.Nodes {
-			n, err := unmarshalNode(en, ss)
+			n, err := unmarshalNode(en, ss, cs)
 			if err != nil {
 				return nil, err
 			}
@@ -111,7 +111,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
 
 	if encoded.DenseNodes != nil {
 		var err error
-		o.Nodes, err = unmarshalNodes(encoded.DenseNodes, ss)
+		o.Nodes, err = unmarshalNodes(encoded.DenseNodes, ss, cs)
 		if err != nil {
 			return nil, err
 		}
@@ -120,7 +120,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
 	if len(encoded.Ways) != 0 {
 		o.Ways = make([]*Way, len(encoded.Ways), len(encoded.Ways))
 		for i, ew := range encoded.Ways {
-			w, err := unmarshalWay(ew, ss)
+			w, err := unmarshalWay(ew, ss, cs)
 			if err != nil {
 				return nil, err
 			}
@@ -132,7 +132,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
 	if len(encoded.Relations) != 0 {
 		o.Relations = make([]*Relation, len(encoded.Relations), len(encoded.Relations))
 		for i, er := range encoded.Relations {
-			r, err := unmarshalRelation(er, ss)
+			r, err := unmarshalRelation(er, ss, cs)
 			if err != nil {
 				return nil, err
 			}
@@ -143,10 +143,10 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string) (*OSM, error) {
 
 	if encoded.Bounds != nil {
 		o.Bound = &Bound{
-			MinLat: float64(encoded.Bounds.GetMinLat() / locMultiple),
-			MaxLat: float64(encoded.Bounds.GetMaxLat() / locMultiple),
-			MinLng: float64(encoded.Bounds.GetMinLng() / locMultiple),
-			MaxLng: float64(encoded.Bounds.GetMaxLng() / locMultiple),
+			MinLat: float64(encoded.Bounds.GetMinLat()) / locMultiple,
+			MaxLat: float64(encoded.Bounds.GetMaxLat()) / locMultiple,
+			MinLng: float64(encoded.Bounds.GetMinLng()) / locMultiple,
+			MaxLng: float64(encoded.Bounds.GetMaxLng()) / locMultiple,
 		}
 	}
 

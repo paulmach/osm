@@ -2,7 +2,7 @@ package osm
 
 import (
 	"github.com/golang/protobuf/proto"
-	"github.com/paulmach/go.osm/osmpb"
+	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 // Change is the structure of a changeset to be
@@ -32,7 +32,7 @@ func UnmarshalChange(data []byte) (*Change, error) {
 		return nil, err
 	}
 
-	return unmarshalChange(pbf, pbf.GetStrings())
+	return unmarshalChange(pbf, pbf.GetStrings(), nil)
 }
 
 func marshalChange(c *Change, ss *stringSet, includeChangeset bool) *osmpb.Change {
@@ -47,21 +47,21 @@ func marshalChange(c *Change, ss *stringSet, includeChangeset bool) *osmpb.Chang
 	}
 }
 
-func unmarshalChange(encoded *osmpb.Change, ss []string) (*Change, error) {
+func unmarshalChange(encoded *osmpb.Change, ss []string, cs *Changeset) (*Change, error) {
 	var err error
 	c := &Change{}
 
-	c.Create, err = unmarshalOSM(encoded.Create, ss)
+	c.Create, err = unmarshalOSM(encoded.Create, ss, cs)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Modify, err = unmarshalOSM(encoded.Modify, ss)
+	c.Modify, err = unmarshalOSM(encoded.Modify, ss, cs)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Delete, err = unmarshalOSM(encoded.Delete, ss)
+	c.Delete, err = unmarshalOSM(encoded.Delete, ss, cs)
 	if err != nil {
 		return nil, err
 	}

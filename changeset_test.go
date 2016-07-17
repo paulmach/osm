@@ -2,11 +2,12 @@ package osm
 
 import (
 	"encoding/xml"
+	"reflect"
 	"testing"
 	"time"
 )
 
-func TestChangeset(t *testing.T) {
+func TestChangesets(t *testing.T) {
 	data := []byte(`
 <?xml version="1.0" encoding="UTF-8"?>
 <osm version="0.6" generator="replicate_changesets.rb" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
@@ -76,6 +77,42 @@ func TestChangeset(t *testing.T) {
 
 	if v := c.CommentsCount; v != 5 {
 		t.Errorf("incorrect comment count, got %v", v)
+	}
+}
+
+func TestChangeset(t *testing.T) {
+	data := []byte(`
+<changeset id="38162206" user="grah735" uid="2744209" created_at="2016-03-30T09:25:31Z" closed_at="2016-03-30T09:25:36Z" open="false" min_lat="44.5540891" min_lon="33.5261473" max_lat="44.5614501" max_lon="33.5302043" comments_count="0">
+  <tag k="comment" v="двойная сплошная"/>
+  <tag k="locale" v="ru"/>
+  <tag k="host" v="https://www.openstreetmap.org/id"/>
+  <tag k="imagery_used" v="Bing"/>
+  <tag k="created_by" v="iD 1.9.2"/>
+</changeset>`)
+	c := loadChange(t, "testdata/changeset_38162206.osc")
+
+	cs1 := &Changeset{}
+	err := xml.Unmarshal(data, cs1)
+	if err != nil {
+		t.Fatalf("unable to unmarshal changeset: %v", err)
+	}
+
+	cs1.Change = c
+
+	data, err = cs1.Marshal()
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	cs2, err := UnmarshalChangeset(data)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if !reflect.DeepEqual(cs1, cs2) {
+		t.Errorf("changesets are not equal")
+		t.Logf("%+v", cs1)
+		t.Logf("%+v", cs2)
 	}
 }
 

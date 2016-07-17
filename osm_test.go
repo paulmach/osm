@@ -8,7 +8,7 @@ import (
 func TestOSMMarshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
 	o1 := flattenOSM(c)
-	o1.Bound = &Bound{1, 2, 3, 4}
+	o1.Bound = &Bound{1.1, 2.2, 3.3, 4.4}
 
 	data, err := o1.Marshal()
 	if err != nil {
