@@ -22,7 +22,7 @@ var memberTypeMapRev = map[osmpb.Relation_MemberType]MemberType{
 }
 
 func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
-	keys, vals := node.Tags.KeyValues(ss)
+	keys, vals := node.Tags.keyValues(ss)
 	encoded := &osmpb.Node{
 		Id:   proto.Int64(int64(node.ID)),
 		Keys: keys,
@@ -162,7 +162,7 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 }
 
 func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
-	keys, vals := way.Tags.KeyValues(ss)
+	keys, vals := way.Tags.keyValues(ss)
 	encoded := &osmpb.Way{
 		Id:   proto.Int64(int64(way.ID)),
 		Keys: keys,
@@ -224,7 +224,7 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 		types[i] = memberTypeMap[m.Type]
 	}
 
-	keys, vals := relation.Tags.KeyValues(ss)
+	keys, vals := relation.Tags.keyValues(ss)
 	encoded := &osmpb.Relation{
 		Id:   proto.Int64(int64(relation.ID)),
 		Keys: keys,

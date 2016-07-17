@@ -26,7 +26,7 @@ func (ts Tags) Find(k string) string {
 	return ""
 }
 
-func (ts Tags) KeyValues(ss *stringSet) (keys, values []uint32) {
+func (ts Tags) keyValues(ss *stringSet) (keys, values []uint32) {
 	for _, t := range ts {
 		keys = append(keys, ss.Add(t.Key))
 		values = append(values, ss.Add(t.Value))

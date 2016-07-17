@@ -75,7 +75,7 @@ func (c *Changeset) Marshal() ([]byte, error) {
 	ss := &stringSet{}
 
 	userSid := ss.Add(c.User)
-	keys, vals := c.Tags.KeyValues(ss)
+	keys, vals := c.Tags.keyValues(ss)
 
 	encoded := &osmpb.Changeset{
 		Id:        proto.Int64(int64(c.ID)),
