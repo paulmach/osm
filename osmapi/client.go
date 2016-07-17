@@ -27,6 +27,10 @@ func getFromAPI(ctx context.Context, url string, item interface{}) error {
 		return ErrNotFound{URL: url}
 	}
 
+	if resp.StatusCode == http.StatusGone {
+		return ErrGone{URL: url}
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		return ErrUnexpectedStatusCode{
 			Code: resp.StatusCode,
@@ -45,6 +49,16 @@ type ErrNotFound struct {
 // Error returns an error message with the url causing the problem.
 func (e ErrNotFound) Error() string {
 	return fmt.Sprintf("osmapi: not found at %s", e.URL)
+}
+
+// ErrGone is returned for deleted elements that get 410 from the api.
+type ErrGone struct {
+	URL string
+}
+
+// Error returns an error message with the url causing the problem.
+func (e ErrGone) Error() string {
+	return fmt.Sprintf("osmapi: gone at %s", e.URL)
 }
 
 // ErrUnexpectedStatusCode is return for a non 200 or 404 status code.
