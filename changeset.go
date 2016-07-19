@@ -74,18 +74,32 @@ func (c *Changeset) Bot() bool {
 func (c *Changeset) Marshal() ([]byte, error) {
 	ss := &stringSet{}
 
-	userSid := ss.Add(c.User)
+	var userSid *uint32
+	if c.User != "" {
+		v := ss.Add(c.User)
+		userSid = &v
+	}
 	keys, vals := c.Tags.keyValues(ss)
 
 	encoded := &osmpb.Changeset{
-		Id:        proto.Int64(int64(c.ID)),
 		Keys:      keys,
 		Vals:      vals,
-		UserId:    proto.Int32(int32(c.UserID)),
-		UserSid:   &userSid,
+		UserSid:   userSid,
 		CreatedAt: timeToUnix(c.CreatedAt),
 		ClosedAt:  timeToUnix(c.ClosedAt),
-		Open:      proto.Bool(c.Open),
+	}
+
+	// only set these values if they make any sense.
+	if c.ID != 0 {
+		encoded.Id = proto.Int64(int64(c.ID))
+	}
+
+	if c.Open {
+		encoded.Open = proto.Bool(c.Open)
+	}
+
+	if c.UserID != 0 {
+		encoded.UserId = proto.Int32(int32(c.UserID))
 	}
 
 	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLng != 0 || c.MaxLng != 0 {
@@ -97,7 +111,8 @@ func (c *Changeset) Marshal() ([]byte, error) {
 		}
 	}
 
-	if c.Change != nil {
+	if c.Change != nil &&
+		(c.Change.Create != nil || c.Change.Modify != nil || c.Change.Delete != nil) {
 		encoded.Change = marshalChange(c.Change, ss, false)
 	}
 

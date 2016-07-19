@@ -110,6 +110,27 @@ func TestChange(t *testing.T) {
 	if v := c.Delete.Nodes[0].ID; v != 301847601 {
 		t.Errorf("incorrect node id, got %v", v)
 	}
+
+	// empty change
+	data = []byte(`<osmChange version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/"/>`)
+
+	c = Change{}
+	err = xml.Unmarshal(data, &c)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if c.Create != nil {
+		t.Errorf("create should be nil for empty change")
+	}
+
+	if c.Modify != nil {
+		t.Errorf("modify should be nil for empty change")
+	}
+
+	if c.Delete != nil {
+		t.Errorf("delete should be nil for empty change")
+	}
 }
 
 func TestChangeMarshal(t *testing.T) {
@@ -146,5 +167,34 @@ func TestChangeMarshal(t *testing.T) {
 		t.Errorf("changes are not equal")
 		t.Logf("%+v", c1)
 		t.Logf("%+v", c2)
+	}
+
+	// minute diff change
+	c1 = loadChange(t, "testdata/minute_871.osc")
+	data, err = c1.Marshal()
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	c2, err = UnmarshalChange(data)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if !reflect.DeepEqual(c1, c2) {
+		t.Errorf("changes are not equal")
+		t.Logf("%+v", c1)
+		t.Logf("%+v", c2)
+	}
+
+	// empty change
+	c3 := &Change{}
+	data, err = c3.Marshal()
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if l := len(data); l != 0 {
+		t.Errorf("empty should be empty, got %v", l)
 	}
 }

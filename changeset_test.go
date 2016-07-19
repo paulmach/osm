@@ -114,6 +114,19 @@ func TestChangeset(t *testing.T) {
 		t.Logf("%+v", cs1)
 		t.Logf("%+v", cs2)
 	}
+
+	// empty change
+	cs3 := &Changeset{
+		Change: &Change{},
+	}
+	data, err = cs3.Marshal()
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if l := len(data); l != 0 {
+		t.Errorf("empty should be empty, got %v", l)
+	}
 }
 
 func TestChangesetOpen(t *testing.T) {

@@ -3,7 +3,7 @@ package osm;
 option go_package = "osmpb";
 
 message Changeset {
-  required int64 id = 1;
+  optional int64 id = 1;
 
   // Parallel arrays.
   repeated uint32 keys = 2 [packed = true];
@@ -35,6 +35,10 @@ message Change {
   optional OSM create = 1;
   optional OSM modify = 2;
   optional OSM delete = 3;
+
+  // elements that give the change extra context like
+  // nodes of the ways, and previous versions.
+  optional OSM context = 4;
 
   // contains the tag strings if this is the root of the data.
   repeated string strings = 20;
@@ -74,8 +78,9 @@ message Info {
   optional int32 version = 1;
   optional int64 timestamp = 2; // Epoch
 
-  // these will be omitted if the object represents one changeset
-  // since they will be all the same.
+  // these caan be omitted if the object represents one changeset
+  // since they will be all the same. However tests on 200k changesets
+  // show this saves about 17 bytes per changeset on average after gzip.
   optional int64 changeset_id = 3;
   optional int32 user_id = 4;
   optional uint32 user_sid = 5; // String ID
