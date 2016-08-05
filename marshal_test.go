@@ -1,6 +1,8 @@
 package osm
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/xml"
 	"io/ioutil"
 	"os"
@@ -207,6 +209,35 @@ func BenchmarkMarshalProto(b *testing.B) {
 	}
 }
 
+func BenchmarkMarshalProtoGZIP(b *testing.B) {
+	cs := &Changeset{
+		ID:     38162206,
+		UserID: 2744209,
+		User:   "grah735",
+		Change: loadChange(b, "testdata/changeset_38162206.osc"),
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		data, err := cs.Marshal()
+		if err != nil {
+			b.Fatalf("unable to marshal: %v", err)
+		}
+
+		w, _ := gzip.NewWriterLevel(&bytes.Buffer{}, gzip.BestCompression)
+		_, err = w.Write(data)
+		if err != nil {
+			b.Fatalf("unable to write: %v", err)
+		}
+
+		err = w.Close()
+		if err != nil {
+			b.Fatalf("unable to close: %v", err)
+		}
+	}
+}
+
 func BenchmarkUnmarshalXML(b *testing.B) {
 	filename := "testdata/changeset_38162206.osc"
 	data := readFile(b, filename)
@@ -239,6 +270,45 @@ func BenchmarkUnmarshalProto(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		_, err := UnmarshalChangeset(data)
+		if err != nil {
+			b.Fatalf("unable to unmarshal: %v", err)
+		}
+	}
+}
+func BenchmarkUnmarshalProtoGZIP(b *testing.B) {
+	cs := &Changeset{
+		ID:     38162206,
+		UserID: 2744209,
+		User:   "grah735",
+		Change: loadChange(b, "testdata/changeset_38162206.osc"),
+	}
+
+	data, err := cs.Marshal()
+	if err != nil {
+		b.Fatalf("unable to marshal: %v", err)
+	}
+
+	buff := &bytes.Buffer{}
+	w, _ := gzip.NewWriterLevel(buff, gzip.BestCompression)
+	_, err = w.Write(data)
+	if err != nil {
+		b.Fatalf("unable to write: %v", err)
+	}
+
+	err = w.Close()
+	if err != nil {
+		b.Fatalf("unable to close: %v", err)
+	}
+
+	data = buff.Bytes()
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		r, _ := gzip.NewReader(bytes.NewReader(data))
+		ungzipped, _ := ioutil.ReadAll(r)
+
+		_, err := UnmarshalChangeset(ungzipped)
 		if err != nil {
 			b.Fatalf("unable to unmarshal: %v", err)
 		}
