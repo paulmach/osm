@@ -3,7 +3,6 @@ package replication
 import (
 	"bytes"
 	"compress/gzip"
-	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -89,12 +88,14 @@ func Changesets(ctx context.Context, id ChangesetSeqID) (osm.Changesets, error) 
 	defer gzReader.Close()
 
 	var changesets []*osm.Changeset
-	for ci := range osmutil.ReadChangesets(ctx, xml.NewDecoder(gzReader)) {
-		if ci.Err != nil {
-			return changesets, err
-		}
+	scanner := osmutil.NewChangesetScanner(ctx, gzReader)
+	for scanner.Scan() {
+		cs := scanner.Changeset()
+		changesets = append(changesets, cs)
+	}
 
-		changesets = append(changesets, ci.Changeset)
+	if scanner.Err() != nil {
+		return changesets, err
 	}
 
 	return changesets, nil
