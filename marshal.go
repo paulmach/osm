@@ -369,7 +369,7 @@ func decodeMembers(ss []string, roles []uint32, refs []int64, types []osmpb.Rela
 	decodeInt64(refs)
 	for i := range roles {
 		result[i].Role = ss[roles[i]]
-		result[i].Ref = int(refs[i])
+		result[i].Ref = int64(refs[i])
 		result[i].Type = memberTypeMapRev[types[i]]
 	}
 
