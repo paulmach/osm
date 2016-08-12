@@ -1,0 +1,281 @@
+package osmpbf
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"reflect"
+	"runtime"
+	"testing"
+	"time"
+
+	"golang.org/x/net/context"
+
+	osm "github.com/paulmach/go.osm"
+)
+
+const (
+	// Originally downloaded from http://download.geofabrik.de/europe/great-britain/england/greater-london.html
+	London    = "greater-london-140324.osm.pbf"
+	LondonURL = "https://googledrive.com/host/0B8pisLiGtmqDR3dOR3hrWUpRTVE"
+)
+
+func parseTime(s string) time.Time {
+	t, err := time.Parse(time.RFC3339, s)
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
+var (
+	IDsExpectedOrder = []string{
+		// Start of dense nodes.
+		"node/44", "node/47", "node/52", "node/58", "node/60",
+		"node/79", // Just because way/79 is already there
+		"node/2740703694", "node/2740703695", "node/2740703697",
+		"node/2740703699", "node/2740703701",
+		// End of dense nodes.
+
+		// Start of ways.
+		"way/73", "way/74", "way/75", "way/79", "way/482",
+		"way/268745428", "way/268745431", "way/268745434", "way/268745436",
+		"way/268745439",
+		// End of ways.
+
+		// Start of relations.
+		"relation/69", "relation/94", "relation/152", "relation/245",
+		"relation/332", "relation/3593436", "relation/3595575",
+		"relation/3595798", "relation/3599126", "relation/3599127",
+		// End of relations
+	}
+
+	IDs map[string]bool
+
+	enc uint64 = 2729006
+	ewc uint64 = 459055
+	erc uint64 = 12833
+
+	en = &osm.Node{
+		ID:  18088578,
+		Lat: 51.5442632,
+		Lng: -0.2010027,
+		Tags: osm.Tags([]osm.Tag{
+			osm.Tag{Key: "alt_name", Value: "The King's Head"},
+			osm.Tag{Key: "amenity", Value: "pub"},
+			osm.Tag{Key: "created_by", Value: "JOSM"},
+			osm.Tag{Key: "name", Value: "The Luminaire"},
+			osm.Tag{Key: "note", Value: "Live music venue too"},
+		}),
+		Version:     2,
+		Timestamp:   parseTime("2009-05-20T10:28:54Z"),
+		ChangesetID: 1260468,
+		UserID:      508,
+		User:        "Welshie",
+		Visible:     true,
+	}
+
+	ew = &osm.Way{
+		ID: 4257116,
+		NodeRefs: []osm.NodeRef{
+			osm.NodeRef{Ref: 21544864},
+			osm.NodeRef{Ref: 333731851},
+			osm.NodeRef{Ref: 333731852},
+			osm.NodeRef{Ref: 333731850},
+			osm.NodeRef{Ref: 333731855},
+			osm.NodeRef{Ref: 333731858},
+			osm.NodeRef{Ref: 333731854},
+			osm.NodeRef{Ref: 108047},
+			osm.NodeRef{Ref: 769984352},
+			osm.NodeRef{Ref: 21544864},
+		},
+		Tags: osm.Tags([]osm.Tag{
+			osm.Tag{Key: "area", Value: "yes"},
+			osm.Tag{Key: "highway", Value: "pedestrian"},
+			osm.Tag{Key: "name", Value: "Fitzroy Square"},
+		}),
+		Version:     7,
+		Timestamp:   parseTime("2013-08-07T12:08:39Z"),
+		ChangesetID: 17253164,
+		UserID:      1016290,
+		User:        "Amaroussi",
+		Visible:     true,
+	}
+
+	er = &osm.Relation{
+		ID: 7677,
+		Members: []osm.Member{
+			osm.Member{Ref: 4875932, Type: osm.WayMember, Role: "outer"},
+			osm.Member{Ref: 4894305, Type: osm.WayMember, Role: "inner"},
+		},
+		Tags: osm.Tags([]osm.Tag{
+			osm.Tag{Key: "created_by", Value: "Potlatch 0.9c"},
+			osm.Tag{Key: "type", Value: "multipolygon"},
+		}),
+		Version:     4,
+		Timestamp:   parseTime("2008-07-19T15:04:03Z"),
+		ChangesetID: 540201,
+		UserID:      3876,
+		User:        "Edgemaster",
+		Visible:     true,
+	}
+)
+
+func init() {
+	IDs = make(map[string]bool)
+	for _, id := range IDsExpectedOrder {
+		IDs[id] = false
+	}
+}
+
+func downloadTestOSMFile(t *testing.T) {
+	if _, err := os.Stat(London); os.IsNotExist(err) {
+		out, err := os.Create(London)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer out.Close()
+
+		resp, err := http.Get(LondonURL)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+
+		if _, err := io.Copy(out, resp.Body); err != nil {
+			t.Fatal(err)
+		}
+	} else if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDecode(t *testing.T) {
+	downloadTestOSMFile(t)
+
+	f, err := os.Open(London)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	d := newDecoder(context.Background(), f)
+	err = d.Start(runtime.GOMAXPROCS(-1))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var n *osm.Node
+	var w *osm.Way
+	var r *osm.Relation
+	var nc, wc, rc uint64
+	var id string
+	idsOrder := make([]string, 0, len(IDsExpectedOrder))
+	for {
+		if v, err := d.Next(); err == io.EOF {
+			break
+		} else if err != nil {
+			t.Fatal(err)
+		} else {
+			if v := v.Node; v != nil {
+				nc++
+				if v.ID == en.ID {
+					n = v
+				}
+				id = fmt.Sprintf("node/%d", v.ID)
+				if _, ok := IDs[id]; ok {
+					idsOrder = append(idsOrder, id)
+				}
+			}
+
+			if v := v.Way; v != nil {
+				wc++
+				if v.ID == ew.ID {
+					w = v
+				}
+				id = fmt.Sprintf("way/%d", v.ID)
+				if _, ok := IDs[id]; ok {
+					idsOrder = append(idsOrder, id)
+				}
+			}
+
+			if v := v.Relation; v != nil {
+				rc++
+				if v.ID == er.ID {
+					r = v
+				}
+				id = fmt.Sprintf("relation/%d", v.ID)
+				if _, ok := IDs[id]; ok {
+					idsOrder = append(idsOrder, id)
+				}
+			}
+		}
+	}
+	d.Close()
+
+	if !reflect.DeepEqual(en, n) {
+		t.Errorf("\nExpected: %#v\nActual:   %#v", en, n)
+	}
+	if !reflect.DeepEqual(ew, w) {
+		t.Errorf("\nExpected: %#v\nActual:   %#v", ew, w)
+	}
+	if !reflect.DeepEqual(er, r) {
+		t.Errorf("\nExpected: %#v\nActual:   %#v", er, r)
+	}
+	if enc != nc || ewc != wc || erc != rc {
+		t.Errorf("\nExpected %7d nodes, %7d ways, %7d relations\nGot %7d nodes, %7d ways, %7d relations.",
+			enc, ewc, erc, nc, wc, rc)
+	}
+	if !reflect.DeepEqual(IDsExpectedOrder, idsOrder) {
+		t.Errorf("\nExpected: %v\nGot:      %v", IDsExpectedOrder, idsOrder)
+	}
+}
+
+func BenchmarkDecode(b *testing.B) {
+	file := os.Getenv("OSMPBF_BENCHMARK_FILE")
+	if file == "" {
+		file = London
+	}
+	f, err := os.Open(file)
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer f.Close()
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
+
+		d := newDecoder(context.Background(), f)
+		err = d.Start(runtime.GOMAXPROCS(-1))
+		if err != nil {
+			b.Fatal(err)
+		}
+
+		var nc, wc, rc uint64
+		start := time.Now()
+		for {
+			if v, err := d.Next(); err == io.EOF {
+				break
+			} else if err != nil {
+				b.Fatal(err)
+			} else {
+				if v := v.Node; v != nil {
+					nc++
+				}
+
+				if v := v.Way; v != nil {
+					wc++
+				}
+
+				if v := v.Relation; v != nil {
+					rc++
+				}
+			}
+		}
+
+		b.Logf("Done in %.3f seconds. Nodes: %d, Ways: %d, Relations: %d\n",
+			time.Now().Sub(start).Seconds(), nc, wc, rc)
+	}
+}
