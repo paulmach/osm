@@ -7,7 +7,7 @@ import (
 
 // RelationID is the primary key of a relation.
 // A relation is uniquely identifiable by the id + version.
-type RelationID int
+type RelationID int64
 
 // Relation is an collection of nodes, ways and other relations
 // with some defining attributes.
@@ -66,7 +66,7 @@ func (rs relationsSort) Less(i, j int) bool {
 // Member is a member of a relation.
 type Member struct {
 	Type MemberType `xml:"type,attr"`
-	Ref  int        `xml:"ref,attr"`
+	Ref  int64      `xml:"ref,attr"`
 	Role string     `xml:"role,attr"`
 }
 

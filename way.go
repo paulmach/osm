@@ -7,7 +7,7 @@ import (
 
 // WayID is the primary key of a way.
 // A way is uniquely identifiable by the id + version.
-type WayID int
+type WayID int64
 
 // Way is an osm way, ie collection of nodes.
 type Way struct {

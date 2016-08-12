@@ -7,7 +7,7 @@ import (
 
 // NodeID corresponds the primary key of a node.
 // The node id + version uniquely identify a node.
-type NodeID int
+type NodeID int64
 
 // Node is an osm point and allows for marshalling to/from osm xml.
 type Node struct {
