@@ -13,7 +13,7 @@ import (
 const host = "http://api.openstreetmap.org/api/0.6"
 
 var httpClient = &http.Client{
-	Timeout: 5 * time.Minute,
+	Timeout: 6 * time.Minute, // looks like the api server has a 5 min timeout.
 }
 
 func getFromAPI(ctx context.Context, url string, item interface{}) error {
