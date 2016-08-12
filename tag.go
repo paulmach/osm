@@ -2,6 +2,7 @@ package osm
 
 import (
 	"errors"
+	"sort"
 	"sync"
 )
 
@@ -24,6 +25,22 @@ func (ts Tags) Find(k string) string {
 	}
 
 	return ""
+}
+
+type tagsSort Tags
+
+// SortByKeyValue will do an inplace sort of the tags.
+func (ts Tags) SortByKeyValue() {
+	sort.Sort(tagsSort(ts))
+}
+func (ts tagsSort) Len() int      { return len(ts) }
+func (ts tagsSort) Swap(i, j int) { ts[i], ts[j] = ts[j], ts[i] }
+func (ts tagsSort) Less(i, j int) bool {
+	if ts[i].Key == ts[j].Key {
+		return ts[i].Value < ts[j].Value
+	}
+
+	return ts[i].Key < ts[j].Key
 }
 
 func (ts Tags) keyValues(ss *stringSet) (keys, values []uint32) {
