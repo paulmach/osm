@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/paulmach/go.osm"
-	"github.com/paulmach/go.osm/osmutil"
+	"github.com/paulmach/go.osm/osmxml"
 
 	"golang.org/x/net/context"
 	"golang.org/x/net/context/ctxhttp"
@@ -88,10 +88,10 @@ func Changesets(ctx context.Context, id ChangesetSeqID) (osm.Changesets, error) 
 	defer gzReader.Close()
 
 	var changesets []*osm.Changeset
-	scanner := osmutil.NewChangesetScanner(ctx, gzReader)
+	scanner := osmxml.New(ctx, gzReader)
 	for scanner.Scan() {
-		cs := scanner.Changeset()
-		changesets = append(changesets, cs)
+		e := scanner.Element()
+		changesets = append(changesets, e.Changeset)
 	}
 
 	if scanner.Err() != nil {
