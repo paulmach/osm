@@ -233,28 +233,24 @@ func TestDecode(t *testing.T) {
 }
 
 func BenchmarkDecode(b *testing.B) {
-	file := os.Getenv("OSMPBF_BENCHMARK_FILE")
-	if file == "" {
-		file = London
-	}
-	f, err := os.Open(file)
+	f, err := os.Open(London)
 	if err != nil {
 		b.Fatal(err)
 	}
 	defer f.Close()
 
+	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		f.Seek(0, 0)
 
 		d := newDecoder(context.Background(), f)
-		err = d.Start(runtime.GOMAXPROCS(-1))
+		err = d.Start(4)
 		if err != nil {
 			b.Fatal(err)
 		}
 
 		var nc, wc, rc uint64
-		start := time.Now()
 		for {
 			if v, err := d.Next(); err == io.EOF {
 				break
@@ -275,7 +271,16 @@ func BenchmarkDecode(b *testing.B) {
 			}
 		}
 
-		b.Logf("Done in %.3f seconds. Nodes: %d, Ways: %d, Relations: %d\n",
-			time.Now().Sub(start).Seconds(), nc, wc, rc)
+		if nc != 2729006 {
+			b.Errorf("wrong number of nodes, got %v", nc)
+		}
+
+		if wc != 459055 {
+			b.Errorf("wrong number of ways, got %v", wc)
+		}
+
+		if rc != 12833 {
+			b.Errorf("wrong number of relations, got %v", rc)
+		}
 	}
 }

@@ -7,6 +7,8 @@ import (
 	"os"
 	"testing"
 
+	osm "github.com/paulmach/go.osm"
+
 	"golang.org/x/net/context"
 )
 
@@ -60,6 +62,29 @@ func TestChangesetScannerContext(t *testing.T) {
 	}
 }
 
+func TestChangesetScannerClose(t *testing.T) {
+	r := changesetReader()
+	scanner := New(context.Background(), r)
+
+	if v := scanner.Scan(); v == false {
+		t.Fatalf("should read first scan: %v", scanner.Err())
+	}
+
+	if cs := scanner.Element().Changeset; cs.ID != 41226352 {
+		t.Fatalf("did not scan correctly, got %v", cs)
+	}
+
+	scanner.Close()
+
+	if v := scanner.Scan(); v == true {
+		t.Fatalf("should be closed for second scan: %v", scanner.Err())
+	}
+
+	if v := scanner.Err(); v != osm.ErrScannerClosed {
+		t.Errorf("incorrect error, got %v", v)
+	}
+}
+
 func TestChangesetScannerErr(t *testing.T) {
 	r := changesetReaderErr()
 	scanner := New(nil, r)
@@ -82,6 +107,11 @@ func TestChangesetScannerErr(t *testing.T) {
 
 	if v := scanner.Err(); v == nil {
 		t.Errorf("incorrect error, got %v", v)
+	}
+
+	scanner.Close()
+	if v := scanner.Err(); v == osm.ErrScannerClosed {
+		t.Errorf("should return xml error not closed error, got %v", v)
 	}
 }
 

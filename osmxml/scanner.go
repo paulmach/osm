@@ -8,6 +8,8 @@ import (
 	"golang.org/x/net/context"
 )
 
+var _ osm.Scanner = &Scanner{}
+
 // Scanner provides a convenient interface reading a stream of osm data
 // from a file or url. Successive calls to the Scan method will step through the data.
 //
@@ -18,7 +20,10 @@ import (
 // The Scanner API is based on bufio.Scanner
 // https://golang.org/pkg/bufio/#Scanner
 type Scanner struct {
-	ctx     context.Context
+	ctx    context.Context
+	cancel func()
+	closed bool
+
 	decoder *xml.Decoder
 	next    osm.Element
 	err     error
@@ -30,10 +35,21 @@ func New(ctx context.Context, r io.Reader) *Scanner {
 		ctx = context.Background()
 	}
 
-	return &Scanner{
-		ctx:     ctx,
+	s := &Scanner{
 		decoder: xml.NewDecoder(r),
 	}
+
+	s.ctx, s.cancel = context.WithCancel(ctx)
+	return s
+}
+
+// Close causes all future calls to Scan to return false.
+// Does not close the underlying reader.
+func (s *Scanner) Close() error {
+	s.closed = true
+	s.cancel()
+
+	return nil
 }
 
 // Scan advances the Scanner to the next element, which will then be available
@@ -101,6 +117,10 @@ func (s *Scanner) Err() error {
 
 	if s.err != nil {
 		return s.err
+	}
+
+	if s.closed {
+		return osm.ErrScannerClosed
 	}
 
 	return s.ctx.Err()

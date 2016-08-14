@@ -4,16 +4,17 @@ import (
 	"os"
 	"testing"
 
+	osm "github.com/paulmach/go.osm"
+
 	"golang.org/x/net/context"
 )
 
-func TestScanner(t *testing.T) {
-	file := os.Getenv("OSMPBF_BENCHMARK_FILE")
-	if file == "" {
-		file = London
-	}
+var (
+	Delaware = "../testdata/delaware-latest.osm.pbf"
+)
 
-	f, err := os.Open(file)
+func TestScanner(t *testing.T) {
+	f, err := os.Open(Delaware)
 	if err != nil {
 		t.Fatalf("unable to open file: %v", err)
 	}
@@ -26,7 +27,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 44 {
+	if n := scanner.Element().Node; n.ID != 75385503 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 
@@ -34,19 +35,14 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read second scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 47 {
+	if n := scanner.Element().Node; n.ID != 75390099 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 }
 
 func TestChangesetScannerContext(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
-	file := os.Getenv("OSMPBF_BENCHMARK_FILE")
-	if file == "" {
-		file = London
-	}
-
-	f, err := os.Open(file)
+	f, err := os.Open(Delaware)
 	if err != nil {
 		t.Fatalf("unable to open file: %v", err)
 	}
@@ -59,7 +55,7 @@ func TestChangesetScannerContext(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 44 {
+	if n := scanner.Element().Node; n.ID != 75385503 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 
@@ -74,14 +70,57 @@ func TestChangesetScannerContext(t *testing.T) {
 	}
 }
 
+func TestChangesetScannerClose(t *testing.T) {
+	f, err := os.Open(Delaware)
+	if err != nil {
+		t.Fatalf("unable to open file: %v", err)
+	}
+	defer f.Close()
+
+	scanner := New(context.Background(), f, 1)
+
+	if v := scanner.Scan(); v == false {
+		t.Fatalf("should read first scan: %v", scanner.Err())
+	}
+
+	if n := scanner.Element().Node; n.ID != 75385503 {
+		t.Fatalf("did not scan correctly, got %v", n)
+	}
+
+	scanner.Close()
+
+	if v := scanner.Scan(); v == true {
+		t.Fatalf("should be closed for second scan: %v", scanner.Err())
+	}
+
+	if v := scanner.Err(); v != osm.ErrScannerClosed {
+		t.Errorf("incorrect error, got %v", v)
+	}
+}
+
 func BenchmarkLondon(b *testing.B) {
-	f, err := os.Open("greater-london-140324.osm.pbf")
+	f, err := os.Open(London)
 	if err != nil {
 		b.Fatalf("could not open file: %v", err)
 	}
 
 	scanner := New(context.Background(), f, 4)
+	nodes, ways, relations := benchmarkScanner(b, scanner)
 
+	if nodes != 2729006 {
+		b.Errorf("wrong number of nodes, got %v", nodes)
+	}
+
+	if ways != 459055 {
+		b.Errorf("wrong number of ways, got %v", ways)
+	}
+
+	if relations != 12833 {
+		b.Errorf("wrong number of relations, got %v", relations)
+	}
+}
+
+func benchmarkScanner(b *testing.B, scanner osm.Scanner) (int, int, int) {
 	var (
 		nodes     int
 		ways      int
@@ -105,9 +144,9 @@ func BenchmarkLondon(b *testing.B) {
 		}
 	}
 
-	if scanner.Err() != nil {
+	if err := scanner.Err(); err != nil {
 		b.Errorf("scanner returned error: %v", err)
 	}
 
-	b.Logf("nodes %d, ways %d, relations %d", nodes, ways, relations)
+	return nodes, ways, relations
 }
