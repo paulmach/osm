@@ -44,6 +44,11 @@ message Change {
   repeated string strings = 20;
 }
 
+message Tags {
+  // encoded as [key1, val1, key2, val2, etc.]
+  repeated string keys_vals = 1;
+}
+
 message OSM {
   optional Bounds bounds = 1;
 

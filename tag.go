@@ -4,6 +4,9 @@ import (
 	"errors"
 	"sort"
 	"sync"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 // Tag is a key+value item attached to osm nodes, ways and relations.
@@ -25,6 +28,46 @@ func (ts Tags) Find(k string) string {
 	}
 
 	return ""
+}
+
+// Marshal encodes the tags using protocol buffers.
+func (ts Tags) Marshal() ([]byte, error) {
+	if len(ts) == 0 {
+		return nil, nil
+	}
+
+	tags := make([]string, 0, len(ts)*2)
+	for _, t := range ts {
+		tags = append(tags, t.Key, t.Value)
+	}
+
+	t := &osmpb.Tags{
+		KeysVals: tags,
+	}
+	return proto.Marshal(t)
+}
+
+// UnmarshalTags will unmarshal the tags into a list of tags.
+func UnmarshalTags(data []byte) (Tags, error) {
+	t := osmpb.Tags{}
+	err := proto.Unmarshal(data, &t)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(t.KeysVals) == 0 {
+		return nil, nil
+	}
+
+	tags := make(Tags, 0, len(t.KeysVals)/2)
+	for i := 0; i < len(t.KeysVals); i += 2 {
+		tags = append(tags, Tag{
+			Key:   t.KeysVals[i],
+			Value: t.KeysVals[i+1],
+		})
+	}
+
+	return tags, nil
 }
 
 type tagsSort Tags
