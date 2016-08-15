@@ -34,7 +34,7 @@ func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
 		},
 		// geoToInt64
 		Lat: proto.Int64(geoToInt64(node.Lat)),
-		Lng: proto.Int64(geoToInt64(node.Lng)),
+		Lon: proto.Int64(geoToInt64(node.Lon)),
 	}
 
 	if includeChangeset {
@@ -63,7 +63,7 @@ func unmarshalNode(encoded *osmpb.Node, ss []string, cs *Changeset) (*Node, erro
 		Timestamp:   unixToTime(info.GetTimestamp()),
 		Tags:        tags,
 		Lat:         float64(encoded.GetLat()) / locMultiple,
-		Lng:         float64(encoded.GetLng()) / locMultiple,
+		Lon:         float64(encoded.GetLon()) / locMultiple,
 	}
 
 	if cs != nil {
@@ -85,7 +85,7 @@ func marshalNodes(nodes Nodes, ss *stringSet, includeChangeset bool) *osmpb.Dens
 			Visible:   dense.Visibles,
 		},
 		Lat: encodeInt64(dense.Lats),
-		Lng: encodeInt64(dense.Lngs),
+		Lon: encodeInt64(dense.Lons),
 	}
 
 	if dense.TagCount > 0 {
@@ -105,7 +105,7 @@ func marshalNodes(nodes Nodes, ss *stringSet, includeChangeset bool) *osmpb.Dens
 func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Nodes, error) {
 	encoded.Id = decodeInt64(encoded.Id)
 	encoded.Lat = decodeInt64(encoded.Lat)
-	encoded.Lng = decodeInt64(encoded.Lng)
+	encoded.Lon = decodeInt64(encoded.Lon)
 	encoded.DenseInfo.Timestamp = decodeInt64(encoded.DenseInfo.Timestamp)
 	encoded.DenseInfo.ChangesetId = decodeInt64(encoded.DenseInfo.ChangesetId)
 	encoded.DenseInfo.UserId = decodeInt32(encoded.DenseInfo.UserId)
@@ -117,7 +117,7 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 		n := &Node{
 			ID:        NodeID(encoded.Id[i]),
 			Lat:       float64(encoded.Lat[i]) / locMultiple,
-			Lng:       float64(encoded.Lng[i]) / locMultiple,
+			Lon:       float64(encoded.Lon[i]) / locMultiple,
 			Visible:   encoded.DenseInfo.Visible[i],
 			Version:   int(encoded.DenseInfo.Version[i]),
 			Timestamp: unixToTime(encoded.DenseInfo.Timestamp[i]),
@@ -281,7 +281,7 @@ func unmarshalRelation(encoded *osmpb.Relation, ss []string, cs *Changeset) (*Re
 type denseNodesResult struct {
 	IDs        []int64
 	Lats       []int64
-	Lngs       []int64
+	Lons       []int64
 	Timestamps []int64
 	Versions   []int32
 	Visibles   []bool
@@ -293,7 +293,7 @@ func denseNodesValues(ns Nodes) denseNodesResult {
 	ds := denseNodesResult{
 		IDs:        make([]int64, l, l),
 		Lats:       make([]int64, l, l),
-		Lngs:       make([]int64, l, l),
+		Lons:       make([]int64, l, l),
 		Timestamps: make([]int64, l, l),
 		Versions:   make([]int32, l, l),
 		Visibles:   make([]bool, l, l),
@@ -302,7 +302,7 @@ func denseNodesValues(ns Nodes) denseNodesResult {
 	for i, n := range ns {
 		ds.IDs[i] = int64(n.ID)
 		ds.Lats[i] = geoToInt64(n.Lat)
-		ds.Lngs[i] = geoToInt64(n.Lng)
+		ds.Lons[i] = geoToInt64(n.Lon)
 		ds.Timestamps[i] = n.Timestamp.Unix()
 		ds.Versions[i] = int32(n.Version)
 		ds.Visibles[i] = n.Visible

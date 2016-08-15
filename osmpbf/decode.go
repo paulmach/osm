@@ -23,8 +23,9 @@ const (
 
 var (
 	parseCapabilities = map[string]bool{
-		"OsmSchema-V0.6": true,
-		"DenseNodes":     true,
+		"OsmSchema-V0.6":        true,
+		"DenseNodes":            true,
+		"HistoricalInformation": true,
 	}
 )
 

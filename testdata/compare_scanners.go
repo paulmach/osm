@@ -89,7 +89,7 @@ func scanner2osm(scanner osm.Scanner) *osm.OSM {
 
 		if e.Node != nil {
 			e.Node.Lat = math.Floor(e.Node.Lat*1e7+0.5) / 1e7
-			e.Node.Lng = math.Floor(e.Node.Lng*1e7+0.5) / 1e7
+			e.Node.Lon = math.Floor(e.Node.Lon*1e7+0.5) / 1e7
 			e.Node.Visible = true
 			e.Node.Tags.SortByKeyValue()
 			o.Nodes = append(o.Nodes, e.Node)

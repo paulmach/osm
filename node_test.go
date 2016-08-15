@@ -47,8 +47,8 @@ func TestNode(t *testing.T) {
 		t.Errorf("incorrect lat, got %v", v)
 	}
 
-	if v := n.Lng; v != 6.0043943 {
-		t.Errorf("incorrect lng, got %v", v)
+	if v := n.Lon; v != 6.0043943 {
+		t.Errorf("incorrect lon, got %v", v)
 	}
 }
 

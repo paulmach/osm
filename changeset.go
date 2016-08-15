@@ -24,8 +24,8 @@ type Changeset struct {
 	ChangesCount  int                 `xml:"num_changes,attr"`
 	MinLat        float64             `xml:"min_lat,attr"`
 	MaxLat        float64             `xml:"max_lat,attr"`
-	MinLng        float64             `xml:"min_lon,attr"`
-	MaxLng        float64             `xml:"max_lon,attr"`
+	MinLon        float64             `xml:"min_lon,attr"`
+	MaxLon        float64             `xml:"max_lon,attr"`
 	CommentsCount int                 `xml:"comments_count,attr"`
 	Tags          Tags                `xml:"tag"`
 	Discussion    ChangesetDiscussion `xml:"discussion"`
@@ -102,12 +102,12 @@ func (c *Changeset) Marshal() ([]byte, error) {
 		encoded.UserId = proto.Int32(int32(c.UserID))
 	}
 
-	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLng != 0 || c.MaxLng != 0 {
+	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLon != 0 || c.MaxLon != 0 {
 		encoded.Bounds = &osmpb.Bounds{
 			MinLat: proto.Int64(geoToInt64(c.MinLat)),
 			MaxLat: proto.Int64(geoToInt64(c.MaxLat)),
-			MinLng: proto.Int64(geoToInt64(c.MinLng)),
-			MaxLng: proto.Int64(geoToInt64(c.MaxLng)),
+			MinLon: proto.Int64(geoToInt64(c.MinLon)),
+			MaxLon: proto.Int64(geoToInt64(c.MaxLon)),
 		}
 	}
 
@@ -147,8 +147,8 @@ func UnmarshalChangeset(data []byte) (*Changeset, error) {
 	if encoded.Bounds != nil {
 		cs.MinLat = float64(encoded.Bounds.GetMinLat()) / locMultiple
 		cs.MaxLat = float64(encoded.Bounds.GetMaxLat()) / locMultiple
-		cs.MinLng = float64(encoded.Bounds.GetMinLng()) / locMultiple
-		cs.MaxLng = float64(encoded.Bounds.GetMaxLng()) / locMultiple
+		cs.MinLon = float64(encoded.Bounds.GetMinLon()) / locMultiple
+		cs.MaxLon = float64(encoded.Bounds.GetMaxLon()) / locMultiple
 	}
 
 	if encoded.Change != nil {

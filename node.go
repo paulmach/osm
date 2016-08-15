@@ -13,7 +13,7 @@ type NodeID int64
 type Node struct {
 	ID          NodeID      `xml:"id,attr"`
 	Lat         float64     `xml:"lat,attr"`
-	Lng         float64     `xml:"lon,attr"`
+	Lon         float64     `xml:"lon,attr"`
 	User        string      `xml:"user,attr"`
 	UserID      UserID      `xml:"uid,attr"`
 	Visible     bool        `xml:"visible,attr"`

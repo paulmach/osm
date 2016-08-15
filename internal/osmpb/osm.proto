@@ -25,8 +25,8 @@ message Changeset {
 }
 
 message Bounds {
-	required sint64 min_lng = 1;
-	required sint64 max_lng = 2;
+	required sint64 min_lon = 1;
+	required sint64 max_lon = 2;
 	required sint64 min_lat = 3;
 	required sint64 max_lat = 4;
 }
@@ -71,7 +71,7 @@ message Node {
   optional Info info = 4;
 
   required sint64 lat = 8;
-  required sint64 lng = 9;
+  required sint64 lon = 9;
 }
 
 message Info {
@@ -98,7 +98,7 @@ message DenseNodes {
   optional DenseInfo dense_info = 5;
 
   repeated sint64 lat = 8 [packed = true]; // DELTA coded
-  repeated sint64 lng = 9 [packed = true]; // DELTA coded
+  repeated sint64 lon = 9 [packed = true]; // DELTA coded
 
   // Special packing of keys and vals into one array. We use a single stringid
   // of 0 to delimit when the tags of a node ends and the tags of the next node

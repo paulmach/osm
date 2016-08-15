@@ -24,8 +24,8 @@ type OSM struct {
 type Bound struct {
 	MinLat float64 `xml:"minlat,attr"`
 	MaxLat float64 `xml:"maxlat,attr"`
-	MinLng float64 `xml:"minlon,attr"`
-	MaxLng float64 `xml:"maxlon,attr"`
+	MinLon float64 `xml:"minlon,attr"`
+	MaxLon float64 `xml:"maxlon,attr"`
 }
 
 func (o *OSM) changesetInfo() (ChangesetID, UserID, string) {
@@ -98,8 +98,8 @@ func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 		encoded.Bounds = &osmpb.Bounds{
 			MinLat: proto.Int64(geoToInt64(o.Bound.MinLat)),
 			MaxLat: proto.Int64(geoToInt64(o.Bound.MaxLat)),
-			MinLng: proto.Int64(geoToInt64(o.Bound.MinLng)),
-			MaxLng: proto.Int64(geoToInt64(o.Bound.MaxLng)),
+			MinLon: proto.Int64(geoToInt64(o.Bound.MinLon)),
+			MaxLon: proto.Int64(geoToInt64(o.Bound.MaxLon)),
 		}
 	}
 
@@ -164,8 +164,8 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 		o.Bound = &Bound{
 			MinLat: float64(encoded.Bounds.GetMinLat()) / locMultiple,
 			MaxLat: float64(encoded.Bounds.GetMaxLat()) / locMultiple,
-			MinLng: float64(encoded.Bounds.GetMinLng()) / locMultiple,
-			MaxLng: float64(encoded.Bounds.GetMaxLng()) / locMultiple,
+			MinLon: float64(encoded.Bounds.GetMinLon()) / locMultiple,
+			MaxLon: float64(encoded.Bounds.GetMaxLon()) / locMultiple,
 		}
 	}
 

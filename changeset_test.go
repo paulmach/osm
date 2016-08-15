@@ -67,12 +67,12 @@ func TestChangesets(t *testing.T) {
 		t.Errorf("incorrect max lat, got %v", v)
 	}
 
-	if v := c.MinLng; v != 5.1545597 {
-		t.Errorf("incorrect min lng, got %v", v)
+	if v := c.MinLon; v != 5.1545597 {
+		t.Errorf("incorrect min lon, got %v", v)
 	}
 
-	if v := c.MaxLng; v != 5.2532961 {
-		t.Errorf("incorrect max lng, got %v", v)
+	if v := c.MaxLon; v != 5.2532961 {
+		t.Errorf("incorrect max on, got %v", v)
 	}
 
 	if v := c.CommentsCount; v != 5 {

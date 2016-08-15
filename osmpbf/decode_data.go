@@ -71,7 +71,7 @@ func (dec *dataDecoder) parseNodes(pb *osmpbf.PrimitiveBlock, nodes []*osmpbf.No
 	// 		Node: &osm.Node{
 	// 			ID:          osm.NodeID(node.GetId()),
 	// 			Lat:         1e-9 * float64((latOffset + (granularity * node.GetLat()))),
-	// 			Lng:         1e-9 * float64((lonOffset + (granularity * node.GetLon()))),
+	// 			Lon:         1e-9 * float64((lonOffset + (granularity * node.GetLon()))),
 	// 			User:        info.User,
 	// 			UserID:      osm.UserID(info.UID),
 	// 			Visible:     info.Visible,
@@ -112,7 +112,7 @@ func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.De
 			Node: &osm.Node{
 				ID:          osm.NodeID(id),
 				Lat:         1e-9 * float64((latOffset + (granularity * lat))),
-				Lng:         1e-9 * float64((lonOffset + (granularity * lon))),
+				Lon:         1e-9 * float64((lonOffset + (granularity * lon))),
 				User:        info.User,
 				UserID:      osm.UserID(info.UID),
 				Visible:     info.Visible,

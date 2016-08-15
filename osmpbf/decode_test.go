@@ -60,7 +60,7 @@ var (
 	en = &osm.Node{
 		ID:  18088578,
 		Lat: 51.5442632,
-		Lng: -0.2010027,
+		Lon: -0.2010027,
 		Tags: osm.Tags([]osm.Tag{
 			osm.Tag{Key: "alt_name", Value: "The King's Head"},
 			osm.Tag{Key: "amenity", Value: "pub"},
