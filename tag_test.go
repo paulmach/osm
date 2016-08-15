@@ -26,8 +26,8 @@ func TestTagsMarshal(t *testing.T) {
 	}
 
 	t2 := Tags{
-		Tag{Key: "highway", Value: "crossing"},
-		Tag{Key: "source", Value: "Bind"},
+		Tag{Key: "highway 🏤 ", Value: "crossing"},
+		Tag{Key: "source", Value: "Bind 🏤 "},
 	}
 
 	data, err = t2.Marshal()
