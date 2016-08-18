@@ -187,16 +187,20 @@ func (dec *decoder) Start(n int) error {
 			var p oPair
 			select {
 			case <-dec.ctx.Done():
-				p = oPair{Err: dec.ctx.Err()}
+				dec.cData.Err = dec.ctx.Err()
+				close(dec.serializer)
+				dec.cancel()
+				return
 			case p = <-output:
 			}
 
-			if p.Elements != nil {
-				dec.serializer <- p
+			select {
+			case <-dec.ctx.Done():
+				dec.cData.Err = dec.ctx.Err()
+			case dec.serializer <- p:
 			}
 
 			if p.Err != nil {
-				dec.serializer <- p
 				close(dec.serializer)
 				dec.cancel()
 				return
