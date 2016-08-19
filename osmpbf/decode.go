@@ -11,7 +11,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmpbf/internal/osmpbf"
 )

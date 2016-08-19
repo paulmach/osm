@@ -3,7 +3,7 @@ package osmpbf
 import (
 	"time"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
 	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmpbf/internal/osmpbf"
 )
@@ -146,7 +146,7 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 
 		dec.q = append(dec.q, osm.Element{
 			Way: &osm.Way{
-				ID:          osm.WayID(*way.Id),
+				ID:          osm.WayID(way.Id),
 				User:        info.User,
 				UserID:      osm.UserID(info.UID),
 				Visible:     info.Visible,
@@ -205,7 +205,7 @@ func (dec *dataDecoder) parseRelations(pb *osmpbf.PrimitiveBlock, relations []*o
 
 		dec.q = append(dec.q, osm.Element{
 			Relation: &osm.Relation{
-				ID:          osm.RelationID(rel.GetId()),
+				ID:          osm.RelationID(rel.Id),
 				User:        info.User,
 				UserID:      osm.UserID(info.UID),
 				Visible:     info.Visible,

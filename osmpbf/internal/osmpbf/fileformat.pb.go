@@ -27,13 +27,12 @@
 */
 package osmpbf
 
-import proto "github.com/golang/protobuf/proto"
+import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
-import github_com_golang_protobuf_proto "github.com/golang/protobuf/proto"
-
 import io "io"
+import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -44,18 +43,17 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type Blob struct {
-	Raw     []byte `protobuf:"bytes,1,opt,name=raw" json:"raw,omitempty"`
-	RawSize *int32 `protobuf:"varint,2,opt,name=raw_size" json:"raw_size,omitempty"`
+	Raw     []byte `protobuf:"bytes,1,opt,name=raw" json:"raw"`
+	RawSize int32  `protobuf:"varint,2,opt,name=raw_size" json:"raw_size"`
 	// Possible compressed versions of the data.
-	ZlibData []byte `protobuf:"bytes,3,opt,name=zlib_data" json:"zlib_data,omitempty"`
+	ZlibData []byte `protobuf:"bytes,3,opt,name=zlib_data" json:"zlib_data"`
 	// PROPOSED feature for LZMA compressed data. SUPPORT IS NOT REQUIRED.
-	LzmaData []byte `protobuf:"bytes,4,opt,name=lzma_data" json:"lzma_data,omitempty"`
+	LzmaData []byte `protobuf:"bytes,4,opt,name=lzma_data" json:"lzma_data"`
 	// Formerly used for bzip2 compressed data. Depreciated in 2010.
-	OBSOLETEBzip2Data []byte `protobuf:"bytes,5,opt,name=OBSOLETE_bzip2_data" json:"OBSOLETE_bzip2_data,omitempty"`
-	XXX_unrecognized  []byte `json:"-"`
+	OBSOLETEBzip2Data []byte `protobuf:"bytes,5,opt,name=OBSOLETE_bzip2_data" json:"OBSOLETE_bzip2_data"`
 }
 
 func (m *Blob) Reset()                    { *m = Blob{} }
@@ -71,8 +69,8 @@ func (m *Blob) GetRaw() []byte {
 }
 
 func (m *Blob) GetRawSize() int32 {
-	if m != nil && m.RawSize != nil {
-		return *m.RawSize
+	if m != nil {
+		return m.RawSize
 	}
 	return 0
 }
@@ -99,10 +97,9 @@ func (m *Blob) GetOBSOLETEBzip2Data() []byte {
 }
 
 type BlobHeader struct {
-	Type             *string `protobuf:"bytes,1,req,name=type" json:"type,omitempty"`
-	Indexdata        []byte  `protobuf:"bytes,2,opt,name=indexdata" json:"indexdata,omitempty"`
-	Datasize         *int32  `protobuf:"varint,3,req,name=datasize" json:"datasize,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	Type      string `protobuf:"bytes,1,req,name=type" json:"type"`
+	Indexdata []byte `protobuf:"bytes,2,opt,name=indexdata" json:"indexdata"`
+	Datasize  int32  `protobuf:"varint,3,req,name=datasize" json:"datasize"`
 }
 
 func (m *BlobHeader) Reset()                    { *m = BlobHeader{} }
@@ -111,8 +108,8 @@ func (*BlobHeader) ProtoMessage()               {}
 func (*BlobHeader) Descriptor() ([]byte, []int) { return fileDescriptorFileformat, []int{1} }
 
 func (m *BlobHeader) GetType() string {
-	if m != nil && m.Type != nil {
-		return *m.Type
+	if m != nil {
+		return m.Type
 	}
 	return ""
 }
@@ -125,8 +122,8 @@ func (m *BlobHeader) GetIndexdata() []byte {
 }
 
 func (m *BlobHeader) GetDatasize() int32 {
-	if m != nil && m.Datasize != nil {
-		return *m.Datasize
+	if m != nil {
+		return m.Datasize
 	}
 	return 0
 }
@@ -156,11 +153,9 @@ func (m *Blob) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintFileformat(data, i, uint64(len(m.Raw)))
 		i += copy(data[i:], m.Raw)
 	}
-	if m.RawSize != nil {
-		data[i] = 0x10
-		i++
-		i = encodeVarintFileformat(data, i, uint64(*m.RawSize))
-	}
+	data[i] = 0x10
+	i++
+	i = encodeVarintFileformat(data, i, uint64(m.RawSize))
 	if m.ZlibData != nil {
 		data[i] = 0x1a
 		i++
@@ -178,9 +173,6 @@ func (m *Blob) MarshalTo(data []byte) (int, error) {
 		i++
 		i = encodeVarintFileformat(data, i, uint64(len(m.OBSOLETEBzip2Data)))
 		i += copy(data[i:], m.OBSOLETEBzip2Data)
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -200,30 +192,19 @@ func (m *BlobHeader) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Type == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0xa
-		i++
-		i = encodeVarintFileformat(data, i, uint64(len(*m.Type)))
-		i += copy(data[i:], *m.Type)
-	}
+	data[i] = 0xa
+	i++
+	i = encodeVarintFileformat(data, i, uint64(len(m.Type)))
+	i += copy(data[i:], m.Type)
 	if m.Indexdata != nil {
 		data[i] = 0x12
 		i++
 		i = encodeVarintFileformat(data, i, uint64(len(m.Indexdata)))
 		i += copy(data[i:], m.Indexdata)
 	}
-	if m.Datasize == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x18
-		i++
-		i = encodeVarintFileformat(data, i, uint64(*m.Datasize))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
+	data[i] = 0x18
+	i++
+	i = encodeVarintFileformat(data, i, uint64(m.Datasize))
 	return i, nil
 }
 
@@ -261,9 +242,7 @@ func (m *Blob) Size() (n int) {
 		l = len(m.Raw)
 		n += 1 + l + sovFileformat(uint64(l))
 	}
-	if m.RawSize != nil {
-		n += 1 + sovFileformat(uint64(*m.RawSize))
-	}
+	n += 1 + sovFileformat(uint64(m.RawSize))
 	if m.ZlibData != nil {
 		l = len(m.ZlibData)
 		n += 1 + l + sovFileformat(uint64(l))
@@ -276,29 +255,19 @@ func (m *Blob) Size() (n int) {
 		l = len(m.OBSOLETEBzip2Data)
 		n += 1 + l + sovFileformat(uint64(l))
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
 	return n
 }
 
 func (m *BlobHeader) Size() (n int) {
 	var l int
 	_ = l
-	if m.Type != nil {
-		l = len(*m.Type)
-		n += 1 + l + sovFileformat(uint64(l))
-	}
+	l = len(m.Type)
+	n += 1 + l + sovFileformat(uint64(l))
 	if m.Indexdata != nil {
 		l = len(m.Indexdata)
 		n += 1 + l + sovFileformat(uint64(l))
 	}
-	if m.Datasize != nil {
-		n += 1 + sovFileformat(uint64(*m.Datasize))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
+	n += 1 + sovFileformat(uint64(m.Datasize))
 	return n
 }
 
@@ -379,7 +348,7 @@ func (m *Blob) Unmarshal(data []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RawSize", wireType)
 			}
-			var v int32
+			m.RawSize = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowFileformat
@@ -389,12 +358,11 @@ func (m *Blob) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int32(b) & 0x7F) << shift
+				m.RawSize |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.RawSize = &v
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ZlibData", wireType)
@@ -500,7 +468,6 @@ func (m *Blob) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -567,8 +534,7 @@ func (m *BlobHeader) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			s := string(data[iNdEx:postIndex])
-			m.Type = &s
+			m.Type = string(data[iNdEx:postIndex])
 			iNdEx = postIndex
 			hasFields[0] |= uint64(0x00000001)
 		case 2:
@@ -606,7 +572,7 @@ func (m *BlobHeader) Unmarshal(data []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Datasize", wireType)
 			}
-			var v int32
+			m.Datasize = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowFileformat
@@ -616,12 +582,11 @@ func (m *BlobHeader) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int32(b) & 0x7F) << shift
+				m.Datasize |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Datasize = &v
 			hasFields[0] |= uint64(0x00000002)
 		default:
 			iNdEx = preIndex
@@ -635,15 +600,14 @@ func (m *BlobHeader) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	}
 	if hasFields[0]&uint64(0x00000002) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("datasize")
 	}
 
 	if iNdEx > l {
@@ -759,19 +723,20 @@ var (
 func init() { proto.RegisterFile("fileformat.proto", fileDescriptorFileformat) }
 
 var fileDescriptorFileformat = []byte{
-	// 218 bytes of a gzipped FileDescriptorProto
+	// 237 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0x12, 0x48, 0xcb, 0xcc, 0x49,
 	0x4d, 0xcb, 0x2f, 0xca, 0x4d, 0x2c, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0xcb, 0x2f,
-	0xce, 0x2d, 0x48, 0x4a, 0x53, 0xca, 0xe1, 0x62, 0x71, 0xca, 0xc9, 0x4f, 0x12, 0xe2, 0xe6, 0x62,
-	0x2e, 0x4a, 0x2c, 0x97, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x11, 0x12, 0xe0, 0xe2, 0x00, 0x72, 0xe2,
-	0x8b, 0x33, 0xab, 0x52, 0x25, 0x98, 0x80, 0x22, 0xac, 0x42, 0x82, 0x5c, 0x9c, 0x55, 0x39, 0x99,
-	0x49, 0xf1, 0x29, 0x89, 0x25, 0x89, 0x12, 0xcc, 0x60, 0x45, 0x40, 0xa1, 0x9c, 0xaa, 0xdc, 0x44,
-	0x88, 0x10, 0x0b, 0x58, 0x48, 0x9e, 0x4b, 0xd8, 0xdf, 0x29, 0xd8, 0xdf, 0xc7, 0x35, 0xc4, 0x35,
-	0x3e, 0xa9, 0x2a, 0xb3, 0xc0, 0x08, 0x22, 0xc9, 0x0a, 0x92, 0x74, 0x62, 0x92, 0x60, 0x54, 0xb2,
-	0xe7, 0xe2, 0x02, 0xd9, 0xe6, 0x91, 0x9a, 0x98, 0x92, 0x5a, 0x24, 0xc4, 0xc3, 0xc5, 0x52, 0x52,
-	0x59, 0x90, 0x0a, 0xb4, 0x94, 0x49, 0x83, 0x13, 0x64, 0x5e, 0x66, 0x5e, 0x4a, 0x6a, 0x05, 0x58,
-	0x0b, 0x13, 0xcc, 0x1d, 0x20, 0x1e, 0xd8, 0x1d, 0xcc, 0x40, 0x45, 0xac, 0x4e, 0x8a, 0x27, 0x1e,
-	0xc9, 0x31, 0x5e, 0x00, 0xe2, 0x07, 0x40, 0x3c, 0xe3, 0xb1, 0x1c, 0x03, 0x17, 0x6f, 0x72, 0x51,
-	0x7e, 0x71, 0x52, 0xa5, 0x5e, 0x52, 0x66, 0x5e, 0x62, 0x51, 0xa5, 0x07, 0x33, 0x20, 0x00, 0x00,
-	0xff, 0xff, 0xe8, 0xdb, 0xa1, 0xf7, 0xec, 0x00, 0x00, 0x00,
+	0xce, 0x2d, 0x48, 0x4a, 0x53, 0xea, 0x60, 0xe4, 0x62, 0x71, 0xca, 0xc9, 0x4f, 0x12, 0x12, 0xe4,
+	0x62, 0x2e, 0x4a, 0x2c, 0x97, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x71, 0x62, 0x39, 0x71, 0x4f, 0x9e,
+	0x41, 0x48, 0x8c, 0x8b, 0xa3, 0x28, 0xb1, 0x3c, 0xbe, 0x38, 0xb3, 0x2a, 0x55, 0x82, 0x49, 0x81,
+	0x51, 0x83, 0x15, 0x2a, 0x2e, 0xce, 0xc5, 0x59, 0x95, 0x93, 0x99, 0x14, 0x9f, 0x92, 0x58, 0x92,
+	0x28, 0xc1, 0x8c, 0xa4, 0x41, 0x9c, 0x8b, 0x33, 0xa7, 0x2a, 0x37, 0x11, 0x22, 0xc1, 0x82, 0x24,
+	0xa1, 0xcc, 0x25, 0xec, 0xef, 0x14, 0xec, 0xef, 0xe3, 0x1a, 0xe2, 0x1a, 0x9f, 0x54, 0x95, 0x59,
+	0x60, 0x04, 0x51, 0xc2, 0x0a, 0x56, 0xc2, 0x06, 0x52, 0x22, 0xc1, 0xa8, 0x14, 0xc8, 0xc5, 0x05,
+	0x72, 0x89, 0x47, 0x6a, 0x62, 0x4a, 0x6a, 0x91, 0x90, 0x10, 0x17, 0x4b, 0x49, 0x65, 0x41, 0xaa,
+	0x04, 0xa3, 0x02, 0x93, 0x06, 0x27, 0xc2, 0xfc, 0xcc, 0xbc, 0x94, 0xd4, 0x0a, 0xb0, 0x66, 0x26,
+	0x54, 0x97, 0x82, 0xc4, 0xc0, 0x2e, 0x65, 0x56, 0x60, 0x82, 0xb9, 0xd4, 0x49, 0xf1, 0xc4, 0x23,
+	0x39, 0xc6, 0x0b, 0x8f, 0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf0, 0x58, 0x8e, 0x81, 0x8b,
+	0x37, 0xb9, 0x28, 0xbf, 0x38, 0xa9, 0x52, 0x2f, 0x29, 0x33, 0x2f, 0xb1, 0xa8, 0xd2, 0x83, 0x19,
+	0x10, 0x00, 0x00, 0xff, 0xff, 0x3c, 0x4a, 0x3b, 0x4c, 0x1b, 0x01, 0x00, 0x00,
 }
