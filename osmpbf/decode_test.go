@@ -232,6 +232,67 @@ func TestDecode(t *testing.T) {
 	}
 }
 
+func TestDecodeClose(t *testing.T) {
+	f, err := os.Open(Delaware)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer f.Close()
+
+	// should close at start
+	f.Seek(0, 0)
+	d := newDecoder(context.Background(), f)
+	d.Start(5)
+
+	err = d.Close()
+	if err != nil {
+		t.Errorf("close error: %v", err)
+	}
+
+	// should close after partial read
+	f.Seek(0, 0)
+	d = newDecoder(context.Background(), f)
+	d.Start(5)
+
+	d.Next()
+	d.Next()
+
+	err = d.Close()
+	if err != nil {
+		t.Errorf("close error: %v", err)
+	}
+
+	// should close after full read
+	f.Seek(0, 0)
+	d = newDecoder(context.Background(), f)
+	d.Start(5)
+
+	elements := 0
+	for {
+		_, err := d.Next()
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			t.Errorf("next error: %v", err)
+		}
+
+		elements++
+	}
+
+	if elements < 2 {
+		t.Errorf("did not read enough elements: %v", elements)
+	}
+
+	// should close at end of read
+	err = d.Close()
+	if err != nil {
+		t.Errorf("close error: %v", err)
+	}
+
+}
+
 func BenchmarkDecode(b *testing.B) {
 	f, err := os.Open(London)
 	if err != nil {
