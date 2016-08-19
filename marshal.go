@@ -3,7 +3,7 @@ package osm
 import (
 	"time"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
@@ -24,23 +24,23 @@ var memberTypeMapRev = map[osmpb.Relation_MemberType]MemberType{
 func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
 	keys, vals := node.Tags.keyValues(ss)
 	encoded := &osmpb.Node{
-		Id:   proto.Int64(int64(node.ID)),
+		Id:   int64(node.ID),
 		Keys: keys,
 		Vals: vals,
 		Info: &osmpb.Info{
-			Version:   proto.Int32(int32(node.Version)),
+			Version:   int32(node.Version),
 			Timestamp: timeToUnix(node.Timestamp),
 			Visible:   proto.Bool(node.Visible),
 		},
 		// geoToInt64
-		Lat: proto.Int64(geoToInt64(node.Lat)),
-		Lon: proto.Int64(geoToInt64(node.Lon)),
+		Lat: geoToInt64(node.Lat),
+		Lon: geoToInt64(node.Lon),
 	}
 
 	if includeChangeset {
-		encoded.Info.ChangesetId = proto.Int64(int64(node.ChangesetID))
-		encoded.Info.UserId = proto.Int32(int32(node.UserID))
-		encoded.Info.UserSid = proto.Uint32(ss.Add(node.User))
+		encoded.Info.ChangesetId = int64(node.ChangesetID)
+		encoded.Info.UserId = int32(node.UserID)
+		encoded.Info.UserSid = ss.Add(node.User)
 	}
 
 	return encoded
@@ -166,11 +166,11 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 	keys, vals := way.Tags.keyValues(ss)
 	encoded := &osmpb.Way{
-		Id:   proto.Int64(int64(way.ID)),
+		Id:   int64(way.ID),
 		Keys: keys,
 		Vals: vals,
 		Info: &osmpb.Info{
-			Version:   proto.Int32(int32(way.Version)),
+			Version:   int32(way.Version),
 			Timestamp: timeToUnix(way.Timestamp),
 			Visible:   proto.Bool(way.Visible),
 		},
@@ -178,9 +178,9 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 	}
 
 	if includeChangeset {
-		encoded.Info.ChangesetId = proto.Int64(int64(way.ChangesetID))
-		encoded.Info.UserId = proto.Int32(int32(way.UserID))
-		encoded.Info.UserSid = proto.Uint32(ss.Add(way.User))
+		encoded.Info.ChangesetId = int64(way.ChangesetID)
+		encoded.Info.UserId = int32(way.UserID)
+		encoded.Info.UserSid = ss.Add(way.User)
 	}
 
 	return encoded
@@ -228,11 +228,11 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 
 	keys, vals := relation.Tags.keyValues(ss)
 	encoded := &osmpb.Relation{
-		Id:   proto.Int64(int64(relation.ID)),
+		Id:   int64(relation.ID),
 		Keys: keys,
 		Vals: vals,
 		Info: &osmpb.Info{
-			Version:   proto.Int32(int32(relation.Version)),
+			Version:   int32(relation.Version),
 			Timestamp: timeToUnix(relation.Timestamp),
 			Visible:   proto.Bool(relation.Visible),
 		},
@@ -242,9 +242,9 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 	}
 
 	if includeChangeset {
-		encoded.Info.ChangesetId = proto.Int64(int64(relation.ChangesetID))
-		encoded.Info.UserId = proto.Int32(int32(relation.UserID))
-		encoded.Info.UserSid = proto.Uint32(ss.Add(relation.User))
+		encoded.Info.ChangesetId = int64(relation.ChangesetID)
+		encoded.Info.UserId = int32(relation.UserID)
+		encoded.Info.UserSid = ss.Add(relation.User)
 	}
 
 	return encoded
@@ -452,7 +452,16 @@ func geoToInt64(l float64) int64 {
 	return int64(l*locMultiple + sign)
 }
 
-func timeToUnix(t time.Time) *int64 {
+func timeToUnix(t time.Time) int64 {
+	u := t.Unix()
+	if u <= 0 {
+		return 0
+	}
+
+	return u
+}
+
+func timeToUnixPointer(t time.Time) *int64 {
 	u := t.Unix()
 	if u <= 0 {
 		return nil

@@ -3,7 +3,7 @@ package osm
 import (
 	"time"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
@@ -85,8 +85,8 @@ func (c *Changeset) Marshal() ([]byte, error) {
 		Keys:      keys,
 		Vals:      vals,
 		UserSid:   userSid,
-		CreatedAt: timeToUnix(c.CreatedAt),
-		ClosedAt:  timeToUnix(c.ClosedAt),
+		CreatedAt: timeToUnixPointer(c.CreatedAt),
+		ClosedAt:  timeToUnixPointer(c.ClosedAt),
 	}
 
 	// only set these values if they make any sense.
@@ -104,10 +104,10 @@ func (c *Changeset) Marshal() ([]byte, error) {
 
 	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLon != 0 || c.MaxLon != 0 {
 		encoded.Bounds = &osmpb.Bounds{
-			MinLat: proto.Int64(geoToInt64(c.MinLat)),
-			MaxLat: proto.Int64(geoToInt64(c.MaxLat)),
-			MinLon: proto.Int64(geoToInt64(c.MinLon)),
-			MaxLon: proto.Int64(geoToInt64(c.MaxLon)),
+			MinLat: geoToInt64(c.MinLat),
+			MaxLat: geoToInt64(c.MaxLat),
+			MinLon: geoToInt64(c.MinLon),
+			MaxLon: geoToInt64(c.MaxLon),
 		}
 	}
 

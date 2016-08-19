@@ -23,13 +23,13 @@
 */
 package osmpb
 
-import proto "github.com/golang/protobuf/proto"
+import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
-
-import github_com_golang_protobuf_proto "github.com/golang/protobuf/proto"
+import _ "github.com/gogo/protobuf/gogoproto"
 
 import io "io"
+import github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -40,7 +40,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type Relation_MemberType int32
 
@@ -93,8 +93,7 @@ type Changeset struct {
 	Change    *Change  `protobuf:"bytes,11,opt,name=change" json:"change,omitempty"`
 	// contains the tag strings for everything
 	// in this entire changeset.
-	Strings          []string `protobuf:"bytes,20,rep,name=strings" json:"strings,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Strings []string `protobuf:"bytes,20,rep,name=strings" json:"strings,omitempty"`
 }
 
 func (m *Changeset) Reset()                    { *m = Changeset{} }
@@ -180,11 +179,10 @@ func (m *Changeset) GetStrings() []string {
 }
 
 type Bounds struct {
-	MinLon           *int64 `protobuf:"zigzag64,1,req,name=min_lon" json:"min_lon,omitempty"`
-	MaxLon           *int64 `protobuf:"zigzag64,2,req,name=max_lon" json:"max_lon,omitempty"`
-	MinLat           *int64 `protobuf:"zigzag64,3,req,name=min_lat" json:"min_lat,omitempty"`
-	MaxLat           *int64 `protobuf:"zigzag64,4,req,name=max_lat" json:"max_lat,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
+	MinLon int64 `protobuf:"zigzag64,1,req,name=min_lon" json:"min_lon"`
+	MaxLon int64 `protobuf:"zigzag64,2,req,name=max_lon" json:"max_lon"`
+	MinLat int64 `protobuf:"zigzag64,3,req,name=min_lat" json:"min_lat"`
+	MaxLat int64 `protobuf:"zigzag64,4,req,name=max_lat" json:"max_lat"`
 }
 
 func (m *Bounds) Reset()                    { *m = Bounds{} }
@@ -193,29 +191,29 @@ func (*Bounds) ProtoMessage()               {}
 func (*Bounds) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{1} }
 
 func (m *Bounds) GetMinLon() int64 {
-	if m != nil && m.MinLon != nil {
-		return *m.MinLon
+	if m != nil {
+		return m.MinLon
 	}
 	return 0
 }
 
 func (m *Bounds) GetMaxLon() int64 {
-	if m != nil && m.MaxLon != nil {
-		return *m.MaxLon
+	if m != nil {
+		return m.MaxLon
 	}
 	return 0
 }
 
 func (m *Bounds) GetMinLat() int64 {
-	if m != nil && m.MinLat != nil {
-		return *m.MinLat
+	if m != nil {
+		return m.MinLat
 	}
 	return 0
 }
 
 func (m *Bounds) GetMaxLat() int64 {
-	if m != nil && m.MaxLat != nil {
-		return *m.MaxLat
+	if m != nil {
+		return m.MaxLat
 	}
 	return 0
 }
@@ -228,8 +226,7 @@ type Change struct {
 	// nodes of the ways, and previous versions.
 	Context *OSM `protobuf:"bytes,4,opt,name=context" json:"context,omitempty"`
 	// contains the tag strings if this is the root of the data.
-	Strings          []string `protobuf:"bytes,20,rep,name=strings" json:"strings,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Strings []string `protobuf:"bytes,20,rep,name=strings" json:"strings,omitempty"`
 }
 
 func (m *Change) Reset()                    { *m = Change{} }
@@ -274,8 +271,7 @@ func (m *Change) GetStrings() []string {
 
 type Tags struct {
 	// encoded as [key1, val1, key2, val2, etc.]
-	KeysVals         []string `protobuf:"bytes,1,rep,name=keys_vals" json:"keys_vals,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	KeysVals []string `protobuf:"bytes,1,rep,name=keys_vals" json:"keys_vals,omitempty"`
 }
 
 func (m *Tags) Reset()                    { *m = Tags{} }
@@ -298,8 +294,7 @@ type OSM struct {
 	Ways       []*Way      `protobuf:"bytes,4,rep,name=ways" json:"ways,omitempty"`
 	Relations  []*Relation `protobuf:"bytes,5,rep,name=relations" json:"relations,omitempty"`
 	// contains the tag strings if this is the root of the data.
-	Strings          []string `protobuf:"bytes,20,rep,name=strings" json:"strings,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Strings []string `protobuf:"bytes,20,rep,name=strings" json:"strings,omitempty"`
 }
 
 func (m *OSM) Reset()                    { *m = OSM{} }
@@ -350,14 +345,13 @@ func (m *OSM) GetStrings() []string {
 }
 
 type Node struct {
-	Id *int64 `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
+	Id int64 `protobuf:"varint,1,req,name=id" json:"id"`
 	// Parallel arrays.
-	Keys             []uint32 `protobuf:"varint,2,rep,packed,name=keys" json:"keys,omitempty"`
-	Vals             []uint32 `protobuf:"varint,3,rep,packed,name=vals" json:"vals,omitempty"`
-	Info             *Info    `protobuf:"bytes,4,opt,name=info" json:"info,omitempty"`
-	Lat              *int64   `protobuf:"zigzag64,8,req,name=lat" json:"lat,omitempty"`
-	Lon              *int64   `protobuf:"zigzag64,9,req,name=lon" json:"lon,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Keys []uint32 `protobuf:"varint,2,rep,packed,name=keys" json:"keys,omitempty"`
+	Vals []uint32 `protobuf:"varint,3,rep,packed,name=vals" json:"vals,omitempty"`
+	Info *Info    `protobuf:"bytes,4,opt,name=info" json:"info,omitempty"`
+	Lat  int64    `protobuf:"zigzag64,8,req,name=lat" json:"lat"`
+	Lon  int64    `protobuf:"zigzag64,9,req,name=lon" json:"lon"`
 }
 
 func (m *Node) Reset()                    { *m = Node{} }
@@ -366,8 +360,8 @@ func (*Node) ProtoMessage()               {}
 func (*Node) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{5} }
 
 func (m *Node) GetId() int64 {
-	if m != nil && m.Id != nil {
-		return *m.Id
+	if m != nil {
+		return m.Id
 	}
 	return 0
 }
@@ -394,34 +388,33 @@ func (m *Node) GetInfo() *Info {
 }
 
 func (m *Node) GetLat() int64 {
-	if m != nil && m.Lat != nil {
-		return *m.Lat
+	if m != nil {
+		return m.Lat
 	}
 	return 0
 }
 
 func (m *Node) GetLon() int64 {
-	if m != nil && m.Lon != nil {
-		return *m.Lon
+	if m != nil {
+		return m.Lon
 	}
 	return 0
 }
 
 type Info struct {
-	Version   *int32 `protobuf:"varint,1,opt,name=version" json:"version,omitempty"`
-	Timestamp *int64 `protobuf:"varint,2,opt,name=timestamp" json:"timestamp,omitempty"`
+	Version   int32 `protobuf:"varint,1,opt,name=version" json:"version"`
+	Timestamp int64 `protobuf:"varint,2,opt,name=timestamp" json:"timestamp"`
 	// these caan be omitted if the object represents one changeset
 	// since they will be all the same. However tests on 200k changesets
 	// show this saves about 17 bytes per changeset on average after gzip.
-	ChangesetId *int64  `protobuf:"varint,3,opt,name=changeset_id" json:"changeset_id,omitempty"`
-	UserId      *int32  `protobuf:"varint,4,opt,name=user_id" json:"user_id,omitempty"`
-	UserSid     *uint32 `protobuf:"varint,5,opt,name=user_sid" json:"user_sid,omitempty"`
+	ChangesetId int64  `protobuf:"varint,3,opt,name=changeset_id" json:"changeset_id"`
+	UserId      int32  `protobuf:"varint,4,opt,name=user_id" json:"user_id"`
+	UserSid     uint32 `protobuf:"varint,5,opt,name=user_sid" json:"user_sid"`
 	// The visible flag is used to store history information. It indicates that
 	// the current object version has been created by a delete operation on the
 	// OSM API. This info may be omitted if it can be inferred from its group
 	// ie. create, modify, delete.
-	Visible          *bool  `protobuf:"varint,6,opt,name=visible" json:"visible,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
+	Visible *bool `protobuf:"varint,6,opt,name=visible" json:"visible,omitempty"`
 }
 
 func (m *Info) Reset()                    { *m = Info{} }
@@ -430,36 +423,36 @@ func (*Info) ProtoMessage()               {}
 func (*Info) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{6} }
 
 func (m *Info) GetVersion() int32 {
-	if m != nil && m.Version != nil {
-		return *m.Version
+	if m != nil {
+		return m.Version
 	}
 	return 0
 }
 
 func (m *Info) GetTimestamp() int64 {
-	if m != nil && m.Timestamp != nil {
-		return *m.Timestamp
+	if m != nil {
+		return m.Timestamp
 	}
 	return 0
 }
 
 func (m *Info) GetChangesetId() int64 {
-	if m != nil && m.ChangesetId != nil {
-		return *m.ChangesetId
+	if m != nil {
+		return m.ChangesetId
 	}
 	return 0
 }
 
 func (m *Info) GetUserId() int32 {
-	if m != nil && m.UserId != nil {
-		return *m.UserId
+	if m != nil {
+		return m.UserId
 	}
 	return 0
 }
 
 func (m *Info) GetUserSid() uint32 {
-	if m != nil && m.UserSid != nil {
-		return *m.UserSid
+	if m != nil {
+		return m.UserSid
 	}
 	return 0
 }
@@ -481,8 +474,7 @@ type DenseNodes struct {
 	// begin. The storage pattern is: ((<keyid> <valid>)* '0' )* As an exception,
 	// if no node in the current block has any key/value pairs, this array does
 	// not contain any delimiters, but is simply empty.
-	KeysVals         []uint32 `protobuf:"varint,10,rep,packed,name=keys_vals" json:"keys_vals,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	KeysVals []uint32 `protobuf:"varint,10,rep,packed,name=keys_vals" json:"keys_vals,omitempty"`
 }
 
 func (m *DenseNodes) Reset()                    { *m = DenseNodes{} }
@@ -537,8 +529,7 @@ type DenseInfo struct {
 	// the current object version has been created by a delete operation on the
 	// OSM API. This info may be omitted if it can be inferred from it's group
 	// ie. create, modify, delete.
-	Visible          []bool `protobuf:"varint,6,rep,packed,name=visible" json:"visible,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
+	Visible []bool `protobuf:"varint,6,rep,packed,name=visible" json:"visible,omitempty"`
 }
 
 func (m *DenseInfo) Reset()                    { *m = DenseInfo{} }
@@ -589,13 +580,12 @@ func (m *DenseInfo) GetVisible() []bool {
 }
 
 type Way struct {
-	Id *int64 `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
+	Id int64 `protobuf:"varint,1,req,name=id" json:"id"`
 	// Parallel arrays.
-	Keys             []uint32 `protobuf:"varint,2,rep,packed,name=keys" json:"keys,omitempty"`
-	Vals             []uint32 `protobuf:"varint,3,rep,packed,name=vals" json:"vals,omitempty"`
-	Info             *Info    `protobuf:"bytes,4,opt,name=info" json:"info,omitempty"`
-	Refs             []int64  `protobuf:"zigzag64,8,rep,packed,name=refs" json:"refs,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	Keys []uint32 `protobuf:"varint,2,rep,packed,name=keys" json:"keys,omitempty"`
+	Vals []uint32 `protobuf:"varint,3,rep,packed,name=vals" json:"vals,omitempty"`
+	Info *Info    `protobuf:"bytes,4,opt,name=info" json:"info,omitempty"`
+	Refs []int64  `protobuf:"zigzag64,8,rep,packed,name=refs" json:"refs,omitempty"`
 }
 
 func (m *Way) Reset()                    { *m = Way{} }
@@ -604,8 +594,8 @@ func (*Way) ProtoMessage()               {}
 func (*Way) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{9} }
 
 func (m *Way) GetId() int64 {
-	if m != nil && m.Id != nil {
-		return *m.Id
+	if m != nil {
+		return m.Id
 	}
 	return 0
 }
@@ -639,7 +629,7 @@ func (m *Way) GetRefs() []int64 {
 }
 
 type Relation struct {
-	Id *int64 `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
+	Id int64 `protobuf:"varint,1,req,name=id" json:"id"`
 	// Parallel arrays.
 	Keys []uint32 `protobuf:"varint,2,rep,packed,name=keys" json:"keys,omitempty"`
 	Vals []uint32 `protobuf:"varint,3,rep,packed,name=vals" json:"vals,omitempty"`
@@ -647,10 +637,9 @@ type Relation struct {
 	// Parallel arrays
 	// Roles has been changed int32 -> uint32 form the osm proto,
 	// this is for consistency and backwards compatible.
-	Roles            []uint32              `protobuf:"varint,8,rep,packed,name=roles" json:"roles,omitempty"`
-	Refs             []int64               `protobuf:"zigzag64,9,rep,packed,name=refs" json:"refs,omitempty"`
-	Types            []Relation_MemberType `protobuf:"varint,10,rep,packed,name=types,enum=osm.Relation_MemberType" json:"types,omitempty"`
-	XXX_unrecognized []byte                `json:"-"`
+	Roles []uint32              `protobuf:"varint,8,rep,packed,name=roles" json:"roles,omitempty"`
+	Refs  []int64               `protobuf:"zigzag64,9,rep,packed,name=refs" json:"refs,omitempty"`
+	Types []Relation_MemberType `protobuf:"varint,10,rep,packed,name=types,enum=osm.Relation_MemberType" json:"types,omitempty"`
 }
 
 func (m *Relation) Reset()                    { *m = Relation{} }
@@ -659,8 +648,8 @@ func (*Relation) ProtoMessage()               {}
 func (*Relation) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{10} }
 
 func (m *Relation) GetId() int64 {
-	if m != nil && m.Id != nil {
-		return *m.Id
+	if m != nil {
+		return m.Id
 	}
 	return 0
 }
@@ -842,9 +831,6 @@ func (m *Changeset) MarshalTo(data []byte) (int, error) {
 			i += copy(data[i:], s)
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
 	return i, nil
 }
 
@@ -863,37 +849,18 @@ func (m *Bounds) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.MinLon == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x8
-		i++
-		i = encodeVarintOsm(data, i, uint64((uint64(*m.MinLon)<<1)^uint64((*m.MinLon>>63))))
-	}
-	if m.MaxLon == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x10
-		i++
-		i = encodeVarintOsm(data, i, uint64((uint64(*m.MaxLon)<<1)^uint64((*m.MaxLon>>63))))
-	}
-	if m.MinLat == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x18
-		i++
-		i = encodeVarintOsm(data, i, uint64((uint64(*m.MinLat)<<1)^uint64((*m.MinLat>>63))))
-	}
-	if m.MaxLat == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x20
-		i++
-		i = encodeVarintOsm(data, i, uint64((uint64(*m.MaxLat)<<1)^uint64((*m.MaxLat>>63))))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
+	data[i] = 0x8
+	i++
+	i = encodeVarintOsm(data, i, uint64((uint64(m.MinLon)<<1)^uint64((m.MinLon>>63))))
+	data[i] = 0x10
+	i++
+	i = encodeVarintOsm(data, i, uint64((uint64(m.MaxLon)<<1)^uint64((m.MaxLon>>63))))
+	data[i] = 0x18
+	i++
+	i = encodeVarintOsm(data, i, uint64((uint64(m.MinLat)<<1)^uint64((m.MinLat>>63))))
+	data[i] = 0x20
+	i++
+	i = encodeVarintOsm(data, i, uint64((uint64(m.MaxLat)<<1)^uint64((m.MaxLat>>63))))
 	return i, nil
 }
 
@@ -969,9 +936,6 @@ func (m *Change) MarshalTo(data []byte) (int, error) {
 			i += copy(data[i:], s)
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
 	return i, nil
 }
 
@@ -1004,9 +968,6 @@ func (m *Tags) MarshalTo(data []byte) (int, error) {
 			i++
 			i += copy(data[i:], s)
 		}
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1099,9 +1060,6 @@ func (m *OSM) MarshalTo(data []byte) (int, error) {
 			i += copy(data[i:], s)
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
 	return i, nil
 }
 
@@ -1120,13 +1078,9 @@ func (m *Node) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Id == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x8
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.Id))
-	}
+	data[i] = 0x8
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.Id))
 	if len(m.Keys) > 0 {
 		data14 := make([]byte, len(m.Keys)*10)
 		var j13 int
@@ -1171,23 +1125,12 @@ func (m *Node) MarshalTo(data []byte) (int, error) {
 		}
 		i += n17
 	}
-	if m.Lat == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x40
-		i++
-		i = encodeVarintOsm(data, i, uint64((uint64(*m.Lat)<<1)^uint64((*m.Lat>>63))))
-	}
-	if m.Lon == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x48
-		i++
-		i = encodeVarintOsm(data, i, uint64((uint64(*m.Lon)<<1)^uint64((*m.Lon>>63))))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
+	data[i] = 0x40
+	i++
+	i = encodeVarintOsm(data, i, uint64((uint64(m.Lat)<<1)^uint64((m.Lat>>63))))
+	data[i] = 0x48
+	i++
+	i = encodeVarintOsm(data, i, uint64((uint64(m.Lon)<<1)^uint64((m.Lon>>63))))
 	return i, nil
 }
 
@@ -1206,31 +1149,21 @@ func (m *Info) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Version != nil {
-		data[i] = 0x8
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.Version))
-	}
-	if m.Timestamp != nil {
-		data[i] = 0x10
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.Timestamp))
-	}
-	if m.ChangesetId != nil {
-		data[i] = 0x18
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.ChangesetId))
-	}
-	if m.UserId != nil {
-		data[i] = 0x20
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.UserId))
-	}
-	if m.UserSid != nil {
-		data[i] = 0x28
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.UserSid))
-	}
+	data[i] = 0x8
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.Version))
+	data[i] = 0x10
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.Timestamp))
+	data[i] = 0x18
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.ChangesetId))
+	data[i] = 0x20
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.UserId))
+	data[i] = 0x28
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.UserSid))
 	if m.Visible != nil {
 		data[i] = 0x30
 		i++
@@ -1240,9 +1173,6 @@ func (m *Info) MarshalTo(data []byte) (int, error) {
 			data[i] = 0
 		}
 		i++
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1342,9 +1272,6 @@ func (m *DenseNodes) MarshalTo(data []byte) (int, error) {
 		i++
 		i = encodeVarintOsm(data, i, uint64(j28))
 		i += copy(data[i:], data29[:j28])
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
 	}
 	return i, nil
 }
@@ -1467,9 +1394,6 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 			i++
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
 	return i, nil
 }
 
@@ -1488,13 +1412,9 @@ func (m *Way) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Id == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x8
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.Id))
-	}
+	data[i] = 0x8
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.Id))
 	if len(m.Keys) > 0 {
 		data45 := make([]byte, len(m.Keys)*10)
 		var j44 int
@@ -1557,9 +1477,6 @@ func (m *Way) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j49))
 		i += copy(data[i:], data51[:j49])
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
 	return i, nil
 }
 
@@ -1578,13 +1495,9 @@ func (m *Relation) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Id == nil {
-		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
-	} else {
-		data[i] = 0x8
-		i++
-		i = encodeVarintOsm(data, i, uint64(*m.Id))
-	}
+	data[i] = 0x8
+	i++
+	i = encodeVarintOsm(data, i, uint64(m.Id))
 	if len(m.Keys) > 0 {
 		data53 := make([]byte, len(m.Keys)*10)
 		var j52 int
@@ -1681,9 +1594,6 @@ func (m *Relation) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j62))
 		i += copy(data[i:], data63[:j62])
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(data[i:], m.XXX_unrecognized)
-	}
 	return i, nil
 }
 
@@ -1763,30 +1673,16 @@ func (m *Changeset) Size() (n int) {
 			n += 2 + l + sovOsm(uint64(l))
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
 	return n
 }
 
 func (m *Bounds) Size() (n int) {
 	var l int
 	_ = l
-	if m.MinLon != nil {
-		n += 1 + sozOsm(uint64(*m.MinLon))
-	}
-	if m.MaxLon != nil {
-		n += 1 + sozOsm(uint64(*m.MaxLon))
-	}
-	if m.MinLat != nil {
-		n += 1 + sozOsm(uint64(*m.MinLat))
-	}
-	if m.MaxLat != nil {
-		n += 1 + sozOsm(uint64(*m.MaxLat))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
+	n += 1 + sozOsm(uint64(m.MinLon))
+	n += 1 + sozOsm(uint64(m.MaxLon))
+	n += 1 + sozOsm(uint64(m.MinLat))
+	n += 1 + sozOsm(uint64(m.MaxLat))
 	return n
 }
 
@@ -1815,9 +1711,6 @@ func (m *Change) Size() (n int) {
 			n += 2 + l + sovOsm(uint64(l))
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
 	return n
 }
 
@@ -1829,9 +1722,6 @@ func (m *Tags) Size() (n int) {
 			l = len(s)
 			n += 1 + l + sovOsm(uint64(l))
 		}
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1871,18 +1761,13 @@ func (m *OSM) Size() (n int) {
 			n += 2 + l + sovOsm(uint64(l))
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
 	return n
 }
 
 func (m *Node) Size() (n int) {
 	var l int
 	_ = l
-	if m.Id != nil {
-		n += 1 + sovOsm(uint64(*m.Id))
-	}
+	n += 1 + sovOsm(uint64(m.Id))
 	if len(m.Keys) > 0 {
 		l = 0
 		for _, e := range m.Keys {
@@ -1901,41 +1786,21 @@ func (m *Node) Size() (n int) {
 		l = m.Info.Size()
 		n += 1 + l + sovOsm(uint64(l))
 	}
-	if m.Lat != nil {
-		n += 1 + sozOsm(uint64(*m.Lat))
-	}
-	if m.Lon != nil {
-		n += 1 + sozOsm(uint64(*m.Lon))
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
+	n += 1 + sozOsm(uint64(m.Lat))
+	n += 1 + sozOsm(uint64(m.Lon))
 	return n
 }
 
 func (m *Info) Size() (n int) {
 	var l int
 	_ = l
-	if m.Version != nil {
-		n += 1 + sovOsm(uint64(*m.Version))
-	}
-	if m.Timestamp != nil {
-		n += 1 + sovOsm(uint64(*m.Timestamp))
-	}
-	if m.ChangesetId != nil {
-		n += 1 + sovOsm(uint64(*m.ChangesetId))
-	}
-	if m.UserId != nil {
-		n += 1 + sovOsm(uint64(*m.UserId))
-	}
-	if m.UserSid != nil {
-		n += 1 + sovOsm(uint64(*m.UserSid))
-	}
+	n += 1 + sovOsm(uint64(m.Version))
+	n += 1 + sovOsm(uint64(m.Timestamp))
+	n += 1 + sovOsm(uint64(m.ChangesetId))
+	n += 1 + sovOsm(uint64(m.UserId))
+	n += 1 + sovOsm(uint64(m.UserSid))
 	if m.Visible != nil {
 		n += 2
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1974,9 +1839,6 @@ func (m *DenseNodes) Size() (n int) {
 			l += sovOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -2022,18 +1884,13 @@ func (m *DenseInfo) Size() (n int) {
 	if len(m.Visible) > 0 {
 		n += 1 + sovOsm(uint64(len(m.Visible))) + len(m.Visible)*1
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
 	return n
 }
 
 func (m *Way) Size() (n int) {
 	var l int
 	_ = l
-	if m.Id != nil {
-		n += 1 + sovOsm(uint64(*m.Id))
-	}
+	n += 1 + sovOsm(uint64(m.Id))
 	if len(m.Keys) > 0 {
 		l = 0
 		for _, e := range m.Keys {
@@ -2059,18 +1916,13 @@ func (m *Way) Size() (n int) {
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
-	}
 	return n
 }
 
 func (m *Relation) Size() (n int) {
 	var l int
 	_ = l
-	if m.Id != nil {
-		n += 1 + sovOsm(uint64(*m.Id))
-	}
+	n += 1 + sovOsm(uint64(m.Id))
 	if len(m.Keys) > 0 {
 		l = 0
 		for _, e := range m.Keys {
@@ -2109,9 +1961,6 @@ func (m *Relation) Size() (n int) {
 			l += sovOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
-	}
-	if m.XXX_unrecognized != nil {
-		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -2510,7 +2359,6 @@ func (m *Changeset) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2570,8 +2418,7 @@ func (m *Bounds) Unmarshal(data []byte) error {
 				}
 			}
 			v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-			v2 := int64(v)
-			m.MinLon = &v2
+			m.MinLon = int64(v)
 			hasFields[0] |= uint64(0x00000001)
 		case 2:
 			if wireType != 0 {
@@ -2593,8 +2440,7 @@ func (m *Bounds) Unmarshal(data []byte) error {
 				}
 			}
 			v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-			v2 := int64(v)
-			m.MaxLon = &v2
+			m.MaxLon = int64(v)
 			hasFields[0] |= uint64(0x00000002)
 		case 3:
 			if wireType != 0 {
@@ -2616,8 +2462,7 @@ func (m *Bounds) Unmarshal(data []byte) error {
 				}
 			}
 			v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-			v2 := int64(v)
-			m.MinLat = &v2
+			m.MinLat = int64(v)
 			hasFields[0] |= uint64(0x00000004)
 		case 4:
 			if wireType != 0 {
@@ -2639,8 +2484,7 @@ func (m *Bounds) Unmarshal(data []byte) error {
 				}
 			}
 			v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-			v2 := int64(v)
-			m.MaxLat = &v2
+			m.MaxLat = int64(v)
 			hasFields[0] |= uint64(0x00000008)
 		default:
 			iNdEx = preIndex
@@ -2654,21 +2498,20 @@ func (m *Bounds) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("min_lon")
 	}
 	if hasFields[0]&uint64(0x00000002) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("max_lon")
 	}
 	if hasFields[0]&uint64(0x00000004) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("min_lat")
 	}
 	if hasFields[0]&uint64(0x00000008) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("max_lat")
 	}
 
 	if iNdEx > l {
@@ -2878,7 +2721,6 @@ func (m *Change) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2958,7 +2800,6 @@ func (m *Tags) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -3197,7 +3038,6 @@ func (m *OSM) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -3241,7 +3081,7 @@ func (m *Node) Unmarshal(data []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var v int64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -3251,12 +3091,11 @@ func (m *Node) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Id = &v
 			hasFields[0] |= uint64(0x00000001)
 		case 2:
 			if wireType == 2 {
@@ -3435,8 +3274,7 @@ func (m *Node) Unmarshal(data []byte) error {
 				}
 			}
 			v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-			v2 := int64(v)
-			m.Lat = &v2
+			m.Lat = int64(v)
 			hasFields[0] |= uint64(0x00000002)
 		case 9:
 			if wireType != 0 {
@@ -3458,8 +3296,7 @@ func (m *Node) Unmarshal(data []byte) error {
 				}
 			}
 			v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-			v2 := int64(v)
-			m.Lon = &v2
+			m.Lon = int64(v)
 			hasFields[0] |= uint64(0x00000004)
 		default:
 			iNdEx = preIndex
@@ -3473,18 +3310,17 @@ func (m *Node) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	}
 	if hasFields[0]&uint64(0x00000002) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("lat")
 	}
 	if hasFields[0]&uint64(0x00000004) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("lon")
 	}
 
 	if iNdEx > l {
@@ -3525,7 +3361,7 @@ func (m *Info) Unmarshal(data []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
 			}
-			var v int32
+			m.Version = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -3535,17 +3371,16 @@ func (m *Info) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int32(b) & 0x7F) << shift
+				m.Version |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Version = &v
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
 			}
-			var v int64
+			m.Timestamp = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -3555,17 +3390,16 @@ func (m *Info) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				m.Timestamp |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Timestamp = &v
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ChangesetId", wireType)
 			}
-			var v int64
+			m.ChangesetId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -3575,17 +3409,16 @@ func (m *Info) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				m.ChangesetId |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.ChangesetId = &v
 		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
 			}
-			var v int32
+			m.UserId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -3595,17 +3428,16 @@ func (m *Info) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int32(b) & 0x7F) << shift
+				m.UserId |= (int32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.UserId = &v
 		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserSid", wireType)
 			}
-			var v uint32
+			m.UserSid = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -3615,12 +3447,11 @@ func (m *Info) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (uint32(b) & 0x7F) << shift
+				m.UserSid |= (uint32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.UserSid = &v
 		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Visible", wireType)
@@ -3654,7 +3485,6 @@ func (m *Info) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -3992,7 +3822,6 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -4423,7 +4252,6 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -4467,7 +4295,7 @@ func (m *Way) Unmarshal(data []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var v int64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -4477,12 +4305,11 @@ func (m *Way) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Id = &v
 			hasFields[0] |= uint64(0x00000001)
 		case 2:
 			if wireType == 2 {
@@ -4717,12 +4544,11 @@ func (m *Way) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	}
 
 	if iNdEx > l {
@@ -4764,7 +4590,7 @@ func (m *Relation) Unmarshal(data []byte) error {
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var v int64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowOsm
@@ -4774,12 +4600,11 @@ func (m *Relation) Unmarshal(data []byte) error {
 				}
 				b := data[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			m.Id = &v
 			hasFields[0] |= uint64(0x00000001)
 		case 2:
 			if wireType == 2 {
@@ -5138,12 +4963,11 @@ func (m *Relation) Unmarshal(data []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.XXX_unrecognized = append(m.XXX_unrecognized, data[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	}
 
 	if iNdEx > l {
@@ -5259,48 +5083,52 @@ var (
 func init() { proto.RegisterFile("osm.proto", fileDescriptorOsm) }
 
 var fileDescriptorOsm = []byte{
-	// 680 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x53, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0xae, 0xbd, 0x76, 0x62, 0x8f, 0xfb, 0x93, 0x6e, 0x0b, 0xdd, 0x0a, 0xa9, 0xaa, 0x2c, 0x0e,
-	0x96, 0x10, 0x3d, 0xe4, 0x0d, 0x5a, 0xda, 0x43, 0xa5, 0xfe, 0x48, 0x50, 0x09, 0xc1, 0x25, 0x38,
-	0xf1, 0xb6, 0x58, 0x38, 0xde, 0xc8, 0xeb, 0x96, 0xe6, 0xca, 0x1b, 0x70, 0xe3, 0x25, 0x78, 0x0f,
-	0x8e, 0x1c, 0x38, 0x23, 0x04, 0x2f, 0xc2, 0xec, 0xd8, 0x4e, 0x1c, 0x72, 0xe1, 0xd0, 0x43, 0xa4,
-	0xf8, 0xfb, 0x76, 0x66, 0xe7, 0xfb, 0xe6, 0x5b, 0xf0, 0x95, 0x1e, 0x1f, 0x4c, 0x0a, 0x55, 0x2a,
-	0xce, 0xf0, 0x6f, 0xf8, 0xd3, 0x02, 0xff, 0xc5, 0xfb, 0x38, 0xbf, 0x91, 0x5a, 0x96, 0x1c, 0xc0,
-	0x4e, 0x13, 0x61, 0xed, 0x5b, 0x11, 0xe3, 0x3d, 0x70, 0x3e, 0xc8, 0xa9, 0x16, 0xf6, 0x3e, 0x8b,
-	0xd6, 0x8e, 0xec, 0x9e, 0x65, 0x90, 0xbb, 0x38, 0xd3, 0x82, 0xcd, 0x90, 0x0d, 0xe8, 0xde, 0x6a,
-	0x59, 0x0c, 0xb0, 0xc8, 0xc5, 0x22, 0x17, 0x8f, 0x78, 0x04, 0x68, 0x44, 0x3a, 0x88, 0xac, 0x71,
-	0xec, 0x39, 0x2a, 0x64, 0x5c, 0xca, 0x64, 0x10, 0x97, 0xa2, 0x4b, 0xad, 0x37, 0xc1, 0x1f, 0x65,
-	0x4a, 0x57, 0x90, 0x47, 0xd0, 0x2a, 0x38, 0x6a, 0x22, 0x73, 0xe1, 0xe3, 0x97, 0xc7, 0x9f, 0x40,
-	0x67, 0xa8, 0x6e, 0xf3, 0x44, 0x0b, 0xc0, 0xef, 0xa0, 0x1f, 0x1c, 0x98, 0xb1, 0x8f, 0x08, 0x32,
-	0xe4, 0x88, 0x26, 0x16, 0x41, 0x8b, 0xac, 0x44, 0x98, 0x89, 0x74, 0x59, 0xa4, 0xf9, 0x8d, 0x16,
-	0xdb, 0x38, 0xa6, 0x1f, 0x9e, 0x41, 0xa7, 0xae, 0x43, 0x6a, 0x9c, 0xe6, 0x83, 0x4c, 0xe5, 0xa8,
-	0xd0, 0x8e, 0x38, 0x01, 0xf1, 0x3d, 0x01, 0xf6, 0x0c, 0x30, 0x27, 0x70, 0x2a, 0xb6, 0x70, 0x02,
-	0x01, 0xc7, 0x00, 0xe1, 0x27, 0x0b, 0x3a, 0xf5, 0x4d, 0x02, 0xc7, 0x20, 0x61, 0xe4, 0x57, 0xd0,
-	0xf7, 0x68, 0x8c, 0xcb, 0x57, 0xe7, 0x86, 0x19, 0xab, 0x24, 0xbd, 0x9e, 0x62, 0xdb, 0x25, 0x26,
-	0x91, 0x99, 0xc4, 0x1a, 0xf6, 0x0f, 0xb3, 0x0b, 0xdd, 0x91, 0xca, 0x4b, 0x79, 0x6f, 0x6e, 0x5a,
-	0xa4, 0x96, 0x24, 0xed, 0x82, 0x73, 0x15, 0xdf, 0x68, 0x63, 0xa3, 0xd9, 0xd0, 0x80, 0x96, 0x62,
-	0x11, 0xf5, 0xd5, 0x02, 0x66, 0x6a, 0xe6, 0x06, 0x5a, 0xcb, 0x06, 0x0a, 0x70, 0x73, 0x95, 0xc8,
-	0x6a, 0xb5, 0x41, 0xdf, 0x27, 0xee, 0x02, 0x11, 0xfe, 0x14, 0x82, 0x44, 0xe6, 0x5a, 0x0e, 0x2a,
-	0xbe, 0x1a, 0x72, 0x83, 0xf8, 0x63, 0x83, 0x9b, 0x43, 0x9a, 0x3f, 0x06, 0xe7, 0x63, 0x8c, 0xc9,
-	0x70, 0xa8, 0xbc, 0x1a, 0xf4, 0x75, 0x3c, 0xe5, 0xfb, 0xe0, 0x17, 0x12, 0xbd, 0x4a, 0x55, 0xae,
-	0x31, 0x0f, 0x86, 0x5c, 0x23, 0xf2, 0x65, 0x8d, 0x2e, 0x4b, 0x49, 0xc1, 0xa1, 0x8b, 0x9b, 0xe0,
-	0xd9, 0xff, 0x19, 0xbc, 0x1d, 0x70, 0xd2, 0xfc, 0x5a, 0xd5, 0x5e, 0x55, 0x0a, 0x4e, 0x11, 0xe0,
-	0x01, 0xb0, 0x8c, 0x42, 0x65, 0xd6, 0x67, 0x3e, 0x94, 0xc9, 0x94, 0x59, 0x5d, 0x09, 0x0e, 0x9d,
-	0xc0, 0x19, 0xee, 0x64, 0xa1, 0x53, 0x8a, 0x81, 0xc9, 0x2c, 0xda, 0x58, 0xa6, 0x63, 0xa9, 0xcb,
-	0x78, 0x3c, 0xa1, 0x8d, 0x31, 0xbe, 0x0d, 0xab, 0xa3, 0xe6, 0x51, 0x98, 0x70, 0x33, 0x42, 0x5b,
-	0x69, 0x77, 0x96, 0xd2, 0xee, 0x52, 0xda, 0x4d, 0xf3, 0x54, 0xa7, 0xc3, 0x4c, 0x52, 0xfc, 0xbd,
-	0x70, 0x0a, 0xd0, 0x72, 0x6e, 0xbd, 0x96, 0xc9, 0x22, 0x4e, 0x32, 0x42, 0x80, 0xca, 0x6f, 0x12,
-	0xe3, 0x92, 0x98, 0xf5, 0xb9, 0xdd, 0xf5, 0xbc, 0xb5, 0xa2, 0xa6, 0x68, 0xa3, 0x51, 0xd5, 0x00,
-	0x8f, 0xda, 0x39, 0x80, 0xc6, 0xa3, 0xf0, 0x33, 0x3e, 0xed, 0x79, 0x9b, 0xad, 0xb6, 0x6c, 0x16,
-	0xb9, 0x4d, 0x65, 0x5b, 0x7a, 0xd3, 0x50, 0x2c, 0xc9, 0x6f, 0x98, 0xad, 0xb6, 0x05, 0x2c, 0xda,
-	0x24, 0x70, 0x7b, 0xc1, 0x86, 0x06, 0xdd, 0x6a, 0x5b, 0xc1, 0x22, 0x8f, 0x66, 0x7a, 0x07, 0xcc,
-	0x24, 0xe5, 0xc1, 0xd6, 0x8d, 0x47, 0x0b, 0x79, 0xad, 0xe7, 0xee, 0x84, 0x3f, 0x2c, 0xf0, 0x66,
-	0x79, 0x7b, 0xb0, 0x7b, 0x36, 0xc1, 0x2d, 0x54, 0x26, 0xab, 0x8b, 0x66, 0xd5, 0x74, 0xf5, 0x7c,
-	0x0f, 0xcf, 0xc0, 0x2d, 0xa7, 0x13, 0x59, 0xed, 0x60, 0xbd, 0x2f, 0x16, 0xb2, 0x7f, 0x70, 0x2e,
-	0xc7, 0x43, 0x59, 0x5c, 0xe1, 0x01, 0x9a, 0xf3, 0x39, 0xc0, 0x1c, 0xe1, 0x1e, 0xbe, 0x83, 0xcb,
-	0xe3, 0x93, 0xde, 0x0a, 0xef, 0xa2, 0x43, 0x87, 0x6f, 0xb0, 0xdb, 0x2a, 0xea, 0x38, 0x39, 0x3b,
-	0xbc, 0x3a, 0xbd, 0xbc, 0xe8, 0xd9, 0x47, 0x3b, 0xdf, 0x7e, 0xef, 0x59, 0xdf, 0xf1, 0xf7, 0x0b,
-	0x7f, 0x5f, 0xfe, 0xec, 0xad, 0xbc, 0x75, 0xb1, 0xfb, 0x64, 0xf8, 0x37, 0x00, 0x00, 0xff, 0xff,
-	0x51, 0xfc, 0xd9, 0xac, 0xd1, 0x05, 0x00, 0x00,
+	// 748 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x53, 0xc1, 0x4e, 0xe3, 0x48,
+	0x10, 0x4d, 0xbb, 0xed, 0xc4, 0xae, 0x00, 0x09, 0x0d, 0x81, 0x86, 0x95, 0xb2, 0x56, 0xb4, 0x07,
+	0x4b, 0x2b, 0x82, 0x94, 0x3f, 0x20, 0x0b, 0x07, 0xa4, 0x05, 0x24, 0x16, 0x09, 0xed, 0x5e, 0x22,
+	0x27, 0xee, 0x04, 0x6b, 0x6d, 0x77, 0xe4, 0x76, 0x58, 0xa2, 0xbd, 0xf1, 0x05, 0x33, 0xb7, 0xf9,
+	0x89, 0xf9, 0x0f, 0x8e, 0x73, 0x9e, 0xc3, 0x68, 0xc4, 0xfc, 0xc8, 0xc8, 0x65, 0x3b, 0x36, 0x64,
+	0x0e, 0x73, 0xe0, 0x66, 0xbf, 0x57, 0xd5, 0x55, 0xf5, 0xea, 0x15, 0x58, 0x52, 0x85, 0xfd, 0x79,
+	0x2c, 0x13, 0xc9, 0xa8, 0x54, 0xe1, 0xe1, 0xd1, 0xcc, 0x4f, 0xee, 0x16, 0xe3, 0xfe, 0x44, 0x86,
+	0xc7, 0x33, 0x39, 0x93, 0xc7, 0xc8, 0x8d, 0x17, 0x53, 0xfc, 0xc3, 0x1f, 0xfc, 0xca, 0x72, 0x7a,
+	0x8f, 0x1a, 0x58, 0x7f, 0xdc, 0xb9, 0xd1, 0x4c, 0x28, 0x91, 0xb0, 0x36, 0x68, 0xbe, 0xc7, 0x89,
+	0x4d, 0x1c, 0x3a, 0xd4, 0x9f, 0xbe, 0xfc, 0x4a, 0x58, 0x1b, 0xf4, 0x7f, 0xc5, 0x52, 0x71, 0xcd,
+	0xa6, 0xce, 0xe6, 0x50, 0x6b, 0x23, 0x72, 0xef, 0x06, 0x8a, 0xd3, 0x15, 0xd2, 0x81, 0xc6, 0x42,
+	0x89, 0x78, 0xe4, 0x7b, 0xdc, 0xb0, 0x89, 0x63, 0xe4, 0xa9, 0x7b, 0x60, 0x22, 0xac, 0x7c, 0x8f,
+	0xd7, 0x6d, 0xe2, 0x6c, 0xe6, 0x38, 0x07, 0x98, 0xc4, 0xc2, 0x4d, 0x84, 0x37, 0x72, 0x13, 0xde,
+	0xa8, 0x14, 0xdb, 0x07, 0x6b, 0x12, 0x48, 0x95, 0x11, 0x66, 0x85, 0x60, 0xa0, 0xcb, 0xb9, 0x88,
+	0xb8, 0x65, 0x13, 0xc7, 0xcc, 0xb1, 0x5f, 0xa0, 0x3e, 0x96, 0x8b, 0xc8, 0x53, 0x1c, 0x6c, 0xe2,
+	0x34, 0x07, 0xcd, 0x7e, 0xaa, 0xc4, 0x10, 0xa1, 0x94, 0x9c, 0xe0, 0x54, 0xbc, 0x59, 0x21, 0xb3,
+	0x41, 0x59, 0x0b, 0x1a, 0x2a, 0x89, 0xfd, 0x68, 0xa6, 0xf8, 0xae, 0x4d, 0x1d, 0xab, 0xe7, 0x41,
+	0x3d, 0xcf, 0xeb, 0x40, 0x23, 0xf4, 0xa3, 0x51, 0x20, 0x23, 0x4e, 0x6c, 0xcd, 0x61, 0x58, 0xab,
+	0x86, 0xb0, 0xfb, 0x80, 0xb0, 0xf6, 0x0a, 0x4e, 0xa3, 0xdd, 0x84, 0xd3, 0x1f, 0x44, 0xbb, 0x09,
+	0xd7, 0x4b, 0xb8, 0xf7, 0x48, 0xa0, 0x9e, 0x77, 0xc0, 0xa1, 0x9e, 0x49, 0x80, 0x5a, 0x37, 0x07,
+	0x26, 0xb6, 0x77, 0xf5, 0xd7, 0x45, 0xca, 0x84, 0xd2, 0xf3, 0xa7, 0x4b, 0xae, 0xad, 0x33, 0x9e,
+	0x08, 0x44, 0x22, 0x38, 0x7d, 0xc5, 0x1c, 0x40, 0x63, 0x22, 0xa3, 0x44, 0x3c, 0xa4, 0xf5, 0x5e,
+	0x52, 0x6b, 0xa3, 0x1e, 0x80, 0x7e, 0xe3, 0xce, 0x14, 0xdb, 0x06, 0x2b, 0xdd, 0xeb, 0x08, 0x57,
+	0x49, 0x90, 0xfa, 0x48, 0x80, 0xa6, 0x39, 0xa5, 0xb0, 0x64, 0x5d, 0x58, 0x0e, 0x46, 0x24, 0x3d,
+	0x91, 0x19, 0xa2, 0x39, 0xb0, 0x90, 0xbb, 0x94, 0x9e, 0x60, 0xbf, 0x41, 0xd3, 0x13, 0x91, 0x12,
+	0xa3, 0x8c, 0xcf, 0x9a, 0x6c, 0x21, 0x7f, 0x9a, 0xe2, 0x69, 0x90, 0x62, 0x7b, 0xa0, 0xff, 0xe7,
+	0x2e, 0x15, 0xd7, 0x31, 0x3d, 0x6b, 0xf4, 0xd6, 0x5d, 0x32, 0x1b, 0xac, 0x58, 0x04, 0x6e, 0xe2,
+	0xcb, 0x48, 0x71, 0x03, 0xc9, 0x4d, 0x24, 0xaf, 0x73, 0x74, 0x7d, 0x94, 0xff, 0x41, 0xc7, 0xc2,
+	0x85, 0x69, 0xb5, 0xdc, 0x2e, 0xb5, 0x9f, 0x32, 0xed, 0x3e, 0xe8, 0x7e, 0x34, 0x95, 0xb9, 0x62,
+	0xd9, 0x1c, 0xe7, 0xd1, 0x54, 0xb2, 0x6d, 0xa0, 0x01, 0xda, 0xaf, 0x5c, 0x68, 0x0a, 0xc9, 0xd4,
+	0x7d, 0xe5, 0x32, 0x3f, 0x10, 0xd0, 0x31, 0xbc, 0x03, 0x8d, 0x7b, 0x11, 0x2b, 0x1f, 0x1d, 0x53,
+	0x98, 0xbf, 0x96, 0x5a, 0x39, 0xf1, 0x43, 0xa1, 0x12, 0x37, 0x9c, 0xe3, 0x2a, 0x8b, 0xde, 0x0e,
+	0x61, 0x63, 0x52, 0xdc, 0x5b, 0x7a, 0x31, 0xb4, 0xc2, 0x55, 0x0e, 0x49, 0xaf, 0xbc, 0x55, 0x3d,
+	0x24, 0x63, 0x75, 0x48, 0x18, 0x7e, 0xef, 0x2b, 0x7f, 0x1c, 0x08, 0xbc, 0xaf, 0xfc, 0x30, 0x7a,
+	0x4b, 0x80, 0x8a, 0xe0, 0x5b, 0xb9, 0x3a, 0xd4, 0x61, 0x38, 0x77, 0x0f, 0x20, 0x5b, 0x13, 0x4e,
+	0x6f, 0xe0, 0xf4, 0x5b, 0xe5, 0x96, 0x70, 0xa6, 0x56, 0x21, 0x41, 0x91, 0xd4, 0x2a, 0x04, 0x28,
+	0x80, 0x4e, 0xd5, 0x3e, 0x50, 0x88, 0xda, 0x7b, 0x4f, 0xc0, 0x2a, 0x9f, 0xd9, 0xa9, 0x4a, 0x43,
+	0x1d, 0xa3, 0xc8, 0xac, 0x0a, 0x53, 0x3c, 0xc8, 0xd7, 0x64, 0x29, 0x98, 0x9d, 0xaa, 0x28, 0xd4,
+	0xd9, 0x46, 0x70, 0xf7, 0x85, 0x24, 0x05, 0xba, 0x53, 0x15, 0x84, 0x3a, 0x26, 0xf6, 0x34, 0x05,
+	0x9a, 0x1a, 0xec, 0x8d, 0x5d, 0xd2, 0x06, 0x3d, 0x16, 0x53, 0x55, 0x6a, 0xd4, 0xfb, 0x4c, 0xc0,
+	0x5c, 0x99, 0xf5, 0xcd, 0x3d, 0x69, 0xc4, 0x32, 0x10, 0x59, 0xb9, 0x55, 0x36, 0x36, 0x50, 0xee,
+	0xe4, 0x77, 0x30, 0x92, 0xe5, 0x5c, 0x64, 0xfb, 0xd8, 0x1a, 0xf0, 0x17, 0xe7, 0xd3, 0xbf, 0x10,
+	0xe1, 0x58, 0xc4, 0x37, 0xcb, 0xb9, 0xc0, 0x6e, 0x8f, 0x00, 0x4a, 0x84, 0x99, 0xa0, 0x5f, 0x5e,
+	0x9d, 0x9e, 0xb5, 0x6b, 0xac, 0x01, 0xf4, 0xf6, 0xe4, 0xef, 0x36, 0x61, 0x1b, 0x60, 0x5e, 0x9f,
+	0xfd, 0x79, 0x72, 0x73, 0x7e, 0x75, 0xd9, 0xd6, 0x86, 0xfb, 0x4f, 0xcf, 0x5d, 0xf2, 0xe9, 0xb9,
+	0x4b, 0xbe, 0x3e, 0x77, 0xc9, 0xbb, 0x6f, 0xdd, 0xda, 0x3f, 0x86, 0x54, 0xe1, 0x7c, 0xfc, 0x3d,
+	0x00, 0x00, 0xff, 0xff, 0x07, 0x52, 0x97, 0x38, 0x7f, 0x06, 0x00, 0x00,
 }

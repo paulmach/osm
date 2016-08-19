@@ -2,4 +2,4 @@ package osmpb
 
 // gogo protobuf seems to be about 10% faster
 // https://github.com/gogo/protobuf
-//go:generate protoc --gofast_out=. osm.proto
+//go:generate protoc --proto_path=../../../../..:../../../../gogo/protobuf/protobuf:. --gogofaster_out=. osm.proto

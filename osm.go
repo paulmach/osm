@@ -3,7 +3,7 @@ package osm
 import (
 	"errors"
 
-	"github.com/golang/protobuf/proto"
+	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
@@ -96,10 +96,10 @@ func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 
 	if o.Bound != nil {
 		encoded.Bounds = &osmpb.Bounds{
-			MinLat: proto.Int64(geoToInt64(o.Bound.MinLat)),
-			MaxLat: proto.Int64(geoToInt64(o.Bound.MaxLat)),
-			MinLon: proto.Int64(geoToInt64(o.Bound.MinLon)),
-			MaxLon: proto.Int64(geoToInt64(o.Bound.MaxLon)),
+			MinLat: geoToInt64(o.Bound.MinLat),
+			MaxLat: geoToInt64(o.Bound.MaxLat),
+			MinLon: geoToInt64(o.Bound.MinLon),
+			MaxLon: geoToInt64(o.Bound.MaxLon),
 		}
 	}
 
