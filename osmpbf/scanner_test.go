@@ -104,19 +104,27 @@ func BenchmarkLondon(b *testing.B) {
 		b.Fatalf("could not open file: %v", err)
 	}
 
-	scanner := New(context.Background(), f, 4)
-	nodes, ways, relations := benchmarkScanner(b, scanner)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
 
-	if nodes != 2729006 {
-		b.Errorf("wrong number of nodes, got %v", nodes)
-	}
+		scanner := New(context.Background(), f, 4)
+		nodes, ways, relations := benchmarkScanner(b, scanner)
 
-	if ways != 459055 {
-		b.Errorf("wrong number of ways, got %v", ways)
-	}
+		if nodes != 2729006 {
+			b.Errorf("wrong number of nodes, got %v", nodes)
+		}
 
-	if relations != 12833 {
-		b.Errorf("wrong number of relations, got %v", relations)
+		if ways != 459055 {
+			b.Errorf("wrong number of ways, got %v", ways)
+		}
+
+		if relations != 12833 {
+			b.Errorf("wrong number of relations, got %v", relations)
+		}
+
+		scanner.Close()
 	}
 }
 
@@ -127,8 +135,6 @@ func benchmarkScanner(b *testing.B, scanner osm.Scanner) (int, int, int) {
 		relations int
 	)
 
-	b.ReportAllocs()
-	b.ResetTimer()
 	for scanner.Scan() {
 		e := scanner.Element()
 		if e.Node != nil {
