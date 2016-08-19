@@ -83,8 +83,12 @@ func (dec *decoder) Start(n int) error {
 	}
 	dec.serializer = make(chan oPair, n)
 
+	sizeBuf := make([]byte, 4, 4)
+	headerBuf := make([]byte, maxBlobHeaderSize, maxBlobHeaderSize)
+	blobBuf := make([]byte, maxBlobSize, maxBlobSize)
+
 	// read OSMHeader
-	blobHeader, blob, err := dec.readFileBlock()
+	blobHeader, blob, err := dec.readFileBlock(sizeBuf, headerBuf, blobBuf)
 	if err != nil {
 		return err
 	}
@@ -153,12 +157,13 @@ func (dec *decoder) Start(n int) error {
 		}()
 
 		i := 0
+
 		var err error
 		for dec.ctx.Err() == nil || err == nil {
 			input := dec.inputs[i]
 			i = (i + 1) % n
 
-			blobHeader, blob, err = dec.readFileBlock()
+			blobHeader, blob, err = dec.readFileBlock(sizeBuf, headerBuf, blobBuf)
 			if err == nil && blobHeader.GetType() != "OSMData" {
 				err = fmt.Errorf("unexpected fileblock of type %s", blobHeader.GetType())
 			}
@@ -233,18 +238,17 @@ func (dec *decoder) Next() (osm.Element, error) {
 	return v, dec.cData.Err
 }
 
-func (dec *decoder) readFileBlock() (*osmpbf.BlobHeader, *osmpbf.Blob, error) {
-	blobHeaderSize, err := dec.readBlobHeaderSize()
+func (dec *decoder) readFileBlock(sizeBuf, headerBuf, blobBuf []byte) (*osmpbf.BlobHeader, *osmpbf.Blob, error) {
+	blobHeaderSize, err := dec.readBlobHeaderSize(sizeBuf)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	blobHeader, err := dec.readBlobHeader(blobHeaderSize)
-	if err != nil {
-		return nil, nil, err
-	}
+	headerBuf = headerBuf[:blobHeaderSize]
+	blobHeader, err := dec.readBlobHeader(headerBuf)
 
-	blob, err := dec.readBlob(blobHeader)
+	blobBuf = blobBuf[:blobHeader.GetDatasize()]
+	blob, err := dec.readBlob(blobHeader, blobBuf)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -252,8 +256,7 @@ func (dec *decoder) readFileBlock() (*osmpbf.BlobHeader, *osmpbf.Blob, error) {
 	return blobHeader, blob, err
 }
 
-func (dec *decoder) readBlobHeaderSize() (uint32, error) {
-	buf := make([]byte, 4, 4)
+func (dec *decoder) readBlobHeaderSize(buf []byte) (uint32, error) {
 	if _, err := io.ReadFull(dec.r, buf); err != nil {
 		return 0, err
 	}
@@ -265,8 +268,7 @@ func (dec *decoder) readBlobHeaderSize() (uint32, error) {
 	return size, nil
 }
 
-func (dec *decoder) readBlobHeader(size uint32) (*osmpbf.BlobHeader, error) {
-	buf := make([]byte, size, size)
+func (dec *decoder) readBlobHeader(buf []byte) (*osmpbf.BlobHeader, error) {
 	if _, err := io.ReadFull(dec.r, buf); err != nil {
 		return nil, err
 	}
@@ -282,8 +284,7 @@ func (dec *decoder) readBlobHeader(size uint32) (*osmpbf.BlobHeader, error) {
 	return blobHeader, nil
 }
 
-func (dec *decoder) readBlob(blobHeader *osmpbf.BlobHeader) (*osmpbf.Blob, error) {
-	buf := make([]byte, blobHeader.GetDatasize())
+func (dec *decoder) readBlob(blobHeader *osmpbf.BlobHeader, buf []byte) (*osmpbf.Blob, error) {
 	if _, err := io.ReadFull(dec.r, buf); err != nil {
 		return nil, err
 	}
