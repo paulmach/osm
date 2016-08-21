@@ -9,22 +9,17 @@ import (
 
 // Changeset returns a given changeset from the osm rest api.
 func Changeset(ctx context.Context, id osm.ChangesetID) (*osm.Changeset, error) {
-	return getChangeset(ctx, id, false)
+	url := fmt.Sprintf("%s/changeset/%d", host, id)
+	return getChangeset(ctx, url)
 }
 
 // ChangesetWithDiscussion returns a changeset and its discussion from the osm rest api.
 func ChangesetWithDiscussion(ctx context.Context, id osm.ChangesetID) (*osm.Changeset, error) {
-	return getChangeset(ctx, id, true)
+	url := fmt.Sprintf("%s/changeset/%d?include_discussion=true", host, id)
+	return getChangeset(ctx, url)
 }
 
-func getChangeset(ctx context.Context, id osm.ChangesetID, disc bool) (*osm.Changeset, error) {
-	var url string
-	if disc {
-		url = fmt.Sprintf("%s/changeset/%d?include_discussion=true", host, id)
-	} else {
-		url = fmt.Sprintf("%s/changeset/%d", host, id)
-	}
-
+func getChangeset(ctx context.Context, url string) (*osm.Changeset, error) {
 	css := &osm.OSM{}
 	if err := getFromAPI(ctx, url, &css); err != nil {
 		return nil, err

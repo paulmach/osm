@@ -51,7 +51,20 @@ func WayHistory(ctx context.Context, id osm.WayID) (osm.Ways, error) {
 	return o.Ways, nil
 }
 
-// WayFull returns the way and it's nodes for the latest version the way.
+// WayRelations returns all relations a way is part of.
+// There is no error if the element does not exist.
+func WayRelations(ctx context.Context, id osm.WayID) (osm.Relations, error) {
+	url := fmt.Sprintf("%s/way/%d/relations", host, id)
+
+	o := &osm.OSM{}
+	if err := getFromAPI(ctx, url, &o); err != nil {
+		return nil, err
+	}
+
+	return o.Relations, nil
+}
+
+// WayFull returns the way and its nodes for the latest version the way.
 func WayFull(ctx context.Context, id osm.WayID) (*osm.OSM, error) {
 	url := fmt.Sprintf("%s/way/%d/full", host, id)
 

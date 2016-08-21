@@ -27,6 +27,10 @@ func getFromAPI(ctx context.Context, url string, item interface{}) error {
 		return ErrNotFound{URL: url}
 	}
 
+	if resp.StatusCode == http.StatusForbidden {
+		return ErrForbidden{URL: url}
+	}
+
 	if resp.StatusCode == http.StatusGone {
 		return ErrGone{URL: url}
 	}
@@ -49,6 +53,17 @@ type ErrNotFound struct {
 // Error returns an error message with the url causing the problem.
 func (e ErrNotFound) Error() string {
 	return fmt.Sprintf("osmapi: not found at %s", e.URL)
+}
+
+// ErrForbidden means 403 from the api.
+// Returned whenever the version of the element is not available (due to redaction).
+type ErrForbidden struct {
+	URL string
+}
+
+// Error returns an error message with the url causing the problem.
+func (e ErrForbidden) Error() string {
+	return fmt.Sprintf("osmapi: forbidden at %s", e.URL)
 }
 
 // ErrGone is returned for deleted elements that get 410 from the api.
