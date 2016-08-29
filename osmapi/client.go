@@ -24,19 +24,19 @@ func getFromAPI(ctx context.Context, url string, item interface{}) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
-		return ErrNotFound{URL: url}
+		return &ErrNotFound{URL: url}
 	}
 
 	if resp.StatusCode == http.StatusForbidden {
-		return ErrForbidden{URL: url}
+		return &ErrForbidden{URL: url}
 	}
 
 	if resp.StatusCode == http.StatusGone {
-		return ErrGone{URL: url}
+		return &ErrGone{URL: url}
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrUnexpectedStatusCode{
+		return &ErrUnexpectedStatusCode{
 			Code: resp.StatusCode,
 			URL:  url,
 		}
