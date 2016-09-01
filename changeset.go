@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/xml"
 	"time"
 
 	"github.com/gogo/protobuf/proto"
@@ -15,22 +16,23 @@ type Changesets []*Changeset
 
 // A Changeset is a set of metadata around a set of osm changes.
 type Changeset struct {
+	XMLName       xml.Name            `xml:"changeset"`
 	ID            ChangesetID         `xml:"id,attr"`
 	User          string              `xml:"user,attr"`
 	UserID        UserID              `xml:"uid,attr"`
 	CreatedAt     time.Time           `xml:"created_at,attr"`
 	ClosedAt      time.Time           `xml:"closed_at,attr"`
 	Open          bool                `xml:"open,attr"`
-	ChangesCount  int                 `xml:"num_changes,attr"`
+	ChangesCount  int                 `xml:"num_changes,attr,omitempty"`
 	MinLat        float64             `xml:"min_lat,attr"`
 	MaxLat        float64             `xml:"max_lat,attr"`
 	MinLon        float64             `xml:"min_lon,attr"`
 	MaxLon        float64             `xml:"max_lon,attr"`
-	CommentsCount int                 `xml:"comments_count,attr"`
+	CommentsCount int                 `xml:"comments_count,attr,omitempty"`
 	Tags          Tags                `xml:"tag"`
-	Discussion    ChangesetDiscussion `xml:"discussion"`
+	Discussion    ChangesetDiscussion `xml:"discussion,omitempty"`
 
-	Change *Change
+	Change *Change `xml:"-"`
 }
 
 // Comment is a helper and returns the changeset comment from the tag.
@@ -186,4 +188,27 @@ type ChangesetComment struct {
 	UserID    UserID    `xml:"uid,attr"`
 	CreatedAt time.Time `xml:"date,attr"`
 	Text      string    `xml:"text"`
+}
+
+// MarshalXML implements the xml.Marshaller method to exclude this
+// whole element if the comments are empty.
+func (csd ChangesetDiscussion) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	if len(csd.Comments) == 0 {
+		return nil
+	}
+
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+
+	t := xml.StartElement{Name: xml.Name{Local: "comment"}}
+	if err := e.EncodeElement(csd.Comments, t); err != nil {
+		return err
+	}
+
+	if err := e.EncodeToken(start.End()); err != nil {
+		return err
+	}
+
+	return nil
 }

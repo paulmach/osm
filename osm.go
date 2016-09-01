@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/xml"
 	"errors"
 
 	"github.com/gogo/protobuf/proto"
@@ -10,7 +11,7 @@ import (
 // OSM represents the core osm data.
 // I designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
-	Bound     *Bound    `xml:"bounds"`
+	Bounds    *Bounds   `xml:"bounds"`
 	Nodes     Nodes     `xml:"node"`
 	Ways      Ways      `xml:"way"`
 	Relations Relations `xml:"relation"`
@@ -20,8 +21,8 @@ type OSM struct {
 	Changesets Changesets `xml:"changeset"`
 }
 
-// Bound are the bounds of osm data as defined in the xml file.
-type Bound struct {
+// Bounds are the bounds of osm data as defined in the xml file.
+type Bounds struct {
 	MinLat float64 `xml:"minlat,attr"`
 	MaxLat float64 `xml:"maxlat,attr"`
 	MinLon float64 `xml:"minlon,attr"`
@@ -94,12 +95,12 @@ func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 		}
 	}
 
-	if o.Bound != nil {
+	if o.Bounds != nil {
 		encoded.Bounds = &osmpb.Bounds{
-			MinLat: geoToInt64(o.Bound.MinLat),
-			MaxLat: geoToInt64(o.Bound.MaxLat),
-			MinLon: geoToInt64(o.Bound.MinLon),
-			MaxLon: geoToInt64(o.Bound.MaxLon),
+			MinLat: geoToInt64(o.Bounds.MinLat),
+			MaxLat: geoToInt64(o.Bounds.MaxLat),
+			MinLon: geoToInt64(o.Bounds.MinLon),
+			MaxLon: geoToInt64(o.Bounds.MaxLon),
 		}
 	}
 
@@ -161,7 +162,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	}
 
 	if encoded.Bounds != nil {
-		o.Bound = &Bound{
+		o.Bounds = &Bounds{
 			MinLat: float64(encoded.Bounds.GetMinLat()) / locMultiple,
 			MaxLat: float64(encoded.Bounds.GetMaxLat()) / locMultiple,
 			MinLon: float64(encoded.Bounds.GetMinLon()) / locMultiple,
@@ -170,4 +171,67 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	}
 
 	return o, nil
+}
+
+type osmXML struct {
+	Version   float64 `xml:"version,attr"`
+	Generator string  `xml:"generator,attr"`
+
+	Bounds     *Bounds    `xml:"bounds"`
+	Nodes      Nodes      `xml:"node"`
+	Ways       Ways       `xml:"way"`
+	Relations  Relations  `xml:"relation"`
+	Changesets Changesets `xml:"changeset"`
+}
+
+// MarshalXML implements the xml.Marshaller method to allow for the
+// correct wrapper/start element case and attr data.
+func (o OSM) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	start.Name.Local = "osm"
+	start.Attr = []xml.Attr{
+		{Name: xml.Name{Local: "version"}, Value: "0.6"},
+		{Name: xml.Name{Local: "generator"}, Value: "go.osm"},
+	}
+
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+
+	if err := o.marshalInnerXML(e); err != nil {
+		return err
+	}
+
+	if err := e.EncodeToken(start.End()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *OSM) marshalInnerXML(e *xml.Encoder) error {
+	if o == nil {
+		return nil
+	}
+
+	if err := e.Encode(o.Bounds); err != nil {
+		return err
+	}
+
+	if err := e.Encode(o.Nodes); err != nil {
+		return err
+	}
+
+	if err := e.Encode(o.Ways); err != nil {
+		return err
+	}
+
+	if err := e.Encode(o.Relations); err != nil {
+		return err
+	}
+
+	if err := e.Encode(o.Changesets); err != nil {
+		return err
+	}
+
+	return nil
 }

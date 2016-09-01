@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"bytes"
 	"encoding/xml"
 	"testing"
 	"time"
@@ -49,6 +50,22 @@ func TestNode(t *testing.T) {
 
 	if v := n.Lon; v != 6.0043943 {
 		t.Errorf("incorrect lon, got %v", v)
+	}
+}
+
+func TestNodeMarshalXML(t *testing.T) {
+	n := Node{
+		ID: 123,
+	}
+
+	data, err := xml.Marshal(n)
+	if err != nil {
+		t.Fatalf("xml marshal error: %v", err)
+	}
+
+	expected := `<node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>`
+	if !bytes.Equal(data, []byte(expected)) {
+		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
 }
 

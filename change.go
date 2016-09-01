@@ -1,6 +1,8 @@
 package osm
 
 import (
+	"encoding/xml"
+
 	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
 )
@@ -67,4 +69,57 @@ func unmarshalChange(encoded *osmpb.Change, ss []string, cs *Changeset) (*Change
 	}
 
 	return c, nil
+}
+
+// MarshalXML implements the xml.Marshaller method to allow for the
+// correct wrapper/start element case and attr data.
+func (c Change) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	start.Name.Local = "osmChange"
+	start.Attr = []xml.Attr{
+		{Name: xml.Name{Local: "version"}, Value: "0.6"},
+		{Name: xml.Name{Local: "generator"}, Value: "go.osm"},
+	}
+
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+
+	if err := marshalInnerChange(e, "create", c.Create); err != nil {
+		return err
+	}
+
+	if err := marshalInnerChange(e, "modify", c.Modify); err != nil {
+		return err
+	}
+
+	if err := marshalInnerChange(e, "delete", c.Delete); err != nil {
+		return err
+	}
+
+	if err := e.EncodeToken(start.End()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func marshalInnerChange(e *xml.Encoder, name string, o *OSM) error {
+	if o == nil {
+		return nil
+	}
+
+	t := xml.StartElement{Name: xml.Name{Local: name}}
+	if err := e.EncodeToken(t); err != nil {
+		return err
+	}
+
+	if err := o.marshalInnerXML(e); err != nil {
+		return err
+	}
+
+	if err := e.EncodeToken(t.End()); err != nil {
+		return err
+	}
+
+	return nil
 }

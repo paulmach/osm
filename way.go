@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/xml"
 	"sort"
 	"time"
 )
@@ -11,6 +12,7 @@ type WayID int64
 
 // Way is an osm way, ie collection of nodes.
 type Way struct {
+	XMLName     xml.Name    `xml:"way"`
 	ID          WayID       `xml:"id,attr"`
 	User        string      `xml:"user,attr"`
 	UserID      UserID      `xml:"uid,attr"`

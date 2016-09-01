@@ -1,6 +1,8 @@
 package osm
 
 import (
+	"bytes"
+	"encoding/xml"
 	"reflect"
 	"testing"
 )
@@ -8,7 +10,7 @@ import (
 func TestOSMMarshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
 	o1 := flattenOSM(c)
-	o1.Bound = &Bound{1.1, 2.2, 3.3, 4.4}
+	o1.Bounds = &Bounds{1.1, 2.2, 3.3, 4.4}
 
 	data, err := o1.Marshal()
 	if err != nil {
@@ -47,6 +49,25 @@ func TestOSMMarshal(t *testing.T) {
 	}
 }
 
+func TestOSMMarshalXML(t *testing.T) {
+	o := &OSM{
+		Nodes: Nodes{
+			&Node{ID: 123},
+		},
+	}
+
+	data, err := xml.Marshal(o)
+	if err != nil {
+		t.Fatalf("xml marshal error: %v", err)
+	}
+
+	expected := `<osm version="0.6" generator="go.osm"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
+
+	if !bytes.Equal(data, []byte(expected)) {
+		t.Errorf("incorrect marshal, got: %s", string(data))
+	}
+}
+
 func flattenOSM(c *Change) *OSM {
 	o := c.Create
 	if o == nil {
@@ -66,4 +87,18 @@ func flattenOSM(c *Change) *OSM {
 	}
 
 	return o
+}
+
+func cleanXMLNameFromOSM(o *OSM) {
+	for _, n := range o.Nodes {
+		n.XMLName = xml.Name{}
+	}
+
+	for _, w := range o.Ways {
+		w.XMLName = xml.Name{}
+	}
+
+	for _, r := range o.Relations {
+		r.XMLName = xml.Name{}
+	}
 }

@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"bytes"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -133,8 +134,30 @@ func TestChange(t *testing.T) {
 	}
 }
 
+func TestChangeMarshalXML(t *testing.T) {
+	// correct case of name
+	c := Change{
+		Create: &OSM{
+			Nodes: Nodes{
+				&Node{ID: 123},
+			},
+		},
+	}
+
+	data, err := xml.Marshal(c)
+	if err != nil {
+		t.Fatalf("xml marshal error: %v", err)
+	}
+
+	expected := `<osmChange version="0.6" generator="go.osm"><create><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></create></osmChange>`
+	if !bytes.Equal(data, []byte(expected)) {
+		t.Errorf("incorrect marshal, got: %s", string(data))
+	}
+}
+
 func TestChangeMarshal(t *testing.T) {
 	c1 := loadChange(t, "testdata/changeset_38162206.osc")
+	cleanXMLNameFromChange(c1)
 	data, err := c1.Marshal()
 	if err != nil {
 		t.Fatalf("marshal error: %v", err)
@@ -153,6 +176,7 @@ func TestChangeMarshal(t *testing.T) {
 
 	// second changeset
 	c1 = loadChange(t, "testdata/changeset_38162210.osc")
+	cleanXMLNameFromChange(c1)
 	data, err = c1.Marshal()
 	if err != nil {
 		t.Fatalf("marshal error: %v", err)
@@ -171,6 +195,7 @@ func TestChangeMarshal(t *testing.T) {
 
 	// minute diff change
 	c1 = loadChange(t, "testdata/minute_871.osc")
+	cleanXMLNameFromChange(c1)
 	data, err = c1.Marshal()
 	if err != nil {
 		t.Fatalf("marshal error: %v", err)
@@ -196,5 +221,17 @@ func TestChangeMarshal(t *testing.T) {
 
 	if l := len(data); l != 0 {
 		t.Errorf("empty should be empty, got %v", l)
+	}
+}
+
+func cleanXMLNameFromChange(c *Change) {
+	if c.Create != nil {
+		cleanXMLNameFromOSM(c.Create)
+	}
+	if c.Modify != nil {
+		cleanXMLNameFromOSM(c.Modify)
+	}
+	if c.Delete != nil {
+		cleanXMLNameFromOSM(c.Delete)
 	}
 }

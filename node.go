@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/xml"
 	"sort"
 	"time"
 )
@@ -11,6 +12,7 @@ type NodeID int64
 
 // Node is an osm point and allows for marshalling to/from osm xml.
 type Node struct {
+	XMLName     xml.Name    `xml:"node"`
 	ID          NodeID      `xml:"id,attr"`
 	Lat         float64     `xml:"lat,attr"`
 	Lon         float64     `xml:"lon,attr"`

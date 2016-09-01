@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"bytes"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -97,6 +98,7 @@ func TestChangeset(t *testing.T) {
 		t.Fatalf("unable to unmarshal changeset: %v", err)
 	}
 
+	cs1.XMLName = xml.Name{}
 	cs1.Change = c
 
 	data, err = cs1.Marshal()
@@ -220,7 +222,7 @@ func TestChangesetComment(t *testing.T) {
   <tag k="created_by" v="iD 1.9.6"/>
   <discussion>
     <comment date="2016-06-26T17:22:27Z" uid="5359" user="user_5359">
-      <text>Welcome to OSM! We didn't paint the whole width of a street. One line is enough. I have done some changes on your work, please take a look. </text>
+      <text>Welcome to OSM!</text>
     </comment>
     <comment date="2016-06-26T20:56:11Z" uid="4173877" user="Glen Bundrick">
       <text>OK New to this and learning
@@ -255,7 +257,40 @@ func TestChangesetComment(t *testing.T) {
 		t.Errorf("incorrect username, got %v", v)
 	}
 
-	if v := com.Text; v != "Welcome to OSM! We didn't paint the whole width of a street. One line is enough. I have done some changes on your work, please take a look. " {
+	if v := com.Text; v != "Welcome to OSM!" {
 		t.Errorf("incorrect text, got %v", v)
+	}
+}
+
+func TestChangesetMarshalXML(t *testing.T) {
+	cs := Changeset{
+		ID: 123,
+	}
+
+	data, err := xml.Marshal(cs)
+	if err != nil {
+		t.Fatalf("xml marshal error: %v", err)
+	}
+
+	expected := `<changeset id="123" user="" uid="0" created_at="0001-01-01T00:00:00Z" closed_at="0001-01-01T00:00:00Z" open="false" min_lat="0" max_lat="0" min_lon="0" max_lon="0"></changeset>`
+	if !bytes.Equal(data, []byte(expected)) {
+		t.Errorf("incorrect marshal, got: %s", string(data))
+	}
+
+	// changeset with discussion
+	cs.Discussion = ChangesetDiscussion{
+		Comments: []*ChangesetComment{
+			&ChangesetComment{Text: "foo"},
+		},
+	}
+
+	data, err = xml.Marshal(cs)
+	if err != nil {
+		t.Fatalf("xml marshal error: %v", err)
+	}
+
+	expected = `<changeset id="123" user="" uid="0" created_at="0001-01-01T00:00:00Z" closed_at="0001-01-01T00:00:00Z" open="false" min_lat="0" max_lat="0" min_lon="0" max_lon="0"><discussion><comment user="" uid="0" date="0001-01-01T00:00:00Z"><text>foo</text></comment></discussion></changeset>`
+	if !bytes.Equal(data, []byte(expected)) {
+		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
 }

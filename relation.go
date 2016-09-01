@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/xml"
 	"sort"
 	"time"
 )
@@ -12,6 +13,7 @@ type RelationID int64
 // Relation is an collection of nodes, ways and other relations
 // with some defining attributes.
 type Relation struct {
+	XMLName     xml.Name    `xml:"relation"`
 	ID          RelationID  `xml:"id,attr"`
 	User        string      `xml:"user,attr"`
 	UserID      UserID      `xml:"uid,attr"`
