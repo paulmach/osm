@@ -94,7 +94,7 @@ func Changesets(ctx context.Context, id ChangesetSeqID) (osm.Changesets, error) 
 		changesets = append(changesets, e.Changeset)
 	}
 
-	if scanner.Err() != nil {
+	if err := scanner.Err(); err != nil {
 		return changesets, err
 	}
 
