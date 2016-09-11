@@ -66,7 +66,7 @@ message OSM {
   repeated Relation   relations = 5;
 
   // contains the tag strings if this is the root of the data.
-  repeated string strings = 20;
+  repeated string strings = 15;
 }
 
 // The message defined below are trying to match the official osm pdf
@@ -118,6 +118,8 @@ message DenseNodes {
   // if no node in the current block has any key/value pairs, this array does
   // not contain any delimiters, but is simply empty.
   repeated uint32 keys_vals = 10 [packed = true];
+
+  repeated string strings = 15; // NOTE: id less than 16 encodes as 2 less bytes.
 }
 
 message DenseInfo {

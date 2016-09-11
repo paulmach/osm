@@ -3,6 +3,7 @@ package osm
 import (
 	"bytes"
 	"encoding/xml"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -66,6 +67,29 @@ func TestNodeMarshalXML(t *testing.T) {
 	expected := `<node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>`
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
+	}
+}
+
+func TestNodesMarshal(t *testing.T) {
+	ns := Nodes{
+		{ID: 123},
+		{ID: 321},
+	}
+
+	data, err := ns.Marshal()
+	if err != nil {
+		t.Fatalf("nodes marshal error: %v", err)
+	}
+
+	ns2, err := UnmarshalNodes(data)
+	if err != nil {
+		t.Fatalf("nodes unmarshal error: %v", err)
+	}
+
+	if !reflect.DeepEqual(ns, ns2) {
+		t.Errorf("nodes not equal")
+		t.Logf("%+v", ns)
+		t.Logf("%+v", ns2)
 	}
 }
 

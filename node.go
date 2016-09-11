@@ -4,6 +4,9 @@ import (
 	"encoding/xml"
 	"sort"
 	"time"
+
+	"github.com/gogo/protobuf/proto"
+	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 // NodeID corresponds the primary key of a node.
@@ -30,21 +33,22 @@ type Nodes []*Node
 
 // Marshal encodes the nodes using protocol buffers.
 func (ns Nodes) Marshal() ([]byte, error) {
-	o := OSM{
-		Nodes: ns,
-	}
+	ss := &stringSet{}
+	encoded := marshalNodes(ns, ss, true)
+	encoded.Strings = ss.Strings()
 
-	return o.Marshal()
+	return proto.Marshal(encoded)
 }
 
 // UnmarshalNodes will unmarshal the data into a list of nodes.
 func UnmarshalNodes(data []byte) (Nodes, error) {
-	o, err := UnmarshalOSM(data)
+	pbf := &osmpb.DenseNodes{}
+	err := proto.Unmarshal(data, pbf)
 	if err != nil {
 		return nil, err
 	}
 
-	return o.Nodes, nil
+	return unmarshalNodes(pbf, pbf.GetStrings(), nil)
 }
 
 // ActiveAt returns the active node at the give time for a history of nodes.
