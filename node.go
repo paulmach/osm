@@ -33,6 +33,10 @@ type Nodes []*Node
 
 // Marshal encodes the nodes using protocol buffers.
 func (ns Nodes) Marshal() ([]byte, error) {
+	if len(ns) == 0 {
+		return nil, nil
+	}
+
 	ss := &stringSet{}
 	encoded := marshalNodes(ns, ss, true)
 	encoded.Strings = ss.Strings()
@@ -42,6 +46,10 @@ func (ns Nodes) Marshal() ([]byte, error) {
 
 // UnmarshalNodes will unmarshal the data into a list of nodes.
 func UnmarshalNodes(data []byte) (Nodes, error) {
+	if len(data) == 0 {
+		return nil, nil
+	}
+
 	pbf := &osmpb.DenseNodes{}
 	err := proto.Unmarshal(data, pbf)
 	if err != nil {
