@@ -9,16 +9,16 @@ import (
 
 const locMultiple = 10000000.0
 
-var memberTypeMap = map[MemberType]osmpb.Relation_MemberType{
-	NodeMember:     osmpb.Relation_NODE,
-	WayMember:      osmpb.Relation_WAY,
-	RelationMember: osmpb.Relation_RELATION,
+var memberTypeMap = map[ElementType]osmpb.MemberType{
+	NodeType:     osmpb.MemberType_NODE,
+	WayType:      osmpb.MemberType_WAY,
+	RelationType: osmpb.MemberType_RELATION,
 }
 
-var memberTypeMapRev = map[osmpb.Relation_MemberType]MemberType{
-	osmpb.Relation_NODE:     NodeMember,
-	osmpb.Relation_WAY:      WayMember,
-	osmpb.Relation_RELATION: RelationMember,
+var memberTypeMapRev = map[osmpb.MemberType]ElementType{
+	osmpb.MemberType_NODE:     NodeType,
+	osmpb.MemberType_WAY:      WayType,
+	osmpb.MemberType_RELATION: RelationType,
 }
 
 func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
@@ -112,7 +112,7 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 	encoded.DenseInfo.UserSid = decodeInt32(encoded.DenseInfo.UserSid)
 
 	tagLoc := 0
-	nodes := make(Nodes, 0, len(encoded.Id))
+	nodes := make(Nodes, len(encoded.Id))
 	for i := range encoded.Id {
 		n := &Node{
 			ID:        NodeID(encoded.Id[i]),
@@ -157,7 +157,8 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 				tagLoc++
 			}
 		}
-		nodes = append(nodes, n)
+
+		nodes[i] = n
 	}
 
 	return nodes, nil
@@ -174,7 +175,19 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 			Timestamp: timeToUnix(way.Timestamp),
 			Visible:   proto.Bool(way.Visible),
 		},
-		Refs: encodeNodeRef(way.NodeRefs),
+	}
+
+	if len(way.Nodes) > 0 {
+		// legacy simple refs encoding.
+		if way.Nodes[0].Version == 0 {
+			encoded.Refs = encodeWayNodes(way.Nodes)
+		} else {
+			encoded.DenseMembers = encodeDenseWayNodes(way.Nodes)
+		}
+	}
+
+	if len(way.Minors) > 0 {
+		encoded.MinorVersion = encodeMinorWays(way.Minors)
 	}
 
 	if includeChangeset {
@@ -201,8 +214,17 @@ func unmarshalWay(encoded *osmpb.Way, ss []string, cs *Changeset) (*Way, error) 
 		Version:     int(info.GetVersion()),
 		ChangesetID: ChangesetID(info.GetChangesetId()),
 		Timestamp:   unixToTime(info.GetTimestamp()),
-		NodeRefs:    decodeNodeRef(encoded.GetRefs()),
 		Tags:        tags,
+	}
+
+	if len(encoded.Refs) > 0 {
+		w.Nodes = decodeWayNodes(encoded.GetRefs())
+	} else if encoded.DenseMembers != nil {
+		w.Nodes = decodeDenseWayNodes(encoded.GetDenseMembers())
+	}
+
+	if len(encoded.MinorVersion) > 0 {
+		w.Minors = decodeMinorWays(encoded.MinorVersion)
 	}
 
 	if cs != nil {
@@ -216,9 +238,9 @@ func unmarshalWay(encoded *osmpb.Way, ss []string, cs *Changeset) (*Way, error) 
 
 func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *osmpb.Relation {
 	l := len(relation.Members)
-	roles := make([]uint32, l, l)
-	refs := make([]int64, l, l)
-	types := make([]osmpb.Relation_MemberType, l, l)
+	roles := make([]uint32, l)
+	refs := make([]int64, l)
+	types := make([]osmpb.MemberType, l)
 
 	for i, m := range relation.Members {
 		roles[i] = ss.Add(m.Role)
@@ -239,6 +261,10 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 		Roles: roles,
 		Refs:  encodeInt64(refs),
 		Types: types,
+	}
+
+	if len(relation.Minors) > 0 {
+		encoded.MinorVersion = encodeMinorRelations(relation.Minors)
 	}
 
 	if includeChangeset {
@@ -269,6 +295,10 @@ func unmarshalRelation(encoded *osmpb.Relation, ss []string, cs *Changeset) (*Re
 		Tags:        tags,
 	}
 
+	if len(encoded.MinorVersion) > 0 {
+		r.Minors = decodeMinorRelations(encoded.MinorVersion)
+	}
+
 	if cs != nil {
 		r.ChangesetID = cs.ID
 		r.UserID = cs.UserID
@@ -291,12 +321,12 @@ type denseNodesResult struct {
 func denseNodesValues(ns Nodes) denseNodesResult {
 	l := len(ns)
 	ds := denseNodesResult{
-		IDs:        make([]int64, l, l),
-		Lats:       make([]int64, l, l),
-		Lons:       make([]int64, l, l),
-		Timestamps: make([]int64, l, l),
-		Versions:   make([]int32, l, l),
-		Visibles:   make([]bool, l, l),
+		IDs:        make([]int64, l),
+		Lats:       make([]int64, l),
+		Lons:       make([]int64, l),
+		Timestamps: make([]int64, l),
+		Versions:   make([]int32, l),
+		Visibles:   make([]bool, l),
 	}
 
 	for i, n := range ns {
@@ -334,9 +364,9 @@ type changesetInfoResult struct {
 func nodesChangesetInfo(ns Nodes, ss *stringSet) changesetInfoResult {
 	l := len(ns)
 	cs := changesetInfoResult{
-		Changesets: make([]int64, l, l),
-		UserIDs:    make([]int32, l, l),
-		UserSid:    make([]int32, l, l),
+		Changesets: make([]int64, l),
+		UserIDs:    make([]int32, l),
+		UserSid:    make([]int32, l),
 	}
 
 	for i, n := range ns {
@@ -348,24 +378,133 @@ func nodesChangesetInfo(ns Nodes, ss *stringSet) changesetInfoResult {
 	return cs
 }
 
-func encodeNodeRef(refs []NodeRef) []int64 {
-	result := make([]int64, 0, len(refs))
+func encodeWayNodes(waynodes []WayNode) []int64 {
+	result := make([]int64, len(waynodes))
 	var prev int64
 
-	for _, r := range refs {
-		result = append(result, int64(r.Ref)-prev)
-		prev = int64(r.Ref)
+	for i, r := range waynodes {
+		result[i] = int64(r.ID) - prev
+		prev = int64(r.ID)
 	}
 
 	return result
 }
 
-func decodeMembers(ss []string, roles []uint32, refs []int64, types []osmpb.Relation_MemberType) []Member {
+func encodeDenseWayNodes(waynodes []WayNode) *osmpb.DenseMembers {
+	l := len(waynodes)
+
+	IDs := make([]int64, l)
+	Versions := make([]int32, l)
+	ChangesetIDs := make([]int64, l)
+	Lats := make([]int64, l)
+	Lons := make([]int64, l)
+
+	for i, n := range waynodes {
+		IDs[i] = int64(n.ID)
+		Lats[i] = geoToInt64(n.Lat)
+		Lons[i] = geoToInt64(n.Lon)
+		Versions[i] = int32(n.Version)
+		ChangesetIDs[i] = int64(n.ChangesetID)
+	}
+
+	return &osmpb.DenseMembers{
+		Id:          encodeInt64(IDs),
+		Version:     Versions,
+		ChangesetId: encodeInt64(ChangesetIDs),
+		Lat:         encodeInt64(Lats),
+		Lon:         encodeInt64(Lons),
+	}
+}
+
+func encodeDenseMinorWayNodes(waynodes []MinorWayNode) *osmpb.DenseMembers {
+	if len(waynodes) == 0 {
+		return nil
+	}
+
+	l := len(waynodes)
+	Indexes := make([]int32, l)
+	Versions := make([]int32, l)
+	ChangesetIDs := make([]int64, l)
+	Lats := make([]int64, l)
+	Lons := make([]int64, l)
+
+	for i, n := range waynodes {
+		Indexes[i] = int32(n.Index)
+		Lats[i] = geoToInt64(n.Lat)
+		Lons[i] = geoToInt64(n.Lon)
+		Versions[i] = int32(n.Version)
+		ChangesetIDs[i] = int64(n.ChangesetID)
+	}
+
+	return &osmpb.DenseMembers{
+		Index:       encodeInt32(Indexes),
+		Version:     Versions,
+		ChangesetId: encodeInt64(ChangesetIDs),
+		Lat:         encodeInt64(Lats),
+		Lon:         encodeInt64(Lons),
+	}
+}
+
+func encodeMinorWays(ways []MinorWay) []*osmpb.MinorVersion {
+	if len(ways) == 0 {
+		return nil
+	}
+
+	result := make([]*osmpb.MinorVersion, len(ways))
+	for i, w := range ways {
+		result[i] = &osmpb.MinorVersion{
+			Timestamp:    timeToUnix(w.Timestamp),
+			DenseMembers: encodeDenseMinorWayNodes(w.MinorNodes),
+		}
+	}
+
+	return result
+}
+
+func encodeMinorRelations(relations []MinorRelation) []*osmpb.MinorVersion {
+	if len(relations) == 0 {
+		return nil
+	}
+
+	result := make([]*osmpb.MinorVersion, len(relations))
+	for i, r := range relations {
+		result[i] = &osmpb.MinorVersion{
+			Timestamp:    timeToUnix(r.Timestamp),
+			DenseMembers: encodeDenseMinorMembers(r.MinorMembers),
+		}
+	}
+
+	return result
+}
+
+func encodeDenseMinorMembers(members []MinorRelationMember) *osmpb.DenseMembers {
+	l := len(members)
+	indexes := make([]int32, l)
+	versions := make([]int32, l)
+	minorVersions := make([]int32, l)
+	changesetIDs := make([]int64, l)
+
+	for i, m := range members {
+		indexes[i] = int32(m.Index)
+		versions[i] = int32(m.Version)
+		minorVersions[i] = int32(m.MinorVersion)
+		changesetIDs[i] = int64(m.ChangesetID)
+	}
+
+	return &osmpb.DenseMembers{
+		Index:        encodeInt32(indexes),
+		Version:      versions,
+		MinorVersion: minorVersions,
+		ChangesetId:  encodeInt64(changesetIDs),
+	}
+}
+
+func decodeMembers(ss []string, roles []uint32, refs []int64, types []osmpb.MemberType) []Member {
 	if len(roles) == 0 {
 		return nil
 	}
 
-	result := make([]Member, len(roles), len(roles))
+	result := make([]Member, len(roles))
 	decodeInt64(refs)
 	for i := range roles {
 		result[i].Role = ss[roles[i]]
@@ -396,17 +535,120 @@ func encodeInt64(vals []int64) []int64 {
 	return vals
 }
 
-func decodeNodeRef(diff []int64) []NodeRef {
+func decodeWayNodes(diff []int64) []WayNode {
 	if len(diff) == 0 {
 		return nil
 	}
 
-	result := make([]NodeRef, 0, len(diff))
-	var prev NodeID
+	result := make([]WayNode, len(diff))
+	decodeInt64(diff)
 
-	for _, d := range diff {
-		result = append(result, NodeRef{Ref: NodeID(d) + prev})
-		prev += NodeID(d)
+	for i, d := range diff {
+		result[i] = WayNode{ID: NodeID(d)}
+	}
+
+	return result
+}
+
+func decodeDenseWayNodes(encoded *osmpb.DenseMembers) []WayNode {
+	if encoded == nil {
+		return nil
+	}
+
+	result := make([]WayNode, len(encoded.Id))
+
+	decodeInt64(encoded.Id)
+	decodeInt64(encoded.ChangesetId)
+	decodeInt64(encoded.Lat)
+	decodeInt64(encoded.Lon)
+
+	for i := range encoded.Id {
+		result[i] = WayNode{
+			ID:          NodeID(encoded.Id[i]),
+			Version:     int(encoded.Version[i]),
+			ChangesetID: ChangesetID(encoded.ChangesetId[i]),
+			Lat:         float64(encoded.Lat[i]) / locMultiple,
+			Lon:         float64(encoded.Lon[i]) / locMultiple,
+		}
+	}
+
+	return result
+}
+
+func decodeDenseMinorWayNodes(encoded *osmpb.DenseMembers) []MinorWayNode {
+	if encoded == nil || len(encoded.Index) == 0 {
+		return nil
+	}
+
+	result := make([]MinorWayNode, len(encoded.Index))
+
+	decodeInt32(encoded.Index)
+	decodeInt64(encoded.ChangesetId)
+	decodeInt64(encoded.Lat)
+	decodeInt64(encoded.Lon)
+
+	for i := range encoded.Index {
+		result[i] = MinorWayNode{
+			Index:       int(encoded.Index[i]),
+			Version:     int(encoded.Version[i]),
+			ChangesetID: ChangesetID(encoded.ChangesetId[i]),
+			Lat:         float64(encoded.Lat[i]) / locMultiple,
+			Lon:         float64(encoded.Lon[i]) / locMultiple,
+		}
+	}
+
+	return result
+}
+
+func decodeMinorWays(encoded []*osmpb.MinorVersion) []MinorWay {
+	if len(encoded) == 0 {
+		return nil
+	}
+
+	result := make([]MinorWay, len(encoded))
+	for i, mv := range encoded {
+		result[i] = MinorWay{
+			Timestamp:  unixToTime(mv.Timestamp),
+			MinorNodes: decodeDenseMinorWayNodes(mv.DenseMembers),
+		}
+	}
+
+	return result
+}
+
+func decodeMinorRelations(encoded []*osmpb.MinorVersion) []MinorRelation {
+	if len(encoded) == 0 {
+		return nil
+	}
+
+	result := make([]MinorRelation, len(encoded))
+	for i, mv := range encoded {
+		result[i] = MinorRelation{
+			Timestamp:    unixToTime(mv.Timestamp),
+			MinorMembers: decodeDenseMinorMembers(mv.DenseMembers),
+		}
+	}
+
+	return result
+}
+
+func decodeDenseMinorMembers(encoded *osmpb.DenseMembers) []MinorRelationMember {
+	if encoded == nil || len(encoded.Index) == 0 {
+		return nil
+	}
+
+	result := make([]MinorRelationMember, len(encoded.Index))
+
+	decodeInt32(encoded.Index)
+	decodeInt64(encoded.ChangesetId)
+
+	for i := range encoded.Index {
+		result[i] = MinorRelationMember{
+			Index:        int(encoded.Index[i]),
+			Version:      int(encoded.Version[i]),
+			MinorVersion: int(encoded.MinorVersion[i]),
+			ChangesetID:  ChangesetID(encoded.ChangesetId[i]),
+		}
 	}
 
 	return result

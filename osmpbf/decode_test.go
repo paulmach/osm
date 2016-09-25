@@ -78,17 +78,17 @@ var (
 
 	ew = &osm.Way{
 		ID: 4257116,
-		NodeRefs: []osm.NodeRef{
-			osm.NodeRef{Ref: 21544864},
-			osm.NodeRef{Ref: 333731851},
-			osm.NodeRef{Ref: 333731852},
-			osm.NodeRef{Ref: 333731850},
-			osm.NodeRef{Ref: 333731855},
-			osm.NodeRef{Ref: 333731858},
-			osm.NodeRef{Ref: 333731854},
-			osm.NodeRef{Ref: 108047},
-			osm.NodeRef{Ref: 769984352},
-			osm.NodeRef{Ref: 21544864},
+		Nodes: []osm.WayNode{
+			osm.WayNode{ID: 21544864},
+			osm.WayNode{ID: 333731851},
+			osm.WayNode{ID: 333731852},
+			osm.WayNode{ID: 333731850},
+			osm.WayNode{ID: 333731855},
+			osm.WayNode{ID: 333731858},
+			osm.WayNode{ID: 333731854},
+			osm.WayNode{ID: 108047},
+			osm.WayNode{ID: 769984352},
+			osm.WayNode{ID: 21544864},
 		},
 		Tags: osm.Tags([]osm.Tag{
 			osm.Tag{Key: "area", Value: "yes"},
@@ -106,8 +106,8 @@ var (
 	er = &osm.Relation{
 		ID: 7677,
 		Members: []osm.Member{
-			osm.Member{Ref: 4875932, Type: osm.WayMember, Role: "outer"},
-			osm.Member{Ref: 4894305, Type: osm.WayMember, Role: "inner"},
+			osm.Member{Ref: 4875932, Type: osm.WayType, Role: "outer"},
+			osm.Member{Ref: 4894305, Type: osm.WayType, Role: "inner"},
 		},
 		Tags: osm.Tags([]osm.Tag{
 			osm.Tag{Key: "created_by", Value: "Potlatch 0.9c"},

@@ -24,6 +24,33 @@ type Relation struct {
 
 	Tags    Tags     `xml:"tag"`
 	Members []Member `xml:"member"`
+
+	// Minors are diffs from the original version representing
+	// member updates independent of relation version updates.
+	Minors []MinorRelation `xml:"minor-relation,omitempty"`
+}
+
+// Member is a member of a relation.
+type Member struct {
+	Type ElementType `xml:"type,attr"`
+	Ref  int64       `xml:"ref,attr"`
+	Role string      `xml:"role,attr"`
+}
+
+// A MinorRelation contains diff information for a minor version update of a
+// relation caused by members being updated independent of the relation.
+type MinorRelation struct {
+	Timestamp    time.Time             `xml:"timestamp,attr"`
+	MinorMembers []MinorRelationMember `xml:"minor-member"`
+}
+
+// A MinorRelationMember is a reference to a updated member in a
+// minor relation version.
+type MinorRelationMember struct {
+	Index        int         `xml:"index,attr"`
+	Version      int         `xml:"version,attr,omitempty"`
+	MinorVersion int         `xml:"minor-version,attr,omitempty"`
+	ChangesetID  ChangesetID `xml:"changeset,attr,omitempty"`
 }
 
 // Relations is a collection with some helper functions attached.
@@ -64,20 +91,3 @@ func (rs relationsSort) Less(i, j int) bool {
 
 	return rs[i].ID < rs[j].ID
 }
-
-// Member is a member of a relation.
-type Member struct {
-	Type MemberType `xml:"type,attr"`
-	Ref  int64      `xml:"ref,attr"`
-	Role string     `xml:"role,attr"`
-}
-
-// MemberType is the type of a member of a relation.
-type MemberType string
-
-// Enums for the different member types.
-const (
-	NodeMember     MemberType = "node"
-	WayMember                 = "way"
-	RelationMember            = "relation"
-)

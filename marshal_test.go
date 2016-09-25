@@ -151,6 +151,116 @@ func TestProtobufWay(t *testing.T) {
 	}
 }
 
+func TestProtobufMinorWay(t *testing.T) {
+	o := loadOSM(t, "testdata/minor-way.osm")
+	w1 := o.Ways[0]
+
+	ss := &stringSet{}
+	pbway := marshalWay(w1, ss, true)
+
+	w2, err := unmarshalWay(pbway, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(w1, w2) {
+		t.Errorf("ways are not equal")
+		t.Logf("%+v", w1)
+		t.Logf("%+v", w2)
+	}
+
+	// with no minor nodes
+	w1.Minors[0].MinorNodes = nil
+	w1.Minors[1].MinorNodes = nil
+
+	ss = &stringSet{}
+	pbway = marshalWay(w1, ss, true)
+
+	w2, err = unmarshalWay(pbway, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(w1, w2) {
+		t.Errorf("ways are not equal")
+		t.Logf("%+v", w1)
+		t.Logf("%+v", w2)
+	}
+
+	// with no minor version
+	w1.Minors = nil
+	w1.Minors = nil
+
+	ss = &stringSet{}
+	pbway = marshalWay(w1, ss, true)
+
+	w2, err = unmarshalWay(pbway, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(w1, w2) {
+		t.Errorf("ways are not equal")
+		t.Logf("%+v", w1)
+		t.Logf("%+v", w2)
+	}
+}
+
+func TestProtobufMinorRelation(t *testing.T) {
+	o := loadOSM(t, "testdata/minor-relation.osm")
+	r1 := o.Relations[0]
+
+	ss := &stringSet{}
+	pbrelation := marshalRelation(r1, ss, true)
+
+	r2, err := unmarshalRelation(pbrelation, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(r1, r2) {
+		t.Errorf("relations are not equal")
+		t.Logf("%+v", r1)
+		t.Logf("%+v", r2)
+	}
+
+	// with no minor members
+	r1.Minors[0].MinorMembers = nil
+	r1.Minors[1].MinorMembers = nil
+
+	ss = &stringSet{}
+	pbrelation = marshalRelation(r1, ss, true)
+
+	r2, err = unmarshalRelation(pbrelation, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(r1, r2) {
+		t.Errorf("relations are not equal")
+		t.Logf("%+v", r1)
+		t.Logf("%+v", r2)
+	}
+
+	// with no minor version
+	r1.Minors = nil
+	r1.Minors = nil
+
+	ss = &stringSet{}
+	pbrelation = marshalRelation(r1, ss, true)
+
+	r2, err = unmarshalRelation(pbrelation, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(r1, r2) {
+		t.Errorf("relations are not equal")
+		t.Logf("%+v", r1)
+		t.Logf("%+v", r2)
+	}
+}
+
 func TestProtobufRelation(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
 	r1 := c.Create.Relations[0]
@@ -210,6 +320,30 @@ func BenchmarkMarshalProto(b *testing.B) {
 		if err != nil {
 			b.Fatalf("unable to marshal: %v", err)
 		}
+	}
+}
+
+func BenchmarkMarshalMinorWay(b *testing.B) {
+	o := loadOSM(b, "testdata/minor-way.osm")
+	ways := o.Ways
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		data, _ := ways.Marshal()
+		UnmarshalWays(data)
+	}
+}
+
+func BenchmarkMarshalMinorRelation(b *testing.B) {
+	o := loadOSM(b, "testdata/minor-relation.osm")
+	relations := o.Relations
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		data, _ := relations.Marshal()
+		UnmarshalRelations(data)
 	}
 }
 
@@ -330,6 +464,19 @@ func loadChange(t testing.TB, filename string) *Change {
 
 	cleanXMLNameFromChange(c)
 	return c
+}
+
+func loadOSM(t testing.TB, filename string) *OSM {
+	data := readFile(t, filename)
+
+	o := &OSM{}
+	err := xml.Unmarshal(data, &o)
+	if err != nil {
+		t.Fatalf("unable to unmarshal %s: %v", filename, err)
+	}
+
+	cleanXMLNameFromOSM(o)
+	return o
 }
 
 func readFile(t testing.TB, filename string) []byte {

@@ -59,25 +59,6 @@ func UnmarshalNodes(data []byte) (Nodes, error) {
 	return unmarshalNodes(pbf, pbf.GetStrings(), nil)
 }
 
-// ActiveAt returns the active node at the give time for a history of nodes.
-// These nodes should normally be returned from a /nodes/:id/history api call.
-func (ns Nodes) ActiveAt(t time.Time) *Node {
-	if len(ns) == 0 {
-		return nil
-	}
-
-	var active *Node
-	for _, n := range ns {
-		if n.Timestamp.After(t) {
-			return active
-		}
-
-		active = n
-	}
-
-	return active
-}
-
 type nodesSort Nodes
 
 // SortByIDVersion will sort the set of nodes first by id and then version

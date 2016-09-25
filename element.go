@@ -39,3 +39,14 @@ type Element struct {
 	Way       *Way
 	Relation  *Relation
 }
+
+// ElementType is the type of different osm elements.
+// ie. node, way, relation
+type ElementType string
+
+// Enums for the different element types.
+const (
+	NodeType     ElementType = "node"
+	WayType                  = "way"
+	RelationType             = "relation"
+)

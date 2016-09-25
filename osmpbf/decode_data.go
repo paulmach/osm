@@ -132,15 +132,15 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 	for _, way := range ways {
 		var (
 			prev    int64
-			nodeIDs []osm.NodeRef
+			nodeIDs []osm.WayNode
 		)
 
 		info := extractInfo(st, way.Info, dateGranularity)
 		if refs := way.GetRefs(); len(refs) > 0 {
-			nodeIDs = make([]osm.NodeRef, len(refs))
+			nodeIDs = make([]osm.WayNode, len(refs))
 			for i, r := range refs {
 				prev = r + prev // delta encoding
-				nodeIDs[i].Ref = osm.NodeID(prev)
+				nodeIDs[i].ID = osm.NodeID(prev)
 			}
 		}
 
@@ -153,7 +153,7 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 				Version:     int(info.Version),
 				ChangesetID: osm.ChangesetID(info.Changeset),
 				Timestamp:   info.Timestamp,
-				NodeRefs:    nodeIDs,
+				Nodes:       nodeIDs,
 				Tags:        extractTags(st, way.Keys, way.Vals),
 			},
 		})
@@ -175,14 +175,14 @@ func extractMembers(stringTable []string, rel *osmpbf.Relation) []osm.Member {
 	for index := range memIDs {
 		memID = memIDs[index] + memID // delta encoding
 
-		var memType osm.MemberType
+		var memType osm.ElementType
 		switch types[index] {
 		case osmpbf.Relation_NODE:
-			memType = osm.NodeMember
+			memType = osm.NodeType
 		case osmpbf.Relation_WAY:
-			memType = osm.WayMember
+			memType = osm.WayType
 		case osmpbf.Relation_RELATION:
-			memType = osm.RelationMember
+			memType = osm.RelationType
 		}
 
 		members[index] = osm.Member{

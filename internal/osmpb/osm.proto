@@ -90,7 +90,7 @@ message Info {
   optional int32 version = 1;
   optional int64 timestamp = 2; // Epoch
 
-  // these caan be omitted if the object represents one changeset
+  // these can be omitted if the object represents one changeset
   // since they will be all the same. However tests on 200k changesets
   // show this saves about 17 bytes per changeset on average after gzip.
   optional int64 changeset_id = 3;
@@ -134,7 +134,7 @@ message DenseInfo {
 
   // The visible flag is used to store history information. It indicates that
   // the current object version has been created by a delete operation on the
-  // OSM API. This info may be omitted if it can be inferred from it's group
+  // OSM API. This info may be omitted if it can be inferred from its group
   // ie. create, modify, delete.
   repeated bool visible = 6 [packed = true];
 }
@@ -148,16 +148,25 @@ message Way {
 
   optional Info info = 4;
 
-  repeated sint64 refs = 8 [packed = true];  // DELTA coded
+  // Only one of the next two must be included.
+  // refs are DELTA coded node ids. If there is more info,
+  // ids, version, changeset ids, lat and lon will be encoded
+  // as a DenseMembers object.
+  repeated sint64 refs = 8 [packed = true];
+  optional DenseMembers dense_members = 9;
+
+  // minor versions are changes to members that did not happen
+  // at a similar time to a change in the parent.
+  repeated MinorVersion minor_version = 10;
+}
+
+enum MemberType {
+  NODE = 0;
+  WAY = 1;
+  RELATION = 2;
 }
 
 message Relation {
-  enum MemberType {
-    NODE = 0;
-    WAY = 1;
-    RELATION = 2;
-  }
-
   required int64 id = 1;
 
   // Parallel arrays.
@@ -166,11 +175,39 @@ message Relation {
 
   optional Info info = 4;
 
+  // Only one of the next two sets must be included.
+  // roles+refs+types are simple values. If there is more info,
+  // versions and changeset ids will be encoded as DenseMembers.
+
   // Parallel arrays
   // Roles has been changed int32 -> uint32 form the osm proto,
   // this is for consistency and backwards compatible.
   repeated uint32 roles = 8 [packed = true]; // String IDs.
   repeated sint64 refs = 9 [packed = true]; // DELTA encoded
   repeated MemberType types = 10 [packed = true];
+
+  optional DenseMembers dense_members = 11;
+
+  // minor versions are changes to members that did not happen
+  // at a similar time to a change in the parent.
+  repeated MinorVersion minor_version = 12;
 }
 
+message MinorVersion {
+  optional int64 timestamp = 1; // Epoch
+  optional DenseMembers dense_members = 2;
+}
+
+message DenseMembers {
+  repeated sint32 index = 1 [packed = true]; // DELTA coded
+  repeated int32 version = 2 [packed = true];
+  repeated int32 minor_version = 3 [packed = true]; // only needed for relations
+  repeated sint64 changeset_id = 4 [packed = true]; // DELTA coded
+
+  // included when part of a way
+  repeated sint64 lat = 8 [packed = true]; // DELTA coded
+  repeated sint64 lon = 9 [packed = true]; // DELTA coded
+
+  // used for dense way members
+  repeated sint64 id = 15 [packed = true]; // DELTA coded
+}
