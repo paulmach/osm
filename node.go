@@ -65,9 +65,9 @@ func UnmarshalNodes(data []byte) (Nodes, error) {
 
 type nodesSort Nodes
 
-// SortIDVersion will sort the set of nodes first by id and then version
+// SortByIDVersion will sort the set of nodes first by id and then version
 // in ascending order.
-func (ns Nodes) SortIDVersion() {
+func (ns Nodes) SortByIDVersion() {
 	sort.Sort(nodesSort(ns))
 }
 

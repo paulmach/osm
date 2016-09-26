@@ -1,7 +1,9 @@
 <osm>
   <relation id="6091239" changeset="38162206" timestamp="2016-03-30T09:25:31Z" version="1" visible="true" user="grah735" uid="2744209">
     <member type="way" ref="406567027" role="from" version="11" minor-version="22" changeset="33"/>
-    <member type="node" ref="1088206870" role="via" version="13" minor-version="24" changeset="35"/>
+    <member type="node" ref="1088206870" role="via" version="13" minor-version="24" changeset="35" lat="23.456" lon="-123"/>
+    <member type="node" ref="1088206871" role="via" version="13" minor-version="24" changeset="35" lat="43.456" lon="-143"/>
+    <member type="node" ref="1088206872" role="via" version="13" minor-version="24" changeset="35" lat="33.456" lon="-133"/>
     <member type="way" ref="406567027" role="to" version="12" minor-version="23" changeset="34"/>
     <tag k="restriction" v="no_u_turn"/>
     <tag k="type" v="restriction"/>

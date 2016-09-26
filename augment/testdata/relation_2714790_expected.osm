@@ -1,0 +1,2060 @@
+<osm version="0.6" generator="go.osm">
+ <relation id="2714790" user="dchiles" uid="153669" visible="true" version="1" changeset="14724410" timestamp="2013-01-20T18:33:45Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="202024194" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="195604782" role="" version="1" changeset="14229308"></member>
+  <member type="way" ref="195604783" role="" version="1" changeset="14229308"></member>
+  <member type="way" ref="196739926" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="202172572" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="184792817" role="" version="6" changeset="14724410"></member>
+  <member type="way" ref="202172598" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="6347657" role="" version="23" changeset="14558740"></member>
+  <member type="way" ref="183343384" role="" version="5" changeset="14558740"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="31" changeset="14273390"></member>
+  <member type="way" ref="184792836" role="" version="3" changeset="14273390"></member>
+  <member type="way" ref="202172587" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="7" changeset="11993246"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="5" changeset="8357276"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="3" changeset="14724410"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="4" changeset="14724410"></member>
+  <member type="way" ref="23591772" role="" version="6" changeset="14724410"></member>
+ </relation>
+ <relation id="2714790" user="dchiles" uid="153669" visible="true" version="2" changeset="14724965" timestamp="2013-01-20T19:10:11Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="202024194" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="195604782" role="" version="1" changeset="14229308"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="196739926" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="202172572" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="184792817" role="" version="6" changeset="14724410"></member>
+  <member type="way" ref="202172598" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="6347657" role="" version="23" changeset="14558740"></member>
+  <member type="way" ref="183343384" role="" version="5" changeset="14558740"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="31" changeset="14273390"></member>
+  <member type="way" ref="184792836" role="" version="3" changeset="14273390"></member>
+  <member type="way" ref="202172587" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="7" changeset="11993246"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="5" changeset="8357276"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="3" changeset="14724410"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="4" changeset="14724410"></member>
+  <member type="way" ref="23591772" role="" version="6" changeset="14724410"></member>
+ </relation>
+ <relation id="2714790" user="dchiles" uid="153669" visible="true" version="3" changeset="14737162" timestamp="2013-01-21T19:14:21Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="202024194" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="202317705" role="" version="1" changeset="14737162"></member>
+  <member type="way" ref="195604782" role="" version="2" changeset="14737162"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="196739926" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="202172572" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="184792817" role="" version="6" changeset="14724410"></member>
+  <member type="way" ref="202172598" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="6347657" role="" version="23" changeset="14558740"></member>
+  <member type="way" ref="183343384" role="" version="5" changeset="14558740"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="31" changeset="14273390"></member>
+  <member type="way" ref="184792836" role="" version="3" changeset="14273390"></member>
+  <member type="way" ref="202172587" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="7" changeset="11993246"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="5" changeset="8357276"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="3" changeset="14724410"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="4" changeset="14724410"></member>
+  <member type="way" ref="23591772" role="" version="6" changeset="14724410"></member>
+ </relation>
+ <relation id="2714790" user="dchiles" uid="153669" visible="true" version="4" changeset="14749145" timestamp="2013-01-22T18:51:51Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="202024194" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="202317705" role="" version="1" changeset="14737162"></member>
+  <member type="way" ref="195604782" role="" version="2" changeset="14737162"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="196739926" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="202172572" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="184792817" role="" version="6" changeset="14724410"></member>
+  <member type="way" ref="202172598" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="6347657" role="" version="23" changeset="14558740"></member>
+  <member type="way" ref="183343384" role="" version="5" changeset="14558740"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="31" changeset="14273390"></member>
+  <member type="way" ref="184792836" role="" version="3" changeset="14273390"></member>
+  <member type="way" ref="202172587" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="5" changeset="8357276"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="3" changeset="14724410"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="4" changeset="14724410"></member>
+  <member type="way" ref="23591772" role="" version="6" changeset="14724410"></member>
+ </relation>
+ <relation id="2714790" user="dchiles" uid="153669" visible="true" version="5" changeset="14750261" timestamp="2013-01-22T20:31:08Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="202024194" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="202317705" role="" version="1" changeset="14737162"></member>
+  <member type="way" ref="195604782" role="" version="2" changeset="14737162"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="196739926" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="202172572" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="184792817" role="" version="6" changeset="14724410"></member>
+  <member type="way" ref="202172598" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="6347657" role="" version="23" changeset="14558740"></member>
+  <member type="way" ref="183343384" role="" version="5" changeset="14558740"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="32" changeset="14750261"></member>
+  <member type="way" ref="202459227" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="184792836" role="" version="3" changeset="14273390"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="5" changeset="8357276"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="3" changeset="14724410"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="4" changeset="14724410"></member>
+  <member type="way" ref="23591772" role="" version="6" changeset="14724410"></member>
+  <update index="2" version="2" timestamp="2013-07-17T01:21:49Z" changeset="16981620"></update>
+  <update index="3" version="2" timestamp="2013-07-16T00:41:36Z" changeset="16969271"></update>
+  <update index="3" version="3" timestamp="2013-07-16T01:03:08Z" changeset="16969271"></update>
+  <update index="15" version="2" timestamp="2013-05-17T18:37:13Z" changeset="16171283"></update>
+  <update index="16" version="24" timestamp="2013-05-17T18:42:08Z" changeset="16171365"></update>
+  <update index="17" version="6" timestamp="2013-05-17T18:46:15Z" changeset="16171419"></update>
+  <update index="20" version="2" timestamp="2013-02-24T00:16:29Z" changeset="15142720"></update>
+  <update index="21" version="4" timestamp="2013-02-24T00:16:29Z" changeset="15142720"></update>
+  <update index="21" version="5" timestamp="2013-05-03T18:31:15Z" changeset="15963924"></update>
+  <update index="31" version="6" timestamp="2013-02-15T07:38:44Z" changeset="15036812"></update>
+  <update index="31" version="7" timestamp="2013-02-15T08:37:37Z" changeset="15037420"></update>
+  <update index="33" version="4" timestamp="2013-06-02T23:17:57Z" changeset="16399344"></update>
+  <update index="36" version="5" timestamp="2013-04-04T04:23:03Z" changeset="15603077"></update>
+  <update index="37" version="7" timestamp="2013-04-04T04:23:04Z" changeset="15603077"></update>
+ </relation>
+ <relation id="2714790" user="KindredCoda" uid="14293" visible="true" version="6" changeset="17006132" timestamp="2013-07-18T23:19:35Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="2" changeset="16981620"></member>
+  <member type="way" ref="202024194" role="" version="3" changeset="16969271"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="230391158" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="202317705" role="" version="2" changeset="17006132"></member>
+  <member type="way" ref="195604782" role="" version="2" changeset="14737162"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="196739926" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="202172572" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="184792817" role="" version="6" changeset="14724410"></member>
+  <member type="way" ref="202172598" role="" version="2" changeset="16171283"></member>
+  <member type="way" ref="6347657" role="" version="24" changeset="16171365"></member>
+  <member type="way" ref="183343384" role="" version="6" changeset="16171419"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="32" changeset="14750261"></member>
+  <member type="way" ref="202459227" role="" version="2" changeset="15142720"></member>
+  <member type="way" ref="184792836" role="" version="5" changeset="15963924"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="230391151" role="" version="1" changeset="17006132"></member>
+ </relation>
+ <relation id="2714790" user="KindredCoda" uid="14293" visible="true" version="7" changeset="17006321" timestamp="2013-07-19T00:30:43Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="2" changeset="16981620"></member>
+  <member type="way" ref="202024194" role="" version="3" changeset="16969271"></member>
+  <member type="way" ref="202024193" role="" version="1" changeset="14714108"></member>
+  <member type="way" ref="106994776" role="" version="7" changeset="14248550"></member>
+  <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
+  <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
+  <member type="way" ref="230391158" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="2" changeset="14737162"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="2" changeset="16171283"></member>
+  <member type="way" ref="6347657" role="" version="24" changeset="16171365"></member>
+  <member type="way" ref="183343384" role="" version="6" changeset="16171419"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="32" changeset="14750261"></member>
+  <member type="way" ref="202459227" role="" version="2" changeset="15142720"></member>
+  <member type="way" ref="184792836" role="" version="5" changeset="15963924"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="230391151" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="230393400" role="" version="1" changeset="17006321"></member>
+  <update index="5" version="8" timestamp="2013-07-19T04:48:48Z" changeset="17007313"></update>
+  <update index="10" version="3" timestamp="2013-07-19T01:58:16Z" changeset="17006728"></update>
+  <update index="40" version="2" timestamp="2013-07-19T00:43:32Z" changeset="17006498"></update>
+ </relation>
+ <relation id="2714790" user="KindredCoda" uid="14293" visible="true" version="8" changeset="17007392" timestamp="2013-07-19T05:01:47Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="4" changeset="17007313"></member>
+  <member type="way" ref="202024193" role="" version="2" changeset="17007313"></member>
+  <member type="way" ref="106994776" role="" version="9" changeset="17007392"></member>
+  <member type="way" ref="196739922" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="230400522" role="" version="1" changeset="17007392"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="3" changeset="17006728"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="2" changeset="16171283"></member>
+  <member type="way" ref="6347657" role="" version="24" changeset="16171365"></member>
+  <member type="way" ref="183343384" role="" version="6" changeset="16171419"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="32" changeset="14750261"></member>
+  <member type="way" ref="202459227" role="" version="2" changeset="15142720"></member>
+  <member type="way" ref="184792836" role="" version="5" changeset="15963924"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="230391151" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="230393400" role="" version="2" changeset="17006498"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <update index="6" version="3" timestamp="2013-07-19T07:22:02Z" changeset="17008055"></update>
+  <update index="7" version="2" timestamp="2013-07-19T07:22:01Z" changeset="17008055"></update>
+ </relation>
+ <relation id="2714790" user="jlev" uid="81909" visible="true" version="9" changeset="17127985" timestamp="2013-07-28T16:37:02Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="2" changeset="14280145"></member>
+  <member type="way" ref="196485704" role="" version="1" changeset="14280145"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="4" changeset="17007313"></member>
+  <member type="way" ref="202024193" role="" version="2" changeset="17007313"></member>
+  <member type="way" ref="106994776" role="" version="9" changeset="17007392"></member>
+  <member type="way" ref="196739922" role="" version="3" changeset="17008055"></member>
+  <member type="way" ref="230400522" role="" version="2" changeset="17008055"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="3" changeset="17006728"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="2" changeset="16171283"></member>
+  <member type="way" ref="6347657" role="" version="24" changeset="16171365"></member>
+  <member type="way" ref="183343384" role="" version="6" changeset="16171419"></member>
+  <member type="way" ref="25966237" role="" version="9" changeset="13461517"></member>
+  <member type="way" ref="6334626" role="" version="32" changeset="14750261"></member>
+  <member type="way" ref="202459227" role="" version="2" changeset="15142720"></member>
+  <member type="way" ref="184792836" role="" version="5" changeset="15963924"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="2" changeset="17006498"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <update index="0" version="3" timestamp="2013-12-07T21:28:55Z" changeset="19330159"></update>
+  <update index="1" version="2" timestamp="2013-08-25T04:18:43Z" changeset="17493020"></update>
+  <update index="3" version="5" timestamp="2013-12-07T21:51:43Z" changeset="19330845"></update>
+  <update index="4" version="3" timestamp="2013-12-07T21:51:43Z" changeset="19330845"></update>
+  <update index="5" version="10" timestamp="2013-12-07T21:51:42Z" changeset="19330845"></update>
+  <update index="16" version="3" timestamp="2013-09-15T07:57:33Z" changeset="17844825"></update>
+  <update index="17" version="25" timestamp="2013-09-15T07:57:31Z" changeset="17844825"></update>
+  <update index="18" version="7" timestamp="2013-09-15T07:57:32Z" changeset="17844825"></update>
+  <update index="19" version="10" timestamp="2013-09-15T07:57:31Z" changeset="17844825"></update>
+  <update index="20" version="33" timestamp="2013-08-15T22:48:08Z" changeset="17365899"></update>
+  <update index="20" version="34" timestamp="2013-09-08T02:15:44Z" changeset="17726056"></update>
+  <update index="21" version="3" timestamp="2013-09-08T02:15:43Z" changeset="17726056"></update>
+  <update index="22" version="6" timestamp="2013-09-08T02:15:45Z" changeset="17726056"></update>
+ </relation>
+ <relation id="2714790" user="migurski" uid="8287" visible="true" version="10" changeset="19332466" timestamp="2013-12-07T22:45:30Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="2" changeset="17493020"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="5" changeset="19330845"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="106994776" role="" version="11" changeset="19332466"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="3" changeset="17006728"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="3" changeset="17844825"></member>
+  <member type="way" ref="6347657" role="" version="25" changeset="17844825"></member>
+  <member type="way" ref="183343384" role="" version="7" changeset="17844825"></member>
+  <member type="way" ref="25966237" role="" version="10" changeset="17844825"></member>
+  <member type="way" ref="6334626" role="" version="34" changeset="17726056"></member>
+  <member type="way" ref="202459227" role="" version="3" changeset="17726056"></member>
+  <member type="way" ref="184792836" role="" version="6" changeset="17726056"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="2" changeset="17006498"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+ </relation>
+ <relation id="2714790" user="npdoty" uid="644152" visible="true" version="11" changeset="20238577" timestamp="2014-01-27T22:40:51Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="2" changeset="17493020"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="5" changeset="19330845"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="106994776" role="" version="11" changeset="19332466"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="3" changeset="17006728"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="3" changeset="17844825"></member>
+  <member type="way" ref="6347657" role="" version="25" changeset="17844825"></member>
+  <member type="way" ref="183343384" role="" version="7" changeset="17844825"></member>
+  <member type="way" ref="25966237" role="" version="10" changeset="17844825"></member>
+  <member type="way" ref="6334626" role="" version="34" changeset="17726056"></member>
+  <member type="way" ref="202459227" role="" version="3" changeset="17726056"></member>
+  <member type="way" ref="184792836" role="" version="6" changeset="17726056"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="2" changeset="17006498"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+ </relation>
+ <relation id="2714790" user="npdoty" uid="644152" visible="true" version="12" changeset="20238761" timestamp="2014-01-27T22:55:08Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="2" changeset="17493020"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="5" changeset="19330845"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="106994776" role="" version="11" changeset="19332466"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="3" changeset="17006728"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="3" changeset="17844825"></member>
+  <member type="way" ref="6347657" role="" version="25" changeset="17844825"></member>
+  <member type="way" ref="183343384" role="" version="7" changeset="17844825"></member>
+  <member type="way" ref="25966237" role="" version="10" changeset="17844825"></member>
+  <member type="way" ref="6334626" role="" version="34" changeset="17726056"></member>
+  <member type="way" ref="202459227" role="" version="3" changeset="17726056"></member>
+  <member type="way" ref="184792836" role="" version="6" changeset="17726056"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="2" changeset="17006498"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="1" version="3" timestamp="2014-05-03T17:30:14Z" changeset="22109939"></update>
+  <update index="20" version="11" timestamp="2014-04-05T20:41:19Z" changeset="21521443"></update>
+  <update index="21" version="35" timestamp="2014-04-05T20:43:53Z" changeset="21521486"></update>
+  <update index="22" version="4" timestamp="2014-04-05T20:43:53Z" changeset="21521486"></update>
+  <update index="23" version="7" timestamp="2014-04-05T20:43:52Z" changeset="21521486"></update>
+ </relation>
+ <relation id="2714790" user="dchiles" uid="153669" visible="true" version="13" changeset="22215520" timestamp="2014-05-08T18:28:01Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="4" changeset="22215520"></member>
+  <member type="way" ref="280308280" role="" version="1" changeset="22215520"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="5" changeset="19330845"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="106994776" role="" version="11" changeset="19332466"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="195604782" role="" version="3" changeset="17006728"></member>
+  <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
+  <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="3" changeset="17844825"></member>
+  <member type="way" ref="6347657" role="" version="25" changeset="17844825"></member>
+  <member type="way" ref="183343384" role="" version="7" changeset="17844825"></member>
+  <member type="way" ref="25966237" role="" version="11" changeset="21521443"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="202459227" role="" version="4" changeset="21521486"></member>
+  <member type="way" ref="184792836" role="" version="7" changeset="21521486"></member>
+  <member type="way" ref="202459229" role="" version="1" changeset="14750261"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="168769919" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="2" changeset="17006498"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="1" version="5" timestamp="2014-09-06T23:49:43Z" changeset="25277657"></update>
+  <update index="2" version="2" timestamp="2014-09-06T23:49:44Z" changeset="25277657"></update>
+  <update index="4" version="6" timestamp="2014-09-07T22:08:36Z" changeset="25296650"></update>
+  <update index="4" version="7" timestamp="2014-10-20T07:35:34Z" changeset="26207380"></update>
+  <update index="6" version="12" timestamp="2014-10-20T07:27:42Z" changeset="26207380"></update>
+  <update index="12" version="4" timestamp="2014-12-20T17:14:38Z" changeset="27592868"></update>
+  <update index="13" version="4" timestamp="2014-09-29T07:16:55Z" changeset="25740140"></update>
+  <update index="13" version="5" timestamp="2014-12-20T17:14:38Z" changeset="27592868"></update>
+  <update index="13" version="6" timestamp="2015-04-15T06:47:19Z" changeset="30228400"></update>
+  <update index="14" version="2" timestamp="2014-12-20T17:14:38Z" changeset="27592868"></update>
+  <update index="15" version="3" timestamp="2014-12-20T17:14:38Z" changeset="27592868"></update>
+  <update index="19" version="26" timestamp="2014-09-30T12:44:07Z" changeset="25766862"></update>
+  <update index="20" version="8" timestamp="2014-09-30T12:44:07Z" changeset="25766862"></update>
+  <update index="21" version="12" timestamp="2014-08-04T19:52:50Z" changeset="24542824"></update>
+  <update index="21" version="13" timestamp="2014-08-17T06:36:31Z" changeset="24800411"></update>
+  <update index="21" version="14" timestamp="2015-09-25T01:32:02Z" changeset="34237134"></update>
+  <update index="23" version="5" timestamp="2015-10-17T10:18:07Z" changeset="34690740"></update>
+  <update index="25" version="2" timestamp="2015-10-17T10:18:06Z" changeset="34690740"></update>
+  <update index="27" version="2" timestamp="2015-08-13T16:56:36Z" changeset="33317752"></update>
+  <update index="27" version="3" timestamp="2015-08-17T22:07:09Z" changeset="33404070"></update>
+  <update index="28" version="3" timestamp="2015-08-13T16:26:56Z" changeset="33317030"></update>
+  <update index="28" version="4" timestamp="2015-08-13T19:55:10Z" changeset="33322626"></update>
+  <update index="44" version="3" timestamp="2014-12-20T17:14:39Z" changeset="27592868"></update>
+ </relation>
+ <relation id="2714790" user="dannykath" uid="2226712" visible="true" version="14" changeset="36823525" timestamp="2016-01-26T19:22:23Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="106994776" role="" version="12" changeset="26207380"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="4" changeset="36823525"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="202459227" role="" version="5" changeset="34690740"></member>
+  <member type="way" ref="184792836" role="" version="7" changeset="21521486"></member>
+  <member type="way" ref="202459229" role="" version="2" changeset="34690740"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="dannykath" uid="2226712" visible="true" version="15" changeset="36825565" timestamp="2016-01-26T21:12:09Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="13" changeset="36825565"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="4" changeset="36823525"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="202459227" role="" version="5" changeset="34690740"></member>
+  <member type="way" ref="184792836" role="" version="7" changeset="21521486"></member>
+  <member type="way" ref="202459229" role="" version="2" changeset="34690740"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="Jothirnadh" uid="2015224" visible="true" version="16" changeset="37015653" timestamp="2016-02-05T09:44:18Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="202172571" role="" version="3" changeset="17007313"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="13" changeset="36825565"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="2" changeset="17007392"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="4" changeset="36823525"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="184792836" role="" version="8" changeset="37015653"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="2" changeset="34690740"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="3" version="4" timestamp="2016-03-12T17:48:48Z" changeset="37787373"></update>
+  <update index="13" version="3" timestamp="2016-03-04T02:40:45Z" changeset="37599981"></update>
+ </relation>
+ <relation id="2714790" user="manings" uid="3272286" visible="true" version="17" changeset="38229690" timestamp="2016-04-01T16:08:16Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="202172571" role="" version="4" changeset="37787373"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="13" changeset="36825565"></member>
+  <member type="way" ref="250670625" role="" version="1" changeset="19332466"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="4" changeset="36823525"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="2" changeset="34690740"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="168769922" role="" version="1" changeset="11993246"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="24089926" role="" version="18" changeset="11993246"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="9" version="2" timestamp="2016-04-08T17:48:54Z" changeset="38412432"></update>
+  <update index="20" version="5" timestamp="2016-04-01T16:41:27Z" changeset="38230459"></update>
+ </relation>
+ <relation id="2714790" user="dannykath" uid="2226712" visible="true" version="18" changeset="39128511" timestamp="2016-05-05T19:55:00Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="202172571" role="" version="4" changeset="37787373"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="13" changeset="36825565"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="2" changeset="34690740"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="19" changeset="39128511"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="RichRico" uid="2219338" visible="true" version="19" changeset="39130412" timestamp="2016-05-05T21:30:52Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="13" changeset="36825565"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="2" changeset="34690740"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="19" changeset="39128511"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="saikabhi" uid="3029661" visible="true" version="20" changeset="39141832" timestamp="2016-05-06T11:45:25Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="13" changeset="36825565"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="19" changeset="39128511"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="10" version="14" timestamp="2016-05-06T12:43:45Z" changeset="39143039"></update>
+ </relation>
+ <relation id="2714790" user="nikhilprabhakar" uid="2835928" visible="true" version="21" changeset="39143420" timestamp="2016-05-06T13:01:08Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="416141198" role="" version="1" changeset="39143420"></member>
+  <member type="way" ref="416141197" role="" version="1" changeset="39143420"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="20" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="saikabhi" uid="3029661" visible="true" version="22" changeset="39143752" timestamp="2016-05-06T13:18:37Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="195604782" role="" version="6" changeset="30228400"></member>
+  <member type="way" ref="202177315" role="" version="2" changeset="27592868"></member>
+  <member type="way" ref="195604783" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="20" changeset="39143752"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="karitotp" uid="2748195" visible="true" version="23" changeset="39146331" timestamp="2016-05-06T15:16:14Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="7" changeset="26207380"></member>
+  <member type="way" ref="202024193" role="" version="3" changeset="19330845"></member>
+  <member type="way" ref="393890395" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="20" changeset="39143752"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="karitotp" uid="2748195" visible="true" version="24" changeset="39147391" timestamp="2016-05-06T16:08:25Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="8" changeset="39147391"></member>
+  <member type="way" ref="416168750" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168760" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168751" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="202024193" role="" version="4" changeset="39147391"></member>
+  <member type="way" ref="416168757" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168756" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168758" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168764" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="393890395" role="" version="2" changeset="39147391"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="20" changeset="39143752"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
+  <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="58" version="2" timestamp="2016-05-11T21:52:46Z" changeset="39253813"></update>
+  <update index="77" version="2" timestamp="2016-05-10T02:11:34Z" changeset="39204791" lat="37.8272129" lon="-122.2570318"></update>
+  <update index="78" version="2" timestamp="2016-05-10T02:11:34Z" changeset="39204791" lat="37.8272225" lon="-122.2570546"></update>
+ </relation>
+ <relation id="2714790" user="karitotp" uid="2748195" visible="true" version="25" changeset="39275923" timestamp="2016-05-12T19:10:30Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="8" changeset="39147391"></member>
+  <member type="way" ref="416168750" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168760" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168751" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="202024193" role="" version="4" changeset="39147391"></member>
+  <member type="way" ref="416168757" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168756" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168758" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168764" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="393890395" role="" version="2" changeset="39147391"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="2" changeset="39253813"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="21" changeset="39275923"></member>
+  <member type="way" ref="417684181" role="" version="1" changeset="39275923"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="3" changeset="39276183"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="2" changeset="39204791" lat="37.8272129" lon="-122.2570318"></member>
+  <member type="node" ref="2640249172" role="" version="2" changeset="39204791" lat="37.8272225" lon="-122.2570546"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="karitotp" uid="2748195" visible="true" version="26" changeset="39276183" timestamp="2016-05-12T19:25:11Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="3" changeset="19330159"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="202024194" role="" version="8" changeset="39147391"></member>
+  <member type="way" ref="416168750" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168760" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168751" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="202024193" role="" version="4" changeset="39147391"></member>
+  <member type="way" ref="416168757" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168756" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168758" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168764" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="393890395" role="" version="2" changeset="39147391"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="2" changeset="39253813"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="21" changeset="39275923"></member>
+  <member type="way" ref="417684181" role="" version="1" changeset="39275923"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="3" changeset="39276183"></member>
+  <member type="way" ref="417688722" role="" version="1" changeset="39276183"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="2" changeset="39204791" lat="37.8272129" lon="-122.2570318"></member>
+  <member type="node" ref="2640249172" role="" version="2" changeset="39204791" lat="37.8272225" lon="-122.2570546"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="0" version="4" timestamp="2016-05-12T20:47:09Z" changeset="39277696"></update>
+ </relation>
+ <relation id="2714790" user="samely" uid="2512300" visible="true" version="27" changeset="39278760" timestamp="2016-05-12T21:52:13Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="4" changeset="39277696"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="417722494" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="417722481" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="202024194" role="" version="9" changeset="39278760"></member>
+  <member type="way" ref="416168750" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168760" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168751" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="202024193" role="" version="5" changeset="39278760"></member>
+  <member type="way" ref="417722489" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="416168757" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168756" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168758" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168764" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="393890395" role="" version="2" changeset="39147391"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="106994776" role="" version="15" changeset="39143420"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="196739922" role="" version="4" changeset="19332466"></member>
+  <member type="way" ref="230400522" role="" version="3" changeset="19332466"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="2" changeset="39253813"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="21" changeset="39275923"></member>
+  <member type="way" ref="417684181" role="" version="1" changeset="39275923"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="3" changeset="39276183"></member>
+  <member type="way" ref="417688722" role="" version="1" changeset="39276183"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="2" changeset="39204791" lat="37.8272129" lon="-122.2570318"></member>
+  <member type="node" ref="2640249172" role="" version="2" changeset="39204791" lat="37.8272225" lon="-122.2570546"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+ </relation>
+ <relation id="2714790" user="samely" uid="2512300" visible="true" version="28" changeset="39279322" timestamp="2016-05-12T22:40:15Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="4" changeset="39277696"></member>
+  <member type="way" ref="196485704" role="" version="5" changeset="25277657"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="417722494" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="417722481" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="202024194" role="" version="9" changeset="39278760"></member>
+  <member type="way" ref="416168750" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168760" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168751" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="202024193" role="" version="5" changeset="39278760"></member>
+  <member type="way" ref="417722489" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="416168757" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168756" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168758" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168764" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="393890395" role="" version="2" changeset="39147391"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="417728707" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728702" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728711" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728705" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="106994776" role="" version="16" changeset="39279322"></member>
+  <member type="way" ref="417728701" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728677" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728699" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728697" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="417728685" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728681" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="196739922" role="" version="5" changeset="39279322"></member>
+  <member type="way" ref="230400522" role="" version="4" changeset="39279322"></member>
+  <member type="way" ref="417728675" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728672" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="3" changeset="37599981"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="35" changeset="21521486"></member>
+  <member type="way" ref="396143019" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459227" role="" version="6" changeset="37015653"></member>
+  <member type="way" ref="406993225" role="" version="1" changeset="38229690"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="3" changeset="39141832"></member>
+  <member type="way" ref="416118668" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118665" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118666" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118667" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118664" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="416118669" role="" version="1" changeset="39141832"></member>
+  <member type="way" ref="202172587" role="" version="2" changeset="14750261"></member>
+  <member type="way" ref="168769918" role="" version="3" changeset="33404070"></member>
+  <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
+  <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="2" changeset="39253813"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="21" changeset="39275923"></member>
+  <member type="way" ref="417684181" role="" version="1" changeset="39275923"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="3" changeset="39276183"></member>
+  <member type="way" ref="417688722" role="" version="1" changeset="39276183"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="2" changeset="39204791" lat="37.8272129" lon="-122.2570318"></member>
+  <member type="node" ref="2640249172" role="" version="2" changeset="39204791" lat="37.8272225" lon="-122.2570546"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="0" version="5" timestamp="2016-05-27T10:07:03Z" changeset="39600093"></update>
+  <update index="1" version="6" timestamp="2016-05-27T10:06:59Z" changeset="39600093"></update>
+  <update index="4" version="2" timestamp="2016-06-10T15:46:43Z" changeset="39933072"></update>
+  <update index="37" version="4" timestamp="2016-05-19T01:10:45Z" changeset="39413928"></update>
+ </relation>
+ <relation id="2714790" user="oba510" uid="933797" visible="true" version="29" changeset="40337963" timestamp="2016-06-28T08:30:11Z">
+  <tag k="from" v="Rockridge BART"></tag>
+  <tag k="name" v="Line 51A to Fruitvale BART"></tag>
+  <tag k="operator" v="AC Transit"></tag>
+  <tag k="ref" v="51A"></tag>
+  <tag k="route" v="bus"></tag>
+  <tag k="to" v="Fruitvale BART"></tag>
+  <tag k="type" v="route"></tag>
+  <tag k="via" v="Alameda"></tag>
+  <member type="way" ref="195430723" role="" version="5" changeset="39600093"></member>
+  <member type="way" ref="196485704" role="" version="6" changeset="39600093"></member>
+  <member type="way" ref="280308280" role="" version="2" changeset="25277657"></member>
+  <member type="way" ref="415877113" role="" version="1" changeset="39130412"></member>
+  <member type="way" ref="415877114" role="" version="2" changeset="39933072"></member>
+  <member type="way" ref="202172571" role="" version="5" changeset="39130412"></member>
+  <member type="way" ref="417722494" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="417722481" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="202024194" role="" version="9" changeset="39278760"></member>
+  <member type="way" ref="416168750" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168760" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168751" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="202024193" role="" version="5" changeset="39278760"></member>
+  <member type="way" ref="417722489" role="" version="1" changeset="39278760"></member>
+  <member type="way" ref="416168757" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168756" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168758" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="416168764" role="" version="1" changeset="39147391"></member>
+  <member type="way" ref="393890395" role="" version="2" changeset="39147391"></member>
+  <member type="way" ref="393890393" role="" version="1" changeset="36825565"></member>
+  <member type="way" ref="417728707" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728702" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728711" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728705" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="106994776" role="" version="16" changeset="39279322"></member>
+  <member type="way" ref="417728701" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728677" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728699" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728697" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="250670625" role="" version="2" changeset="38412432"></member>
+  <member type="way" ref="417728685" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728681" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="196739922" role="" version="5" changeset="39279322"></member>
+  <member type="way" ref="230400522" role="" version="4" changeset="39279322"></member>
+  <member type="way" ref="417728675" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="417728672" role="" version="1" changeset="39279322"></member>
+  <member type="way" ref="195604784" role="" version="3" changeset="17007392"></member>
+  <member type="way" ref="230391158" role="" version="4" changeset="39413928"></member>
+  <member type="way" ref="202317705" role="" version="4" changeset="27592868"></member>
+  <member type="way" ref="416161538" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="416161537" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604782" role="" version="7" changeset="39146331"></member>
+  <member type="way" ref="202177315" role="" version="3" changeset="39146331"></member>
+  <member type="way" ref="416161536" role="" version="1" changeset="39146331"></member>
+  <member type="way" ref="195604783" role="" version="4" changeset="39146331"></member>
+  <member type="way" ref="202172572" role="" version="2" changeset="17006321"></member>
+  <member type="way" ref="184792817" role="" version="7" changeset="17006321"></member>
+  <member type="way" ref="202172598" role="" version="5" changeset="38230459"></member>
+  <member type="way" ref="393861673" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="393861667" role="" version="1" changeset="36823525"></member>
+  <member type="way" ref="6347657" role="" version="26" changeset="25766862"></member>
+  <member type="way" ref="183343384" role="" version="8" changeset="25766862"></member>
+  <member type="way" ref="25966237" role="" version="14" changeset="34237134"></member>
+  <member type="way" ref="6334626" role="" version="36" changeset="40337963"></member>
+  <member type="way" ref="396143019" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="202459227" role="" version="7" changeset="40337963"></member>
+  <member type="way" ref="427768982" role="" version="1" changeset="40337963"></member>
+  <member type="way" ref="406993225" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="184792836" role="" version="9" changeset="38229690"></member>
+  <member type="way" ref="396143018" role="" version="1" changeset="37015653"></member>
+  <member type="way" ref="202459229" role="" version="4" changeset="40337963"></member>
+  <member type="way" ref="416118668" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="416118665" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="416118666" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="416118667" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="416118664" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="416118669" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="202172587" role="" version="3" changeset="40337963"></member>
+  <member type="way" ref="168769918" role="" version="4" changeset="40337963"></member>
+  <member type="way" ref="168769919" role="" version="5" changeset="40337963"></member>
+  <member type="way" ref="202172579" role="" version="2" changeset="40337963"></member>
+  <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
+  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860813" role="" version="2" changeset="39253813"></member>
+  <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
+  <member type="way" ref="24089940" role="" version="2" changeset="4280316"></member>
+  <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
+  <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
+  <member type="way" ref="24089926" role="" version="21" changeset="39275923"></member>
+  <member type="way" ref="417684181" role="" version="1" changeset="39275923"></member>
+  <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
+  <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
+  <member type="way" ref="118415845" role="" version="3" changeset="39276183"></member>
+  <member type="way" ref="417688722" role="" version="1" changeset="39276183"></member>
+  <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
+  <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
+  <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>
+  <member type="way" ref="230391153" role="" version="1" changeset="17006132"></member>
+  <member type="way" ref="231610637" role="" version="1" changeset="17127985"></member>
+  <member type="way" ref="230391151" role="" version="2" changeset="17127985"></member>
+  <member type="way" ref="230393400" role="" version="3" changeset="27592868"></member>
+  <member type="way" ref="230400524" role="" version="1" changeset="17007392"></member>
+  <member type="node" ref="2640249171" role="" version="2" changeset="39204791" lat="37.8272129" lon="-122.2570318"></member>
+  <member type="node" ref="2640249172" role="" version="2" changeset="39204791" lat="37.8272225" lon="-122.2570546"></member>
+  <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="0" version="6" timestamp="2016-08-24T06:59:00Z" changeset="41655234"></update>
+  <update index="23" version="2" timestamp="2016-07-28T01:29:23Z" changeset="41075439"></update>
+  <update index="24" version="17" timestamp="2016-07-28T01:29:18Z" changeset="41075439"></update>
+  <update index="25" version="2" timestamp="2016-07-28T01:29:23Z" changeset="41075439"></update>
+  <update index="26" version="2" timestamp="2016-07-28T01:29:22Z" changeset="41075439"></update>
+  <update index="30" version="2" timestamp="2016-07-26T15:44:43Z" changeset="41040981"></update>
+  <update index="31" version="2" timestamp="2016-07-26T15:44:42Z" changeset="41040981"></update>
+  <update index="33" version="5" timestamp="2016-07-26T15:44:41Z" changeset="41040981"></update>
+  <update index="33" version="6" timestamp="2016-07-28T01:29:19Z" changeset="41075439"></update>
+  <update index="36" version="4" timestamp="2016-07-26T15:28:33Z" changeset="41040656"></update>
+  <update index="37" version="5" timestamp="2016-07-26T15:28:36Z" changeset="41040656"></update>
+  <update index="45" version="3" timestamp="2016-07-28T01:51:40Z" changeset="41075561"></update>
+  <update index="46" version="8" timestamp="2016-07-28T01:51:38Z" changeset="41075561"></update>
+  <update index="47" version="6" timestamp="2016-07-28T01:51:40Z" changeset="41075561"></update>
+  <update index="48" version="2" timestamp="2016-07-28T01:51:41Z" changeset="41075561"></update>
+  <update index="49" version="2" timestamp="2016-07-28T01:51:42Z" changeset="41075561"></update>
+  <update index="60" version="5" timestamp="2016-07-24T16:44:14Z" changeset="40994584"></update>
+  <update index="61" version="3" timestamp="2016-07-24T16:44:15Z" changeset="40994584"></update>
+  <update index="94" version="2" timestamp="2016-07-26T15:28:33Z" changeset="41040656"></update>
+  <update index="96" version="3" timestamp="2016-08-19T22:53:24Z" changeset="41567214" lat="37.8272225" lon="-122.2570546"></update>
+ </relation>
+</osm>

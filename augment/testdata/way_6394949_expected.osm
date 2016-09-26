@@ -1,0 +1,122 @@
+<osm version="0.6" generator="go.osm">
+ <way id="6394949" user="DaveHansenTiger" uid="7168" visible="true" version="1" changeset="448653" timestamp="2007-09-17T08:00:17Z">
+  <nd ref="53101285" version="1" changeset="448153" lat="37.818127" lon="-122.226179"></nd>
+  <nd ref="53142906" version="1" changeset="448653" lat="37.818627" lon="-122.226779"></nd>
+  <nd ref="53142908" version="1" changeset="448653" lat="37.818727" lon="-122.225979"></nd>
+  <tag k="highway" v="residential"></tag>
+  <tag k="name" v="Wistaria Way"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Wistaria"></tag>
+  <tag k="tiger:name_type" v="Way"></tag>
+  <tag k="tiger:reviewed" v="no"></tag>
+  <tag k="tiger:separated" v="no"></tag>
+  <tag k="tiger:source" v="tiger_import_dch_v0.6_20070809"></tag>
+  <tag k="tiger:tlid" v="125002128"></tag>
+  <tag k="tiger:upload_uuid" v="bulk_upload.pl-9d5e179e-e488-4300-b71d-b0a82eacb273"></tag>
+  <tag k="tiger:zip_left" v="94611"></tag>
+  <tag k="tiger:zip_right" v="94611"></tag>
+ </way>
+ <way id="6394949" user="David Muir Sharnoff" uid="22946" visible="true" version="2" changeset="84058" timestamp="2008-04-08T09:24:18Z">
+  <nd ref="53101285" version="2" changeset="84058" lat="37.8181128" lon="-122.2259738"></nd>
+  <nd ref="53142906" version="2" changeset="84058" lat="37.818627" lon="-122.226779"></nd>
+  <nd ref="53142908" version="2" changeset="84058" lat="37.818662" lon="-122.2257335"></nd>
+  <tag k="created_by" v="Potlatch 0.8a"></tag>
+  <tag k="highway" v="residential"></tag>
+  <tag k="name" v="Wistaria Way"></tag>
+  <tag k="note" v="TODO: GPS"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Wistaria"></tag>
+  <tag k="tiger:name_type" v="way"></tag>
+  <tag k="tiger:reviewed" v="no"></tag>
+  <tag k="tiger:separated" v="no"></tag>
+  <tag k="tiger:source" v="tiger_import_dch_v0.6_20070809"></tag>
+  <tag k="tiger:tlid" v="125002128"></tag>
+  <tag k="tiger:upload_uuid" v="bulk_upload.pl-9d5e179e-e488-4300-b71d-b0a82eacb273"></tag>
+  <tag k="tiger:zip_left" v="94611"></tag>
+  <tag k="tiger:zip_right" v="94611"></tag>
+ </way>
+ <way id="6394949" user="Michal Migurski" uid="25981" visible="true" version="3" changeset="442821" timestamp="2008-10-19T02:20:15Z">
+  <nd ref="53101285" version="3" changeset="442821" lat="37.8180631" lon="-122.2260013"></nd>
+  <nd ref="305541870" version="1" changeset="442821" lat="37.8183344" lon="-122.226276"></nd>
+  <nd ref="305541871" version="1" changeset="442821" lat="37.8185039" lon="-122.2264133"></nd>
+  <nd ref="53142906" version="3" changeset="442821" lat="37.818653" lon="-122.2265764"></nd>
+  <nd ref="305541872" version="1" changeset="442821" lat="37.8188971" lon="-122.2266193"></nd>
+  <nd ref="305541873" version="1" changeset="442821" lat="37.819087" lon="-122.2265764"></nd>
+  <nd ref="305541874" version="1" changeset="442821" lat="37.8191887" lon="-122.2263618"></nd>
+  <nd ref="305541875" version="1" changeset="442821" lat="37.8191276" lon="-122.2261215"></nd>
+  <nd ref="53142908" version="3" changeset="442821" lat="37.8191209" lon="-122.2258468"></nd>
+  <tag k="created_by" v="Potlatch 0.10e"></tag>
+  <tag k="highway" v="residential"></tag>
+  <tag k="name" v="Wistaria Way"></tag>
+  <tag k="note" v="TODO: GPS"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Wistaria"></tag>
+  <tag k="tiger:name_type" v="Way"></tag>
+  <tag k="tiger:reviewed" v="no"></tag>
+  <tag k="tiger:separated" v="no"></tag>
+  <tag k="tiger:source" v="tiger_import_dch_v0.6_20070809"></tag>
+  <tag k="tiger:tlid" v="125002128"></tag>
+  <tag k="tiger:upload_uuid" v="bulk_upload.pl-9d5e179e-e488-4300-b71d-b0a82eacb273"></tag>
+  <tag k="tiger:zip_left" v="94611"></tag>
+  <tag k="tiger:zip_right" v="94611"></tag>
+ </way>
+ <way id="6394949" user="Michal Migurski" uid="25981" visible="true" version="4" changeset="442821" timestamp="2008-10-19T02:20:23Z">
+  <nd ref="53101285" version="3" changeset="442821" lat="37.8180631" lon="-122.2260013"></nd>
+  <nd ref="305541870" version="2" changeset="442821" lat="37.8183344" lon="-122.226276"></nd>
+  <nd ref="305541871" version="2" changeset="442821" lat="37.8184903" lon="-122.226439"></nd>
+  <nd ref="53142906" version="3" changeset="442821" lat="37.818653" lon="-122.2265764"></nd>
+  <nd ref="305541872" version="2" changeset="442821" lat="37.8188971" lon="-122.2266193"></nd>
+  <nd ref="305541873" version="2" changeset="442821" lat="37.819087" lon="-122.2265764"></nd>
+  <nd ref="305541874" version="2" changeset="442821" lat="37.8191887" lon="-122.2263618"></nd>
+  <nd ref="305541875" version="2" changeset="442821" lat="37.8191276" lon="-122.2261215"></nd>
+  <nd ref="53142908" version="3" changeset="442821" lat="37.8191209" lon="-122.2258468"></nd>
+  <tag k="created_by" v="Potlatch 0.10e"></tag>
+  <tag k="highway" v="residential"></tag>
+  <tag k="name" v="Wistaria Way"></tag>
+  <tag k="note" v="TODO: GPS"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Wistaria"></tag>
+  <tag k="tiger:name_type" v="Way"></tag>
+  <tag k="tiger:reviewed" v="no"></tag>
+  <tag k="tiger:separated" v="no"></tag>
+  <tag k="tiger:source" v="tiger_import_dch_v0.6_20070809"></tag>
+  <tag k="tiger:tlid" v="125002128"></tag>
+  <tag k="tiger:upload_uuid" v="bulk_upload.pl-9d5e179e-e488-4300-b71d-b0a82eacb273"></tag>
+  <tag k="tiger:zip_left" v="94611"></tag>
+  <tag k="tiger:zip_right" v="94611"></tag>
+  <update index="0" version="4" timestamp="2009-12-31T10:58:54Z" changeset="3499473" lat="37.8180631" lon="-122.2260013"></update>
+  <update index="3" version="4" timestamp="2009-09-16T05:43:15Z" changeset="2498408" lat="37.818653" lon="-122.2265764"></update>
+  <update index="8" version="4" timestamp="2009-09-16T05:43:15Z" changeset="2498408" lat="37.8191209" lon="-122.2258468"></update>
+ </way>
+ <way id="6394949" user="David Muir Sharnoff" uid="22946" visible="true" version="5" changeset="4309928" timestamp="2010-04-03T06:15:20Z">
+  <nd ref="53101285" version="4" changeset="3499473" lat="37.8180631" lon="-122.2260013"></nd>
+  <nd ref="305541870" version="3" changeset="4309928" lat="37.8183028" lon="-122.2262988"></nd>
+  <nd ref="305541871" version="3" changeset="4309928" lat="37.8184766" lon="-122.2264517"></nd>
+  <nd ref="53142906" version="4" changeset="2498408" lat="37.818653" lon="-122.2265764"></nd>
+  <nd ref="305541872" version="3" changeset="4309928" lat="37.8188527" lon="-122.2265335"></nd>
+  <nd ref="683050072" version="1" changeset="4309928" lat="37.8189057" lon="-122.2264838"></nd>
+  <nd ref="305541873" version="3" changeset="4309928" lat="37.8189353" lon="-122.2263551"></nd>
+  <nd ref="305541874" version="3" changeset="4309928" lat="37.8189226" lon="-122.2261969"></nd>
+  <nd ref="305541875" version="3" changeset="4309928" lat="37.8188527" lon="-122.2259434"></nd>
+  <nd ref="53142908" version="5" changeset="4309928" lat="37.8188336" lon="-122.2257288"></nd>
+  <tag k="highway" v="residential"></tag>
+  <tag k="name" v="Wistaria Way"></tag>
+  <tag k="note" v="TODO: GPS"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Wistaria"></tag>
+  <tag k="tiger:name_type" v="way"></tag>
+  <tag k="tiger:reviewed" v="no"></tag>
+  <tag k="tiger:separated" v="no"></tag>
+  <tag k="tiger:source" v="tiger_import_dch_v0.6_20070809"></tag>
+  <tag k="tiger:tlid" v="125002128"></tag>
+  <tag k="tiger:upload_uuid" v="bulk_upload.pl-9d5e179e-e488-4300-b71d-b0a82eacb273"></tag>
+  <tag k="tiger:zip_left" v="94611"></tag>
+  <tag k="tiger:zip_right" v="94611"></tag>
+  <update index="4" version="4" timestamp="2016-07-25T18:57:02Z" changeset="41020084" lat="37.8187985" lon="-122.2265475"></update>
+ </way>
+</osm>

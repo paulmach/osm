@@ -173,17 +173,6 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	return o, nil
 }
 
-type osmXML struct {
-	Version   float64 `xml:"version,attr"`
-	Generator string  `xml:"generator,attr"`
-
-	Bounds     *Bounds    `xml:"bounds"`
-	Nodes      Nodes      `xml:"node"`
-	Ways       Ways       `xml:"way"`
-	Relations  Relations  `xml:"relation"`
-	Changesets Changesets `xml:"changeset"`
-}
-
 // MarshalXML implements the xml.Marshaller method to allow for the
 // correct wrapper/start element case and attr data.
 func (o OSM) MarshalXML(e *xml.Encoder, start xml.StartElement) error {

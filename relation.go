@@ -43,6 +43,41 @@ type Member struct {
 
 	Version     int         `xml:"version,attr,omitempty"`
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
+
+	// invalid unless the Type == NodeType
+	Lat float64 `xml:"lat,attr,omitempty"`
+	Lon float64 `xml:"lon,attr,omitempty"`
+}
+
+// ApplyUpdatesUpTo will apply the updates to this object upto and including
+// the given time.
+func (r *Relation) ApplyUpdatesUpTo(t time.Time) error {
+	for _, u := range r.Updates {
+		if u.Timestamp.After(t) {
+			continue
+		}
+
+		if err := r.ApplyUpdate(u); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ApplyUpdate will modify the current relation and dictated by the given update.
+// Will return UpdateIndexOutOfRangeError if the update index is too large.
+func (r *Relation) ApplyUpdate(u Update) error {
+	if u.Index >= len(r.Members) {
+		return &UpdateIndexOutOfRangeError{Index: u.Index}
+	}
+
+	r.Members[u.Index].Version = u.Version
+	r.Members[u.Index].ChangesetID = u.ChangesetID
+	r.Members[u.Index].Lat = u.Lat
+	r.Members[u.Index].Lon = u.Lon
+
+	return nil
 }
 
 // Relations is a collection with some helper functions attached.
@@ -69,9 +104,9 @@ func UnmarshalRelations(data []byte) (Relations, error) {
 
 type relationsSort Relations
 
-// SortIDVersion will sort the set of relations first by id and then version
+// SortByIDVersion will sort the set of relations first by id and then version
 // in ascending order.
-func (rs Relations) SortIDVersion() {
+func (rs Relations) SortByIDVersion() {
 	sort.Sort(relationsSort(rs))
 }
 func (rs relationsSort) Len() int      { return len(rs) }

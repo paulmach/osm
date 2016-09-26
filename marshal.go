@@ -251,7 +251,7 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 
 	for i, m := range relation.Members {
 		roles[i] = ss.Add(m.Role)
-		refs[i] = int64(m.Ref)
+		refs[i] = m.Ref
 		types[i] = memberTypeMap[m.Type]
 	}
 
@@ -486,7 +486,7 @@ func decodeMembers(
 	decodeInt64(refs)
 	for i := range roles {
 		result[i].Role = ss[roles[i]]
-		result[i].Ref = int64(refs[i])
+		result[i].Ref = refs[i]
 		result[i].Type = memberTypeMapRev[types[i]]
 	}
 
@@ -497,16 +497,33 @@ func encodeDenseMembers(members []Member) *osmpb.DenseMembers {
 	l := len(members)
 	versions := make([]int32, l)
 	changesetIDs := make([]int64, l)
+	lats := make([]int64, l)
+	lons := make([]int64, l)
 
+	nodes := 0
 	for i, m := range members {
+		if m.Type == NodeType {
+			nodes++
+		}
+
+		lats[i] = geoToInt64(m.Lat)
+		lons[i] = geoToInt64(m.Lon)
+
 		versions[i] = int32(m.Version)
 		changesetIDs[i] = int64(m.ChangesetID)
 	}
 
-	return &osmpb.DenseMembers{
+	result := &osmpb.DenseMembers{
 		Versions:     versions,
 		ChangesetIds: encodeInt64(changesetIDs),
 	}
+
+	if nodes > 0 {
+		result.Lats = encodeInt64(lats)
+		result.Lons = encodeInt64(lons)
+	}
+
+	return result
 }
 
 func decodeDenseMembers(members []Member, encoded *osmpb.DenseMembers) {
@@ -515,10 +532,17 @@ func decodeDenseMembers(members []Member, encoded *osmpb.DenseMembers) {
 	}
 
 	decodeInt64(encoded.ChangesetIds)
+	decodeInt64(encoded.Lats)
+	decodeInt64(encoded.Lons)
 
 	for i := range encoded.Versions {
 		members[i].Version = int(encoded.Versions[i])
 		members[i].ChangesetID = ChangesetID(encoded.ChangesetIds[i])
+
+		if encoded.Lats != nil {
+			members[i].Lat = float64(encoded.Lats[i]) / locMultiple
+			members[i].Lon = float64(encoded.Lons[i]) / locMultiple
+		}
 	}
 
 	return

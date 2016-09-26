@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
@@ -16,9 +17,8 @@ var CommitInfoStart = time.Date(2012, 9, 12, 13, 21, 3, 0, time.UTC)
 // The child type, id, ref and/or role are the same as the child
 // at the given index. Lat/Lng are only updated for ways.
 type Update struct {
-	Index   int  `xml:"index,attr"`
-	Version int  `xml:"version,attr"`
-	Minor   bool `xml:"minor,attr"`
+	Index   int `xml:"index,attr"`
+	Version int `xml:"version,attr"`
 
 	// Timestamp is the committed at time if time > TODO or the
 	// element timestamp if before that date.
@@ -32,15 +32,39 @@ type Update struct {
 // Updates are collections of updates.
 type Updates []Update
 
-func (us Updates) Until(t time.Time) Updates {
-	us.SortTimestamp() // TODO: need to copy memory
-	panic("not implemented")
+// UpTo will return the subset of updates taking place upto and on
+// the given time.
+func (us Updates) UpTo(t time.Time) Updates {
+	var result Updates
+
+	for _, u := range us {
+		if u.Timestamp.After(t) {
+			continue
+		}
+
+		result = append(result, u)
+	}
+
+	return result
+}
+
+// UpdateIndexOutOfRangeError is return when apply an update to an object
+// and the update index is out of range.
+type UpdateIndexOutOfRangeError struct {
+	Index int
+}
+
+var _ error = &UpdateIndexOutOfRangeError{}
+
+// Error returns a string representation of the error.
+func (e *UpdateIndexOutOfRangeError) Error() string {
+	return fmt.Sprintf("osm: index %d is out of range", e.Index)
 }
 
 type updatesSortTS Updates
 
-// SortTimestamp will sort the updates by timestamp in ascending order.
-func (us Updates) SortTimestamp()      { sort.Sort(updatesSortTS(us)) }
+// SortByTimestamp will sort the updates by timestamp in ascending order.
+func (us Updates) SortByTimestamp()    { sort.Sort(updatesSortTS(us)) }
 func (us updatesSortTS) Len() int      { return len(us) }
 func (us updatesSortTS) Swap(i, j int) { us[i], us[j] = us[j], us[i] }
 func (us updatesSortTS) Less(i, j int) bool {
@@ -49,8 +73,8 @@ func (us updatesSortTS) Less(i, j int) bool {
 
 type updatesSortIndex Updates
 
-// SortIndex will sort the updates by index in ascending order.
-func (us Updates) SortIndex()             { sort.Sort(updatesSortIndex(us)) }
+// SortByIndex will sort the updates by index in ascending order.
+func (us Updates) SortByIndex()           { sort.Sort(updatesSortIndex(us)) }
 func (us updatesSortIndex) Len() int      { return len(us) }
 func (us updatesSortIndex) Swap(i, j int) { us[i], us[j] = us[j], us[i] }
 func (us updatesSortIndex) Less(i, j int) bool {
@@ -65,7 +89,6 @@ func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
 	l := len(updates)
 	indexes := make([]int32, l)
 	versions := make([]int32, l)
-	minors := make([]bool, l)
 	timestamps := make([]int64, l)
 	changesetIDs := make([]int64, l)
 
@@ -75,7 +98,6 @@ func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
 		lons = make([]int64, l)
 	}
 
-	lastMinor := 0
 	for i, u := range updates {
 		indexes[i] = int32(u.Index)
 		versions[i] = int32(u.Version)
@@ -85,11 +107,6 @@ func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
 			lats[i] = geoToInt64(u.Lat)
 			lons[i] = geoToInt64(u.Lon)
 		}
-
-		if u.Minor {
-			minors[i] = u.Minor
-			lastMinor = i
-		}
 	}
 
 	result := &osmpb.DenseMembers{
@@ -97,10 +114,6 @@ func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
 		Versions:     versions,
 		ChangesetIds: encodeInt64(changesetIDs),
 		Timestamps:   encodeInt64(timestamps),
-	}
-
-	if lastMinor > 0 {
-		result.Minors = minors[:lastMinor+1]
 	}
 
 	if includeLoc {
@@ -131,10 +144,6 @@ func unmarshalUpdates(encoded *osmpb.DenseMembers) Updates {
 			Version:     int(encoded.Versions[i]),
 			ChangesetID: ChangesetID(encoded.ChangesetIds[i]),
 			Timestamp:   unixToTime(encoded.Timestamps[i]),
-		}
-
-		if len(encoded.Minors) > i {
-			result[i].Minor = encoded.Minors[i]
 		}
 
 		if len(encoded.Lats) > i {

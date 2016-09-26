@@ -8,6 +8,82 @@ import (
 	"time"
 )
 
+func TestRelationApplyUpdatesUpTo(t *testing.T) {
+	r := Relation{
+		ID:      123,
+		Members: []Member{{Version: 1}, {Version: 2}, {Version: 3}},
+		Updates: Updates{
+			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Version: 11},
+			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Version: 12},
+			{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Version: 13, Lat: 10, Lon: 20},
+		},
+	}
+
+	r.ApplyUpdatesUpTo(time.Date(2011, 1, 1, 0, 0, 0, 0, time.UTC))
+	if r.Members[0].Version != 1 || r.Members[1].Version != 2 || r.Members[2].Version != 3 {
+		t.Errorf("incorrect members, got %v", r.Members)
+	}
+
+	r.ApplyUpdatesUpTo(time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC))
+	if r.Members[0].Version != 11 || r.Members[1].Version != 2 || r.Members[2].Version != 13 {
+		t.Errorf("incorrect members, got %v", r.Members)
+	}
+
+	if r.Members[2].Lat != 10 {
+		t.Errorf("did not apply lat data")
+	}
+
+	if r.Members[2].Lon != 20 {
+		t.Errorf("did not apply lon data")
+	}
+}
+
+func TestRelationApplyUpdate(t *testing.T) {
+	r := Relation{
+		ID:      123,
+		Members: []Member{{Ref: 1, Type: NodeType}},
+	}
+
+	err := r.ApplyUpdate(Update{
+		Index:       0,
+		Version:     1,
+		ChangesetID: 2,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	expected := Member{
+		Ref:         1,
+		Type:        NodeType,
+		Version:     1,
+		ChangesetID: 2,
+	}
+
+	if expected != r.Members[0] {
+		t.Errorf("incorrect update, got %v", r.Members[0])
+	}
+}
+
+func TestRelationApplyUpdateError(t *testing.T) {
+	r := Relation{
+		ID:      123,
+		Members: []Member{{Ref: 1, Type: NodeType}},
+	}
+
+	err := r.ApplyUpdate(Update{
+		Index: 1,
+	})
+
+	if err == nil {
+		t.Fatalf("expected error, got nil")
+	}
+
+	if e, ok := err.(*UpdateIndexOutOfRangeError); !ok {
+		t.Errorf("incorrect error, got %v", e)
+	}
+}
+
 func TestRelationMarshalXML(t *testing.T) {
 	r := Relation{
 		ID: 123,
@@ -50,7 +126,7 @@ func TestRelationMarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="1" minor="false" timestamp="2012-01-01T00:00:00Z" changeset="123"></update></relation>`)) {
+	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="1" timestamp="2012-01-01T00:00:00Z" changeset="123"></update></relation>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 

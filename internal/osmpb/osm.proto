@@ -204,11 +204,10 @@ message Relation {
 message DenseMembers {
   repeated sint32 indexes = 1 [packed = true]; // DELTA coded
   repeated int32 versions = 2 [packed = true];
-  repeated bool minors = 3 [packed = true];
-  repeated sint64 timestamps = 4 [packed = true]; // DELTA coded
-  repeated sint64 changeset_ids = 5 [packed = true]; // DELTA coded
+  repeated sint64 timestamps = 3 [packed = true]; // DELTA coded
+  repeated sint64 changeset_ids = 4 [packed = true]; // DELTA coded
 
-  // included when part of a way
+  // included if some of the members are nodes
   repeated sint64 lats = 8 [packed = true]; // DELTA coded
   repeated sint64 lons = 9 [packed = true]; // DELTA coded
 }

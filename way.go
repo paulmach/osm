@@ -44,6 +44,37 @@ type WayNode struct {
 	Lon         float64     `xml:"lon,attr,omitempty"`
 }
 
+// ApplyUpdatesUpTo will apply the updates to this object upto and including
+// the given time.
+func (w *Way) ApplyUpdatesUpTo(t time.Time) error {
+	for _, u := range w.Updates {
+		if u.Timestamp.After(t) {
+			continue
+		}
+
+		if err := w.ApplyUpdate(u); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ApplyUpdate will modify the current way and dictated by the given update.
+// Will return UpdateIndexOutOfRangeError if the update index is too large.
+func (w *Way) ApplyUpdate(u Update) error {
+	if u.Index >= len(w.Nodes) {
+		return &UpdateIndexOutOfRangeError{Index: u.Index}
+	}
+
+	w.Nodes[u.Index].Version = u.Version
+	w.Nodes[u.Index].ChangesetID = u.ChangesetID
+	w.Nodes[u.Index].Lat = u.Lat
+	w.Nodes[u.Index].Lon = u.Lon
+
+	return nil
+}
+
 // Ways is a set of osm ways with some helper functions attached.
 type Ways []*Way
 
@@ -68,9 +99,9 @@ func UnmarshalWays(data []byte) (Ways, error) {
 
 type waysSort Ways
 
-// SortIDVersion will sort the set of ways first by id and then version
+// SortByIDVersion will sort the set of ways first by id and then version
 // in ascending order.
-func (ws Ways) SortIDVersion() {
+func (ws Ways) SortByIDVersion() {
 	sort.Sort(waysSort(ws))
 }
 func (ws waysSort) Len() int      { return len(ws) }

@@ -8,6 +8,77 @@ import (
 	"time"
 )
 
+func TestWayApplyUpdatesUpTo(t *testing.T) {
+	w := Way{
+		ID:    123,
+		Nodes: []WayNode{{Lat: 1}, {Lat: 2}, {Lat: 3}},
+		Updates: Updates{
+			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 11},
+			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 12},
+			{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 13},
+		},
+	}
+
+	w.ApplyUpdatesUpTo(time.Date(2011, 1, 1, 0, 0, 0, 0, time.UTC))
+	if w.Nodes[0].Lat != 1 || w.Nodes[1].Lat != 2 || w.Nodes[2].Lat != 3 {
+		t.Errorf("incorrect way nodes, got %v", w.Nodes)
+	}
+
+	w.ApplyUpdatesUpTo(time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC))
+	if w.Nodes[0].Lat != 11 || w.Nodes[1].Lat != 2 || w.Nodes[2].Lat != 13 {
+		t.Errorf("incorrect way nodes, got %v", w.Nodes)
+	}
+}
+
+func TestWayApplyUpdate(t *testing.T) {
+	w := Way{
+		ID:    123,
+		Nodes: []WayNode{{Lat: 1, Lon: 2}},
+	}
+
+	err := w.ApplyUpdate(Update{
+		Index:       0,
+		Version:     1,
+		ChangesetID: 2,
+		Lat:         3,
+		Lon:         4,
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	expected := WayNode{
+		ID:          0,
+		Version:     1,
+		ChangesetID: 2,
+		Lat:         3,
+		Lon:         4,
+	}
+
+	if expected != w.Nodes[0] {
+		t.Errorf("incorrect update, got %v", w.Nodes[0])
+	}
+}
+
+func TestWayApplyUpdateError(t *testing.T) {
+	w := Way{
+		ID:    123,
+		Nodes: []WayNode{{Lat: 1, Lon: 2}},
+	}
+
+	err := w.ApplyUpdate(Update{
+		Index: 1,
+	})
+
+	if err == nil {
+		t.Fatalf("expected error, got nil")
+	}
+
+	if e, ok := err.(*UpdateIndexOutOfRangeError); !ok {
+		t.Errorf("incorrect error, got %v", e)
+	}
+}
+
 func TestWayMarshalXML(t *testing.T) {
 	w := Way{
 		ID: 123,
@@ -61,7 +132,7 @@ func TestWayMarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="2" minor="false" timestamp="2012-01-01T00:00:00Z" lat="100" lon="200"></update></way>`)) {
+	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="2" timestamp="2012-01-01T00:00:00Z" lat="100" lon="200"></update></way>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 

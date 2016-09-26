@@ -1,0 +1,46 @@
+<osm version="0.6" generator="go.osm">
+ <node id="2389008502" lat="37.8050683" lon="-122.2707159" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:26Z"></node>
+ <node id="2389008502" lat="37.8050673" lon="-122.2707151" user="KindredCoda" uid="14293" visible="true" version="2" changeset="17006498" timestamp="2013-07-19T00:43:32Z"></node>
+ <node id="2389008502" lat="37.8050707" lon="-122.2707237" user="KindredCoda" uid="14293" visible="true" version="3" changeset="17007392" timestamp="2013-07-19T05:01:42Z"></node>
+ <node id="2389008502" lat="37.8050625" lon="-122.2707189" user="KindredCoda" uid="14293" visible="true" version="4" changeset="17007392" timestamp="2013-07-19T05:03:18Z"></node>
+ <node id="2389008500" lat="37.8050919" lon="-122.2706798" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:26Z"></node>
+ <node id="2389008500" lat="37.8050889" lon="-122.2706791" user="KindredCoda" uid="14293" visible="true" version="2" changeset="17006498" timestamp="2013-07-19T00:43:32Z"></node>
+ <node id="2389008466" lat="37.8051161" lon="-122.2706469" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:25Z"></node>
+ <node id="2389008466" lat="37.8051184" lon="-122.2706449" user="KindredCoda" uid="14293" visible="true" version="2" changeset="17006498" timestamp="2013-07-19T00:43:32Z"></node>
+ <node id="2389008489" lat="37.8051504" lon="-122.2706183" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:25Z"></node>
+ <node id="2389008483" lat="37.8052155" lon="-122.2705774" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:25Z"></node>
+ <node id="2389008483" lat="37.8052155" lon="-122.2705774" user="KindredCoda" uid="14293" visible="true" version="2" changeset="17006321" timestamp="2013-07-19T00:30:35Z"></node>
+ <node id="2389008483" lat="37.8052155" lon="-122.2705774" user="KindredCoda" uid="14293" visible="true" version="3" changeset="18623274" timestamp="2013-10-30T19:43:52Z"></node>
+ <node id="2389008483" lat="37.8052155" lon="-122.2705774" user="JessAk71" uid="381909" visible="true" version="4" changeset="41040656" timestamp="2016-07-26T15:28:31Z">
+  <tag k="highway" v="crossing"></tag>
+ </node>
+ <node id="2389008465" lat="37.8052855" lon="-122.2705334" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:25Z"></node>
+ <node id="2389008465" lat="37.8052826" lon="-122.2705352" user="KindredCoda" uid="14293" visible="true" version="2" changeset="17006321" timestamp="2013-07-19T00:30:35Z"></node>
+ <node id="2389008465" lat="37.8052826" lon="-122.2705352" user="KindredCoda" uid="14293" visible="true" version="3" changeset="18623274" timestamp="2013-10-30T19:43:52Z"></node>
+ <node id="2389008468" lat="37.8057167" lon="-122.2702623" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:25Z"></node>
+ <node id="2389008498" lat="37.8057681" lon="-122.2702354" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:26Z"></node>
+ <node id="2389008494" lat="37.805822" lon="-122.2702139" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:26Z"></node>
+ <node id="2389008475" lat="37.8059378" lon="-122.2701741" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:25Z"></node>
+ <node id="2389008475" lat="37.8059391" lon="-122.2701774" user="KindredCoda" uid="14293" visible="true" version="2" changeset="17007392" timestamp="2013-07-19T05:01:41Z"></node>
+ <way id="230391153" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:26Z">
+  <nd ref="2389008502"></nd>
+  <nd ref="2389008500"></nd>
+  <nd ref="2389008466"></nd>
+  <nd ref="2389008489"></nd>
+  <nd ref="2389008483"></nd>
+  <nd ref="2389008465"></nd>
+  <nd ref="2389008468"></nd>
+  <nd ref="2389008498"></nd>
+  <nd ref="2389008494"></nd>
+  <nd ref="2389008475"></nd>
+  <tag k="bicycle" v="yes"></tag>
+  <tag k="foot" v="yes"></tag>
+  <tag k="highway" v="primary"></tag>
+  <tag k="name" v="Broadway"></tag>
+  <tag k="oneway" v="yes"></tag>
+  <tag k="sidewalk" v="both"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Broadway"></tag>
+ </way>
+</osm>

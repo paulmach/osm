@@ -1,0 +1,34 @@
+<osm version="0.6" generator="go.osm">
+ <way id="230391153" user="KindredCoda" uid="14293" visible="true" version="1" changeset="17006132" timestamp="2013-07-18T23:19:26Z">
+  <nd ref="2389008502" version="1" changeset="17006132" lat="37.8050683" lon="-122.2707159"></nd>
+  <nd ref="2389008500" version="1" changeset="17006132" lat="37.8050919" lon="-122.2706798"></nd>
+  <nd ref="2389008466" version="1" changeset="17006132" lat="37.8051161" lon="-122.2706469"></nd>
+  <nd ref="2389008489" version="1" changeset="17006132" lat="37.8051504" lon="-122.2706183"></nd>
+  <nd ref="2389008483" version="1" changeset="17006132" lat="37.8052155" lon="-122.2705774"></nd>
+  <nd ref="2389008465" version="1" changeset="17006132" lat="37.8052855" lon="-122.2705334"></nd>
+  <nd ref="2389008468" version="1" changeset="17006132" lat="37.8057167" lon="-122.2702623"></nd>
+  <nd ref="2389008498" version="1" changeset="17006132" lat="37.8057681" lon="-122.2702354"></nd>
+  <nd ref="2389008494" version="1" changeset="17006132" lat="37.805822" lon="-122.2702139"></nd>
+  <nd ref="2389008475" version="1" changeset="17006132" lat="37.8059378" lon="-122.2701741"></nd>
+  <tag k="bicycle" v="yes"></tag>
+  <tag k="foot" v="yes"></tag>
+  <tag k="highway" v="primary"></tag>
+  <tag k="name" v="Broadway"></tag>
+  <tag k="oneway" v="yes"></tag>
+  <tag k="sidewalk" v="both"></tag>
+  <tag k="tiger:cfcc" v="A41"></tag>
+  <tag k="tiger:county" v="Alameda, CA"></tag>
+  <tag k="tiger:name_base" v="Broadway"></tag>
+  <update index="0" version="2" timestamp="2013-07-19T00:43:32Z" changeset="17006498" lat="37.8050673" lon="-122.2707151"></update>
+  <update index="0" version="3" timestamp="2013-07-19T05:01:42Z" changeset="17007392" lat="37.8050707" lon="-122.2707237"></update>
+  <update index="0" version="4" timestamp="2013-07-19T05:03:18Z" changeset="17007392" lat="37.8050625" lon="-122.2707189"></update>
+  <update index="1" version="2" timestamp="2013-07-19T00:43:32Z" changeset="17006498" lat="37.8050889" lon="-122.2706791"></update>
+  <update index="2" version="2" timestamp="2013-07-19T00:43:32Z" changeset="17006498" lat="37.8051184" lon="-122.2706449"></update>
+  <update index="4" version="2" timestamp="2013-07-19T00:30:35Z" changeset="17006321" lat="37.8052155" lon="-122.2705774"></update>
+  <update index="4" version="3" timestamp="2013-10-30T19:43:52Z" changeset="18623274" lat="37.8052155" lon="-122.2705774"></update>
+  <update index="4" version="4" timestamp="2016-07-26T15:28:31Z" changeset="41040656" lat="37.8052155" lon="-122.2705774"></update>
+  <update index="5" version="2" timestamp="2013-07-19T00:30:35Z" changeset="17006321" lat="37.8052826" lon="-122.2705352"></update>
+  <update index="5" version="3" timestamp="2013-10-30T19:43:52Z" changeset="18623274" lat="37.8052826" lon="-122.2705352"></update>
+  <update index="9" version="2" timestamp="2013-07-19T05:01:41Z" changeset="17007392" lat="37.8059391" lon="-122.2701774"></update>
+ </way>
+</osm>
