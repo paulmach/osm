@@ -1,0 +1,22 @@
+<osm>
+  <way id="406567335" changeset="38162206" timestamp="2016-03-30T09:25:31Z" version="1" visible="true" user="grah735" uid="2744209">
+    <nd ref="1088206870" version="123" changeset="456" lat="12.34" lon="26.78"/>
+    <nd ref="2973947976" version="103" changeset="446" lat="22.34" lon="36.78"/>
+    <nd ref="2973947977" version="120" changeset="436" lat="10.34" lon="16.78"/>
+    <nd ref="2694302680" version="124" changeset="476" lat="42.34" lon="56.78"/>
+    <tag k="highway" v="secondary"/>
+    <tag k="trolley_wire" v="yes"/>
+    <minor-way timestamp="2016-01-01T02:03:04Z">
+      <minor-nd ref="1088206870" version="123" changeset="456" lat="12.34" lon="26.78" index="1"/>
+      <minor-nd ref="2973947976" version="103" changeset="446" lat="22.34" lon="36.78" index="5"/>
+      <minor-nd ref="2973947977" version="120" changeset="436" lat="10.34" lon="16.78" index="3"/>
+      <minor-nd ref="2694302680" version="124" changeset="476" lat="42.34" lon="56.78" index="9"/>
+    </minor-way>
+    <minor-way timestamp="2017-01-01T02:03:04Z">
+      <minor-nd ref="10882068" version="12" changeset="56" lat="1.34" lon="2.78" index="10"/>
+      <minor-nd ref="29739479" version="10" changeset="46" lat="2.34" lon="3.78" index="50"/>
+      <minor-nd ref="29739479" version="12" changeset="36" lat="1.34" lon="1.78" index="30"/>
+      <minor-nd ref="26943026" version="12" changeset="76" lat="4.34" lon="5.78" index="90"/>
+    </minor-way>
+  </way>
+</osm>

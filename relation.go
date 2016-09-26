@@ -35,6 +35,10 @@ type Member struct {
 	Type ElementType `xml:"type,attr"`
 	Ref  int64       `xml:"ref,attr"`
 	Role string      `xml:"role,attr"`
+
+	Version      int         `xml:"version,attr,omitempty"`
+	MinorVersion int         `xml:"minor-version,attr,omitempty"`
+	ChangesetID  ChangesetID `xml:"changeset,attr,omitempty"`
 }
 
 // A MinorRelation contains diff information for a minor version update of a
@@ -48,8 +52,8 @@ type MinorRelation struct {
 // minor relation version.
 type MinorRelationMember struct {
 	Index        int         `xml:"index,attr"`
-	Version      int         `xml:"version,attr,omitempty"`
-	MinorVersion int         `xml:"minor-version,attr,omitempty"`
+	Version      int         `xml:"version,attr"`
+	MinorVersion int         `xml:"minor-version,attr"`
 	ChangesetID  ChangesetID `xml:"changeset,attr,omitempty"`
 }
 

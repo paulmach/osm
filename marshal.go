@@ -263,6 +263,10 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 		Types: types,
 	}
 
+	if len(relation.Members) > 0 && relation.Members[0].Version != 0 {
+		encoded.DenseMembers = encodeDenseMembers(relation.Members)
+	}
+
 	if len(relation.Minors) > 0 {
 		encoded.MinorVersion = encodeMinorRelations(relation.Minors)
 	}
@@ -294,6 +298,8 @@ func unmarshalRelation(encoded *osmpb.Relation, ss []string, cs *Changeset) (*Re
 		Members:     decodeMembers(ss, encoded.GetRoles(), encoded.GetRefs(), encoded.GetTypes()),
 		Tags:        tags,
 	}
+
+	decodeDenseMembers(r.Members, encoded.GetDenseMembers())
 
 	if len(encoded.MinorVersion) > 0 {
 		r.Minors = decodeMinorRelations(encoded.MinorVersion)
@@ -461,6 +467,25 @@ func encodeMinorWays(ways []MinorWay) []*osmpb.MinorVersion {
 	return result
 }
 
+func encodeDenseMembers(members []Member) *osmpb.DenseMembers {
+	l := len(members)
+	versions := make([]int32, l)
+	minorVersions := make([]int32, l)
+	changesetIDs := make([]int64, l)
+
+	for i, m := range members {
+		versions[i] = int32(m.Version)
+		minorVersions[i] = int32(m.MinorVersion)
+		changesetIDs[i] = int64(m.ChangesetID)
+	}
+
+	return &osmpb.DenseMembers{
+		Version:      versions,
+		MinorVersion: minorVersions,
+		ChangesetId:  encodeInt64(changesetIDs),
+	}
+}
+
 func encodeMinorRelations(relations []MinorRelation) []*osmpb.MinorVersion {
 	if len(relations) == 0 {
 		return nil
@@ -614,6 +639,22 @@ func decodeMinorWays(encoded []*osmpb.MinorVersion) []MinorWay {
 	}
 
 	return result
+}
+
+func decodeDenseMembers(members []Member, encoded *osmpb.DenseMembers) {
+	if encoded == nil || len(encoded.Version) == 0 {
+		return
+	}
+
+	decodeInt64(encoded.ChangesetId)
+
+	for i := range encoded.Version {
+		members[i].Version = int(encoded.Version[i])
+		members[i].MinorVersion = int(encoded.MinorVersion[i])
+		members[i].ChangesetID = ChangesetID(encoded.ChangesetId[i])
+	}
+
+	return
 }
 
 func decodeMinorRelations(encoded []*osmpb.MinorVersion) []MinorRelation {
