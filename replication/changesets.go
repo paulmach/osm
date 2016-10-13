@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -17,37 +16,42 @@ import (
 	"golang.org/x/net/context/ctxhttp"
 )
 
-const planetHost = "http://planet.osm.org"
+// ChangesetSeqNum indicates the sequence of the changeset replication found here:
+// http://planet.osm.org/replication/changesets/
+type ChangesetSeqNum uint
 
-var httpClient = &http.Client{
-	Timeout: 5 * time.Minute,
+// CurrentChangesetState returns the current state of the changeset replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, State, error) {
+	return DefaultDataSource.CurrentChangesetState(ctx)
 }
 
-// ChangesetSeqID indicates the sequence of the changeset replication found here:
-// http://planet.osm.org/replication/changesets/
-type ChangesetSeqID uint
-
-// ChangesetState returns the current state of the changeset replication.
-func ChangesetState(ctx context.Context) (ChangesetSeqID, time.Time, error) {
-	resp, err := ctxhttp.Get(ctx, httpClient, planetHost+"/replication/changesets/state.yaml")
+// CurrentChangesetState returns the current state of the changeset replication.
+func (ds *DataSource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, State, error) {
+	url := ds.baseURL() + "/replication/changesets/state.yaml"
+	resp, err := ctxhttp.Get(ctx, ds.client(), url)
 	if err != nil {
-		return 0, time.Time{}, err
+		return 0, State{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return 0, time.Time{}, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
+		return 0, State{}, &UnexpectedStatusCodeError{
+			Code: resp.StatusCode,
+			URL:  url,
+		}
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, time.Time{}, err
+		return 0, State{}, err
 	}
 
-	return decodeChangesetState(data)
+	s, err := decodeChangesetState(data)
+	return ChangesetSeqNum(s.SequenceNumber), s, err
 }
 
-func decodeChangesetState(data []byte) (ChangesetSeqID, time.Time, error) {
+func decodeChangesetState(data []byte) (State, error) {
 	// example
 	// ---
 	// last_run: 2016-07-02 22:46:01.422137422 Z
@@ -61,21 +65,30 @@ func decodeChangesetState(data []byte) (ChangesetSeqID, time.Time, error) {
 		"2006-01-02 15:04:05.999999999 Z",
 		timeString)
 	if err != nil {
-		return 0, time.Time{}, err
+		return State{}, err
 	}
 
 	parts = bytes.Split(lines[2], []byte(":"))
-	id, err := strconv.Atoi(string(bytes.TrimSpace(parts[1])))
+	n, err := strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 	if err != nil {
-		return 0, time.Time{}, err
+		return State{}, err
 	}
 
-	return ChangesetSeqID(id), t, nil
+	return State{
+		SequenceNumber: uint(n),
+		Timestamp:      t,
+	}, nil
 }
 
 // Changesets returns the complete list of changesets in for the given replication sequence.
-func Changesets(ctx context.Context, id ChangesetSeqID) (osm.Changesets, error) {
-	r, err := changesetReader(ctx, id)
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Changesets, error) {
+	return DefaultDataSource.Changesets(ctx, n)
+}
+
+// Changesets returns the complete list of changesets in for the given replication sequence.
+func (ds *DataSource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Changesets, error) {
+	r, err := ds.changesetReader(ctx, n)
 	if err != nil {
 		return nil, err
 	}
@@ -94,34 +107,34 @@ func Changesets(ctx context.Context, id ChangesetSeqID) (osm.Changesets, error) 
 		changesets = append(changesets, e.Changeset)
 	}
 
-	if err := scanner.Err(); err != nil {
-		return changesets, err
-	}
-
-	return changesets, nil
+	return changesets, scanner.Err()
 }
 
 // changesetReader will return a ReadCloser with the data from the changeset.
 // It will be gzip compressed, so the caller must decompress.
 // It is the caller's responsibility to call Close on the Reader when done.
-func changesetReader(ctx context.Context, id ChangesetSeqID) (io.ReadCloser, error) {
-	resp, err := ctxhttp.Get(ctx, httpClient, changesetURL(id))
+func (ds *DataSource) changesetReader(ctx context.Context, n ChangesetSeqNum) (io.ReadCloser, error) {
+	url := ds.changesetURL(n)
+	resp, err := ctxhttp.Get(ctx, ds.client(), url)
 	if err != nil {
 		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
 		resp.Body.Close()
-		return nil, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
+		return nil, &UnexpectedStatusCodeError{
+			Code: resp.StatusCode,
+			URL:  url,
+		}
 	}
 
 	return resp.Body, nil
 }
 
-func changesetURL(id ChangesetSeqID) string {
+func (ds *DataSource) changesetURL(n ChangesetSeqNum) string {
 	return fmt.Sprintf("%s/replication/changesets/%03d/%03d/%03d.osm.gz",
-		planetHost,
-		id/1000000,
-		(id%1000000)/1000,
-		(id % 1000))
+		ds.baseURL(),
+		n/1000000,
+		(n%1000000)/1000,
+		(n % 1000))
 }

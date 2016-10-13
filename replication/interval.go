@@ -15,60 +15,122 @@ import (
 	"golang.org/x/net/context/ctxhttp"
 )
 
-// MinuteSeqID indicates the sequence of the minutely diff replication found here:
-// http://planet.osm.org/replication/minute/
-type MinuteSeqID uint
-
-// HourSeqID indicates the sequence of the hourly diff replication found here:
-// http://planet.osm.org/replication/hour/
-type HourSeqID uint
-
-// DaySeqID indicates the sequence of the daily diff replication found here:
-// http://planet.osm.org/replication/day/
-type DaySeqID uint
-
-// MinuteState returns the current state of the minutely replication.
-func MinuteState(ctx context.Context) (MinuteSeqID, time.Time, error) {
-	id, t, err := fetchIntervalState(ctx, "minute")
-	return MinuteSeqID(id), t, err
+// State returns information about the current replication state.
+type State struct {
+	SequenceNumber uint
+	Timestamp      time.Time
+	TxnMax         int
+	TxnMaxQueried  int
 }
 
-// HourState returns the current state of the hourly replication.
-func HourState(ctx context.Context) (HourSeqID, time.Time, error) {
-	id, t, err := fetchIntervalState(ctx, "hour")
-	return HourSeqID(id), t, err
+// MinuteSeqNum indicates the sequence of the minutely diff replication found here:
+// http://planet.osm.org/replication/minute
+type MinuteSeqNum uint
+
+// HourSeqNum indicates the sequence of the hourly diff replication found here:
+// http://planet.osm.org/replication/hour
+type HourSeqNum uint
+
+// DaySeqNum indicates the sequence of the daily diff replication found here:
+// http://planet.osm.org/replication/day
+type DaySeqNum uint
+
+// CurrentMinuteState returns the current state of the minutely replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
+	return DefaultDataSource.CurrentMinuteState(ctx)
 }
 
-// DayState returns the current state of the daily replication.
-func DayState(ctx context.Context) (DaySeqID, time.Time, error) {
-	id, t, err := fetchIntervalState(ctx, "day")
-	return DaySeqID(id), t, err
+// CurrentMinuteState returns the current state of the minutely replication.
+func (ds *DataSource) CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
+	s, err := ds.MinuteState(ctx, 0)
+	return MinuteSeqNum(s.SequenceNumber), s, err
 }
 
-func fetchIntervalState(ctx context.Context, interval string) (int, time.Time, error) {
-	resp, err := ctxhttp.Get(
-		ctx,
-		httpClient,
-		fmt.Sprintf("%s/replication/%s/state.txt", planetHost, interval),
-	)
+// MinuteState returns the state of the given minutely replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func MinuteState(ctx context.Context, n MinuteSeqNum) (State, error) {
+	return DefaultDataSource.MinuteState(ctx, n)
+}
+
+// MinuteState returns the state of the given minutely replication.
+func (ds *DataSource) MinuteState(ctx context.Context, n MinuteSeqNum) (State, error) {
+	return ds.fetchIntervalState(ctx, "minute", int(n))
+}
+
+// CurrentHourState returns the current state of the hourly replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
+	return DefaultDataSource.CurrentHourState(ctx)
+}
+
+// CurrentHourState returns the current state of the hourly replication.
+func (ds *DataSource) CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
+	s, err := ds.HourState(ctx, 0)
+	return HourSeqNum(s.SequenceNumber), s, err
+}
+
+// HourState returns the state of the given hourly replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func HourState(ctx context.Context, n HourSeqNum) (State, error) {
+	return DefaultDataSource.HourState(ctx, n)
+}
+
+// HourState returns the state of the given hourly replication.
+func (ds *DataSource) HourState(ctx context.Context, n HourSeqNum) (State, error) {
+	return ds.fetchIntervalState(ctx, "hour", int(n))
+}
+
+// CurrentDayState returns the current state of the daily replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
+	return DefaultDataSource.CurrentDayState(ctx)
+}
+
+// CurrentDayState returns the current state of the daily replication.
+func (ds *DataSource) CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
+	s, err := ds.DayState(ctx, 0)
+	return DaySeqNum(s.SequenceNumber), s, err
+}
+
+// DayState returns the state of the given daily replication.
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func DayState(ctx context.Context, n DaySeqNum) (State, error) {
+	return DefaultDataSource.DayState(ctx, n)
+}
+
+// DayState returns the state of the given daily replication.
+func (ds *DataSource) DayState(ctx context.Context, n DaySeqNum) (State, error) {
+	return ds.fetchIntervalState(ctx, "day", int(n))
+}
+
+func (ds *DataSource) fetchIntervalState(ctx context.Context, interval string, n int) (State, error) {
+	var url string
+	if n != 0 {
+		url = ds.baseIntervalURL(interval, n) + ".state.txt"
+	} else {
+		url = fmt.Sprintf("%s/replication/%s/state.txt", ds.baseURL(), interval)
+	}
+
+	resp, err := ctxhttp.Get(ctx, ds.client(), url)
 	if err != nil {
-		return 0, time.Time{}, err
+		return State{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return 0, time.Time{}, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
+		return State{}, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, time.Time{}, err
+		return State{}, err
 	}
 
 	return decodeIntervalState(data)
 }
 
-func decodeIntervalState(data []byte) (int, time.Time, error) {
+func decodeIntervalState(data []byte) (State, error) {
 	// example
 	// ---
 	// #Sat Jul 16 06:14:03 UTC 2016
@@ -80,52 +142,79 @@ func decodeIntervalState(data []byte) (int, time.Time, error) {
 	// txnActiveList=836439008
 
 	var (
-		timestamp time.Time
-		number    int
-		err       error
+		state State
+		n     int
+		err   error
 	)
 
 	for _, l := range bytes.Split(data, []byte("\n")) {
 		parts := bytes.Split(l, []byte("="))
 
 		if bytes.Equal(parts[0], []byte("sequenceNumber")) {
-			number, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
+			n, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 			if err != nil {
-				return 0, time.Time{}, err
+				return State{}, err
 			}
-		}
-
-		if bytes.Equal(parts[0], []byte("timestamp")) {
+			state.SequenceNumber = uint(n)
+		} else if bytes.Equal(parts[0], []byte("txnMax")) {
+			state.TxnMax, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
+			if err != nil {
+				return State{}, err
+			}
+		} else if bytes.Equal(parts[0], []byte("txnMaxQueried")) {
+			state.TxnMaxQueried, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
+			if err != nil {
+				return State{}, err
+			}
+		} else if bytes.Equal(parts[0], []byte("timestamp")) {
 			timeString := string(bytes.TrimSpace(parts[1]))
-			timestamp, err = time.Parse(
+			state.Timestamp, err = time.Parse(
 				"2006-01-02T15\\:04\\:05Z",
 				timeString)
 			if err != nil {
-				return 0, time.Time{}, err
+				return State{}, err
 			}
 		}
 	}
 
-	return number, timestamp, nil
+	return state, nil
 }
 
 // Minute returns the change diff for a given minute.
-func Minute(ctx context.Context, id MinuteSeqID) (*osm.Change, error) {
-	return fetchIntervalData(ctx, minuteURL(id))
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func Minute(ctx context.Context, n MinuteSeqNum) (*osm.Change, error) {
+	return DefaultDataSource.Minute(ctx, n)
+}
+
+// Minute returns the change diff for a given minute.
+func (ds *DataSource) Minute(ctx context.Context, n MinuteSeqNum) (*osm.Change, error) {
+	return ds.fetchIntervalData(ctx, ds.minuteURL(n))
 }
 
 // Hour returns the change diff for a given hour.
-func Hour(ctx context.Context, id HourSeqID) (*osm.Change, error) {
-	return fetchIntervalData(ctx, hourURL(id))
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func Hour(ctx context.Context, n HourSeqNum) (*osm.Change, error) {
+	return DefaultDataSource.Hour(ctx, n)
+}
+
+// Hour returns the change diff for a given hour.
+func (ds *DataSource) Hour(ctx context.Context, n HourSeqNum) (*osm.Change, error) {
+	return ds.fetchIntervalData(ctx, ds.hourURL(n))
 }
 
 // Day returns the change diff for a given day.
-func Day(ctx context.Context, id DaySeqID) (*osm.Change, error) {
-	return fetchIntervalData(ctx, dayURL(id))
+// Delegates to the DefaultDataSource and uses its http.Client to make the request.
+func Day(ctx context.Context, n DaySeqNum) (*osm.Change, error) {
+	return DefaultDataSource.Day(ctx, n)
 }
 
-func fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
-	resp, err := ctxhttp.Get(ctx, httpClient, url)
+// Day returns the change diff for a given day.
+func (ds *DataSource) Day(ctx context.Context, n DaySeqNum) (*osm.Change, error) {
+	return ds.fetchIntervalData(ctx, ds.dayURL(n))
+}
+
+func (ds *DataSource) fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
+	resp, err := ctxhttp.Get(ctx, ds.client(), url)
 	if err != nil {
 		return nil, err
 	}
@@ -146,23 +235,27 @@ func fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
 	return change, err
 }
 
-func minuteURL(id MinuteSeqID) string {
-	return intervalURL("minute", int(id))
+func (ds *DataSource) minuteURL(n MinuteSeqNum) string {
+	return ds.dataURL("minute", int(n))
 }
 
-func hourURL(id HourSeqID) string {
-	return intervalURL("hour", int(id))
+func (ds *DataSource) hourURL(n HourSeqNum) string {
+	return ds.dataURL("hour", int(n))
 }
 
-func dayURL(id DaySeqID) string {
-	return intervalURL("day", int(id))
+func (ds *DataSource) dayURL(n DaySeqNum) string {
+	return ds.dataURL("day", int(n))
 }
 
-func intervalURL(interval string, id int) string {
-	return fmt.Sprintf("%s/replication/%s/%03d/%03d/%03d.osc.gz",
-		planetHost,
+func (ds *DataSource) dataURL(interval string, n int) string {
+	return ds.baseIntervalURL(interval, n) + ".osc.gz"
+}
+
+func (ds *DataSource) baseIntervalURL(interval string, n int) string {
+	return fmt.Sprintf("%s/replication/%s/%03d/%03d/%03d",
+		ds.baseURL(),
 		interval,
-		id/1000000,
-		(id%1000000)/1000,
-		(id % 1000))
+		n/1000000,
+		(n%1000000)/1000,
+		(n % 1000))
 }
