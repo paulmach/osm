@@ -102,6 +102,8 @@ func (dec *decoder) Start(n int) error {
 		return err
 	}
 
+	dec.wg.Add(n + 2)
+
 	// High level overview of the decoder:
 	// The decoder supports parallel unzipping and protobuf decoding of all
 	// the header blocks. On goroutine feeds the headerblocks round-robin into
@@ -111,7 +113,6 @@ func (dec *decoder) Start(n int) error {
 	// serializer channel to maintain the order of the objects in the file.
 
 	// start data decoders
-	dec.wg.Add(n)
 	for i := 0; i < n; i++ {
 		input := make(chan iPair, n)
 		output := make(chan oPair, n)
@@ -147,7 +148,6 @@ func (dec *decoder) Start(n int) error {
 	}
 
 	// start reading OSMData
-	dec.wg.Add(1)
 	go func() {
 		defer dec.wg.Done()
 		defer func() {
@@ -180,7 +180,6 @@ func (dec *decoder) Start(n int) error {
 		}
 	}()
 
-	dec.wg.Add(1)
 	go func() {
 		defer dec.wg.Done()
 

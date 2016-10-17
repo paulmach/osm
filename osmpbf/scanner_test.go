@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/go.osm"
 
 	"golang.org/x/net/context"
 )

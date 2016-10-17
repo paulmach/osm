@@ -12,13 +12,13 @@ import (
 
 	"golang.org/x/net/context"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/go.osm"
 )
 
 const (
 	// Originally downloaded from http://download.geofabrik.de/europe/great-britain/england/greater-london.html
 	London    = "greater-london-140324.osm.pbf"
-	LondonURL = "https://googledrive.com/host/0B8pisLiGtmqDR3dOR3hrWUpRTVE"
+	LondonURL = "https://gist.githubusercontent.com/paulmach/853d57b83d408480d3b148b07954c110/raw/853f33f4dbe4246915134f1cde8edb30241ecc10/greater-london-140324.osm.pbf"
 )
 
 func parseTime(s string) time.Time {
@@ -142,6 +142,10 @@ func downloadTestOSMFile(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			t.Fatalf("test status code invalid: %v", resp.StatusCode)
+		}
 
 		if _, err := io.Copy(out, resp.Body); err != nil {
 			t.Fatal(err)
