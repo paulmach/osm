@@ -16,7 +16,7 @@ txnActiveList=836441203
 `)
 
 	state, err := decodeIntervalState(data)
-	if v := state.SequenceNumber; v != 2010594 {
+	if v := state.SeqNum; v != 2010594 {
 		t.Errorf("incorrect id, got %v", v)
 	}
 

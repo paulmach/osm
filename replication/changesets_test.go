@@ -12,7 +12,7 @@ sequence: 1912325
 `)
 
 	state, err := decodeChangesetState(data)
-	if v := state.SequenceNumber; v != 1912325 {
+	if v := state.SeqNum; v != 1912325 {
 		t.Errorf("incorrect sequence number, got %v", v)
 	}
 

@@ -17,10 +17,10 @@ import (
 
 // State returns information about the current replication state.
 type State struct {
-	SequenceNumber uint
-	Timestamp      time.Time
-	TxnMax         int
-	TxnMaxQueried  int
+	SeqNum        uint      `json:"seq_num"`
+	Timestamp     time.Time `json:"timestamp"`
+	TxnMax        int       `json:"txn_max,omitempty"`
+	TxnMaxQueried int       `json:"txn_max_queries,omitempty"`
 }
 
 // MinuteSeqNum indicates the sequence of the minutely diff replication found here:
@@ -44,7 +44,7 @@ func CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
 // CurrentMinuteState returns the current state of the minutely replication.
 func (ds *DataSource) CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
 	s, err := ds.MinuteState(ctx, 0)
-	return MinuteSeqNum(s.SequenceNumber), s, err
+	return MinuteSeqNum(s.SeqNum), s, err
 }
 
 // MinuteState returns the state of the given minutely replication.
@@ -67,7 +67,7 @@ func CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
 // CurrentHourState returns the current state of the hourly replication.
 func (ds *DataSource) CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
 	s, err := ds.HourState(ctx, 0)
-	return HourSeqNum(s.SequenceNumber), s, err
+	return HourSeqNum(s.SeqNum), s, err
 }
 
 // HourState returns the state of the given hourly replication.
@@ -90,7 +90,7 @@ func CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
 // CurrentDayState returns the current state of the daily replication.
 func (ds *DataSource) CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
 	s, err := ds.DayState(ctx, 0)
-	return DaySeqNum(s.SequenceNumber), s, err
+	return DaySeqNum(s.SeqNum), s, err
 }
 
 // DayState returns the state of the given daily replication.
@@ -155,7 +155,7 @@ func decodeIntervalState(data []byte) (State, error) {
 			if err != nil {
 				return State{}, err
 			}
-			state.SequenceNumber = uint(n)
+			state.SeqNum = uint(n)
 		} else if bytes.Equal(parts[0], []byte("txnMax")) {
 			state.TxnMax, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 			if err != nil {

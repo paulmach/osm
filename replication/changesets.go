@@ -48,7 +48,7 @@ func (ds *DataSource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNu
 	}
 
 	s, err := decodeChangesetState(data)
-	return ChangesetSeqNum(s.SequenceNumber), s, err
+	return ChangesetSeqNum(s.SeqNum), s, err
 }
 
 func decodeChangesetState(data []byte) (State, error) {
@@ -75,8 +75,8 @@ func decodeChangesetState(data []byte) (State, error) {
 	}
 
 	return State{
-		SequenceNumber: uint(n),
-		Timestamp:      t,
+		SeqNum:    uint(n),
+		Timestamp: t,
 	}, nil
 }
 
