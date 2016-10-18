@@ -9,27 +9,27 @@ import (
 // BaseURL defines the planet server to hit.
 const BaseURL = "http://planet.osm.org"
 
-// DataSource defines context around replication data requests.
-type DataSource struct {
+// Datasource defines context around replication data requests.
+type Datasource struct {
 	BaseURL string // will use package level BaseURL if empty
 	Client  *http.Client
 }
 
-// DefaultDataSource is the DataSource used by the package level convenience functions.
-var DefaultDataSource = &DataSource{
+// DefaultDatasource is the Datasource used by the package level convenience functions.
+var DefaultDatasource = &Datasource{
 	Client: &http.Client{
 		Timeout: 30 * time.Minute,
 	},
 }
 
-// NewDataSource creates a DataSource using the given client.
-func NewDataSource(client *http.Client) *DataSource {
-	return &DataSource{
+// NewDatasource creates a Datasource using the given client.
+func NewDatasource(client *http.Client) *Datasource {
+	return &Datasource{
 		Client: client,
 	}
 }
 
-func (ds DataSource) baseURL() string {
+func (ds Datasource) baseURL() string {
 	if ds.BaseURL != "" {
 		return ds.BaseURL
 	}
@@ -37,13 +37,13 @@ func (ds DataSource) baseURL() string {
 	return BaseURL
 }
 
-func (ds DataSource) client() *http.Client {
+func (ds Datasource) client() *http.Client {
 	if ds.Client != nil {
 		return ds.Client
 	}
 
-	if DefaultDataSource.Client != nil {
-		return DefaultDataSource.Client
+	if DefaultDatasource.Client != nil {
+		return DefaultDatasource.Client
 	}
 
 	return http.DefaultClient

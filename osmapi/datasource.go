@@ -14,30 +14,30 @@ import (
 // a dev server, for example, http://api06.dev.openstreetmap.org/api/0.6
 const BaseURL = "http://api.openstreetmap.org/api/0.6"
 
-// DataSource defines context about the http client to use to make requests.
-type DataSource struct {
+// Datasource defines context about the http client to use to make requests.
+type Datasource struct {
 	BaseURL string
 	Client  *http.Client
 }
 
-// DefaultDataSource is the DataSource used by package level convenience functions.
-var DefaultDataSource = &DataSource{
+// DefaultDatasource is the Datasource used by package level convenience functions.
+var DefaultDatasource = &Datasource{
 	Client: &http.Client{
 		Timeout: 6 * time.Minute, // looks like the api server has a 5 min timeout.
 	},
 }
 
-// NewDataSource creates a DataSource using the given client.
-func NewDataSource(client *http.Client) *DataSource {
-	return &DataSource{
+// NewDatasource creates a Datasource using the given client.
+func NewDatasource(client *http.Client) *Datasource {
+	return &Datasource{
 		Client: client,
 	}
 }
 
-func (ds *DataSource) getFromAPI(ctx context.Context, url string, item interface{}) error {
+func (ds *Datasource) getFromAPI(ctx context.Context, url string, item interface{}) error {
 	client := ds.Client
 	if client == nil {
-		client = DefaultDataSource.Client
+		client = DefaultDatasource.Client
 	}
 
 	if client == nil {
@@ -72,7 +72,7 @@ func (ds *DataSource) getFromAPI(ctx context.Context, url string, item interface
 	return xml.NewDecoder(resp.Body).Decode(item)
 }
 
-func (ds *DataSource) baseURL() string {
+func (ds *Datasource) baseURL() string {
 	if ds.BaseURL != "" {
 		return ds.BaseURL
 	}
