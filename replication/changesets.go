@@ -18,7 +18,7 @@ import (
 
 // ChangesetSeqNum indicates the sequence of the changeset replication found here:
 // http://planet.osm.org/replication/changesets/
-type ChangesetSeqNum uint
+type ChangesetSeqNum uint64
 
 // CurrentChangesetState returns the current state of the changeset replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
@@ -69,13 +69,13 @@ func decodeChangesetState(data []byte) (State, error) {
 	}
 
 	parts = bytes.Split(lines[2], []byte(":"))
-	n, err := strconv.Atoi(string(bytes.TrimSpace(parts[1])))
+	n, err := strconv.ParseUint(string(bytes.TrimSpace(parts[1])), 10, 64)
 	if err != nil {
 		return State{}, err
 	}
 
 	return State{
-		SeqNum:    uint(n),
+		SeqNum:    n,
 		Timestamp: t,
 	}, nil
 }

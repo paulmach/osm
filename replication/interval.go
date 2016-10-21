@@ -17,23 +17,35 @@ import (
 
 // State returns information about the current replication state.
 type State struct {
-	SeqNum        uint      `json:"seq_num"`
+	SeqNum        uint64    `json:"seq_num"`
 	Timestamp     time.Time `json:"timestamp"`
 	TxnMax        int       `json:"txn_max,omitempty"`
 	TxnMaxQueried int       `json:"txn_max_queries,omitempty"`
 }
 
+// SeqNum is an interface type that includes MinuteSeqNum,
+// HourSeqNum and DaySeqNum. This is an experiment to implement
+// a sum type, a type that can be one of several things only.
+type SeqNum interface {
+	private()
+}
+
+func (n MinuteSeqNum) private()    {}
+func (n HourSeqNum) private()      {}
+func (n DaySeqNum) private()       {}
+func (n ChangesetSeqNum) private() {}
+
 // MinuteSeqNum indicates the sequence of the minutely diff replication found here:
 // http://planet.osm.org/replication/minute
-type MinuteSeqNum uint
+type MinuteSeqNum uint64
 
 // HourSeqNum indicates the sequence of the hourly diff replication found here:
 // http://planet.osm.org/replication/hour
-type HourSeqNum uint
+type HourSeqNum uint64
 
 // DaySeqNum indicates the sequence of the daily diff replication found here:
 // http://planet.osm.org/replication/day
-type DaySeqNum uint
+type DaySeqNum uint64
 
 // CurrentMinuteState returns the current state of the minutely replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
@@ -44,6 +56,10 @@ func CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
 // CurrentMinuteState returns the current state of the minutely replication.
 func (ds *Datasource) CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
 	s, err := ds.MinuteState(ctx, 0)
+	if err != nil {
+		return 0, State{}, err
+	}
+
 	return MinuteSeqNum(s.SeqNum), s, err
 }
 
@@ -67,6 +83,10 @@ func CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
 // CurrentHourState returns the current state of the hourly replication.
 func (ds *Datasource) CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
 	s, err := ds.HourState(ctx, 0)
+	if err != nil {
+		return 0, State{}, err
+	}
+
 	return HourSeqNum(s.SeqNum), s, err
 }
 
@@ -90,6 +110,10 @@ func CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
 // CurrentDayState returns the current state of the daily replication.
 func (ds *Datasource) CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
 	s, err := ds.DayState(ctx, 0)
+	if err != nil {
+		return 0, State{}, err
+	}
+
 	return DaySeqNum(s.SeqNum), s, err
 }
 
@@ -127,10 +151,10 @@ func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n
 		return State{}, err
 	}
 
-	return decodeIntervalState(data)
+	return decodeIntervalState(data, interval)
 }
 
-func decodeIntervalState(data []byte) (State, error) {
+func decodeIntervalState(data []byte, interval string) (State, error) {
 	// example
 	// ---
 	// #Sat Jul 16 06:14:03 UTC 2016
@@ -155,7 +179,17 @@ func decodeIntervalState(data []byte) (State, error) {
 			if err != nil {
 				return State{}, err
 			}
-			state.SeqNum = uint(n)
+
+			switch interval {
+			case "minute":
+				state.SeqNum = uint64(n)
+			case "hour":
+				state.SeqNum = uint64(n)
+			case "day":
+				state.SeqNum = uint64(n)
+			default:
+				panic("unsupported interval")
+			}
 		} else if bytes.Equal(parts[0], []byte("txnMax")) {
 			state.TxnMax, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 			if err != nil {
