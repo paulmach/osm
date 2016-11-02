@@ -1,0 +1,18 @@
+<osm>
+  <way id="406567335" changeset="38162206" timestamp="2016-03-30T09:25:31Z" version="1" visible="true" user="grah735" uid="2744209">
+    <nd ref="1088206870" version="123" changeset="456" lat="12.34" lon="26.78"/>
+    <nd ref="2973947976" version="103" changeset="446" lat="22.34" lon="36.78"/>
+    <nd ref="2973947977" version="120" changeset="436" lat="10.34" lon="16.78"/>
+    <nd ref="2694302680" version="124" changeset="476" lat="42.34" lon="56.78"/>
+    <tag k="highway" v="secondary"/>
+    <tag k="trolley_wire" v="yes"/>
+    <update index="1" version="123" changeset="456" lat="12.34" lon="26.78" timestapmp="2012-01-02T03:04:05Z"/>
+    <update index="2" version="103" changeset="446" lat="22.34" lon="36.78" timestapmp="2014-01-02T03:04:05Z"/>
+    <update index="3" version="120" changeset="436" lat="10.34" lon="16.78" timestapmp="2013-01-02T03:04:05Z"/>
+    <update index="4" version="124" changeset="476" lat="42.34" lon="56.78" timestapmp="2015-01-02T03:04:05Z"/>
+    <update index="5" version="12" changeset="56" lat="1.34" lon="2.78" timestapmp="2010-01-02T03:04:05Z"/>
+    <update index="6" version="10" changeset="46" lat="2.34" lon="3.78" timestapmp="2012-01-02T03:04:05Z"/>
+    <update index="8" version="12" changeset="36" lat="1.34" lon="1.78" timestapmp="2012-01-02T03:04:05Z"/>
+    <update index="7" version="12" changeset="76" lat="4.34" lon="5.78" timestapmp="2013-01-02T03:04:05Z"/>
+  </way>
+</osm>

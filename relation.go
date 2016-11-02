@@ -25,9 +25,14 @@ type Relation struct {
 	Tags    Tags     `xml:"tag"`
 	Members []Member `xml:"member"`
 
-	// Minors are diffs from the original version representing
-	// member updates independent of relation version updates.
-	Minors []MinorRelation `xml:"minor-relation,omitempty"`
+	// Committed, is the estimated time this object was committed
+	// and made visible in the central OSM database.
+	Committed *time.Time `xml:"commited,attr,omitempty"`
+
+	// Updates are changes the members of this relation independent
+	// of an update to the relation itself. The OSM api allows a child
+	// to be updatedwithout any changes to the parent.
+	Updates Updates `xml:"update,omitempty"`
 }
 
 // Member is a member of a relation.
@@ -36,25 +41,8 @@ type Member struct {
 	Ref  int64       `xml:"ref,attr"`
 	Role string      `xml:"role,attr"`
 
-	Version      int         `xml:"version,attr,omitempty"`
-	MinorVersion int         `xml:"minor-version,attr,omitempty"`
-	ChangesetID  ChangesetID `xml:"changeset,attr,omitempty"`
-}
-
-// A MinorRelation contains diff information for a minor version update of a
-// relation caused by members being updated independent of the relation.
-type MinorRelation struct {
-	Timestamp    time.Time             `xml:"timestamp,attr"`
-	MinorMembers []MinorRelationMember `xml:"minor-member"`
-}
-
-// A MinorRelationMember is a reference to a updated member in a
-// minor relation version.
-type MinorRelationMember struct {
-	Index        int         `xml:"index,attr"`
-	Version      int         `xml:"version,attr"`
-	MinorVersion int         `xml:"minor-version,attr"`
-	ChangesetID  ChangesetID `xml:"changeset,attr,omitempty"`
+	Version     int         `xml:"version,attr,omitempty"`
+	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
 }
 
 // Relations is a collection with some helper functions attached.
@@ -81,9 +69,9 @@ func UnmarshalRelations(data []byte) (Relations, error) {
 
 type relationsSort Relations
 
-// SortByIDVersion will sort the set of relations first by id and then version
+// SortIDVersion will sort the set of relations first by id and then version
 // in ascending order.
-func (rs Relations) SortByIDVersion() {
+func (rs Relations) SortIDVersion() {
 	sort.Sort(relationsSort(rs))
 }
 func (rs relationsSort) Len() int      { return len(rs) }

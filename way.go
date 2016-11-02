@@ -23,9 +23,14 @@ type Way struct {
 	Nodes       []WayNode   `xml:"nd"`
 	Tags        Tags        `xml:"tag"`
 
-	// Minors are diffs from the original version representing
-	// node updates independent of way version updates.
-	Minors []MinorWay `xml:"minor-way,omitempty"`
+	// Committed, is the estimated time this object was committed
+	// and made visible in the central OSM database.
+	Committed *time.Time `xml:"commited,attr,omitempty"`
+
+	// Updates are changes the nodes of this way independent
+	// of an update to the way itself. The OSM api allows a child
+	// to be updated without any changes to the parent.
+	Updates Updates `xml:"update,omitempty"`
 }
 
 // WayNode is a short node used as part of ways and relations in the osm xml.
@@ -33,22 +38,6 @@ type WayNode struct {
 	ID NodeID `xml:"ref,attr"`
 
 	// These attributes are populated for concrete versions of ways.
-	Version     int         `xml:"version,attr,omitempty"`
-	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
-	Lat         float64     `xml:"lat,attr,omitempty"`
-	Lon         float64     `xml:"lon,attr,omitempty"`
-}
-
-// A MinorWay contains diff information for a minor version update of a
-// way caused by nodes being updated independent of the way.
-type MinorWay struct {
-	Timestamp  time.Time      `xml:"timestamp,attr"`
-	MinorNodes []MinorWayNode `xml:"minor-nd,omitempty"`
-}
-
-// A MinorWayNode is a reference to a updated node in a minor way version.
-type MinorWayNode struct {
-	Index       int         `xml:"index,attr"`
 	Version     int         `xml:"version,attr,omitempty"`
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
 	Lat         float64     `xml:"lat,attr,omitempty"`
@@ -79,9 +68,9 @@ func UnmarshalWays(data []byte) (Ways, error) {
 
 type waysSort Ways
 
-// SortByIDVersion will sort the set of ways first by id and then version
+// SortIDVersion will sort the set of ways first by id and then version
 // in ascending order.
-func (ws Ways) SortByIDVersion() {
+func (ws Ways) SortIDVersion() {
 	sort.Sort(waysSort(ws))
 }
 func (ws waysSort) Len() int      { return len(ws) }

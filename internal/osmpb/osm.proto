@@ -102,15 +102,19 @@ message Info {
   // OSM API. This info may be omitted if it can be inferred from its group
   // ie. create, modify, delete.
   optional bool visible = 6 [(gogoproto.nullable) = true];
+
+  // the time this element was committed into the db. Could be much later than
+  // timestamp for large uploads.
+  optional int64 committed = 7 [(gogoproto.nullable) = true]; // Epoch
 }
 
 message DenseNodes {
-  repeated sint64 id = 1 [packed = true]; // DELTA coded
+  repeated sint64 ids = 1 [packed = true]; // DELTA coded
 
   optional DenseInfo dense_info = 5;
 
-  repeated sint64 lat = 8 [packed = true]; // DELTA coded
-  repeated sint64 lon = 9 [packed = true]; // DELTA coded
+  repeated sint64 lats = 8 [packed = true]; // DELTA coded
+  repeated sint64 lons = 9 [packed = true]; // DELTA coded
 
   // Special packing of keys and vals into one array. We use a single stringid
   // of 0 to delimit when the tags of a node ends and the tags of the next node
@@ -123,20 +127,24 @@ message DenseNodes {
 }
 
 message DenseInfo {
-  repeated int32 version = 1 [packed = true];
-  repeated sint64 timestamp = 2 [packed = true]; // DELTA coded
+  repeated int32 versions = 1 [packed = true];
+  repeated sint64 timestamps = 2 [packed = true]; // DELTA coded
 
   // these will be omitted if the object represents one changeset
   // and these will be all the same.
-  repeated sint64 changeset_id = 3 [packed = true]; // DELTA coded
-  repeated sint32 user_id = 4 [packed = true]; // DELTA coded
-  repeated sint32 user_sid = 5 [packed = true]; // String IDs for usernames. DELTA coded
+  repeated sint64 changeset_ids = 3 [packed = true]; // DELTA coded
+  repeated sint32 user_ids = 4 [packed = true]; // DELTA coded
+  repeated sint32 user_sids = 5 [packed = true]; // String IDs for usernames. DELTA coded
 
   // The visible flag is used to store history information. It indicates that
   // the current object version has been created by a delete operation on the
   // OSM API. This info may be omitted if it can be inferred from its group
   // ie. create, modify, delete.
-  repeated bool visible = 6 [packed = true];
+  repeated bool visibles = 6 [packed = true];
+
+  // the time this element was committed into the db. Could be much later than
+  // timestamp for large uploads.
+  repeated sint64 committeds = 7 [packed = true]; // DELTA coded
 }
 
 message Way {
@@ -150,23 +158,23 @@ message Way {
 
   // Only one of the next two must be included.
   // refs are DELTA coded node ids. If there is more info,
-  // ids, version, changeset ids, lat and lon will be encoded
+  // versions, changeset ids, lat and lon will be encoded
   // as a DenseMembers object.
   repeated sint64 refs = 8 [packed = true];
   optional DenseMembers dense_members = 9;
 
-  // minor versions are changes to members that did not happen
+  // updates are changes to members that did not happen
   // at a similar time to a change in the parent.
-  repeated MinorVersion minor_version = 10;
-}
-
-enum MemberType {
-  NODE = 0;
-  WAY = 1;
-  RELATION = 2;
+  optional DenseMembers updates = 10;
 }
 
 message Relation {
+  enum MemberType {
+    NODE = 0;
+    WAY = 1;
+    RELATION = 2;
+  }
+
   required int64 id = 1;
 
   // Parallel arrays.
@@ -188,26 +196,19 @@ message Relation {
 
   optional DenseMembers dense_members = 11;
 
-  // minor versions are changes to members that did not happen
+  // updates are changes to members that did not happen
   // at a similar time to a change in the parent.
-  repeated MinorVersion minor_version = 12;
-}
-
-message MinorVersion {
-  optional int64 timestamp = 1; // Epoch
-  optional DenseMembers dense_members = 2;
+  optional DenseMembers updates = 12;
 }
 
 message DenseMembers {
-  repeated sint32 index = 1 [packed = true]; // DELTA coded
-  repeated int32 version = 2 [packed = true];
-  repeated int32 minor_version = 3 [packed = true]; // only needed for relations
-  repeated sint64 changeset_id = 4 [packed = true]; // DELTA coded
+  repeated sint32 indexes = 1 [packed = true]; // DELTA coded
+  repeated int32 versions = 2 [packed = true];
+  repeated bool minors = 3 [packed = true];
+  repeated sint64 timestamps = 4 [packed = true]; // DELTA coded
+  repeated sint64 changeset_ids = 5 [packed = true]; // DELTA coded
 
   // included when part of a way
-  repeated sint64 lat = 8 [packed = true]; // DELTA coded
-  repeated sint64 lon = 9 [packed = true]; // DELTA coded
-
-  // used for dense way members
-  repeated sint64 id = 15 [packed = true]; // DELTA coded
+  repeated sint64 lats = 8 [packed = true]; // DELTA coded
+  repeated sint64 lons = 9 [packed = true]; // DELTA coded
 }

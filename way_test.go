@@ -47,12 +47,13 @@ func TestWayMarshalXML(t *testing.T) {
 
 	// minor way
 	w.Nodes = nil
-	w.Minors = []MinorWay{
-		MinorWay{
+	w.Updates = []Update{
+		{
+			Index:     0,
+			Version:   2,
+			Lat:       100.0,
+			Lon:       200.0,
 			Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
-			MinorNodes: []MinorWayNode{
-				{Index: 0, Version: 2},
-			},
 		},
 	}
 	data, err = xml.Marshal(w)
@@ -60,12 +61,12 @@ func TestWayMarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><minor-way timestamp="2012-01-01T00:00:00Z"><minor-nd index="0" version="2"></minor-nd></minor-way></way>`)) {
+	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="2" minor="false" timestamp="2012-01-01T00:00:00Z" lat="100" lon="200"></update></way>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
 	// blanket xml test
-	data = readFile(t, "testdata/minor-way.osm")
+	data = readFile(t, "testdata/way-updates.osm")
 
 	osm := &OSM{}
 	err = xml.Unmarshal(data, &osm)

@@ -20,7 +20,6 @@
 		DenseInfo
 		Way
 		Relation
-		MinorVersion
 		DenseMembers
 */
 package osmpb
@@ -44,42 +43,42 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
-type MemberType int32
+type Relation_MemberType int32
 
 const (
-	MemberType_NODE     MemberType = 0
-	MemberType_WAY      MemberType = 1
-	MemberType_RELATION MemberType = 2
+	Relation_NODE     Relation_MemberType = 0
+	Relation_WAY      Relation_MemberType = 1
+	Relation_RELATION Relation_MemberType = 2
 )
 
-var MemberType_name = map[int32]string{
+var Relation_MemberType_name = map[int32]string{
 	0: "NODE",
 	1: "WAY",
 	2: "RELATION",
 }
-var MemberType_value = map[string]int32{
+var Relation_MemberType_value = map[string]int32{
 	"NODE":     0,
 	"WAY":      1,
 	"RELATION": 2,
 }
 
-func (x MemberType) Enum() *MemberType {
-	p := new(MemberType)
+func (x Relation_MemberType) Enum() *Relation_MemberType {
+	p := new(Relation_MemberType)
 	*p = x
 	return p
 }
-func (x MemberType) String() string {
-	return proto.EnumName(MemberType_name, int32(x))
+func (x Relation_MemberType) String() string {
+	return proto.EnumName(Relation_MemberType_name, int32(x))
 }
-func (x *MemberType) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(MemberType_value, data, "MemberType")
+func (x *Relation_MemberType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Relation_MemberType_value, data, "Relation_MemberType")
 	if err != nil {
 		return err
 	}
-	*x = MemberType(value)
+	*x = Relation_MemberType(value)
 	return nil
 }
-func (MemberType) EnumDescriptor() ([]byte, []int) { return fileDescriptorOsm, []int{0} }
+func (Relation_MemberType) EnumDescriptor() ([]byte, []int) { return fileDescriptorOsm, []int{10, 0} }
 
 type Changeset struct {
 	Id *int64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
@@ -417,6 +416,9 @@ type Info struct {
 	// OSM API. This info may be omitted if it can be inferred from its group
 	// ie. create, modify, delete.
 	Visible *bool `protobuf:"varint,6,opt,name=visible" json:"visible,omitempty"`
+	// the time this element was committed into the db. Could be much later than
+	// timestamp for large uploads.
+	Committed *int64 `protobuf:"varint,7,opt,name=committed" json:"committed,omitempty"`
 }
 
 func (m *Info) Reset()                    { *m = Info{} }
@@ -466,11 +468,18 @@ func (m *Info) GetVisible() bool {
 	return false
 }
 
+func (m *Info) GetCommitted() int64 {
+	if m != nil && m.Committed != nil {
+		return *m.Committed
+	}
+	return 0
+}
+
 type DenseNodes struct {
-	Id        []int64    `protobuf:"zigzag64,1,rep,packed,name=id" json:"id,omitempty"`
+	Ids       []int64    `protobuf:"zigzag64,1,rep,packed,name=ids" json:"ids,omitempty"`
 	DenseInfo *DenseInfo `protobuf:"bytes,5,opt,name=dense_info" json:"dense_info,omitempty"`
-	Lat       []int64    `protobuf:"zigzag64,8,rep,packed,name=lat" json:"lat,omitempty"`
-	Lon       []int64    `protobuf:"zigzag64,9,rep,packed,name=lon" json:"lon,omitempty"`
+	Lats      []int64    `protobuf:"zigzag64,8,rep,packed,name=lats" json:"lats,omitempty"`
+	Lons      []int64    `protobuf:"zigzag64,9,rep,packed,name=lons" json:"lons,omitempty"`
 	// Special packing of keys and vals into one array. We use a single stringid
 	// of 0 to delimit when the tags of a node ends and the tags of the next node
 	// begin. The storage pattern is: ((<keyid> <valid>)* '0' )* As an exception,
@@ -485,9 +494,9 @@ func (m *DenseNodes) String() string            { return proto.CompactTextString
 func (*DenseNodes) ProtoMessage()               {}
 func (*DenseNodes) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{7} }
 
-func (m *DenseNodes) GetId() []int64 {
+func (m *DenseNodes) GetIds() []int64 {
 	if m != nil {
-		return m.Id
+		return m.Ids
 	}
 	return nil
 }
@@ -499,16 +508,16 @@ func (m *DenseNodes) GetDenseInfo() *DenseInfo {
 	return nil
 }
 
-func (m *DenseNodes) GetLat() []int64 {
+func (m *DenseNodes) GetLats() []int64 {
 	if m != nil {
-		return m.Lat
+		return m.Lats
 	}
 	return nil
 }
 
-func (m *DenseNodes) GetLon() []int64 {
+func (m *DenseNodes) GetLons() []int64 {
 	if m != nil {
-		return m.Lon
+		return m.Lons
 	}
 	return nil
 }
@@ -528,18 +537,21 @@ func (m *DenseNodes) GetStrings() []string {
 }
 
 type DenseInfo struct {
-	Version   []int32 `protobuf:"varint,1,rep,packed,name=version" json:"version,omitempty"`
-	Timestamp []int64 `protobuf:"zigzag64,2,rep,packed,name=timestamp" json:"timestamp,omitempty"`
+	Versions   []int32 `protobuf:"varint,1,rep,packed,name=versions" json:"versions,omitempty"`
+	Timestamps []int64 `protobuf:"zigzag64,2,rep,packed,name=timestamps" json:"timestamps,omitempty"`
 	// these will be omitted if the object represents one changeset
 	// and these will be all the same.
-	ChangesetId []int64 `protobuf:"zigzag64,3,rep,packed,name=changeset_id" json:"changeset_id,omitempty"`
-	UserId      []int32 `protobuf:"zigzag32,4,rep,packed,name=user_id" json:"user_id,omitempty"`
-	UserSid     []int32 `protobuf:"zigzag32,5,rep,packed,name=user_sid" json:"user_sid,omitempty"`
+	ChangesetIds []int64 `protobuf:"zigzag64,3,rep,packed,name=changeset_ids" json:"changeset_ids,omitempty"`
+	UserIds      []int32 `protobuf:"zigzag32,4,rep,packed,name=user_ids" json:"user_ids,omitempty"`
+	UserSids     []int32 `protobuf:"zigzag32,5,rep,packed,name=user_sids" json:"user_sids,omitempty"`
 	// The visible flag is used to store history information. It indicates that
 	// the current object version has been created by a delete operation on the
 	// OSM API. This info may be omitted if it can be inferred from its group
 	// ie. create, modify, delete.
-	Visible []bool `protobuf:"varint,6,rep,packed,name=visible" json:"visible,omitempty"`
+	Visibles []bool `protobuf:"varint,6,rep,packed,name=visibles" json:"visibles,omitempty"`
+	// the time this element was committed into the db. Could be much later than
+	// timestamp for large uploads.
+	Committeds []int64 `protobuf:"zigzag64,7,rep,packed,name=committeds" json:"committeds,omitempty"`
 }
 
 func (m *DenseInfo) Reset()                    { *m = DenseInfo{} }
@@ -547,44 +559,51 @@ func (m *DenseInfo) String() string            { return proto.CompactTextString(
 func (*DenseInfo) ProtoMessage()               {}
 func (*DenseInfo) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{8} }
 
-func (m *DenseInfo) GetVersion() []int32 {
+func (m *DenseInfo) GetVersions() []int32 {
 	if m != nil {
-		return m.Version
+		return m.Versions
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetTimestamp() []int64 {
+func (m *DenseInfo) GetTimestamps() []int64 {
 	if m != nil {
-		return m.Timestamp
+		return m.Timestamps
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetChangesetId() []int64 {
+func (m *DenseInfo) GetChangesetIds() []int64 {
 	if m != nil {
-		return m.ChangesetId
+		return m.ChangesetIds
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetUserId() []int32 {
+func (m *DenseInfo) GetUserIds() []int32 {
 	if m != nil {
-		return m.UserId
+		return m.UserIds
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetUserSid() []int32 {
+func (m *DenseInfo) GetUserSids() []int32 {
 	if m != nil {
-		return m.UserSid
+		return m.UserSids
 	}
 	return nil
 }
 
-func (m *DenseInfo) GetVisible() []bool {
+func (m *DenseInfo) GetVisibles() []bool {
 	if m != nil {
-		return m.Visible
+		return m.Visibles
+	}
+	return nil
+}
+
+func (m *DenseInfo) GetCommitteds() []int64 {
+	if m != nil {
+		return m.Committeds
 	}
 	return nil
 }
@@ -597,13 +616,13 @@ type Way struct {
 	Info *Info    `protobuf:"bytes,4,opt,name=info" json:"info,omitempty"`
 	// Only one of the next two must be included.
 	// refs are DELTA coded node ids. If there is more info,
-	// ids, version, changeset ids, lat and lon will be encoded
+	// versions, changeset ids, lat and lon will be encoded
 	// as a DenseMembers object.
 	Refs         []int64       `protobuf:"zigzag64,8,rep,packed,name=refs" json:"refs,omitempty"`
 	DenseMembers *DenseMembers `protobuf:"bytes,9,opt,name=dense_members" json:"dense_members,omitempty"`
-	// minor versions are changes to members that did not happen
+	// updates are changes to members that did not happen
 	// at a similar time to a change in the parent.
-	MinorVersion []*MinorVersion `protobuf:"bytes,10,rep,name=minor_version" json:"minor_version,omitempty"`
+	Updates *DenseMembers `protobuf:"bytes,10,opt,name=updates" json:"updates,omitempty"`
 }
 
 func (m *Way) Reset()                    { *m = Way{} }
@@ -653,9 +672,9 @@ func (m *Way) GetDenseMembers() *DenseMembers {
 	return nil
 }
 
-func (m *Way) GetMinorVersion() []*MinorVersion {
+func (m *Way) GetUpdates() *DenseMembers {
 	if m != nil {
-		return m.MinorVersion
+		return m.Updates
 	}
 	return nil
 }
@@ -669,13 +688,13 @@ type Relation struct {
 	// Parallel arrays
 	// Roles has been changed int32 -> uint32 form the osm proto,
 	// this is for consistency and backwards compatible.
-	Roles        []uint32      `protobuf:"varint,8,rep,packed,name=roles" json:"roles,omitempty"`
-	Refs         []int64       `protobuf:"zigzag64,9,rep,packed,name=refs" json:"refs,omitempty"`
-	Types        []MemberType  `protobuf:"varint,10,rep,packed,name=types,enum=osm.MemberType" json:"types,omitempty"`
-	DenseMembers *DenseMembers `protobuf:"bytes,11,opt,name=dense_members" json:"dense_members,omitempty"`
-	// minor versions are changes to members that did not happen
+	Roles        []uint32              `protobuf:"varint,8,rep,packed,name=roles" json:"roles,omitempty"`
+	Refs         []int64               `protobuf:"zigzag64,9,rep,packed,name=refs" json:"refs,omitempty"`
+	Types        []Relation_MemberType `protobuf:"varint,10,rep,packed,name=types,enum=osm.Relation_MemberType" json:"types,omitempty"`
+	DenseMembers *DenseMembers         `protobuf:"bytes,11,opt,name=dense_members" json:"dense_members,omitempty"`
+	// updates are changes to members that did not happen
 	// at a similar time to a change in the parent.
-	MinorVersion []*MinorVersion `protobuf:"bytes,12,rep,name=minor_version" json:"minor_version,omitempty"`
+	Updates *DenseMembers `protobuf:"bytes,12,opt,name=updates" json:"updates,omitempty"`
 }
 
 func (m *Relation) Reset()                    { *m = Relation{} }
@@ -725,7 +744,7 @@ func (m *Relation) GetRefs() []int64 {
 	return nil
 }
 
-func (m *Relation) GetTypes() []MemberType {
+func (m *Relation) GetTypes() []Relation_MemberType {
 	if m != nil {
 		return m.Types
 	}
@@ -739,99 +758,74 @@ func (m *Relation) GetDenseMembers() *DenseMembers {
 	return nil
 }
 
-func (m *Relation) GetMinorVersion() []*MinorVersion {
+func (m *Relation) GetUpdates() *DenseMembers {
 	if m != nil {
-		return m.MinorVersion
-	}
-	return nil
-}
-
-type MinorVersion struct {
-	Timestamp    int64         `protobuf:"varint,1,opt,name=timestamp" json:"timestamp"`
-	DenseMembers *DenseMembers `protobuf:"bytes,2,opt,name=dense_members" json:"dense_members,omitempty"`
-}
-
-func (m *MinorVersion) Reset()                    { *m = MinorVersion{} }
-func (m *MinorVersion) String() string            { return proto.CompactTextString(m) }
-func (*MinorVersion) ProtoMessage()               {}
-func (*MinorVersion) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{11} }
-
-func (m *MinorVersion) GetTimestamp() int64 {
-	if m != nil {
-		return m.Timestamp
-	}
-	return 0
-}
-
-func (m *MinorVersion) GetDenseMembers() *DenseMembers {
-	if m != nil {
-		return m.DenseMembers
+		return m.Updates
 	}
 	return nil
 }
 
 type DenseMembers struct {
-	Index        []int32 `protobuf:"zigzag32,1,rep,packed,name=index" json:"index,omitempty"`
-	Version      []int32 `protobuf:"varint,2,rep,packed,name=version" json:"version,omitempty"`
-	MinorVersion []int32 `protobuf:"varint,3,rep,packed,name=minor_version" json:"minor_version,omitempty"`
-	ChangesetId  []int64 `protobuf:"zigzag64,4,rep,packed,name=changeset_id" json:"changeset_id,omitempty"`
+	Indexes      []int32 `protobuf:"zigzag32,1,rep,packed,name=indexes" json:"indexes,omitempty"`
+	Versions     []int32 `protobuf:"varint,2,rep,packed,name=versions" json:"versions,omitempty"`
+	Minors       []bool  `protobuf:"varint,3,rep,packed,name=minors" json:"minors,omitempty"`
+	Timestamps   []int64 `protobuf:"zigzag64,4,rep,packed,name=timestamps" json:"timestamps,omitempty"`
+	ChangesetIds []int64 `protobuf:"zigzag64,5,rep,packed,name=changeset_ids" json:"changeset_ids,omitempty"`
 	// included when part of a way
-	Lat []int64 `protobuf:"zigzag64,8,rep,packed,name=lat" json:"lat,omitempty"`
-	Lon []int64 `protobuf:"zigzag64,9,rep,packed,name=lon" json:"lon,omitempty"`
-	// used for dense way members
-	Id []int64 `protobuf:"zigzag64,15,rep,packed,name=id" json:"id,omitempty"`
+	Lats []int64 `protobuf:"zigzag64,8,rep,packed,name=lats" json:"lats,omitempty"`
+	Lons []int64 `protobuf:"zigzag64,9,rep,packed,name=lons" json:"lons,omitempty"`
 }
 
 func (m *DenseMembers) Reset()                    { *m = DenseMembers{} }
 func (m *DenseMembers) String() string            { return proto.CompactTextString(m) }
 func (*DenseMembers) ProtoMessage()               {}
-func (*DenseMembers) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{12} }
+func (*DenseMembers) Descriptor() ([]byte, []int) { return fileDescriptorOsm, []int{11} }
 
-func (m *DenseMembers) GetIndex() []int32 {
+func (m *DenseMembers) GetIndexes() []int32 {
 	if m != nil {
-		return m.Index
+		return m.Indexes
 	}
 	return nil
 }
 
-func (m *DenseMembers) GetVersion() []int32 {
+func (m *DenseMembers) GetVersions() []int32 {
 	if m != nil {
-		return m.Version
+		return m.Versions
 	}
 	return nil
 }
 
-func (m *DenseMembers) GetMinorVersion() []int32 {
+func (m *DenseMembers) GetMinors() []bool {
 	if m != nil {
-		return m.MinorVersion
+		return m.Minors
 	}
 	return nil
 }
 
-func (m *DenseMembers) GetChangesetId() []int64 {
+func (m *DenseMembers) GetTimestamps() []int64 {
 	if m != nil {
-		return m.ChangesetId
+		return m.Timestamps
 	}
 	return nil
 }
 
-func (m *DenseMembers) GetLat() []int64 {
+func (m *DenseMembers) GetChangesetIds() []int64 {
 	if m != nil {
-		return m.Lat
+		return m.ChangesetIds
 	}
 	return nil
 }
 
-func (m *DenseMembers) GetLon() []int64 {
+func (m *DenseMembers) GetLats() []int64 {
 	if m != nil {
-		return m.Lon
+		return m.Lats
 	}
 	return nil
 }
 
-func (m *DenseMembers) GetId() []int64 {
+func (m *DenseMembers) GetLons() []int64 {
 	if m != nil {
-		return m.Id
+		return m.Lons
 	}
 	return nil
 }
@@ -848,9 +842,8 @@ func init() {
 	proto.RegisterType((*DenseInfo)(nil), "osm.DenseInfo")
 	proto.RegisterType((*Way)(nil), "osm.Way")
 	proto.RegisterType((*Relation)(nil), "osm.Relation")
-	proto.RegisterType((*MinorVersion)(nil), "osm.MinorVersion")
 	proto.RegisterType((*DenseMembers)(nil), "osm.DenseMembers")
-	proto.RegisterEnum("osm.MemberType", MemberType_name, MemberType_value)
+	proto.RegisterEnum("osm.Relation_MemberType", Relation_MemberType_name, Relation_MemberType_value)
 }
 func (m *Changeset) Marshal() (data []byte, err error) {
 	size := m.Size()
@@ -1314,6 +1307,11 @@ func (m *Info) MarshalTo(data []byte) (int, error) {
 		}
 		i++
 	}
+	if m.Committed != nil {
+		data[i] = 0x38
+		i++
+		i = encodeVarintOsm(data, i, uint64(*m.Committed))
+	}
 	return i, nil
 }
 
@@ -1332,10 +1330,10 @@ func (m *DenseNodes) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
+	if len(m.Ids) > 0 {
 		var j18 int
-		data20 := make([]byte, len(m.Id)*10)
-		for _, num := range m.Id {
+		data20 := make([]byte, len(m.Ids)*10)
+		for _, num := range m.Ids {
 			x19 := (uint64(num) << 1) ^ uint64((num >> 63))
 			for x19 >= 1<<7 {
 				data20[j18] = uint8(uint64(x19)&0x7f | 0x80)
@@ -1360,10 +1358,10 @@ func (m *DenseNodes) MarshalTo(data []byte) (int, error) {
 		}
 		i += n21
 	}
-	if len(m.Lat) > 0 {
+	if len(m.Lats) > 0 {
 		var j22 int
-		data24 := make([]byte, len(m.Lat)*10)
-		for _, num := range m.Lat {
+		data24 := make([]byte, len(m.Lats)*10)
+		for _, num := range m.Lats {
 			x23 := (uint64(num) << 1) ^ uint64((num >> 63))
 			for x23 >= 1<<7 {
 				data24[j22] = uint8(uint64(x23)&0x7f | 0x80)
@@ -1378,10 +1376,10 @@ func (m *DenseNodes) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j22))
 		i += copy(data[i:], data24[:j22])
 	}
-	if len(m.Lon) > 0 {
+	if len(m.Lons) > 0 {
 		var j25 int
-		data27 := make([]byte, len(m.Lon)*10)
-		for _, num := range m.Lon {
+		data27 := make([]byte, len(m.Lons)*10)
+		for _, num := range m.Lons {
 			x26 := (uint64(num) << 1) ^ uint64((num >> 63))
 			for x26 >= 1<<7 {
 				data27[j25] = uint8(uint64(x26)&0x7f | 0x80)
@@ -1446,10 +1444,10 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Version) > 0 {
-		data31 := make([]byte, len(m.Version)*10)
+	if len(m.Versions) > 0 {
+		data31 := make([]byte, len(m.Versions)*10)
 		var j30 int
-		for _, num1 := range m.Version {
+		for _, num1 := range m.Versions {
 			num := uint64(num1)
 			for num >= 1<<7 {
 				data31[j30] = uint8(uint64(num)&0x7f | 0x80)
@@ -1464,10 +1462,10 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j30))
 		i += copy(data[i:], data31[:j30])
 	}
-	if len(m.Timestamp) > 0 {
+	if len(m.Timestamps) > 0 {
 		var j32 int
-		data34 := make([]byte, len(m.Timestamp)*10)
-		for _, num := range m.Timestamp {
+		data34 := make([]byte, len(m.Timestamps)*10)
+		for _, num := range m.Timestamps {
 			x33 := (uint64(num) << 1) ^ uint64((num >> 63))
 			for x33 >= 1<<7 {
 				data34[j32] = uint8(uint64(x33)&0x7f | 0x80)
@@ -1482,10 +1480,10 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j32))
 		i += copy(data[i:], data34[:j32])
 	}
-	if len(m.ChangesetId) > 0 {
+	if len(m.ChangesetIds) > 0 {
 		var j35 int
-		data37 := make([]byte, len(m.ChangesetId)*10)
-		for _, num := range m.ChangesetId {
+		data37 := make([]byte, len(m.ChangesetIds)*10)
+		for _, num := range m.ChangesetIds {
 			x36 := (uint64(num) << 1) ^ uint64((num >> 63))
 			for x36 >= 1<<7 {
 				data37[j35] = uint8(uint64(x36)&0x7f | 0x80)
@@ -1500,10 +1498,10 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j35))
 		i += copy(data[i:], data37[:j35])
 	}
-	if len(m.UserId) > 0 {
-		data38 := make([]byte, len(m.UserId)*5)
+	if len(m.UserIds) > 0 {
+		data38 := make([]byte, len(m.UserIds)*5)
 		var j39 int
-		for _, num := range m.UserId {
+		for _, num := range m.UserIds {
 			x40 := (uint32(num) << 1) ^ uint32((num >> 31))
 			for x40 >= 1<<7 {
 				data38[j39] = uint8(uint64(x40)&0x7f | 0x80)
@@ -1518,10 +1516,10 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j39))
 		i += copy(data[i:], data38[:j39])
 	}
-	if len(m.UserSid) > 0 {
-		data41 := make([]byte, len(m.UserSid)*5)
+	if len(m.UserSids) > 0 {
+		data41 := make([]byte, len(m.UserSids)*5)
 		var j42 int
-		for _, num := range m.UserSid {
+		for _, num := range m.UserSids {
 			x43 := (uint32(num) << 1) ^ uint32((num >> 31))
 			for x43 >= 1<<7 {
 				data41[j42] = uint8(uint64(x43)&0x7f | 0x80)
@@ -1536,11 +1534,11 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 		i = encodeVarintOsm(data, i, uint64(j42))
 		i += copy(data[i:], data41[:j42])
 	}
-	if len(m.Visible) > 0 {
+	if len(m.Visibles) > 0 {
 		data[i] = 0x32
 		i++
-		i = encodeVarintOsm(data, i, uint64(len(m.Visible)))
-		for _, b := range m.Visible {
+		i = encodeVarintOsm(data, i, uint64(len(m.Visibles)))
+		for _, b := range m.Visibles {
 			if b {
 				data[i] = 1
 			} else {
@@ -1548,6 +1546,24 @@ func (m *DenseInfo) MarshalTo(data []byte) (int, error) {
 			}
 			i++
 		}
+	}
+	if len(m.Committeds) > 0 {
+		var j44 int
+		data46 := make([]byte, len(m.Committeds)*10)
+		for _, num := range m.Committeds {
+			x45 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x45 >= 1<<7 {
+				data46[j44] = uint8(uint64(x45)&0x7f | 0x80)
+				j44++
+				x45 >>= 7
+			}
+			data46[j44] = uint8(x45)
+			j44++
+		}
+		data[i] = 0x3a
+		i++
+		i = encodeVarintOsm(data, i, uint64(j44))
+		i += copy(data[i:], data46[:j44])
 	}
 	return i, nil
 }
@@ -1571,88 +1587,86 @@ func (m *Way) MarshalTo(data []byte) (int, error) {
 	i++
 	i = encodeVarintOsm(data, i, uint64(m.Id))
 	if len(m.Keys) > 0 {
-		data45 := make([]byte, len(m.Keys)*10)
-		var j44 int
+		data48 := make([]byte, len(m.Keys)*10)
+		var j47 int
 		for _, num := range m.Keys {
 			for num >= 1<<7 {
-				data45[j44] = uint8(uint64(num)&0x7f | 0x80)
+				data48[j47] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j44++
+				j47++
 			}
-			data45[j44] = uint8(num)
-			j44++
+			data48[j47] = uint8(num)
+			j47++
 		}
 		data[i] = 0x12
 		i++
-		i = encodeVarintOsm(data, i, uint64(j44))
-		i += copy(data[i:], data45[:j44])
+		i = encodeVarintOsm(data, i, uint64(j47))
+		i += copy(data[i:], data48[:j47])
 	}
 	if len(m.Vals) > 0 {
-		data47 := make([]byte, len(m.Vals)*10)
-		var j46 int
+		data50 := make([]byte, len(m.Vals)*10)
+		var j49 int
 		for _, num := range m.Vals {
 			for num >= 1<<7 {
-				data47[j46] = uint8(uint64(num)&0x7f | 0x80)
+				data50[j49] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j46++
+				j49++
 			}
-			data47[j46] = uint8(num)
-			j46++
+			data50[j49] = uint8(num)
+			j49++
 		}
 		data[i] = 0x1a
 		i++
-		i = encodeVarintOsm(data, i, uint64(j46))
-		i += copy(data[i:], data47[:j46])
+		i = encodeVarintOsm(data, i, uint64(j49))
+		i += copy(data[i:], data50[:j49])
 	}
 	if m.Info != nil {
 		data[i] = 0x22
 		i++
 		i = encodeVarintOsm(data, i, uint64(m.Info.Size()))
-		n48, err := m.Info.MarshalTo(data[i:])
+		n51, err := m.Info.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n48
+		i += n51
 	}
 	if len(m.Refs) > 0 {
-		var j49 int
-		data51 := make([]byte, len(m.Refs)*10)
+		var j52 int
+		data54 := make([]byte, len(m.Refs)*10)
 		for _, num := range m.Refs {
-			x50 := (uint64(num) << 1) ^ uint64((num >> 63))
-			for x50 >= 1<<7 {
-				data51[j49] = uint8(uint64(x50)&0x7f | 0x80)
-				j49++
-				x50 >>= 7
+			x53 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x53 >= 1<<7 {
+				data54[j52] = uint8(uint64(x53)&0x7f | 0x80)
+				j52++
+				x53 >>= 7
 			}
-			data51[j49] = uint8(x50)
-			j49++
+			data54[j52] = uint8(x53)
+			j52++
 		}
 		data[i] = 0x42
 		i++
-		i = encodeVarintOsm(data, i, uint64(j49))
-		i += copy(data[i:], data51[:j49])
+		i = encodeVarintOsm(data, i, uint64(j52))
+		i += copy(data[i:], data54[:j52])
 	}
 	if m.DenseMembers != nil {
 		data[i] = 0x4a
 		i++
 		i = encodeVarintOsm(data, i, uint64(m.DenseMembers.Size()))
-		n52, err := m.DenseMembers.MarshalTo(data[i:])
+		n55, err := m.DenseMembers.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n52
+		i += n55
 	}
-	if len(m.MinorVersion) > 0 {
-		for _, msg := range m.MinorVersion {
-			data[i] = 0x52
-			i++
-			i = encodeVarintOsm(data, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(data[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+	if m.Updates != nil {
+		data[i] = 0x52
+		i++
+		i = encodeVarintOsm(data, i, uint64(m.Updates.Size()))
+		n56, err := m.Updates.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
 		}
+		i += n56
 	}
 	return i, nil
 }
@@ -1676,153 +1690,120 @@ func (m *Relation) MarshalTo(data []byte) (int, error) {
 	i++
 	i = encodeVarintOsm(data, i, uint64(m.Id))
 	if len(m.Keys) > 0 {
-		data54 := make([]byte, len(m.Keys)*10)
-		var j53 int
+		data58 := make([]byte, len(m.Keys)*10)
+		var j57 int
 		for _, num := range m.Keys {
 			for num >= 1<<7 {
-				data54[j53] = uint8(uint64(num)&0x7f | 0x80)
+				data58[j57] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j53++
+				j57++
 			}
-			data54[j53] = uint8(num)
-			j53++
+			data58[j57] = uint8(num)
+			j57++
 		}
 		data[i] = 0x12
 		i++
-		i = encodeVarintOsm(data, i, uint64(j53))
-		i += copy(data[i:], data54[:j53])
+		i = encodeVarintOsm(data, i, uint64(j57))
+		i += copy(data[i:], data58[:j57])
 	}
 	if len(m.Vals) > 0 {
-		data56 := make([]byte, len(m.Vals)*10)
-		var j55 int
+		data60 := make([]byte, len(m.Vals)*10)
+		var j59 int
 		for _, num := range m.Vals {
 			for num >= 1<<7 {
-				data56[j55] = uint8(uint64(num)&0x7f | 0x80)
+				data60[j59] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j55++
+				j59++
 			}
-			data56[j55] = uint8(num)
-			j55++
+			data60[j59] = uint8(num)
+			j59++
 		}
 		data[i] = 0x1a
 		i++
-		i = encodeVarintOsm(data, i, uint64(j55))
-		i += copy(data[i:], data56[:j55])
+		i = encodeVarintOsm(data, i, uint64(j59))
+		i += copy(data[i:], data60[:j59])
 	}
 	if m.Info != nil {
 		data[i] = 0x22
 		i++
 		i = encodeVarintOsm(data, i, uint64(m.Info.Size()))
-		n57, err := m.Info.MarshalTo(data[i:])
+		n61, err := m.Info.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n57
+		i += n61
 	}
 	if len(m.Roles) > 0 {
-		data59 := make([]byte, len(m.Roles)*10)
-		var j58 int
+		data63 := make([]byte, len(m.Roles)*10)
+		var j62 int
 		for _, num := range m.Roles {
 			for num >= 1<<7 {
-				data59[j58] = uint8(uint64(num)&0x7f | 0x80)
+				data63[j62] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j58++
+				j62++
 			}
-			data59[j58] = uint8(num)
-			j58++
+			data63[j62] = uint8(num)
+			j62++
 		}
 		data[i] = 0x42
 		i++
-		i = encodeVarintOsm(data, i, uint64(j58))
-		i += copy(data[i:], data59[:j58])
+		i = encodeVarintOsm(data, i, uint64(j62))
+		i += copy(data[i:], data63[:j62])
 	}
 	if len(m.Refs) > 0 {
-		var j60 int
-		data62 := make([]byte, len(m.Refs)*10)
+		var j64 int
+		data66 := make([]byte, len(m.Refs)*10)
 		for _, num := range m.Refs {
-			x61 := (uint64(num) << 1) ^ uint64((num >> 63))
-			for x61 >= 1<<7 {
-				data62[j60] = uint8(uint64(x61)&0x7f | 0x80)
-				j60++
-				x61 >>= 7
+			x65 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x65 >= 1<<7 {
+				data66[j64] = uint8(uint64(x65)&0x7f | 0x80)
+				j64++
+				x65 >>= 7
 			}
-			data62[j60] = uint8(x61)
-			j60++
+			data66[j64] = uint8(x65)
+			j64++
 		}
 		data[i] = 0x4a
 		i++
-		i = encodeVarintOsm(data, i, uint64(j60))
-		i += copy(data[i:], data62[:j60])
+		i = encodeVarintOsm(data, i, uint64(j64))
+		i += copy(data[i:], data66[:j64])
 	}
 	if len(m.Types) > 0 {
-		data64 := make([]byte, len(m.Types)*10)
-		var j63 int
+		data68 := make([]byte, len(m.Types)*10)
+		var j67 int
 		for _, num := range m.Types {
 			for num >= 1<<7 {
-				data64[j63] = uint8(uint64(num)&0x7f | 0x80)
+				data68[j67] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j63++
+				j67++
 			}
-			data64[j63] = uint8(num)
-			j63++
+			data68[j67] = uint8(num)
+			j67++
 		}
 		data[i] = 0x52
 		i++
-		i = encodeVarintOsm(data, i, uint64(j63))
-		i += copy(data[i:], data64[:j63])
+		i = encodeVarintOsm(data, i, uint64(j67))
+		i += copy(data[i:], data68[:j67])
 	}
 	if m.DenseMembers != nil {
 		data[i] = 0x5a
 		i++
 		i = encodeVarintOsm(data, i, uint64(m.DenseMembers.Size()))
-		n65, err := m.DenseMembers.MarshalTo(data[i:])
+		n69, err := m.DenseMembers.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n65
+		i += n69
 	}
-	if len(m.MinorVersion) > 0 {
-		for _, msg := range m.MinorVersion {
-			data[i] = 0x62
-			i++
-			i = encodeVarintOsm(data, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(data[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *MinorVersion) Marshal() (data []byte, err error) {
-	size := m.Size()
-	data = make([]byte, size)
-	n, err := m.MarshalTo(data)
-	if err != nil {
-		return nil, err
-	}
-	return data[:n], nil
-}
-
-func (m *MinorVersion) MarshalTo(data []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	data[i] = 0x8
-	i++
-	i = encodeVarintOsm(data, i, uint64(m.Timestamp))
-	if m.DenseMembers != nil {
-		data[i] = 0x12
+	if m.Updates != nil {
+		data[i] = 0x62
 		i++
-		i = encodeVarintOsm(data, i, uint64(m.DenseMembers.Size()))
-		n66, err := m.DenseMembers.MarshalTo(data[i:])
+		i = encodeVarintOsm(data, i, uint64(m.Updates.Size()))
+		n70, err := m.Updates.MarshalTo(data[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n66
+		i += n70
 	}
 	return i, nil
 }
@@ -1842,131 +1823,126 @@ func (m *DenseMembers) MarshalTo(data []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Index) > 0 {
-		data67 := make([]byte, len(m.Index)*5)
-		var j68 int
-		for _, num := range m.Index {
-			x69 := (uint32(num) << 1) ^ uint32((num >> 31))
-			for x69 >= 1<<7 {
-				data67[j68] = uint8(uint64(x69)&0x7f | 0x80)
-				j68++
-				x69 >>= 7
+	if len(m.Indexes) > 0 {
+		data71 := make([]byte, len(m.Indexes)*5)
+		var j72 int
+		for _, num := range m.Indexes {
+			x73 := (uint32(num) << 1) ^ uint32((num >> 31))
+			for x73 >= 1<<7 {
+				data71[j72] = uint8(uint64(x73)&0x7f | 0x80)
+				j72++
+				x73 >>= 7
 			}
-			data67[j68] = uint8(x69)
-			j68++
+			data71[j72] = uint8(x73)
+			j72++
 		}
 		data[i] = 0xa
 		i++
-		i = encodeVarintOsm(data, i, uint64(j68))
-		i += copy(data[i:], data67[:j68])
+		i = encodeVarintOsm(data, i, uint64(j72))
+		i += copy(data[i:], data71[:j72])
 	}
-	if len(m.Version) > 0 {
-		data71 := make([]byte, len(m.Version)*10)
-		var j70 int
-		for _, num1 := range m.Version {
+	if len(m.Versions) > 0 {
+		data75 := make([]byte, len(m.Versions)*10)
+		var j74 int
+		for _, num1 := range m.Versions {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				data71[j70] = uint8(uint64(num)&0x7f | 0x80)
+				data75[j74] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j70++
+				j74++
 			}
-			data71[j70] = uint8(num)
-			j70++
+			data75[j74] = uint8(num)
+			j74++
 		}
 		data[i] = 0x12
 		i++
-		i = encodeVarintOsm(data, i, uint64(j70))
-		i += copy(data[i:], data71[:j70])
+		i = encodeVarintOsm(data, i, uint64(j74))
+		i += copy(data[i:], data75[:j74])
 	}
-	if len(m.MinorVersion) > 0 {
-		data73 := make([]byte, len(m.MinorVersion)*10)
-		var j72 int
-		for _, num1 := range m.MinorVersion {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				data73[j72] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j72++
-			}
-			data73[j72] = uint8(num)
-			j72++
-		}
+	if len(m.Minors) > 0 {
 		data[i] = 0x1a
 		i++
-		i = encodeVarintOsm(data, i, uint64(j72))
-		i += copy(data[i:], data73[:j72])
-	}
-	if len(m.ChangesetId) > 0 {
-		var j74 int
-		data76 := make([]byte, len(m.ChangesetId)*10)
-		for _, num := range m.ChangesetId {
-			x75 := (uint64(num) << 1) ^ uint64((num >> 63))
-			for x75 >= 1<<7 {
-				data76[j74] = uint8(uint64(x75)&0x7f | 0x80)
-				j74++
-				x75 >>= 7
+		i = encodeVarintOsm(data, i, uint64(len(m.Minors)))
+		for _, b := range m.Minors {
+			if b {
+				data[i] = 1
+			} else {
+				data[i] = 0
 			}
-			data76[j74] = uint8(x75)
-			j74++
+			i++
+		}
+	}
+	if len(m.Timestamps) > 0 {
+		var j76 int
+		data78 := make([]byte, len(m.Timestamps)*10)
+		for _, num := range m.Timestamps {
+			x77 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x77 >= 1<<7 {
+				data78[j76] = uint8(uint64(x77)&0x7f | 0x80)
+				j76++
+				x77 >>= 7
+			}
+			data78[j76] = uint8(x77)
+			j76++
 		}
 		data[i] = 0x22
 		i++
-		i = encodeVarintOsm(data, i, uint64(j74))
-		i += copy(data[i:], data76[:j74])
+		i = encodeVarintOsm(data, i, uint64(j76))
+		i += copy(data[i:], data78[:j76])
 	}
-	if len(m.Lat) > 0 {
-		var j77 int
-		data79 := make([]byte, len(m.Lat)*10)
-		for _, num := range m.Lat {
-			x78 := (uint64(num) << 1) ^ uint64((num >> 63))
-			for x78 >= 1<<7 {
-				data79[j77] = uint8(uint64(x78)&0x7f | 0x80)
-				j77++
-				x78 >>= 7
+	if len(m.ChangesetIds) > 0 {
+		var j79 int
+		data81 := make([]byte, len(m.ChangesetIds)*10)
+		for _, num := range m.ChangesetIds {
+			x80 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x80 >= 1<<7 {
+				data81[j79] = uint8(uint64(x80)&0x7f | 0x80)
+				j79++
+				x80 >>= 7
 			}
-			data79[j77] = uint8(x78)
-			j77++
+			data81[j79] = uint8(x80)
+			j79++
+		}
+		data[i] = 0x2a
+		i++
+		i = encodeVarintOsm(data, i, uint64(j79))
+		i += copy(data[i:], data81[:j79])
+	}
+	if len(m.Lats) > 0 {
+		var j82 int
+		data84 := make([]byte, len(m.Lats)*10)
+		for _, num := range m.Lats {
+			x83 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x83 >= 1<<7 {
+				data84[j82] = uint8(uint64(x83)&0x7f | 0x80)
+				j82++
+				x83 >>= 7
+			}
+			data84[j82] = uint8(x83)
+			j82++
 		}
 		data[i] = 0x42
 		i++
-		i = encodeVarintOsm(data, i, uint64(j77))
-		i += copy(data[i:], data79[:j77])
+		i = encodeVarintOsm(data, i, uint64(j82))
+		i += copy(data[i:], data84[:j82])
 	}
-	if len(m.Lon) > 0 {
-		var j80 int
-		data82 := make([]byte, len(m.Lon)*10)
-		for _, num := range m.Lon {
-			x81 := (uint64(num) << 1) ^ uint64((num >> 63))
-			for x81 >= 1<<7 {
-				data82[j80] = uint8(uint64(x81)&0x7f | 0x80)
-				j80++
-				x81 >>= 7
+	if len(m.Lons) > 0 {
+		var j85 int
+		data87 := make([]byte, len(m.Lons)*10)
+		for _, num := range m.Lons {
+			x86 := (uint64(num) << 1) ^ uint64((num >> 63))
+			for x86 >= 1<<7 {
+				data87[j85] = uint8(uint64(x86)&0x7f | 0x80)
+				j85++
+				x86 >>= 7
 			}
-			data82[j80] = uint8(x81)
-			j80++
+			data87[j85] = uint8(x86)
+			j85++
 		}
 		data[i] = 0x4a
 		i++
-		i = encodeVarintOsm(data, i, uint64(j80))
-		i += copy(data[i:], data82[:j80])
-	}
-	if len(m.Id) > 0 {
-		var j83 int
-		data85 := make([]byte, len(m.Id)*10)
-		for _, num := range m.Id {
-			x84 := (uint64(num) << 1) ^ uint64((num >> 63))
-			for x84 >= 1<<7 {
-				data85[j83] = uint8(uint64(x84)&0x7f | 0x80)
-				j83++
-				x84 >>= 7
-			}
-			data85[j83] = uint8(x84)
-			j83++
-		}
-		data[i] = 0x7a
-		i++
-		i = encodeVarintOsm(data, i, uint64(j83))
-		i += copy(data[i:], data85[:j83])
+		i = encodeVarintOsm(data, i, uint64(j85))
+		i += copy(data[i:], data87[:j85])
 	}
 	return i, nil
 }
@@ -2176,15 +2152,18 @@ func (m *Info) Size() (n int) {
 	if m.Visible != nil {
 		n += 2
 	}
+	if m.Committed != nil {
+		n += 1 + sovOsm(uint64(*m.Committed))
+	}
 	return n
 }
 
 func (m *DenseNodes) Size() (n int) {
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
+	if len(m.Ids) > 0 {
 		l = 0
-		for _, e := range m.Id {
+		for _, e := range m.Ids {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
@@ -2193,16 +2172,16 @@ func (m *DenseNodes) Size() (n int) {
 		l = m.DenseInfo.Size()
 		n += 1 + l + sovOsm(uint64(l))
 	}
-	if len(m.Lat) > 0 {
+	if len(m.Lats) > 0 {
 		l = 0
-		for _, e := range m.Lat {
+		for _, e := range m.Lats {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Lon) > 0 {
+	if len(m.Lons) > 0 {
 		l = 0
-		for _, e := range m.Lon {
+		for _, e := range m.Lons {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
@@ -2226,43 +2205,50 @@ func (m *DenseNodes) Size() (n int) {
 func (m *DenseInfo) Size() (n int) {
 	var l int
 	_ = l
-	if len(m.Version) > 0 {
+	if len(m.Versions) > 0 {
 		l = 0
-		for _, e := range m.Version {
+		for _, e := range m.Versions {
 			l += sovOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Timestamp) > 0 {
+	if len(m.Timestamps) > 0 {
 		l = 0
-		for _, e := range m.Timestamp {
+		for _, e := range m.Timestamps {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.ChangesetId) > 0 {
+	if len(m.ChangesetIds) > 0 {
 		l = 0
-		for _, e := range m.ChangesetId {
+		for _, e := range m.ChangesetIds {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.UserId) > 0 {
+	if len(m.UserIds) > 0 {
 		l = 0
-		for _, e := range m.UserId {
+		for _, e := range m.UserIds {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.UserSid) > 0 {
+	if len(m.UserSids) > 0 {
 		l = 0
-		for _, e := range m.UserSid {
+		for _, e := range m.UserSids {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Visible) > 0 {
-		n += 1 + sovOsm(uint64(len(m.Visible))) + len(m.Visible)*1
+	if len(m.Visibles) > 0 {
+		n += 1 + sovOsm(uint64(len(m.Visibles))) + len(m.Visibles)*1
+	}
+	if len(m.Committeds) > 0 {
+		l = 0
+		for _, e := range m.Committeds {
+			l += sozOsm(uint64(e))
+		}
+		n += 1 + sovOsm(uint64(l)) + l
 	}
 	return n
 }
@@ -2300,11 +2286,9 @@ func (m *Way) Size() (n int) {
 		l = m.DenseMembers.Size()
 		n += 1 + l + sovOsm(uint64(l))
 	}
-	if len(m.MinorVersion) > 0 {
-		for _, e := range m.MinorVersion {
-			l = e.Size()
-			n += 1 + l + sovOsm(uint64(l))
-		}
+	if m.Updates != nil {
+		l = m.Updates.Size()
+		n += 1 + l + sovOsm(uint64(l))
 	}
 	return n
 }
@@ -2356,21 +2340,8 @@ func (m *Relation) Size() (n int) {
 		l = m.DenseMembers.Size()
 		n += 1 + l + sovOsm(uint64(l))
 	}
-	if len(m.MinorVersion) > 0 {
-		for _, e := range m.MinorVersion {
-			l = e.Size()
-			n += 1 + l + sovOsm(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *MinorVersion) Size() (n int) {
-	var l int
-	_ = l
-	n += 1 + sovOsm(uint64(m.Timestamp))
-	if m.DenseMembers != nil {
-		l = m.DenseMembers.Size()
+	if m.Updates != nil {
+		l = m.Updates.Size()
 		n += 1 + l + sovOsm(uint64(l))
 	}
 	return n
@@ -2379,51 +2350,47 @@ func (m *MinorVersion) Size() (n int) {
 func (m *DenseMembers) Size() (n int) {
 	var l int
 	_ = l
-	if len(m.Index) > 0 {
+	if len(m.Indexes) > 0 {
 		l = 0
-		for _, e := range m.Index {
+		for _, e := range m.Indexes {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Version) > 0 {
+	if len(m.Versions) > 0 {
 		l = 0
-		for _, e := range m.Version {
+		for _, e := range m.Versions {
 			l += sovOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.MinorVersion) > 0 {
-		l = 0
-		for _, e := range m.MinorVersion {
-			l += sovOsm(uint64(e))
-		}
-		n += 1 + sovOsm(uint64(l)) + l
+	if len(m.Minors) > 0 {
+		n += 1 + sovOsm(uint64(len(m.Minors))) + len(m.Minors)*1
 	}
-	if len(m.ChangesetId) > 0 {
+	if len(m.Timestamps) > 0 {
 		l = 0
-		for _, e := range m.ChangesetId {
+		for _, e := range m.Timestamps {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Lat) > 0 {
+	if len(m.ChangesetIds) > 0 {
 		l = 0
-		for _, e := range m.Lat {
+		for _, e := range m.ChangesetIds {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Lon) > 0 {
+	if len(m.Lats) > 0 {
 		l = 0
-		for _, e := range m.Lon {
+		for _, e := range m.Lats {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
 	}
-	if len(m.Id) > 0 {
+	if len(m.Lons) > 0 {
 		l = 0
-		for _, e := range m.Id {
+		for _, e := range m.Lons {
 			l += sozOsm(uint64(e))
 		}
 		n += 1 + sovOsm(uint64(l)) + l
@@ -3939,6 +3906,26 @@ func (m *Info) Unmarshal(data []byte) error {
 			}
 			b := bool(v != 0)
 			m.Visible = &b
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Committed", wireType)
+			}
+			var v int64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOsm
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				v |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Committed = &v
 		default:
 			iNdEx = preIndex
 			skippy, err := skipOsm(data[iNdEx:])
@@ -4030,7 +4017,7 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Id = append(m.Id, int64(v))
+					m.Ids = append(m.Ids, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -4049,9 +4036,9 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Id = append(m.Id, int64(v))
+				m.Ids = append(m.Ids, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Ids", wireType)
 			}
 		case 5:
 			if wireType != 2 {
@@ -4127,7 +4114,7 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Lat = append(m.Lat, int64(v))
+					m.Lats = append(m.Lats, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -4146,9 +4133,9 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Lat = append(m.Lat, int64(v))
+				m.Lats = append(m.Lats, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Lat", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Lats", wireType)
 			}
 		case 9:
 			if wireType == 2 {
@@ -4191,7 +4178,7 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Lon = append(m.Lon, int64(v))
+					m.Lons = append(m.Lons, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -4210,9 +4197,9 @@ func (m *DenseNodes) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Lon = append(m.Lon, int64(v))
+				m.Lons = append(m.Lons, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Lon", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Lons", wireType)
 			}
 		case 10:
 			if wireType == 2 {
@@ -4395,7 +4382,7 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 							break
 						}
 					}
-					m.Version = append(m.Version, v)
+					m.Versions = append(m.Versions, v)
 				}
 			} else if wireType == 0 {
 				var v int32
@@ -4413,9 +4400,9 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 						break
 					}
 				}
-				m.Version = append(m.Version, v)
+				m.Versions = append(m.Versions, v)
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Versions", wireType)
 			}
 		case 2:
 			if wireType == 2 {
@@ -4458,7 +4445,7 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Timestamp = append(m.Timestamp, int64(v))
+					m.Timestamps = append(m.Timestamps, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -4477,9 +4464,9 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Timestamp = append(m.Timestamp, int64(v))
+				m.Timestamps = append(m.Timestamps, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Timestamps", wireType)
 			}
 		case 3:
 			if wireType == 2 {
@@ -4522,7 +4509,7 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.ChangesetId = append(m.ChangesetId, int64(v))
+					m.ChangesetIds = append(m.ChangesetIds, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -4541,9 +4528,9 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.ChangesetId = append(m.ChangesetId, int64(v))
+				m.ChangesetIds = append(m.ChangesetIds, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChangesetId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ChangesetIds", wireType)
 			}
 		case 4:
 			if wireType == 2 {
@@ -4586,7 +4573,7 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 						}
 					}
 					v = int32((uint32(v) >> 1) ^ uint32(((v&1)<<31)>>31))
-					m.UserId = append(m.UserId, v)
+					m.UserIds = append(m.UserIds, v)
 				}
 			} else if wireType == 0 {
 				var v int32
@@ -4605,9 +4592,9 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 					}
 				}
 				v = int32((uint32(v) >> 1) ^ uint32(((v&1)<<31)>>31))
-				m.UserId = append(m.UserId, v)
+				m.UserIds = append(m.UserIds, v)
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field UserIds", wireType)
 			}
 		case 5:
 			if wireType == 2 {
@@ -4650,7 +4637,7 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 						}
 					}
 					v = int32((uint32(v) >> 1) ^ uint32(((v&1)<<31)>>31))
-					m.UserSid = append(m.UserSid, v)
+					m.UserSids = append(m.UserSids, v)
 				}
 			} else if wireType == 0 {
 				var v int32
@@ -4669,9 +4656,9 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 					}
 				}
 				v = int32((uint32(v) >> 1) ^ uint32(((v&1)<<31)>>31))
-				m.UserSid = append(m.UserSid, v)
+				m.UserSids = append(m.UserSids, v)
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field UserSid", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field UserSids", wireType)
 			}
 		case 6:
 			if wireType == 2 {
@@ -4713,7 +4700,7 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 							break
 						}
 					}
-					m.Visible = append(m.Visible, bool(v != 0))
+					m.Visibles = append(m.Visibles, bool(v != 0))
 				}
 			} else if wireType == 0 {
 				var v int
@@ -4731,9 +4718,73 @@ func (m *DenseInfo) Unmarshal(data []byte) error {
 						break
 					}
 				}
-				m.Visible = append(m.Visible, bool(v != 0))
+				m.Visibles = append(m.Visibles, bool(v != 0))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Visible", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Visibles", wireType)
+			}
+		case 7:
+			if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOsm
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := data[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOsm
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOsm
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := data[iNdEx]
+						iNdEx++
+						v |= (uint64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
+					m.Committeds = append(m.Committeds, int64(v))
+				}
+			} else if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOsm
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := data[iNdEx]
+					iNdEx++
+					v |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
+				m.Committeds = append(m.Committeds, int64(v))
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Committeds", wireType)
 			}
 		default:
 			iNdEx = preIndex
@@ -5062,7 +5113,7 @@ func (m *Way) Unmarshal(data []byte) error {
 			iNdEx = postIndex
 		case 10:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinorVersion", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Updates", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -5086,8 +5137,10 @@ func (m *Way) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MinorVersion = append(m.MinorVersion, &MinorVersion{})
-			if err := m.MinorVersion[len(m.MinorVersion)-1].Unmarshal(data[iNdEx:postIndex]); err != nil {
+			if m.Updates == nil {
+				m.Updates = &DenseMembers{}
+			}
+			if err := m.Updates.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -5473,7 +5526,7 @@ func (m *Relation) Unmarshal(data []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				for iNdEx < postIndex {
-					var v MemberType
+					var v Relation_MemberType
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return ErrIntOverflowOsm
@@ -5483,7 +5536,7 @@ func (m *Relation) Unmarshal(data []byte) error {
 						}
 						b := data[iNdEx]
 						iNdEx++
-						v |= (MemberType(b) & 0x7F) << shift
+						v |= (Relation_MemberType(b) & 0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -5491,7 +5544,7 @@ func (m *Relation) Unmarshal(data []byte) error {
 					m.Types = append(m.Types, v)
 				}
 			} else if wireType == 0 {
-				var v MemberType
+				var v Relation_MemberType
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return ErrIntOverflowOsm
@@ -5501,7 +5554,7 @@ func (m *Relation) Unmarshal(data []byte) error {
 					}
 					b := data[iNdEx]
 					iNdEx++
-					v |= (MemberType(b) & 0x7F) << shift
+					v |= (Relation_MemberType(b) & 0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -5545,7 +5598,7 @@ func (m *Relation) Unmarshal(data []byte) error {
 			iNdEx = postIndex
 		case 12:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinorVersion", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Updates", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -5569,8 +5622,10 @@ func (m *Relation) Unmarshal(data []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.MinorVersion = append(m.MinorVersion, &MinorVersion{})
-			if err := m.MinorVersion[len(m.MinorVersion)-1].Unmarshal(data[iNdEx:postIndex]); err != nil {
+			if m.Updates == nil {
+				m.Updates = &DenseMembers{}
+			}
+			if err := m.Updates.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -5591,108 +5646,6 @@ func (m *Relation) Unmarshal(data []byte) error {
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
 		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MinorVersion) Unmarshal(data []byte) error {
-	l := len(data)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowOsm
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := data[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MinorVersion: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MinorVersion: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
-			}
-			m.Timestamp = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsm
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				m.Timestamp |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DenseMembers", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowOsm
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := data[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthOsm
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.DenseMembers == nil {
-				m.DenseMembers = &DenseMembers{}
-			}
-			if err := m.DenseMembers.Unmarshal(data[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipOsm(data[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthOsm
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
 	}
 
 	if iNdEx > l {
@@ -5770,7 +5723,7 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 						}
 					}
 					v = int32((uint32(v) >> 1) ^ uint32(((v&1)<<31)>>31))
-					m.Index = append(m.Index, v)
+					m.Indexes = append(m.Indexes, v)
 				}
 			} else if wireType == 0 {
 				var v int32
@@ -5789,9 +5742,9 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 					}
 				}
 				v = int32((uint32(v) >> 1) ^ uint32(((v&1)<<31)>>31))
-				m.Index = append(m.Index, v)
+				m.Indexes = append(m.Indexes, v)
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Indexes", wireType)
 			}
 		case 2:
 			if wireType == 2 {
@@ -5833,7 +5786,7 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 							break
 						}
 					}
-					m.Version = append(m.Version, v)
+					m.Versions = append(m.Versions, v)
 				}
 			} else if wireType == 0 {
 				var v int32
@@ -5851,9 +5804,9 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 						break
 					}
 				}
-				m.Version = append(m.Version, v)
+				m.Versions = append(m.Versions, v)
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Versions", wireType)
 			}
 		case 3:
 			if wireType == 2 {
@@ -5880,7 +5833,7 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				for iNdEx < postIndex {
-					var v int32
+					var v int
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return ErrIntOverflowOsm
@@ -5890,15 +5843,15 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 						}
 						b := data[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= (int(b) & 0x7F) << shift
 						if b < 0x80 {
 							break
 						}
 					}
-					m.MinorVersion = append(m.MinorVersion, v)
+					m.Minors = append(m.Minors, bool(v != 0))
 				}
 			} else if wireType == 0 {
-				var v int32
+				var v int
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return ErrIntOverflowOsm
@@ -5908,14 +5861,14 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 					}
 					b := data[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= (int(b) & 0x7F) << shift
 					if b < 0x80 {
 						break
 					}
 				}
-				m.MinorVersion = append(m.MinorVersion, v)
+				m.Minors = append(m.Minors, bool(v != 0))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinorVersion", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Minors", wireType)
 			}
 		case 4:
 			if wireType == 2 {
@@ -5958,7 +5911,7 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.ChangesetId = append(m.ChangesetId, int64(v))
+					m.Timestamps = append(m.Timestamps, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -5977,9 +5930,73 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.ChangesetId = append(m.ChangesetId, int64(v))
+				m.Timestamps = append(m.Timestamps, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChangesetId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Timestamps", wireType)
+			}
+		case 5:
+			if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOsm
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := data[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthOsm
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOsm
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := data[iNdEx]
+						iNdEx++
+						v |= (uint64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
+					m.ChangesetIds = append(m.ChangesetIds, int64(v))
+				}
+			} else if wireType == 0 {
+				var v uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOsm
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := data[iNdEx]
+					iNdEx++
+					v |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
+				m.ChangesetIds = append(m.ChangesetIds, int64(v))
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChangesetIds", wireType)
 			}
 		case 8:
 			if wireType == 2 {
@@ -6022,7 +6039,7 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Lat = append(m.Lat, int64(v))
+					m.Lats = append(m.Lats, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -6041,9 +6058,9 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Lat = append(m.Lat, int64(v))
+				m.Lats = append(m.Lats, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Lat", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Lats", wireType)
 			}
 		case 9:
 			if wireType == 2 {
@@ -6086,7 +6103,7 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 						}
 					}
 					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Lon = append(m.Lon, int64(v))
+					m.Lons = append(m.Lons, int64(v))
 				}
 			} else if wireType == 0 {
 				var v uint64
@@ -6105,73 +6122,9 @@ func (m *DenseMembers) Unmarshal(data []byte) error {
 					}
 				}
 				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Lon = append(m.Lon, int64(v))
+				m.Lons = append(m.Lons, int64(v))
 			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Lon", wireType)
-			}
-		case 15:
-			if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOsm
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := data[iNdEx]
-					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthOsm
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				for iNdEx < postIndex {
-					var v uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowOsm
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := data[iNdEx]
-						iNdEx++
-						v |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-					m.Id = append(m.Id, int64(v))
-				}
-			} else if wireType == 0 {
-				var v uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowOsm
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := data[iNdEx]
-					iNdEx++
-					v |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				v = (v >> 1) ^ uint64((int64(v&1)<<63)>>63)
-				m.Id = append(m.Id, int64(v))
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Lons", wireType)
 			}
 		default:
 			iNdEx = preIndex
@@ -6302,59 +6255,60 @@ var (
 func init() { proto.RegisterFile("osm.proto", fileDescriptorOsm) }
 
 var fileDescriptorOsm = []byte{
-	// 859 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x54, 0x41, 0x6e, 0xdb, 0x46,
-	0x14, 0xd5, 0x70, 0x48, 0x49, 0xfc, 0x94, 0x2d, 0x89, 0x8e, 0xe3, 0x71, 0x0a, 0xb8, 0x04, 0xd1,
-	0x05, 0x51, 0x20, 0x0e, 0xe0, 0x1b, 0xc4, 0x4d, 0x16, 0x01, 0x6a, 0x1b, 0x4d, 0x8d, 0x06, 0xed,
-	0x46, 0xa0, 0xc4, 0x91, 0x42, 0x94, 0xe4, 0x08, 0x1c, 0xda, 0xb5, 0xd0, 0x5d, 0x96, 0x5d, 0xb5,
-	0xbb, 0x6e, 0x7a, 0x84, 0x5e, 0xa0, 0x27, 0xc8, 0xb2, 0x27, 0x28, 0x0a, 0xf7, 0x0e, 0x5d, 0x17,
-	0xf3, 0x87, 0x14, 0x47, 0x52, 0x52, 0x64, 0x91, 0x9d, 0xe6, 0xbd, 0x19, 0xfe, 0xff, 0xdf, 0x7f,
-	0x4f, 0xe0, 0x0a, 0x99, 0x9f, 0x2e, 0x4b, 0x51, 0x09, 0x9f, 0x0a, 0x99, 0x3f, 0x7a, 0xbc, 0x48,
-	0xab, 0xd7, 0x37, 0xd3, 0xd3, 0x99, 0xc8, 0x9f, 0x2c, 0xc4, 0x42, 0x3c, 0x41, 0x6e, 0x7a, 0x33,
-	0xc7, 0x13, 0x1e, 0xf0, 0x97, 0x7e, 0x13, 0xbe, 0xb1, 0xc0, 0xfd, 0xe2, 0x75, 0x5c, 0x2c, 0xb8,
-	0xe4, 0x95, 0x3f, 0x02, 0x2b, 0x4d, 0x18, 0x09, 0x48, 0x44, 0xcf, 0xed, 0xb7, 0x7f, 0x7d, 0x4a,
-	0xfc, 0x11, 0xd8, 0xdf, 0xf3, 0x95, 0x64, 0x56, 0x40, 0xa3, 0xbd, 0x73, 0x6b, 0x84, 0xc8, 0x6d,
-	0x9c, 0x49, 0x46, 0xd7, 0xc8, 0x21, 0xf4, 0x6e, 0x24, 0x2f, 0x27, 0x69, 0xc2, 0x9c, 0x80, 0x44,
-	0x4e, 0xfd, 0xf4, 0x21, 0xf4, 0x11, 0x96, 0x69, 0xc2, 0xba, 0x01, 0x89, 0xf6, 0x6a, 0x9c, 0x01,
-	0xcc, 0x4a, 0x1e, 0x57, 0x3c, 0x99, 0xc4, 0x15, 0xeb, 0x19, 0xc5, 0x8e, 0xc0, 0x9d, 0x65, 0x42,
-	0x6a, 0xa2, 0x6f, 0x10, 0x3e, 0xd8, 0x62, 0xc9, 0x0b, 0xe6, 0x06, 0x24, 0xea, 0xd7, 0xd8, 0x27,
-	0xd0, 0x9d, 0x8a, 0x9b, 0x22, 0x91, 0x0c, 0x02, 0x12, 0x79, 0x67, 0xde, 0xa9, 0x52, 0xe2, 0x1c,
-	0x21, 0x45, 0xce, 0x70, 0x2a, 0xe6, 0x19, 0xa4, 0x1e, 0xd4, 0x1f, 0x42, 0x4f, 0x56, 0x65, 0x5a,
-	0x2c, 0x24, 0x7b, 0x10, 0xd0, 0xc8, 0x0d, 0x13, 0xe8, 0xd6, 0xef, 0x0e, 0xa1, 0x97, 0xa7, 0xc5,
-	0x24, 0x13, 0x05, 0x23, 0x81, 0x15, 0xf9, 0x58, 0xab, 0x83, 0x70, 0x7c, 0x87, 0xb0, 0xb5, 0x05,
-	0xab, 0xdb, 0x71, 0xc5, 0xe8, 0x3b, 0x6e, 0xc7, 0x15, 0xb3, 0x5b, 0x38, 0x7c, 0x43, 0xa0, 0x5b,
-	0x77, 0xc0, 0xa0, 0xab, 0x25, 0x40, 0xad, 0xbd, 0xb3, 0x3e, 0xb6, 0x77, 0xf5, 0xf5, 0x85, 0x62,
-	0x72, 0x91, 0xa4, 0xf3, 0x15, 0xb3, 0x76, 0x99, 0x84, 0x67, 0xbc, 0xe2, 0x8c, 0x6e, 0x31, 0xc7,
-	0xd0, 0x9b, 0x89, 0xa2, 0xe2, 0x77, 0xaa, 0xde, 0x26, 0xb5, 0x33, 0xea, 0x31, 0xd8, 0xd7, 0xf1,
-	0x42, 0xfa, 0x63, 0x70, 0xd5, 0x5e, 0x27, 0xb8, 0x4a, 0x82, 0xd4, 0xef, 0x04, 0xa8, 0x7a, 0xd3,
-	0x0a, 0x4b, 0x76, 0x85, 0x65, 0xe0, 0x14, 0x22, 0xe1, 0xda, 0x10, 0xde, 0x99, 0x8b, 0xdc, 0xa5,
-	0x48, 0xb8, 0xff, 0x19, 0x78, 0x09, 0x2f, 0x24, 0x9f, 0x68, 0x5e, 0x37, 0x39, 0x44, 0xfe, 0x99,
-	0xc2, 0xd5, 0x25, 0xe9, 0x3f, 0x04, 0xfb, 0x87, 0x78, 0x25, 0x99, 0x8d, 0xcf, 0x75, 0xa3, 0xaf,
-	0xe2, 0x95, 0x1f, 0x80, 0x5b, 0xf2, 0x2c, 0xae, 0x52, 0x51, 0x48, 0xe6, 0x20, 0xb9, 0x87, 0xe4,
-	0xcb, 0x1a, 0x35, 0x47, 0x19, 0x62, 0xbf, 0x3f, 0x82, 0x8d, 0x85, 0x1b, 0xd3, 0x5a, 0xb5, 0x5d,
-	0x3a, 0x1f, 0x64, 0xda, 0x23, 0xb0, 0xd3, 0x62, 0x2e, 0x6a, 0xc5, 0xf4, 0x1c, 0x2f, 0x8a, 0xb9,
-	0xf0, 0xc7, 0x40, 0x33, 0xb4, 0x5f, 0xbb, 0x50, 0x05, 0x09, 0xe5, 0xbe, 0x76, 0x99, 0xbf, 0x12,
-	0xb0, 0xf1, 0xfa, 0x21, 0xf4, 0x6e, 0x79, 0x29, 0x53, 0x74, 0x4c, 0x63, 0xfe, 0x8e, 0xb2, 0x72,
-	0x95, 0xe6, 0x5c, 0x56, 0x71, 0xbe, 0xc4, 0x55, 0x36, 0xbd, 0x3d, 0x82, 0xc1, 0xac, 0xc9, 0x9b,
-	0x4a, 0x0c, 0x35, 0x38, 0x23, 0x48, 0xb6, 0xf1, 0x2d, 0x33, 0x48, 0xce, 0x3a, 0x48, 0x78, 0xfd,
-	0x36, 0x95, 0xe9, 0x34, 0xe3, 0x98, 0xaf, 0x3a, 0x18, 0xe1, 0x4f, 0x04, 0xc0, 0x50, 0x7c, 0xbf,
-	0x96, 0x87, 0x46, 0x3e, 0x0e, 0x1e, 0x02, 0xe8, 0x3d, 0xe1, 0xf8, 0x0e, 0x8e, 0xbf, 0xdf, 0xae,
-	0x09, 0x87, 0x1a, 0x36, 0x1a, 0x34, 0x8f, 0x86, 0x8d, 0x02, 0x0d, 0x70, 0x68, 0xfa, 0x07, 0xd6,
-	0xaa, 0xee, 0x2c, 0xe9, 0x17, 0x02, 0x6e, 0xfb, 0xdd, 0x03, 0x53, 0x2c, 0x1a, 0x39, 0xcd, 0xa7,
-	0x4c, 0xa9, 0x9a, 0x0a, 0x6c, 0x47, 0xa8, 0x86, 0x39, 0x30, 0x65, 0xa2, 0xd1, 0x18, 0xc1, 0x07,
-	0x1b, 0x22, 0x35, 0xe8, 0x81, 0x29, 0x11, 0x8d, 0xfa, 0x0a, 0x0c, 0xff, 0x20, 0x40, 0x95, 0xe7,
-	0x3e, 0xb2, 0x71, 0x46, 0x60, 0x97, 0x7c, 0x2e, 0x0d, 0xd5, 0x22, 0xd8, 0xd3, 0x52, 0xe7, 0x3c,
-	0x9f, 0xf2, 0x52, 0xe2, 0xff, 0x97, 0x77, 0x36, 0x6e, 0xd5, 0xbe, 0xd0, 0x84, 0xba, 0x99, 0xa7,
-	0x85, 0x28, 0x27, 0x8d, 0x3c, 0x80, 0x11, 0xd0, 0x37, 0x2f, 0x14, 0xf3, 0x8d, 0x26, 0xc2, 0x7f,
-	0x09, 0xf4, 0xd7, 0x99, 0xf8, 0xe8, 0xd6, 0x77, 0x4a, 0x91, 0x71, 0x3d, 0xc2, 0xfa, 0x35, 0x0e,
-	0xe5, 0x1a, 0xfe, 0x71, 0xaa, 0xd5, 0x92, 0xeb, 0xad, 0xef, 0xd7, 0x09, 0xd7, 0x73, 0x5c, 0xaf,
-	0x96, 0xfc, 0xdd, 0x83, 0x7b, 0x1f, 0x3c, 0xf8, 0xe0, 0x7d, 0x83, 0x7f, 0x05, 0x03, 0xf3, 0xbc,
-	0x99, 0x30, 0x62, 0xa4, 0x68, 0xa7, 0xb8, 0xf5, 0x9e, 0xe2, 0xe1, 0x6f, 0x04, 0x06, 0x1b, 0xdd,
-	0x8c, 0xc1, 0x49, 0x8b, 0x84, 0xdf, 0xa1, 0x3b, 0x5b, 0x07, 0xd5, 0xad, 0x59, 0x6b, 0xcb, 0x1e,
-	0x6f, 0x77, 0x4d, 0xd7, 0xd4, 0xb6, 0x6d, 0xed, 0x8d, 0x0c, 0xfd, 0x7f, 0xa8, 0x74, 0x54, 0x87,
-	0xcd, 0xf9, 0xf3, 0xc7, 0x00, 0xad, 0xb0, 0x7e, 0x1f, 0xec, 0xcb, 0xab, 0x67, 0xcf, 0x47, 0x1d,
-	0xbf, 0x07, 0xf4, 0xd5, 0xd3, 0x6f, 0x47, 0xc4, 0x1f, 0x40, 0xff, 0xe5, 0xf3, 0x2f, 0x9f, 0x5e,
-	0xbf, 0xb8, 0xba, 0x1c, 0x59, 0xe7, 0x47, 0x6f, 0xef, 0x4f, 0xc8, 0x9f, 0xf7, 0x27, 0xe4, 0xef,
-	0xfb, 0x13, 0xf2, 0xf3, 0x3f, 0x27, 0x9d, 0xef, 0x1c, 0x21, 0xf3, 0xe5, 0xf4, 0xbf, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0xe4, 0x06, 0x48, 0x92, 0x24, 0x08, 0x00, 0x00,
+	// 865 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xac, 0x54, 0xcd, 0x6a, 0xe3, 0x56,
+	0x14, 0xb6, 0xfe, 0x6c, 0xe9, 0xc8, 0x1e, 0xdb, 0x6a, 0x66, 0xa2, 0x4c, 0x61, 0x1a, 0x44, 0x17,
+	0x86, 0x32, 0x1e, 0xf0, 0x1b, 0x8c, 0x3b, 0xb3, 0x18, 0xe8, 0x4c, 0xa0, 0x0d, 0x94, 0x76, 0x63,
+	0x64, 0xeb, 0xda, 0x11, 0xb5, 0x74, 0x8d, 0xae, 0x9c, 0xc6, 0x74, 0x97, 0x7d, 0xa1, 0x0f, 0xd1,
+	0x45, 0x37, 0xa5, 0x14, 0xfa, 0x10, 0x59, 0xf6, 0x09, 0x4a, 0x69, 0x5f, 0xa4, 0xe7, 0x9e, 0xab,
+	0x3f, 0xc7, 0x09, 0xcd, 0x22, 0x0b, 0x83, 0xf5, 0x7d, 0xf7, 0xe8, 0x9e, 0xf3, 0x7d, 0xdf, 0x11,
+	0x38, 0x5c, 0x24, 0xe3, 0x4d, 0xc6, 0x73, 0xee, 0x19, 0xf8, 0xf7, 0xf9, 0xcb, 0x55, 0x9c, 0x5f,
+	0x6c, 0xe7, 0xe3, 0x05, 0x4f, 0x5e, 0xad, 0xf8, 0x8a, 0xbf, 0x22, 0x6e, 0xbe, 0x5d, 0xd2, 0x13,
+	0x3d, 0xd0, 0x3f, 0x55, 0x13, 0x5c, 0xeb, 0xe0, 0x7c, 0x7e, 0x11, 0xa6, 0x2b, 0x26, 0x58, 0xee,
+	0x0d, 0x40, 0x8f, 0x23, 0x5f, 0x3b, 0xd5, 0x46, 0xc6, 0xd4, 0xbc, 0xf9, 0xeb, 0x13, 0x0d, 0x11,
+	0xf3, 0x3b, 0xb6, 0x13, 0xbe, 0x7e, 0x6a, 0x8c, 0x7a, 0x53, 0x7d, 0x40, 0xc8, 0x65, 0xb8, 0x16,
+	0xbe, 0x51, 0x21, 0x4f, 0xa1, 0xb3, 0x15, 0x2c, 0x9b, 0x61, 0xa9, 0x85, 0xa5, 0x56, 0x51, 0xfa,
+	0x0c, 0x6c, 0x82, 0x05, 0xe2, 0x6d, 0xc4, 0x7b, 0x05, 0xee, 0x03, 0x2c, 0x32, 0x16, 0xe6, 0x2c,
+	0x9a, 0x85, 0xb9, 0xdf, 0x69, 0x5c, 0x76, 0x0c, 0xce, 0x62, 0xcd, 0x85, 0x22, 0xec, 0x06, 0xe1,
+	0x81, 0xc9, 0x37, 0x2c, 0xf5, 0x1d, 0xc4, 0xec, 0x02, 0xfb, 0x18, 0xda, 0x73, 0xbe, 0x4d, 0x23,
+	0xe1, 0x03, 0xa2, 0xee, 0xc4, 0x1d, 0x4b, 0x25, 0xa6, 0x04, 0x49, 0x72, 0x41, 0x53, 0xf9, 0x6e,
+	0x83, 0x54, 0x83, 0x7a, 0x7d, 0xe8, 0x88, 0x3c, 0x8b, 0xd3, 0x95, 0xf0, 0x8f, 0x70, 0x08, 0x27,
+	0x88, 0xa0, 0x5d, 0xd4, 0xe1, 0x28, 0x49, 0x9c, 0xce, 0xd6, 0x3c, 0x45, 0x15, 0xf4, 0x91, 0x47,
+	0x77, 0xb5, 0x08, 0x0e, 0xaf, 0x08, 0xd6, 0x6f, 0xc1, 0xf2, 0x34, 0x76, 0x6b, 0xdc, 0x71, 0x1a,
+	0x61, 0xb3, 0x86, 0x83, 0x6b, 0x0d, 0xda, 0x45, 0x07, 0x3e, 0xb6, 0x47, 0x12, 0x90, 0xd6, 0xee,
+	0xc4, 0xa6, 0xf6, 0xce, 0xbe, 0x7a, 0x2f, 0x99, 0x84, 0x47, 0xf1, 0x72, 0x87, 0x17, 0x1d, 0x30,
+	0x11, 0x5b, 0x33, 0xac, 0x31, 0x6e, 0x31, 0x27, 0xd0, 0x59, 0xf0, 0x34, 0x67, 0x57, 0xf2, 0xbe,
+	0x7d, 0xea, 0x60, 0xd4, 0x13, 0x30, 0xcf, 0xc3, 0x95, 0xf0, 0x86, 0xe0, 0x48, 0x5f, 0x67, 0x64,
+	0xa5, 0x46, 0xd4, 0xaf, 0x1a, 0x18, 0xb2, 0xa6, 0x16, 0x56, 0x3b, 0x14, 0xd6, 0x07, 0x2b, 0xe5,
+	0x11, 0x53, 0x81, 0x70, 0x27, 0x0e, 0x71, 0x1f, 0x10, 0xf1, 0x3e, 0x05, 0x37, 0x62, 0xa9, 0x60,
+	0x33, 0xc5, 0xab, 0x26, 0xfb, 0xc4, 0xbf, 0x91, 0xb8, 0x3c, 0x24, 0x30, 0x14, 0xe6, 0xf7, 0x21,
+	0xe6, 0xc9, 0xa4, 0x72, 0xd5, 0xe8, 0xd7, 0xe1, 0xce, 0x3b, 0x05, 0x27, 0x63, 0xa8, 0x58, 0xcc,
+	0x53, 0x81, 0x29, 0x92, 0x64, 0x8f, 0xc8, 0x2f, 0x0b, 0xb4, 0x39, 0x4a, 0x9f, 0xfa, 0xfd, 0x01,
+	0x4c, 0xba, 0xb8, 0x0c, 0xad, 0x5e, 0xc4, 0xa5, 0xf5, 0xa0, 0xd0, 0x1e, 0x83, 0x19, 0xa7, 0x4b,
+	0x5e, 0x28, 0xa6, 0xe6, 0x78, 0x87, 0x00, 0x2a, 0x63, 0xac, 0x29, 0x7e, 0xb5, 0xa1, 0x12, 0xe2,
+	0x32, 0x7d, 0xb5, 0x99, 0xbf, 0x6b, 0x60, 0xd2, 0x71, 0x34, 0xfb, 0x92, 0x65, 0x22, 0xa6, 0xc4,
+	0x94, 0xe1, 0x6f, 0xc9, 0x28, 0xe7, 0x71, 0xc2, 0x44, 0x1e, 0x26, 0x1b, 0xb2, 0xb2, 0xec, 0xed,
+	0x39, 0x74, 0x17, 0xe5, 0xbe, 0xc9, 0x8d, 0x31, 0x1a, 0x5c, 0x63, 0x91, 0xcc, 0xc6, 0xbb, 0x9a,
+	0x8b, 0x64, 0x55, 0x8b, 0x44, 0xc7, 0x2f, 0x63, 0x11, 0xcf, 0xd7, 0x8c, 0xf6, 0xcb, 0x6e, 0x6c,
+	0x11, 0x4f, 0x92, 0x38, 0xc7, 0x0d, 0x6b, 0xae, 0x57, 0xf0, 0xa3, 0x06, 0xd0, 0xb0, 0xa2, 0x0f,
+	0x46, 0x1c, 0x29, 0xf3, 0x3d, 0x92, 0x24, 0x00, 0x50, 0x0e, 0x92, 0x30, 0x16, 0x09, 0xf3, 0xa4,
+	0x36, 0x90, 0xc6, 0x45, 0x21, 0x51, 0x1d, 0x81, 0xf2, 0x94, 0x55, 0x12, 0x91, 0xa6, 0x39, 0x15,
+	0xf2, 0xb4, 0x99, 0x2d, 0xa8, 0x14, 0x3f, 0x30, 0xf0, 0x37, 0x0d, 0x9c, 0xfa, 0xcd, 0x47, 0x60,
+	0x17, 0x42, 0xaa, 0x9e, 0x2c, 0x2a, 0x7a, 0x06, 0x50, 0xe9, 0xa8, 0x0c, 0x55, 0x77, 0x9c, 0x40,
+	0xaf, 0x29, 0xa3, 0x72, 0x56, 0x51, 0x47, 0x85, 0x5c, 0x12, 0x95, 0x31, 0x1b, 0x96, 0x4d, 0x95,
+	0x22, 0xaa, 0x80, 0x0d, 0xcb, 0xc3, 0x85, 0x86, 0x02, 0x45, 0x34, 0x50, 0xc4, 0xe2, 0xd6, 0x4a,
+	0x42, 0x81, 0x1a, 0x16, 0xaf, 0x0e, 0xfe, 0xc0, 0x15, 0x91, 0x69, 0x7d, 0xe4, 0xc8, 0xe1, 0xd1,
+	0x8c, 0x2d, 0x9b, 0xa2, 0x8e, 0xa0, 0xa7, 0xac, 0x48, 0x58, 0x32, 0x47, 0x55, 0xe8, 0xcb, 0xe7,
+	0x4e, 0x86, 0xb5, 0x1b, 0xef, 0x15, 0x81, 0xa6, 0x75, 0xb6, 0x9b, 0x08, 0x3f, 0x25, 0xe5, 0x77,
+	0xf0, 0xf0, 0x4c, 0xf0, 0x8b, 0x0e, 0x76, 0xb5, 0x47, 0x8f, 0xbe, 0x2e, 0x56, 0xc6, 0xa5, 0x7a,
+	0x76, 0xb3, 0x9a, 0xc6, 0xa9, 0x13, 0xf1, 0x19, 0x58, 0xf9, 0x6e, 0xc3, 0x54, 0x1a, 0x9e, 0x4c,
+	0xfc, 0xbd, 0xcd, 0x1e, 0xab, 0x36, 0xcf, 0xf1, 0xc0, 0xdd, 0xb3, 0xbb, 0x0f, 0x98, 0xbd, 0x7b,
+	0xdf, 0xec, 0x2f, 0x01, 0xea, 0xf7, 0x7b, 0x36, 0x7e, 0x33, 0xce, 0xde, 0xbc, 0x1d, 0xb4, 0xbc,
+	0x0e, 0x3a, 0xf9, 0xfa, 0x1b, 0xbc, 0xae, 0x8b, 0xda, 0xbc, 0xfd, 0xe2, 0xf5, 0xf9, 0xbb, 0xb3,
+	0x0f, 0x03, 0x3d, 0xf8, 0x59, 0x83, 0xee, 0xde, 0x1d, 0x1f, 0x41, 0x27, 0x4e, 0x23, 0x76, 0xc5,
+	0x54, 0x2a, 0xeb, 0xd4, 0x94, 0x59, 0xd5, 0xab, 0xac, 0x7a, 0xf8, 0xed, 0x8e, 0x53, 0x9e, 0x29,
+	0xdd, 0xec, 0x3b, 0xf2, 0x6b, 0xde, 0x9f, 0x5f, 0x6b, 0x6f, 0xa1, 0xfe, 0x67, 0xc5, 0xa6, 0xc7,
+	0x37, 0xff, 0xbc, 0xd0, 0xfe, 0xc4, 0xdf, 0xdf, 0xf8, 0xfb, 0xe9, 0xdf, 0x17, 0xad, 0x6f, 0x2d,
+	0x9c, 0x7c, 0x33, 0xff, 0x2f, 0x00, 0x00, 0xff, 0xff, 0x21, 0xc3, 0x6c, 0x3f, 0x0f, 0x08, 0x00,
+	0x00,
 }

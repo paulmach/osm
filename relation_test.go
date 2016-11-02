@@ -36,25 +36,26 @@ func TestRelationMarshalXML(t *testing.T) {
 
 	// minor relation
 	r.Members = nil
-	r.Minors = []MinorRelation{
-		MinorRelation{
-			Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
-			MinorMembers: []MinorRelationMember{
-				{Index: 0, Version: 1, MinorVersion: 2, ChangesetID: 123},
-			},
+	r.Updates = []Update{
+		{
+			Index:       0,
+			Version:     1,
+			ChangesetID: 123,
+			Timestamp:   time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 		},
 	}
+
 	data, err = xml.Marshal(r)
 	if err != nil {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><minor-relation timestamp="2012-01-01T00:00:00Z"><minor-member index="0" version="1" minor-version="2" changeset="123"></minor-member></minor-relation></relation>`)) {
+	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="1" minor="false" timestamp="2012-01-01T00:00:00Z" changeset="123"></update></relation>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
 	// blanket xml test
-	data = readFile(t, "testdata/minor-relation.osm")
+	data = readFile(t, "testdata/relation-updates.osm")
 
 	osm := &OSM{}
 	err = xml.Unmarshal(data, &osm)

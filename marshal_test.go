@@ -8,6 +8,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestChangeCompare(t *testing.T) {
@@ -43,6 +44,24 @@ func TestProtobufNode(t *testing.T) {
 	pbnode := marshalNode(n1, ss, true)
 
 	n2, err := unmarshalNode(pbnode, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(n1, n2) {
+		t.Errorf("nodes are not equal")
+		t.Logf("%+v", n1)
+		t.Logf("%+v", n2)
+	}
+
+	// with committed at
+	tp := time.Now().UTC().Truncate(time.Second)
+	n1.Committed = &tp
+
+	ss = &stringSet{}
+	pbnode = marshalNode(n1, ss, true)
+
+	n2, err = unmarshalNode(pbnode, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -151,8 +170,8 @@ func TestProtobufWay(t *testing.T) {
 	}
 }
 
-func TestProtobufMinorWay(t *testing.T) {
-	o := loadOSM(t, "testdata/minor-way.osm")
+func TestProtobufWayUpdates(t *testing.T) {
+	o := loadOSM(t, "testdata/way-updates.osm")
 	w1 := o.Ways[0]
 
 	ss := &stringSet{}
@@ -170,26 +189,8 @@ func TestProtobufMinorWay(t *testing.T) {
 	}
 
 	// with no minor nodes
-	w1.Minors[0].MinorNodes = nil
-	w1.Minors[1].MinorNodes = nil
-
-	ss = &stringSet{}
-	pbway = marshalWay(w1, ss, true)
-
-	w2, err = unmarshalWay(pbway, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(w1, w2) {
-		t.Errorf("ways are not equal")
-		t.Logf("%+v", w1)
-		t.Logf("%+v", w2)
-	}
-
-	// with no minor version
-	w1.Minors = nil
-	w1.Minors = nil
+	w1.Updates = nil
+	w1.Updates = nil
 
 	ss = &stringSet{}
 	pbway = marshalWay(w1, ss, true)
@@ -206,8 +207,32 @@ func TestProtobufMinorWay(t *testing.T) {
 	}
 }
 
-func TestProtobufMinorRelation(t *testing.T) {
-	o := loadOSM(t, "testdata/minor-relation.osm")
+func TestProtobufRelation(t *testing.T) {
+	c := loadChange(t, "testdata/changeset_38162206.osc")
+	r1 := c.Create.Relations[0]
+
+	// verify it's a good test
+	if len(r1.Tags) == 0 {
+		t.Fatalf("test should have some tags")
+	}
+
+	ss := &stringSet{}
+	pbrelation := marshalRelation(r1, ss, true)
+
+	r2, err := unmarshalRelation(pbrelation, ss.Strings(), nil)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(r1, r2) {
+		t.Errorf("relations are not equal")
+		t.Logf("%+v", r1)
+		t.Logf("%+v", r2)
+	}
+}
+
+func TestProtobufRelationUpdates(t *testing.T) {
+	o := loadOSM(t, "testdata/relation-updates.osm")
 	r1 := o.Relations[0]
 
 	ss := &stringSet{}
@@ -225,55 +250,13 @@ func TestProtobufMinorRelation(t *testing.T) {
 	}
 
 	// with no minor members
-	r1.Minors[0].MinorMembers = nil
-	r1.Minors[1].MinorMembers = nil
+	r1.Updates = nil
+	r1.Updates = nil
 
 	ss = &stringSet{}
 	pbrelation = marshalRelation(r1, ss, true)
 
 	r2, err = unmarshalRelation(pbrelation, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(r1, r2) {
-		t.Errorf("relations are not equal")
-		t.Logf("%+v", r1)
-		t.Logf("%+v", r2)
-	}
-
-	// with no minor version
-	r1.Minors = nil
-	r1.Minors = nil
-
-	ss = &stringSet{}
-	pbrelation = marshalRelation(r1, ss, true)
-
-	r2, err = unmarshalRelation(pbrelation, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(r1, r2) {
-		t.Errorf("relations are not equal")
-		t.Logf("%+v", r1)
-		t.Logf("%+v", r2)
-	}
-}
-
-func TestProtobufRelation(t *testing.T) {
-	c := loadChange(t, "testdata/changeset_38162206.osc")
-	r1 := c.Create.Relations[0]
-
-	// verify it's a good test
-	if len(r1.Tags) == 0 {
-		t.Fatalf("test should have some tags")
-	}
-
-	ss := &stringSet{}
-	pbrelation := marshalRelation(r1, ss, true)
-
-	r2, err := unmarshalRelation(pbrelation, ss.Strings(), nil)
 	if err != nil {
 		t.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -323,8 +306,8 @@ func BenchmarkMarshalProto(b *testing.B) {
 	}
 }
 
-func BenchmarkMarshalMinorWay(b *testing.B) {
-	o := loadOSM(b, "testdata/minor-way.osm")
+func BenchmarkMarshalWayUpdates(b *testing.B) {
+	o := loadOSM(b, "testdata/way-updates.osm")
 	ways := o.Ways
 
 	b.ReportAllocs()
@@ -335,8 +318,8 @@ func BenchmarkMarshalMinorWay(b *testing.B) {
 	}
 }
 
-func BenchmarkMarshalMinorRelation(b *testing.B) {
-	o := loadOSM(b, "testdata/minor-relation.osm")
+func BenchmarkMarshalRelationUpdates(b *testing.B) {
+	o := loadOSM(b, "testdata/relation-updates.osm")
 	relations := o.Relations
 
 	b.ReportAllocs()
