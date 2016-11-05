@@ -28,70 +28,84 @@ func TestWayPolygon(t *testing.T) {
 	}
 
 	cases := []struct {
-		Name  string
-		Tags  []Tag
-		Value bool
+		name  string
+		tags  []Tag
+		value bool
 	}{
 		{
-			Name: "area no overrides",
-			Tags: []Tag{
+			name: "area no overrides",
+			tags: []Tag{
 				{Key: "area", Value: "no"},
 				{Key: "building", Value: "yes"},
 			},
-			Value: false,
+			value: false,
 		},
 		{
-			Name: "at least one condition met",
-			Tags: []Tag{
+			name: "non-empty area and not no",
+			tags: []Tag{
+				{Key: "area", Value: "maybe"},
+				{Key: "building", Value: "no"},
+			},
+			value: true,
+		},
+		{
+			name: "at least one condition met",
+			tags: []Tag{
 				{Key: "building", Value: "no"},
 				{Key: "boundary", Value: "yes"},
 			},
-			Value: true,
+			value: true,
 		},
 		{
-			Name: "match within whitelist",
-			Tags: []Tag{
+			name: "match within whitelist",
+			tags: []Tag{
 				{Key: "railway", Value: "station"},
 			},
-			Value: true,
+			value: true,
 		},
 		{
-			Name: "not match if not within whitelist",
-			Tags: []Tag{
+			name: "not match if not within whitelist",
+			tags: []Tag{
 				{Key: "railway", Value: "line"},
 			},
-			Value: false,
+			value: false,
 		},
 		{
-			Name: "not match within blacklist",
-			Tags: []Tag{
+			name: "not match within blacklist",
+			tags: []Tag{
 				{Key: "man_made", Value: "cutline"},
 			},
-			Value: false,
+			value: false,
 		},
 		{
-			Name: "match if not within blacklist",
-			Tags: []Tag{
+			name: "match if not within blacklist",
+			tags: []Tag{
 				{Key: "man_made", Value: "thing"},
 			},
-			Value: true,
+			value: true,
+		},
+		{
+			name: "indoor anything is a polygon",
+			tags: []Tag{
+				{Key: "indoor", Value: "anything"},
+			},
+			value: true,
 		},
 	}
 
 	for _, tc := range cases {
-		t.Run(tc.Name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			w := &Way{
 				Nodes: []WayNode{
 					WayNode{ID: 1}, WayNode{ID: 2},
 					WayNode{ID: 3}, WayNode{ID: 1},
 				},
-				Tags: Tags(tc.Tags),
+				Tags: Tags(tc.tags),
 			}
 
-			if v := w.Polygon(); v != tc.Value {
-				t.Errorf("not correctly detected, %v != %v", v, tc.Value)
+			if v := w.Polygon(); v != tc.value {
+				t.Errorf("not correctly detected, %v != %v", v, tc.value)
 			}
 		})
 	}
-
 }

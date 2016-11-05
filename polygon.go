@@ -22,8 +22,10 @@ func (w *Way) Polygon() bool {
 		return false
 	}
 
-	if w.Tags.Find("area") == "no" {
+	if area := w.Tags.Find("area"); area == "no" {
 		return false
+	} else if area != "" {
+		return true
 	}
 
 	for _, c := range polyConditions {
@@ -153,10 +155,6 @@ var polygonJSON = []byte(`
         ]
     },
     {
-        "key": "area",
-        "polygon": "all"
-    },
-    {
         "key": "boundary",
         "polygon": "all"
     },
@@ -233,5 +231,9 @@ var polygonJSON = []byte(`
     {
         "key": "golf",
         "polygon": "all"
-    }
+    },
+	{
+		"key": "indoor",
+		"polygon": "all"
+	}
 ]`)
