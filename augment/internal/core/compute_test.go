@@ -19,7 +19,7 @@ func TestCompute(t *testing.T) {
 	// this is the basic test case where the first parent version
 	// gets an update because there is a node update before the parents next version.
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
@@ -78,7 +78,7 @@ func TestComputeDeletedParent(t *testing.T) {
 	// The last living parent needs to have updates up to the deleted time.
 	// When the parent comes back it needs to start from where its at.
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
@@ -142,7 +142,7 @@ func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 	// If a child is updated after the only version of a parent,
 	// an update should be created.
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
@@ -182,22 +182,22 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 	// this should create an update. This also tests a child is missing in
 	// the next version. All of these histories should returned the same results.
 	histories := []map[ChildID]ChildList{
-		map[ChildID]ChildList{
-			child1: ChildList{
+		{
+			child1: {
 				&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
 				// child is updated within threshold
 				&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
 			},
 		},
-		map[ChildID]ChildList{
-			child1: ChildList{
+		{
+			child1: {
 				// initial child is created BEFORE parent
 				&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(-time.Second), visible: true},
 				&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
 			},
 		},
-		map[ChildID]ChildList{
-			child1: ChildList{
+		{
+			child1: {
 				// initial child is created AFTER parent
 				&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(time.Second), visible: true},
 				&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
@@ -241,7 +241,7 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 	// If a child is updated right before (based on threshold) a parent is UPDATED,
 	// this should not trigger an updates.
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			// updated exactly 1 threshold before next parent does not create an update.
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1*time.Hour - time.Minute), visible: true},
@@ -280,12 +280,12 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 func TestComputeMultipleChildren(t *testing.T) {
 	// A parent with multiple children should handle each child independently.
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(5 * time.Hour), visible: true},
 		},
-		child2: ChildList{
+		child2: {
 			&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
 			&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
@@ -333,12 +333,12 @@ func TestComputeMultipleChildren(t *testing.T) {
 func TestComputeChangedChildList(t *testing.T) {
 	// A change in the child list should be supported.
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
 		},
-		child2: ChildList{
+		child2: {
 			&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 			&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
 			&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: true},
@@ -390,7 +390,7 @@ func TestComputeChangedChildList(t *testing.T) {
 
 func TestSetupMajorChildren(t *testing.T) {
 	histories := map[ChildID]ChildList{
-		child1: ChildList{
+		child1: {
 			&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
 			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: false},

@@ -8,8 +8,8 @@ import (
 func TestWayPolygon(t *testing.T) {
 	w := &Way{}
 	w.Nodes = []WayNode{
-		WayNode{ID: 1}, WayNode{ID: 2},
-		WayNode{ID: 3}, WayNode{ID: 1},
+		{ID: 1}, {ID: 2},
+		{ID: 3}, {ID: 1},
 	}
 
 	w2 := &Way{Nodes: w.Nodes[:3]}
@@ -97,8 +97,8 @@ func TestWayPolygon(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			w := &Way{
 				Nodes: []WayNode{
-					WayNode{ID: 1}, WayNode{ID: 2},
-					WayNode{ID: 3}, WayNode{ID: 1},
+					{ID: 1}, {ID: 2},
+					{ID: 3}, {ID: 1},
 				},
 				Tags: Tags(tc.tags),
 			}

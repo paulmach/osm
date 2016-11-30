@@ -280,7 +280,7 @@ func TestChangesetMarshalXML(t *testing.T) {
 	// changeset with discussion
 	cs.Discussion = ChangesetDiscussion{
 		Comments: []*ChangesetComment{
-			&ChangesetComment{Text: "foo"},
+			{Text: "foo"},
 		},
 	}
 
