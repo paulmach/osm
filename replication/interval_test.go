@@ -37,9 +37,12 @@ txnActiveList=836441203
 	}
 
 	// to do some live testing
-	// log.Println(CurrentMinuteState(context.Background()))
-	// log.Println(MinuteState(context.Background(), 2139244))
-	// log.Println(CurrentHourState(context.Background()))
-	// log.Println(CurrentDayState(context.Background()))
-	// log.Println(Minute(context.Background(), 2010617))
+	// ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	// defer cancel()
+
+	// log.Println(CurrentMinuteState(ctx))
+	// log.Println(MinuteState(ctx, 2139244))
+	// log.Println(CurrentHourState(ctx))
+	// log.Println(CurrentDayState(ctx))
+	// log.Println(Minute(ctx, 2010617))
 }

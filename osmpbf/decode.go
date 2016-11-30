@@ -3,16 +3,15 @@ package osmpbf
 import (
 	"bytes"
 	"compress/zlib"
+	"context"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
 	"sync"
 
-	"golang.org/x/net/context"
-
 	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/go.osm"
+	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmpbf/internal/osmpbf"
 )
 

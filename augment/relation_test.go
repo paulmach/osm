@@ -1,14 +1,13 @@
 package augment
 
 import (
+	"context"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"reflect"
 	"testing"
 	"time"
-
-	"golang.org/x/net/context"
 
 	osm "github.com/paulmach/go.osm"
 )

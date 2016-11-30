@@ -3,17 +3,16 @@ package replication
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/paulmach/go.osm"
+	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmxml"
-
-	"golang.org/x/net/context"
-	"golang.org/x/net/context/ctxhttp"
 )
 
 // ChangesetSeqNum indicates the sequence of the changeset replication found here:
@@ -29,7 +28,12 @@ func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, State, error) 
 // CurrentChangesetState returns the current state of the changeset replication.
 func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, State, error) {
 	url := ds.baseURL() + "/replication/changesets/state.yaml"
-	resp, err := ctxhttp.Get(ctx, ds.client(), url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return 0, State{}, err
+	}
+
+	resp, err := ds.client().Do(req.WithContext(ctx))
 	if err != nil {
 		return 0, State{}, err
 	}
@@ -115,7 +119,12 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 // It is the caller's responsibility to call Close on the Reader when done.
 func (ds *Datasource) changesetReader(ctx context.Context, n ChangesetSeqNum) (io.ReadCloser, error) {
 	url := ds.changesetURL(n)
-	resp, err := ctxhttp.Get(ctx, ds.client(), url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := ds.client().Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}

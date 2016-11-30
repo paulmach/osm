@@ -1,10 +1,10 @@
 package osmapi
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/paulmach/go.osm"
-	"golang.org/x/net/context"
+	osm "github.com/paulmach/go.osm"
 )
 
 // Relation returns the latest version of the relation from the osm rest api.

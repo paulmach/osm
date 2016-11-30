@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 	"time"
@@ -219,20 +220,20 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 	expUpdates := []osm.Updates{nil, nil}
 
 	for i, h := range histories {
-		t.Logf("running history %v", i)
+		t.Run(fmt.Sprintf("history %d", i), func(t *testing.T) {
+			expected := []ChildList{
+				{h[child1][0]},
+				nil,
+			}
 
-		expected := []ChildList{
-			{h[child1][0]},
-			nil,
-		}
+			updates, err := Compute(parents, h, time.Minute)
+			if err != nil {
+				t.Fatalf("compute error: %v", err)
+			}
 
-		updates, err := Compute(parents, h, time.Minute)
-		if err != nil {
-			t.Fatalf("compute error: %v", err)
-		}
-
-		compareParents(t, parents, expected)
-		compareUpdates(t, updates, expUpdates)
+			compareParents(t, parents, expected)
+			compareUpdates(t, updates, expUpdates)
+		})
 	}
 }
 

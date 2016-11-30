@@ -1,10 +1,10 @@
 package osmpbf
 
 import (
+	"context"
 	"io"
 
-	"github.com/paulmach/go.osm"
-	"golang.org/x/net/context"
+	osm "github.com/paulmach/go.osm"
 )
 
 var _ osm.Scanner = &Scanner{}

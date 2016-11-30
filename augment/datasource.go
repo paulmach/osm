@@ -1,8 +1,9 @@
 package augment
 
 import (
-	"github.com/paulmach/go.osm"
-	"golang.org/x/net/context"
+	"context"
+
+	osm "github.com/paulmach/go.osm"
 )
 
 // A NodeDatasource defines where node child history data comes from.

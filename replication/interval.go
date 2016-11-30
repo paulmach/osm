@@ -3,16 +3,15 @@ package replication
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/paulmach/go.osm"
-
-	"golang.org/x/net/context"
-	"golang.org/x/net/context/ctxhttp"
+	osm "github.com/paulmach/go.osm"
 )
 
 // State returns information about the current replication state.
@@ -136,7 +135,12 @@ func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n
 		url = fmt.Sprintf("%s/replication/%s/state.txt", ds.baseURL(), interval)
 	}
 
-	resp, err := ctxhttp.Get(ctx, ds.client(), url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return State{}, err
+	}
+
+	resp, err := ds.Client.Do(req.WithContext(ctx))
 	if err != nil {
 		return State{}, err
 	}
@@ -248,7 +252,12 @@ func (ds *Datasource) Day(ctx context.Context, n DaySeqNum) (*osm.Change, error)
 }
 
 func (ds *Datasource) fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
-	resp, err := ctxhttp.Get(ctx, ds.client(), url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := ds.Client.Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}

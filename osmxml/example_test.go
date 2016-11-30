@@ -1,10 +1,9 @@
 package osmxml_test
 
 import (
+	"context"
 	"fmt"
 	"os"
-
-	"golang.org/x/net/context"
 
 	"github.com/paulmach/go.osm/osmxml"
 )

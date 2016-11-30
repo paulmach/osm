@@ -1,13 +1,11 @@
 package osmapi
 
 import (
+	"context"
 	"encoding/xml"
 	"fmt"
 	"net/http"
 	"time"
-
-	"golang.org/x/net/context"
-	"golang.org/x/net/context/ctxhttp"
 )
 
 // BaseURL defines the api host. This can be change to hit
@@ -44,7 +42,12 @@ func (ds *Datasource) getFromAPI(ctx context.Context, url string, item interface
 		client = http.DefaultClient
 	}
 
-	resp, err := ctxhttp.Get(ctx, client, url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Do(req.WithContext(ctx))
 	if err != nil {
 		return err
 	}

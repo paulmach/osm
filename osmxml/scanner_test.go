@@ -3,13 +3,12 @@ package osmxml
 import (
 	"bytes"
 	"compress/bzip2"
+	"context"
 	"io"
 	"os"
 	"testing"
 
 	osm "github.com/paulmach/go.osm"
-
-	"golang.org/x/net/context"
 )
 
 func TestScanner(t *testing.T) {

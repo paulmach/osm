@@ -71,7 +71,6 @@ type polyCondition struct {
 	Condition conditionType `json:"polygon"`
 	Values    []string      `json:"values"`
 }
-
 type conditionType string
 
 var (
@@ -232,8 +231,8 @@ var polygonJSON = []byte(`
         "key": "golf",
         "polygon": "all"
     },
-	{
-		"key": "indoor",
-		"polygon": "all"
-	}
+    {
+        "key": "indoor",
+        "polygon": "all"
+    }
 ]`)

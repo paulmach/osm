@@ -1,11 +1,10 @@
 package augment
 
 import (
+	"context"
 	"time"
 
-	"golang.org/x/net/context"
-
-	"github.com/paulmach/go.osm"
+	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/augment/internal/core"
 )
 

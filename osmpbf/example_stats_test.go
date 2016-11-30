@@ -1,14 +1,13 @@
 package osmpbf_test
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"os"
 	"time"
 
-	"golang.org/x/net/context"
-
-	"github.com/paulmach/go.osm"
+	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmpbf"
 )
 

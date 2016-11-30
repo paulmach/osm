@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/paulmach/go.osm"
+	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/augment/internal/core"
 )
 

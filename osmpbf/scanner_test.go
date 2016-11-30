@@ -1,12 +1,11 @@
 package osmpbf
 
 import (
+	"context"
 	"os"
 	"testing"
 
-	"github.com/paulmach/go.osm"
-
-	"golang.org/x/net/context"
+	osm "github.com/paulmach/go.osm"
 )
 
 var (

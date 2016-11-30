@@ -1,10 +1,10 @@
 package osmapi
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/paulmach/go.osm"
-	"golang.org/x/net/context"
+	osm "github.com/paulmach/go.osm"
 )
 
 // Way returns the latest version of the way from the osm rest api.

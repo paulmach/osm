@@ -1,10 +1,10 @@
 package osmapi
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/paulmach/go.osm"
-	"golang.org/x/net/context"
+	osm "github.com/paulmach/go.osm"
 )
 
 // Node returns the latest version of the node from the osm rest api.
