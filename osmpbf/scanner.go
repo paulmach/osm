@@ -25,6 +25,7 @@ type Scanner struct {
 	decoder *decoder
 	started bool
 	procs   int
+	restart bool
 	next    osm.Element
 	err     error
 }
@@ -43,6 +44,19 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 	}
 	s.decoder = newDecoder(ctx, r)
 	return s
+}
+
+// FullyScannedBytes returns the number of bytes that have been read
+// and fully scanned. OSM protobuf files contain data blocks with
+// 8000 nodes each. The returned value contains the bytes for the blocks
+// that have been fully scanned.
+//
+// A user can use this number of seek forward in a file
+// and begin reading mid-data. Note that while elements are usually sorted
+// by Type, ID, Version in OMS protobuf files, versions of given element may
+// span blocks.
+func (s *Scanner) FullyScannedBytes() int64 {
+	return s.decoder.cOffset
 }
 
 // Close cleans up all the reading goroutines, it does not

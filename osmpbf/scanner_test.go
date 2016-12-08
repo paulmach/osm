@@ -39,6 +39,42 @@ func TestScanner(t *testing.T) {
 	}
 }
 
+func TestScannerIntermediateStart(t *testing.T) {
+	f, err := os.Open(Delaware)
+	if err != nil {
+		t.Fatalf("unable to open file: %v", err)
+	}
+	defer f.Close()
+
+	scanner := New(context.Background(), f, 1)
+
+	target := osm.NodeID(178592359) // first element in last partially scanned block
+	indexOfTarget := 0
+	for i := 0; i < 30000; i++ {
+		scanner.Scan()
+		if scanner.Element().Node.ID == target {
+			indexOfTarget = i
+		}
+	}
+
+	// verifies the target is less than 1 block length from the end.
+	if 30000-indexOfTarget > 8000 {
+		t.Errorf("target is not near the end, index %v", indexOfTarget)
+	}
+	scanner.Close()
+
+	// move the file pointer past all the fully scanned bytes,
+	// to the start of the not-fully scanned block.
+	f.Seek(scanner.FullyScannedBytes(), 0)
+	scanner = New(context.Background(), f, 1)
+
+	scanner.Scan()
+	if id := scanner.Element().Node.ID; id != target {
+		t.Errorf("incorrect first id, got %v", id)
+	}
+	scanner.Close()
+}
+
 func TestChangesetScannerContext(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	f, err := os.Open(Delaware)

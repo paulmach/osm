@@ -28,23 +28,32 @@ var (
 	}
 )
 
+// osm block data types
+const (
+	osmHeaderType = "OSMHeader"
+	osmDataType   = "OSMData"
+)
+
 // iPair is the group sent on the chan into the decoder
 // goroutines that unzip and decode the pbf from the headerblock.
 type iPair struct {
-	Blob *osmpbf.Blob
-	Err  error
+	Offset int64
+	Blob   *osmpbf.Blob
+	Err    error
 }
 
 // oPair is the group sent on the chan out of the decoder
 // goroutines. It'll contain a list of all the elements.
 type oPair struct {
+	Offset   int64
 	Elements []osm.Element
 	Err      error
 }
 
 // A Decoder reads and decodes OpenStreetMap PBF data from an input stream.
 type decoder struct {
-	r io.Reader
+	r         io.Reader
+	bytesRead int64
 
 	ctx    context.Context
 	cancel func()
@@ -55,8 +64,9 @@ type decoder struct {
 	outputs    []<-chan oPair
 	serializer chan oPair
 
-	cData  oPair
-	cIndex int
+	cOffset int64
+	cData   oPair
+	cIndex  int
 }
 
 // newDecoder returns a new decoder that reads from r.
@@ -92,13 +102,10 @@ func (dec *decoder) Start(n int) error {
 		return err
 	}
 
-	if blobHeader.GetType() != "OSMHeader" {
-		return fmt.Errorf("unexpected first fileblock of type %s", blobHeader.GetType())
-	}
-
-	err = decodeOSMHeader(blob)
-	if err != nil {
-		return err
+	if blobHeader.GetType() == osmHeaderType {
+		if err := decodeOSMHeader(blob); err != nil {
+			return err
+		}
 	}
 
 	dec.wg.Add(n + 2)
@@ -115,24 +122,25 @@ func (dec *decoder) Start(n int) error {
 	for i := 0; i < n; i++ {
 		input := make(chan iPair, n)
 		output := make(chan oPair, n)
+
+		dd := &dataDecoder{}
+		if i == 0 && blobHeader.GetType() != osmHeaderType {
+			objects, err := dd.Decode(blob)
+			output <- oPair{0, objects, err}
+		}
+
 		go func() {
 			defer close(output)
 			defer dec.wg.Done()
 
-			dd := &dataDecoder{}
 			for p := range input {
-				if dec.ctx.Err() != nil {
-					return
-				}
-
 				var out oPair
 				if p.Err == nil {
 					// send decoded objects or decoding error
 					objects, err := dd.Decode(p.Blob)
-					out = oPair{objects, err}
+					out = oPair{p.Offset, objects, err}
 				} else {
-					// send input error as is
-					out = oPair{nil, p.Err}
+					out = oPair{0, nil, p.Err} // send input error as is
 				}
 
 				select {
@@ -155,21 +163,24 @@ func (dec *decoder) Start(n int) error {
 			}
 		}()
 
-		i := 0
+		var (
+			i   int
+			err error
+		)
 
-		var err error
 		for dec.ctx.Err() == nil || err == nil {
 			input := dec.inputs[i]
 			i = (i + 1) % n
 
+			offset := dec.bytesRead
 			blobHeader, blob, err = dec.readFileBlock(sizeBuf, headerBuf, blobBuf)
-			if err == nil && blobHeader.GetType() != "OSMData" {
+			if err == nil && blobHeader.GetType() != osmDataType {
 				err = fmt.Errorf("unexpected fileblock of type %s", blobHeader.GetType())
 			}
 
-			pair := iPair{Blob: blob, Err: nil}
+			pair := iPair{Offset: offset, Blob: blob, Err: nil}
 			if err != nil {
-				pair = iPair{Blob: nil, Err: err}
+				pair = iPair{Offset: 0, Blob: nil, Err: err}
 			}
 
 			select {
@@ -181,31 +192,30 @@ func (dec *decoder) Start(n int) error {
 
 	go func() {
 		defer dec.wg.Done()
+		defer func() {
+			close(dec.serializer)
+			dec.cancel()
+		}()
 
-		i := 0
-		for {
+		for i := 0; ; i = (i + 1) % n {
 			output := dec.outputs[i]
-			i = (i + 1) % n
 
 			var p oPair
 			select {
+			case p = <-output:
 			case <-dec.ctx.Done():
 				dec.cData.Err = dec.ctx.Err()
-				close(dec.serializer)
-				dec.cancel()
 				return
-			case p = <-output:
 			}
 
 			select {
+			case dec.serializer <- p:
 			case <-dec.ctx.Done():
 				dec.cData.Err = dec.ctx.Err()
-			case dec.serializer <- p:
+				return
 			}
 
 			if p.Err != nil {
-				close(dec.serializer)
-				dec.cancel()
 				return
 			}
 		}
@@ -227,6 +237,7 @@ func (dec *decoder) Next() (osm.Element, error) {
 			return osm.Element{}, io.EOF
 		}
 
+		dec.cOffset = cd.Offset
 		dec.cData = cd
 		dec.cIndex = 0
 	}
@@ -251,7 +262,8 @@ func (dec *decoder) readFileBlock(sizeBuf, headerBuf, blobBuf []byte) (*osmpbf.B
 		return nil, nil, err
 	}
 
-	return blobHeader, blob, err
+	dec.bytesRead += 4 + int64(blobHeaderSize) + int64(blobHeader.GetDatasize())
+	return blobHeader, blob, nil
 }
 
 func (dec *decoder) readBlobHeaderSize(buf []byte) (uint32, error) {

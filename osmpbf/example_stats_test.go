@@ -20,26 +20,17 @@ func Example_stats() {
 		os.Exit(1)
 	}
 
-	nodes := 0
-	ways := 0
-	relations := 0
+	nodes, ways, relations := 0, 0, 0
 
-	minLat := math.MaxFloat64
-	maxLat := -math.MaxFloat64
-	minLon := math.MaxFloat64
-	maxLon := -math.MaxFloat64
+	minLat, maxLat := math.MaxFloat64, -math.MaxFloat64
+	minLon, maxLon := math.MaxFloat64, -math.MaxFloat64
 
-	minNodeID := osm.NodeID(math.MaxInt64)
-	maxNodeID := osm.NodeID(0)
+	minNodeID, maxNodeID := osm.NodeID(math.MaxInt64), osm.NodeID(0)
+	minWayID, maxWayID := osm.WayID(math.MaxInt64), osm.WayID(0)
 
-	minWayID := osm.WayID(math.MaxInt64)
-	maxWayID := osm.WayID(0)
+	minRelationID, maxRelationID := osm.RelationID(math.MaxInt64), osm.RelationID(0)
 
-	minRelationID := osm.RelationID(math.MaxInt64)
-	maxRelationID := osm.RelationID(0)
-
-	minTS := time.Date(2100, 1, 1, 0, 0, 0, 0, time.UTC) // TODO: update in year 2100
-	maxTS := time.Time{}
+	minTS, maxTS := time.Date(2100, 1, 1, 0, 0, 0, 0, time.UTC), time.Time{}
 
 	var (
 		maxTags     int
