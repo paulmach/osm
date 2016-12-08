@@ -11,7 +11,7 @@ import (
 // CommitInfoStart is the start time when we know committed at information.
 // Any update.Timestamp >= this date is a committed at time. Anything before
 // this date is the element timestamp.
-var CommitInfoStart = time.Date(2012, 9, 12, 13, 21, 3, 0, time.UTC)
+var CommitInfoStart = time.Date(2012, 9, 12, 9, 30, 3, 0, time.UTC)
 
 // An Update is a change to children of a way or relation.
 // The child type, id, ref and/or role are the same as the child

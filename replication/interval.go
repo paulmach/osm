@@ -14,6 +14,18 @@ import (
 	osm "github.com/paulmach/go.osm"
 )
 
+// MinuteSeqStart is the beginning of valid minutely sequence data.
+// The few before look to be way more than a minute.
+// A quick looks says about 75, 57, 17 for 1, 2, 3 respectively.
+const MinuteSeqStart = MinuteSeqNum(4)
+
+// HourSeqStart is the beginning of valid hour sequence data.
+// Without deep inspection it looks like 1-10 are from July 2013.
+const HourSeqStart = HourSeqNum(11)
+
+// DaySeqStart is the beginning of valid day sequence data.
+const DaySeqStart = DaySeqNum(1)
+
 // State returns information about the current replication state.
 type State struct {
 	SeqNum        uint64    `json:"seq_num"`
