@@ -35,6 +35,14 @@ type Changeset struct {
 	Change *Change `xml:"-"`
 }
 
+// ElementID returns the element id of the changeset.
+func (c *Changeset) ElementID() ElementID {
+	return ElementID{
+		Type: ChangesetType,
+		ID:   int64(c.ID),
+	}
+}
+
 // Comment is a helper and returns the changeset comment from the tag.
 func (c *Changeset) Comment() string {
 	return c.Tags.Find("comment")

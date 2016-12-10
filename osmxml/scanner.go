@@ -84,12 +84,35 @@ Loop:
 		switch se.Name.Local {
 		case "changeset":
 			err = s.decoder.DecodeElement(&s.next.Changeset, &se)
+			if err == nil {
+				s.next.ElementID = osm.ElementID{
+					Type: osm.ChangesetType,
+					ID:   int64(s.next.Changeset.ID)}
+			}
 		case "node":
 			err = s.decoder.DecodeElement(&s.next.Node, &se)
+			if err == nil {
+				s.next.ElementID = osm.ElementID{
+					Type:    osm.NodeType,
+					ID:      int64(s.next.Node.ID),
+					Version: s.next.Node.Version}
+			}
 		case "way":
 			err = s.decoder.DecodeElement(&s.next.Way, &se)
+			if err == nil {
+				s.next.ElementID = osm.ElementID{
+					Type:    osm.WayType,
+					ID:      int64(s.next.Way.ID),
+					Version: s.next.Way.Version}
+			}
 		case "relation":
 			err = s.decoder.DecodeElement(&s.next.Relation, &se)
+			if err == nil {
+				s.next.ElementID = osm.ElementID{
+					Type:    osm.RelationType,
+					ID:      int64(s.next.Relation.ID),
+					Version: s.next.Relation.Version}
+			}
 		default:
 			continue Loop
 		}

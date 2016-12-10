@@ -109,6 +109,11 @@ func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.De
 		info := state.Next()
 
 		dec.q = append(dec.q, osm.Element{
+			ElementID: osm.ElementID{
+				Type:    osm.NodeType,
+				ID:      int64(id),
+				Version: int(info.Version),
+			},
 			Node: &osm.Node{
 				ID:          osm.NodeID(id),
 				Lat:         1e-9 * float64((latOffset + (granularity * lat))),
@@ -145,6 +150,11 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 		}
 
 		dec.q = append(dec.q, osm.Element{
+			ElementID: osm.ElementID{
+				Type:    osm.WayType,
+				ID:      int64(way.Id),
+				Version: int(info.Version),
+			},
 			Way: &osm.Way{
 				ID:          osm.WayID(way.Id),
 				User:        info.User,
@@ -204,6 +214,11 @@ func (dec *dataDecoder) parseRelations(pb *osmpbf.PrimitiveBlock, relations []*o
 		info := extractInfo(st, rel.GetInfo(), dateGranularity)
 
 		dec.q = append(dec.q, osm.Element{
+			ElementID: osm.ElementID{
+				Type:    osm.RelationType,
+				ID:      int64(rel.Id),
+				Version: int(info.Version),
+			},
 			Relation: &osm.Relation{
 				ID:          osm.RelationID(rel.Id),
 				User:        info.User,

@@ -32,7 +32,16 @@ type Node struct {
 	Committed *time.Time `xml:"commited,attr,omitempty"`
 }
 
-// Nodes is a set of nodes with helper functions on top.
+// ElementID returns the element id of the node.
+func (n *Node) ElementID() ElementID {
+	return ElementID{
+		Type:    NodeType,
+		ID:      int64(n.ID),
+		Version: n.Version,
+	}
+}
+
+// Nodes is a list of nodes with helper functions on top.
 type Nodes []*Node
 
 // Marshal encodes the nodes using protocol buffers.

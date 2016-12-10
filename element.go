@@ -1,6 +1,10 @@
 package osm
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"sort"
+)
 
 var (
 	// ErrScannerClosed is returned by scanner.Err() if the scanner is closed
@@ -34,6 +38,8 @@ type Scanner interface {
 // An Element is a container for an osm thing that
 // could be returned by a scanner.
 type Element struct {
+	ElementID
+
 	Changeset *Changeset
 	Node      *Node
 	Way       *Way
@@ -46,7 +52,88 @@ type ElementType string
 
 // Enums for the different element types.
 const (
-	NodeType     ElementType = "node"
-	WayType                  = "way"
-	RelationType             = "relation"
+	NodeType      ElementType = "node"
+	WayType                   = "way"
+	RelationType              = "relation"
+	ChangesetType             = "changeset"
 )
+
+// An ElementID is a identifier that maps a thing is osm
+// to a unique id.
+type ElementID struct {
+	Type    ElementType
+	ID      int64
+	Version int
+}
+
+// NodeID returns the id of this element as a node id.
+// The function will panic if this element is not of NodeType.
+func (e ElementID) NodeID() NodeID {
+	if e.Type != NodeType {
+		panic(fmt.Sprintf("element %v is not a node", e))
+	}
+
+	return NodeID(e.ID)
+}
+
+// WayID returns the id of this element as a way id.
+// The function will panic if this element is not of WayType.
+func (e ElementID) WayID() WayID {
+	if e.Type != WayType {
+		panic(fmt.Sprintf("element %v is not a way", e))
+	}
+
+	return WayID(e.ID)
+}
+
+// RelationID returns the id of this element as a relation id.
+// The function will panic if this element is not of RelationType.
+func (e ElementID) RelationID() RelationID {
+	if e.Type != RelationType {
+		panic(fmt.Sprintf("element %v is not a relation", e))
+	}
+
+	return RelationID(e.ID)
+}
+
+// ChangesetID returns the id of this element as a changeset id.
+// The function will panic if this element is not of ChangesetType.
+func (e ElementID) ChangesetID() ChangesetID {
+	if e.Type != ChangesetType {
+		panic(fmt.Sprintf("element %v is not a changeset", e))
+	}
+
+	return ChangesetID(e.ID)
+}
+
+// ElementIDs is a list of element ids with helper functions on top.
+type ElementIDs []ElementID
+
+type elementIDsSort ElementIDs
+
+// Sort will order the ids by type, node, way, relation, changeset,
+// and then id and version.
+func (ids ElementIDs) Sort() {
+	sort.Sort(elementIDsSort(ids))
+}
+
+func (ids elementIDsSort) Len() int      { return len(ids) }
+func (ids elementIDsSort) Swap(i, j int) { ids[i], ids[j] = ids[j], ids[i] }
+func (ids elementIDsSort) Less(i, j int) bool {
+	if ids[i].Type != ids[j].Type {
+		return typeToNumber[ids[i].Type] < typeToNumber[ids[j].Type]
+	}
+
+	if ids[i].ID != ids[j].ID {
+		return ids[i].ID < ids[j].ID
+	}
+
+	return ids[i].Version < ids[j].Version
+}
+
+var typeToNumber = map[ElementType]int{
+	NodeType:      1,
+	WayType:       2,
+	RelationType:  3,
+	ChangesetType: 4,
+}

@@ -31,6 +31,14 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
+	if et := scanner.Element().Type; et != osm.ChangesetType {
+		t.Fatalf("did not set type correctly, got %v", et)
+	}
+
+	if cs := scanner.Element().ID; cs != 41227987 {
+		t.Fatalf("did not set id correctly, got %v", cs)
+	}
+
 	if v := scanner.Scan(); v == true {
 		t.Fatalf("should be finished scanning")
 	}

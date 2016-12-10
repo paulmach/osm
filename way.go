@@ -44,6 +44,15 @@ type WayNode struct {
 	Lon         float64     `xml:"lon,attr,omitempty"`
 }
 
+// ElementID returns the element id of the way.
+func (w *Way) ElementID() ElementID {
+	return ElementID{
+		Type:    WayType,
+		ID:      int64(w.ID),
+		Version: w.Version,
+	}
+}
+
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (w *Way) ApplyUpdatesUpTo(t time.Time) error {
@@ -75,7 +84,7 @@ func (w *Way) ApplyUpdate(u Update) error {
 	return nil
 }
 
-// Ways is a set of osm ways with some helper functions attached.
+// Ways is a list of osm ways with some helper functions attached.
 type Ways []*Way
 
 // Marshal encodes the ways using protocol buffers.

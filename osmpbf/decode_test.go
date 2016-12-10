@@ -176,12 +176,16 @@ func TestDecode(t *testing.T) {
 	var id string
 	idsOrder := make([]string, 0, len(IDsExpectedOrder))
 	for {
-		if v, err := d.Next(); err == io.EOF {
+		if e, err := d.Next(); err == io.EOF {
 			break
 		} else if err != nil {
 			t.Fatal(err)
 		} else {
-			if v := v.Node; v != nil {
+			if v := e.Node; v != nil {
+				if e.ID != int64(v.ID) || e.Version != v.Version || e.Type != osm.NodeType {
+					t.Errorf("incorrect element id for node %d: %v", v.ID, e.ElementID)
+				}
+
 				nc++
 				if v.ID == en.ID {
 					n = v
@@ -192,7 +196,11 @@ func TestDecode(t *testing.T) {
 				}
 			}
 
-			if v := v.Way; v != nil {
+			if v := e.Way; v != nil {
+				if e.ID != int64(v.ID) || e.Version != v.Version || e.Type != osm.WayType {
+					t.Errorf("incorrect element id for way %d: %v", v.ID, e.ElementID)
+				}
+
 				wc++
 				if v.ID == ew.ID {
 					w = v
@@ -203,7 +211,11 @@ func TestDecode(t *testing.T) {
 				}
 			}
 
-			if v := v.Relation; v != nil {
+			if v := e.Relation; v != nil {
+				if e.ID != int64(v.ID) || e.Version != v.Version || e.Type != osm.RelationType {
+					t.Errorf("incorrect element id for relation %d: %v", v.ID, e.ElementID)
+				}
+
 				rc++
 				if v.ID == er.ID {
 					r = v

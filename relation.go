@@ -49,6 +49,15 @@ type Member struct {
 	Lon float64 `xml:"lon,attr,omitempty"`
 }
 
+// ElementID returns the element id of the relation.
+func (r *Relation) ElementID() ElementID {
+	return ElementID{
+		Type:    RelationType,
+		ID:      int64(r.ID),
+		Version: r.Version,
+	}
+}
+
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (r *Relation) ApplyUpdatesUpTo(t time.Time) error {
@@ -80,7 +89,7 @@ func (r *Relation) ApplyUpdate(u Update) error {
 	return nil
 }
 
-// Relations is a collection with some helper functions attached.
+// Relations is a list of relations with some helper functions attached.
 type Relations []*Relation
 
 // Marshal encodes the relations using protocol buffers.
