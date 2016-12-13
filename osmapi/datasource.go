@@ -65,6 +65,10 @@ func (ds *Datasource) getFromAPI(ctx context.Context, url string, item interface
 		return &GoneError{URL: url}
 	}
 
+	if resp.StatusCode == http.StatusRequestURITooLong {
+		return &RequestURITooLongError{URL: url}
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		return &UnexpectedStatusCodeError{
 			Code: resp.StatusCode,
@@ -112,6 +116,17 @@ type GoneError struct {
 // Error returns an error message with the url causing the problem.
 func (e *GoneError) Error() string {
 	return fmt.Sprintf("osmapi: gone at %s", e.URL)
+}
+
+// RequestURITooLongError is returned when requesting too many ids in
+// a multi id request, ie. Nodes, Ways, Relations functions.
+type RequestURITooLongError struct {
+	URL string
+}
+
+// Error returns an error message with the url causing the problem.
+func (e *RequestURITooLongError) Error() string {
+	return fmt.Sprintf("osmapi: uri too long at %s", e.URL)
 }
 
 // UnexpectedStatusCodeError is return for a non 200 or 404 status code.

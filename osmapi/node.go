@@ -3,6 +3,7 @@ package osmapi
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	osm "github.com/paulmach/go.osm"
 )
@@ -27,6 +28,32 @@ func (ds *Datasource) Node(ctx context.Context, id osm.NodeID) (*osm.Node, error
 	}
 
 	return o.Nodes[0], nil
+}
+
+// Nodes returns the latest version of the nodes from the osm rest api.
+// Delegates to the DefaultDatasource and uses its http.Client to make the request.
+func Nodes(ctx context.Context, ids []osm.NodeID) (osm.Nodes, error) {
+	return DefaultDatasource.Nodes(ctx, ids)
+}
+
+// Nodes returns the latest version of the nodes from the osm rest api.
+// Will return 404 if any node is missing.
+func (ds *Datasource) Nodes(ctx context.Context, ids []osm.NodeID) (osm.Nodes, error) {
+	data := make([]byte, 0, 11*len(ids))
+	for i, id := range ids {
+		if i != 0 {
+			data = append(data, byte(','))
+		}
+		data = strconv.AppendInt(data, int64(id), 10)
+	}
+	url := ds.baseURL() + "/nodes?nodes=" + string(data)
+
+	o := &osm.OSM{}
+	if err := ds.getFromAPI(ctx, url, &o); err != nil {
+		return nil, err
+	}
+
+	return o.Nodes, nil
 }
 
 // NodeVersion returns the specific version of the node from the osm rest api.

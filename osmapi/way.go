@@ -3,6 +3,7 @@ package osmapi
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	osm "github.com/paulmach/go.osm"
 )
@@ -27,6 +28,32 @@ func (ds *Datasource) Way(ctx context.Context, id osm.WayID) (*osm.Way, error) {
 	}
 
 	return o.Ways[0], nil
+}
+
+// Ways returns the latest version of the ways from the osm rest api.
+// Delegates to the DefaultDatasource and uses its http.Client to make the request.
+func Ways(ctx context.Context, ids []osm.WayID) (osm.Ways, error) {
+	return DefaultDatasource.Ways(ctx, ids)
+}
+
+// Ways returns the latest version of the ways from the osm rest api.
+// Will return 404 if any way is missing.
+func (ds *Datasource) Ways(ctx context.Context, ids []osm.WayID) (osm.Ways, error) {
+	data := make([]byte, 0, 11*len(ids))
+	for i, id := range ids {
+		if i != 0 {
+			data = append(data, byte(','))
+		}
+		data = strconv.AppendInt(data, int64(id), 10)
+	}
+	url := ds.baseURL() + "/ways?ways=" + string(data)
+
+	o := &osm.OSM{}
+	if err := ds.getFromAPI(ctx, url, &o); err != nil {
+		return nil, err
+	}
+
+	return o.Ways, nil
 }
 
 // WayVersion returns the specific version of the way from the osm rest api.
