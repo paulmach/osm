@@ -12,6 +12,18 @@ var (
 	ErrScannerClosed = errors.New("osmxml: scanner closed by user")
 )
 
+// ElementType is the type of different osm elements.
+// ie. node, way, relation
+type ElementType string
+
+// Enums for the different element types.
+const (
+	NodeType      ElementType = "node"
+	WayType                   = "way"
+	RelationType              = "relation"
+	ChangesetType             = "changeset"
+)
+
 // Scanner allows osm data from dump files to be read.
 // It is based on the bufio.Scanner, common usage.
 // Scanners are not safe for parallel use. One should feed the
@@ -35,28 +47,27 @@ type Scanner interface {
 	Close() error
 }
 
-// An Element is a container for an osm thing that
-// could be returned by a scanner.
-type Element struct {
-	ElementID
-
-	Changeset *Changeset
-	Node      *Node
-	Way       *Way
-	Relation  *Relation
+// An Element represents a Node, Way, Relation or Changeset.
+type Element interface {
+	ElementID() ElementID
 }
 
-// ElementType is the type of different osm elements.
-// ie. node, way, relation
-type ElementType string
+// Elements is a collection of the Element type.
+type Elements []Element
 
-// Enums for the different element types.
-const (
-	NodeType      ElementType = "node"
-	WayType                   = "way"
-	RelationType              = "relation"
-	ChangesetType             = "changeset"
-)
+type elementsSort Elements
+
+// Sort will order the elements by type, node, way, relation, changeset,
+// and then id and version.
+func (es Elements) Sort() {
+	sort.Sort(elementsSort(es))
+}
+
+func (es elementsSort) Len() int      { return len(es) }
+func (es elementsSort) Swap(i, j int) { es[i], es[j] = es[j], es[i] }
+func (es elementsSort) Less(i, j int) bool {
+	return compIDs(es[i].ElementID(), es[j].ElementID())
+}
 
 // An ElementID is a identifier that maps a thing is osm
 // to a unique id.
@@ -120,15 +131,19 @@ func (ids ElementIDs) Sort() {
 func (ids elementIDsSort) Len() int      { return len(ids) }
 func (ids elementIDsSort) Swap(i, j int) { ids[i], ids[j] = ids[j], ids[i] }
 func (ids elementIDsSort) Less(i, j int) bool {
-	if ids[i].Type != ids[j].Type {
-		return typeToNumber[ids[i].Type] < typeToNumber[ids[j].Type]
+	return compIDs(ids[i], ids[j])
+}
+
+func compIDs(a, b ElementID) bool {
+	if a.Type != b.Type {
+		return typeToNumber[a.Type] < typeToNumber[b.Type]
 	}
 
-	if ids[i].ID != ids[j].ID {
-		return ids[i].ID < ids[j].ID
+	if a.ID != b.ID {
+		return a.ID < b.ID
 	}
 
-	return ids[i].Version < ids[j].Version
+	return a.Version < b.Version
 }
 
 var typeToNumber = map[ElementType]int{

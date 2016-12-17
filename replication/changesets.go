@@ -108,7 +108,7 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 	scanner := osmxml.New(ctx, gzReader)
 	for scanner.Scan() {
 		e := scanner.Element()
-		changesets = append(changesets, e.Changeset)
+		changesets = append(changesets, e.(*osm.Changeset))
 	}
 
 	return changesets, scanner.Err()

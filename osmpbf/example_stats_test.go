@@ -52,83 +52,83 @@ func Example_stats() {
 	for scanner.Scan() {
 		var ts time.Time
 
-		e := scanner.Element()
-		if e.Node != nil {
+		switch e := scanner.Element().(type) {
+		case *osm.Node:
 			nodes++
-			ts = e.Node.Timestamp
+			ts = e.Timestamp
 
-			if e.Node.Lat > maxLat {
-				maxLat = e.Node.Lat
+			if e.Lat > maxLat {
+				maxLat = e.Lat
 			}
 
-			if e.Node.Lat < minLat {
-				minLat = e.Node.Lat
+			if e.Lat < minLat {
+				minLat = e.Lat
 			}
 
-			if e.Node.Lon > maxLon {
-				maxLon = e.Node.Lon
+			if e.Lon > maxLon {
+				maxLon = e.Lon
 			}
 
-			if e.Node.Lon < minLon {
-				minLon = e.Node.Lon
+			if e.Lon < minLon {
+				minLon = e.Lon
 			}
 
-			if e.Node.ID > maxNodeID {
-				maxNodeID = e.Node.ID
+			if e.ID > maxNodeID {
+				maxNodeID = e.ID
 			}
 
-			if e.Node.ID < minNodeID {
-				minNodeID = e.Node.ID
+			if e.ID < minNodeID {
+				minNodeID = e.ID
 			}
 
-			if l := len(e.Node.Tags); l > maxTags {
+			if l := len(e.Tags); l > maxTags {
 				maxTags = l
 				maxTagsType = osm.NodeType
-				maxTagsID = int64(e.Node.ID)
+				maxTagsID = int64(e.ID)
 			}
-		} else if e.Way != nil {
+		case *osm.Way:
 			ways++
-			ts = e.Way.Timestamp
+			ts = e.Timestamp
 
-			if e.Way.ID > maxWayID {
-				maxWayID = e.Way.ID
+			if e.ID > maxWayID {
+				maxWayID = e.ID
 			}
 
-			if e.Way.ID < minWayID {
-				minWayID = e.Way.ID
+			if e.ID < minWayID {
+				minWayID = e.ID
 			}
 
-			if l := len(e.Way.Tags); l > maxTags {
+			if l := len(e.Tags); l > maxTags {
 				maxTags = l
 				maxTagsType = osm.WayType
-				maxTagsID = int64(e.Way.ID)
+				maxTagsID = int64(e.ID)
 			}
 
-			if l := len(e.Way.Nodes); l > maxNodeRefs {
+			if l := len(e.Nodes); l > maxNodeRefs {
 				maxNodeRefs = l
-				maxNodeRefsID = e.Way.ID
+				maxNodeRefsID = e.ID
 			}
-		} else if e.Relation != nil {
+		case *osm.Relation:
 			relations++
-			ts = e.Relation.Timestamp
+			ts = e.Timestamp
 
-			if e.Relation.ID > maxRelationID {
-				maxRelationID = e.Relation.ID
+			if e.ID > maxRelationID {
+				maxRelationID = e.ID
 			}
 
-			if e.Relation.ID < minRelationID {
-				minRelationID = e.Relation.ID
+			if e.ID < minRelationID {
+				minRelationID = e.ID
 			}
 
-			if l := len(e.Relation.Tags); l > maxTags {
+			if l := len(e.Tags); l > maxTags {
 				maxTags = l
 				maxTagsType = osm.RelationType
-				maxTagsID = int64(e.Relation.ID)
+				maxTagsID = int64(e.ID)
 			}
 
-			if l := len(e.Relation.Members); l > maxRelRefs {
+			if l := len(e.Members); l > maxRelRefs {
 				maxRelRefs = l
-				maxRelRefsID = e.Relation.ID
+				maxRelRefsID = e.ID
 			}
 		}
 

@@ -108,24 +108,17 @@ func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.De
 		lon = lons[index] + lon
 		info := state.Next()
 
-		dec.q = append(dec.q, osm.Element{
-			ElementID: osm.ElementID{
-				Type:    osm.NodeType,
-				ID:      int64(id),
-				Version: int(info.Version),
-			},
-			Node: &osm.Node{
-				ID:          osm.NodeID(id),
-				Lat:         1e-9 * float64((latOffset + (granularity * lat))),
-				Lon:         1e-9 * float64((lonOffset + (granularity * lon))),
-				User:        info.User,
-				UserID:      osm.UserID(info.UID),
-				Visible:     info.Visible,
-				Version:     int(info.Version),
-				ChangesetID: osm.ChangesetID(info.Changeset),
-				Timestamp:   info.Timestamp,
-				Tags:        tu.Next(),
-			},
+		dec.q = append(dec.q, &osm.Node{
+			ID:          osm.NodeID(id),
+			Lat:         1e-9 * float64((latOffset + (granularity * lat))),
+			Lon:         1e-9 * float64((lonOffset + (granularity * lon))),
+			User:        info.User,
+			UserID:      osm.UserID(info.UID),
+			Visible:     info.Visible,
+			Version:     int(info.Version),
+			ChangesetID: osm.ChangesetID(info.Changeset),
+			Timestamp:   info.Timestamp,
+			Tags:        tu.Next(),
 		})
 	}
 }
@@ -149,23 +142,16 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 			}
 		}
 
-		dec.q = append(dec.q, osm.Element{
-			ElementID: osm.ElementID{
-				Type:    osm.WayType,
-				ID:      int64(way.Id),
-				Version: int(info.Version),
-			},
-			Way: &osm.Way{
-				ID:          osm.WayID(way.Id),
-				User:        info.User,
-				UserID:      osm.UserID(info.UID),
-				Visible:     info.Visible,
-				Version:     int(info.Version),
-				ChangesetID: osm.ChangesetID(info.Changeset),
-				Timestamp:   info.Timestamp,
-				Nodes:       nodeIDs,
-				Tags:        extractTags(st, way.Keys, way.Vals),
-			},
+		dec.q = append(dec.q, &osm.Way{
+			ID:          osm.WayID(way.Id),
+			User:        info.User,
+			UserID:      osm.UserID(info.UID),
+			Visible:     info.Visible,
+			Version:     int(info.Version),
+			ChangesetID: osm.ChangesetID(info.Changeset),
+			Timestamp:   info.Timestamp,
+			Nodes:       nodeIDs,
+			Tags:        extractTags(st, way.Keys, way.Vals),
 		})
 	}
 }
@@ -213,23 +199,16 @@ func (dec *dataDecoder) parseRelations(pb *osmpbf.PrimitiveBlock, relations []*o
 		members := extractMembers(st, rel)
 		info := extractInfo(st, rel.GetInfo(), dateGranularity)
 
-		dec.q = append(dec.q, osm.Element{
-			ElementID: osm.ElementID{
-				Type:    osm.RelationType,
-				ID:      int64(rel.Id),
-				Version: int(info.Version),
-			},
-			Relation: &osm.Relation{
-				ID:          osm.RelationID(rel.Id),
-				User:        info.User,
-				UserID:      osm.UserID(info.UID),
-				Visible:     info.Visible,
-				Version:     int(info.Version),
-				ChangesetID: osm.ChangesetID(info.Changeset),
-				Timestamp:   info.Timestamp,
-				Tags:        extractTags(st, rel.GetKeys(), rel.GetVals()),
-				Members:     members,
-			},
+		dec.q = append(dec.q, &osm.Relation{
+			ID:          osm.RelationID(rel.Id),
+			User:        info.User,
+			UserID:      osm.UserID(info.UID),
+			Visible:     info.Visible,
+			Version:     int(info.Version),
+			ChangesetID: osm.ChangesetID(info.Changeset),
+			Timestamp:   info.Timestamp,
+			Tags:        extractTags(st, rel.GetKeys(), rel.GetVals()),
+			Members:     members,
 		})
 	}
 }

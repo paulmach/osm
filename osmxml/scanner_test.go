@@ -19,7 +19,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().Changeset; cs.ID != 41226352 {
+	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -27,15 +27,15 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read second scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().Changeset; cs.ID != 41227987 {
+	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41227987 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
-	if et := scanner.Element().Type; et != osm.ChangesetType {
+	if et := scanner.Element().ElementID().Type; et != osm.ChangesetType {
 		t.Fatalf("did not set type correctly, got %v", et)
 	}
 
-	if cs := scanner.Element().ID; cs != 41227987 {
+	if cs := scanner.Element().ElementID().ID; cs != 41227987 {
 		t.Fatalf("did not set id correctly, got %v", cs)
 	}
 
@@ -54,7 +54,7 @@ func TestChangesetScannerContext(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().Changeset; cs.ID != 41226352 {
+	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -77,7 +77,7 @@ func TestChangesetScannerClose(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().Changeset; cs.ID != 41226352 {
+	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -100,7 +100,7 @@ func TestChangesetScannerErr(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().Changeset; cs.ID != 41226352 {
+	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -140,16 +140,12 @@ func BenchmarkDelaware(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for scanner.Scan() {
-		e := scanner.Element()
-		if e.Node != nil {
+		switch scanner.Element().(type) {
+		case *osm.Node:
 			nodes++
-		}
-
-		if e.Way != nil {
+		case *osm.Way:
 			ways++
-		}
-
-		if e.Relation != nil {
+		case *osm.Relation:
 			relations++
 		}
 	}

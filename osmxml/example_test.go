@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"os"
 
+	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmxml"
 )
 
 func ExampleChangesetScanner() {
 	scanner := osmxml.New(context.Background(), os.Stdin)
 	for scanner.Scan() {
-		fmt.Println(scanner.Element().Changeset) // Println will add back the final '\n'
+		fmt.Println(scanner.Element().(*osm.Changeset))
 	}
 
 	if err := scanner.Err(); err != nil {

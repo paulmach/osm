@@ -26,7 +26,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 75385503 {
+	if n := scanner.Element().(*osm.Node); n.ID != 75385503 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 
@@ -34,7 +34,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read second scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 75390099 {
+	if n := scanner.Element().(*osm.Node); n.ID != 75390099 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 }
@@ -52,7 +52,7 @@ func TestScannerIntermediateStart(t *testing.T) {
 	indexOfTarget := 0
 	for i := 0; i < 30000; i++ {
 		scanner.Scan()
-		if scanner.Element().Node.ID == target {
+		if scanner.Element().(*osm.Node).ID == target {
 			indexOfTarget = i
 		}
 	}
@@ -69,7 +69,7 @@ func TestScannerIntermediateStart(t *testing.T) {
 	scanner = New(context.Background(), f, 1)
 
 	scanner.Scan()
-	if id := scanner.Element().Node.ID; id != target {
+	if id := scanner.Element().(*osm.Node).ID; id != target {
 		t.Errorf("incorrect first id, got %v", id)
 	}
 	scanner.Close()
@@ -90,7 +90,7 @@ func TestChangesetScannerContext(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 75385503 {
+	if n := scanner.Element().(*osm.Node); n.ID != 75385503 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 
@@ -118,7 +118,7 @@ func TestChangesetScannerClose(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if n := scanner.Element().Node; n.ID != 75385503 {
+	if n := scanner.Element().(*osm.Node); n.ID != 75385503 {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 
@@ -171,16 +171,12 @@ func benchmarkScanner(b *testing.B, scanner osm.Scanner) (int, int, int) {
 	)
 
 	for scanner.Scan() {
-		e := scanner.Element()
-		if e.Node != nil {
+		switch scanner.Element().(type) {
+		case *osm.Node:
 			nodes++
-		}
-
-		if e.Way != nil {
+		case *osm.Way:
 			ways++
-		}
-
-		if e.Relation != nil {
+		case *osm.Relation:
 			relations++
 		}
 	}

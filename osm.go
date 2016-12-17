@@ -57,6 +57,29 @@ func (o *OSM) Marshal() ([]byte, error) {
 	return proto.Marshal(encoded)
 }
 
+// Elements returns all the nodes, way, relation and changesets
+// as a single slice of Elements.
+func (o *OSM) Elements() Elements {
+	result := make(Elements, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
+	for _, e := range o.Nodes {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Ways {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Relations {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Changesets {
+		result = append(result, e)
+	}
+
+	return result
+}
+
 // UnmarshalOSM will unmarshal the data into a OSM object.
 func UnmarshalOSM(data []byte) (*OSM, error) {
 

@@ -232,9 +232,9 @@ func (dec *decoder) Next() (osm.Element, error) {
 		cd, ok := <-dec.serializer
 		if !ok {
 			if dec.cData.Err != nil {
-				return osm.Element{}, dec.cData.Err
+				return nil, dec.cData.Err
 			}
-			return osm.Element{}, io.EOF
+			return nil, io.EOF
 		}
 
 		dec.cOffset = cd.Offset

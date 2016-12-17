@@ -176,54 +176,41 @@ func TestDecode(t *testing.T) {
 	var id string
 	idsOrder := make([]string, 0, len(IDsExpectedOrder))
 	for {
-		if e, err := d.Next(); err == io.EOF {
+		e, err := d.Next()
+
+		if err == io.EOF {
 			break
 		} else if err != nil {
 			t.Fatal(err)
-		} else {
-			if v := e.Node; v != nil {
-				if e.ID != int64(v.ID) || e.Version != v.Version || e.Type != osm.NodeType {
-					t.Errorf("incorrect element id for node %d: %v", v.ID, e.ElementID)
-				}
+		}
 
-				nc++
-				if v.ID == en.ID {
-					n = v
-				}
-				id = fmt.Sprintf("node/%d", v.ID)
-				if _, ok := IDs[id]; ok {
-					idsOrder = append(idsOrder, id)
-				}
+		switch v := e.(type) {
+		case *osm.Node:
+			nc++
+			if v.ID == en.ID {
+				n = v
 			}
-
-			if v := e.Way; v != nil {
-				if e.ID != int64(v.ID) || e.Version != v.Version || e.Type != osm.WayType {
-					t.Errorf("incorrect element id for way %d: %v", v.ID, e.ElementID)
-				}
-
-				wc++
-				if v.ID == ew.ID {
-					w = v
-				}
-				id = fmt.Sprintf("way/%d", v.ID)
-				if _, ok := IDs[id]; ok {
-					idsOrder = append(idsOrder, id)
-				}
+			id = fmt.Sprintf("node/%d", v.ID)
+			if _, ok := IDs[id]; ok {
+				idsOrder = append(idsOrder, id)
 			}
-
-			if v := e.Relation; v != nil {
-				if e.ID != int64(v.ID) || e.Version != v.Version || e.Type != osm.RelationType {
-					t.Errorf("incorrect element id for relation %d: %v", v.ID, e.ElementID)
-				}
-
-				rc++
-				if v.ID == er.ID {
-					r = v
-				}
-				id = fmt.Sprintf("relation/%d", v.ID)
-				if _, ok := IDs[id]; ok {
-					idsOrder = append(idsOrder, id)
-				}
+		case *osm.Way:
+			wc++
+			if v.ID == ew.ID {
+				w = v
+			}
+			id = fmt.Sprintf("way/%d", v.ID)
+			if _, ok := IDs[id]; ok {
+				idsOrder = append(idsOrder, id)
+			}
+		case *osm.Relation:
+			rc++
+			if v.ID == er.ID {
+				r = v
+			}
+			id = fmt.Sprintf("relation/%d", v.ID)
+			if _, ok := IDs[id]; ok {
+				idsOrder = append(idsOrder, id)
 			}
 		}
 	}
@@ -333,15 +320,12 @@ func BenchmarkDecode(b *testing.B) {
 			} else if err != nil {
 				b.Fatal(err)
 			} else {
-				if v := v.Node; v != nil {
+				switch v.(type) {
+				case *osm.Node:
 					nc++
-				}
-
-				if v := v.Way; v != nil {
+				case *osm.Way:
 					wc++
-				}
-
-				if v := v.Relation; v != nil {
+				case *osm.Relation:
 					rc++
 				}
 			}
