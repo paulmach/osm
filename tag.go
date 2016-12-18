@@ -1,12 +1,10 @@
 package osm
 
 import (
+	"encoding/json"
 	"errors"
 	"sort"
 	"sync"
-
-	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
 // Tag is a key+value item attached to osm nodes, ways and relations.
@@ -30,44 +28,34 @@ func (ts Tags) Find(k string) string {
 	return ""
 }
 
-// Marshal encodes the tags using protocol buffers.
-func (ts Tags) Marshal() ([]byte, error) {
-	if len(ts) == 0 {
-		return nil, nil
-	}
-
-	tags := make([]string, 0, len(ts)*2)
+// MarshalJSON allows the tags to be marshalled as a key/value object,
+// as defined by the overpass osmjson.
+func (ts Tags) MarshalJSON() ([]byte, error) {
+	o := make(map[string]string, len(ts))
 	for _, t := range ts {
-		tags = append(tags, t.Key, t.Value)
+		o[t.Key] = t.Value
 	}
 
-	t := &osmpb.Tags{
-		KeysVals: tags,
-	}
-	return proto.Marshal(t)
+	return json.Marshal(o)
 }
 
-// UnmarshalTags will unmarshal the tags into a list of tags.
-func UnmarshalTags(data []byte) (Tags, error) {
-	t := osmpb.Tags{}
-	err := proto.Unmarshal(data, &t)
+// UnmarshalJSON allows the tags to be unmarshalled from a key/value object,
+// as defined by the overpass osmjson.
+func (ts *Tags) UnmarshalJSON(data []byte) error {
+	o := make(map[string]string)
+	err := json.Unmarshal(data, &o)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	if len(t.KeysVals) == 0 {
-		return nil, nil
+	tags := make(Tags, 0, len(o))
+
+	for k, v := range o {
+		tags = append(tags, Tag{Key: k, Value: v})
 	}
 
-	tags := make(Tags, 0, len(t.KeysVals)/2)
-	for i := 0; i < len(t.KeysVals); i += 2 {
-		tags = append(tags, Tag{
-			Key:   t.KeysVals[i],
-			Value: t.KeysVals[i+1],
-		})
-	}
-
-	return tags, nil
+	*ts = tags
+	return nil
 }
 
 type tagsSort Tags

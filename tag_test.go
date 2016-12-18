@@ -1,28 +1,19 @@
 package osm
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
 )
 
-func TestTagsMarshal(t *testing.T) {
-	data, err := Tags{}.Marshal()
+func TestTagsMarshalJSON(t *testing.T) {
+	data, err := Tags{}.MarshalJSON()
 	if err != nil {
 		t.Errorf("marshal error: %v", err)
 	}
 
-	if data != nil {
-		t.Errorf("empty tags should results in nil byte array, got %v", data)
-	}
-
-	var t1 Tags
-	data, err = t1.Marshal()
-	if err != nil {
-		t.Errorf("marshal error: %v", err)
-	}
-
-	if data != nil {
-		t.Errorf("empty tags should results in nil byte array, got %v", data)
+	if !bytes.Equal(data, []byte(`{}`)) {
+		t.Errorf("incorrect data, got: %v", string(data))
 	}
 
 	t2 := Tags{
@@ -30,29 +21,32 @@ func TestTagsMarshal(t *testing.T) {
 		Tag{Key: "source", Value: "Bind 🏤 "},
 	}
 
-	data, err = t2.Marshal()
+	data, err = t2.MarshalJSON()
 	if err != nil {
 		t.Errorf("marshal error: %v", err)
 	}
+	if !bytes.Equal(data, []byte(`{"highway 🏤 ":"crossing","source":"Bind 🏤 "}`)) {
+		t.Errorf("incorrect data, got: %v", string(data))
+	}
+}
 
-	t3, err := UnmarshalTags(data)
+func TestTagsUnmarshalJSON(t *testing.T) {
+	tags := Tags{}
+	data := []byte(`{"highway 🏤 ":"crossing","source":"Bind 🏤 "}`)
+
+	err := tags.UnmarshalJSON(data)
 	if err != nil {
 		t.Errorf("unmarshal error: %v", err)
 	}
 
-	if !reflect.DeepEqual(t2, t3) {
-		t.Errorf("unequal sets")
-		t.Logf("%v", t2)
-		t.Logf("%v", t3)
+	tags.SortByKeyValue()
+	t2 := Tags{
+		Tag{Key: "highway 🏤 ", Value: "crossing"},
+		Tag{Key: "source", Value: "Bind 🏤 "},
 	}
 
-	t4, err := UnmarshalTags(nil)
-	if err != nil {
-		t.Errorf("unmarshal error: %v", err)
-	}
-
-	if t4 != nil {
-		t.Errorf("should get nil tags for nil data, got %v", t4)
+	if !reflect.DeepEqual(tags, t2) {
+		t.Errorf("incorrect tags: %v", tags)
 	}
 }
 

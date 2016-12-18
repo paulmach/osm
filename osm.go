@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"errors"
 
@@ -194,6 +195,19 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	}
 
 	return o, nil
+}
+
+// MarshalJSON allows the tags to be marshalled as an object
+// as defined by the overpass osmjson.
+// http://overpass-api.de/output_formats.html#json
+func (o OSM) MarshalJSON() ([]byte, error) {
+	s := struct {
+		Version   float64  `json:"version"`
+		Generator string   `json:"generator"`
+		Elements  Elements `json:"elements"`
+	}{0.6, "go.osm", o.Elements()}
+
+	return json.Marshal(s)
 }
 
 // MarshalXML implements the xml.Marshaller method to allow for the

@@ -2,6 +2,7 @@ package osm
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -49,6 +50,32 @@ func TestOSMMarshal(t *testing.T) {
 	}
 }
 
+func TestOSMMarshalJSON(t *testing.T) {
+	o := &OSM{
+		Nodes: Nodes{
+			&Node{ID: 123},
+		},
+		Ways: Ways{
+			&Way{ID: 456},
+		},
+		Relations: Relations{
+			&Relation{ID: 789},
+		},
+		Changesets: Changesets{
+			&Changeset{ID: 10},
+		},
+	}
+
+	data, err := json.Marshal(o)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"version":0.6,"generator":"go.osm","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false}]}`)) {
+		t.Errorf("incorrect json: %v", string(data))
+	}
+}
+
 func TestOSMMarshalXML(t *testing.T) {
 	o := &OSM{
 		Nodes: Nodes{
@@ -91,14 +118,15 @@ func flattenOSM(c *Change) *OSM {
 
 func cleanXMLNameFromOSM(o *OSM) {
 	for _, n := range o.Nodes {
-		n.XMLName = xml.Name{}
+		n.XMLName = xmlNameJSONTypeNode{}
 	}
 
 	for _, w := range o.Ways {
-		w.XMLName = xml.Name{}
+		w.XMLName = xmlNameJSONTypeWay{}
 	}
 
 	for _, r := range o.Relations {
-		r.XMLName = xml.Name{}
+		// r.XMLName = xml.Name{}
+		r.XMLName = xmlNameJSONTypeRel{}
 	}
 }

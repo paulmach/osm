@@ -1,7 +1,7 @@
 package osm
 
 import (
-	"encoding/xml"
+	"encoding/json"
 	"sort"
 	"time"
 )
@@ -12,26 +12,29 @@ type WayID int64
 
 // Way is an osm way, ie collection of nodes.
 type Way struct {
-	XMLName     xml.Name    `xml:"way"`
-	ID          WayID       `xml:"id,attr"`
-	User        string      `xml:"user,attr"`
-	UserID      UserID      `xml:"uid,attr"`
-	Visible     bool        `xml:"visible,attr"`
-	Version     int         `xml:"version,attr"`
-	ChangesetID ChangesetID `xml:"changeset,attr"`
-	Timestamp   time.Time   `xml:"timestamp,attr"`
-	Nodes       []WayNode   `xml:"nd"`
-	Tags        Tags        `xml:"tag"`
+	XMLName     xmlNameJSONTypeWay `xml:"way" json:"type"`
+	ID          WayID              `xml:"id,attr" json:"id"`
+	User        string             `xml:"user,attr" json:"user,omitempty"`
+	UserID      UserID             `xml:"uid,attr" json:"uid,omitempty"`
+	Visible     bool               `xml:"visible,attr" json:"visible"`
+	Version     int                `xml:"version,attr" json:"version,omitempty"`
+	ChangesetID ChangesetID        `xml:"changeset,attr" json:"changeset,omitempty"`
+	Timestamp   time.Time          `xml:"timestamp,attr" json:"timestamp"`
+	Nodes       WayNodes           `xml:"nd" json:"nodes"`
+	Tags        Tags               `xml:"tag" json:"tags,omitempty"`
 
 	// Committed, is the estimated time this object was committed
 	// and made visible in the central OSM database.
-	Committed *time.Time `xml:"commited,attr,omitempty"`
+	Committed *time.Time `xml:"commited,attr,omitempty" json:"committed,omitempty"`
 
 	// Updates are changes the nodes of this way independent
 	// of an update to the way itself. The OSM api allows a child
 	// to be updated without any changes to the parent.
-	Updates Updates `xml:"update,omitempty"`
+	Updates Updates `xml:"update,omitempty" json:"updates,omitempty"`
 }
+
+// WayNodes represents a collection of way nodes.
+type WayNodes []WayNode
 
 // WayNode is a short node used as part of ways and relations in the osm xml.
 type WayNode struct {
@@ -81,6 +84,35 @@ func (w *Way) ApplyUpdate(u Update) error {
 	w.Nodes[u.Index].Lat = u.Lat
 	w.Nodes[u.Index].Lon = u.Lon
 
+	return nil
+}
+
+// MarshalJSON allows the waynodes to be marshalled as an array of ids,
+// as defined by the overpass osmjson.
+func (wn WayNodes) MarshalJSON() ([]byte, error) {
+	a := make([]int64, 0, len(wn))
+	for _, n := range wn {
+		a = append(a, int64(n.ID))
+	}
+
+	return json.Marshal(a)
+}
+
+// UnmarshalJSON allows the tags to be unmarshalled from an array of ids,
+// as defined by the overpass osmjson.
+func (wn *WayNodes) UnmarshalJSON(data []byte) error {
+	var a []int64
+	err := json.Unmarshal(data, &a)
+	if err != nil {
+		return err
+	}
+
+	nodes := make(WayNodes, len(a))
+	for i, id := range a {
+		nodes[i].ID = NodeID(id)
+	}
+
+	*wn = nodes
 	return nil
 }
 

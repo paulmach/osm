@@ -2,11 +2,42 @@ package osm
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"reflect"
 	"testing"
 	"time"
 )
+
+func TestRelationMarshalJSON(t *testing.T) {
+	r := Relation{
+		ID: 123,
+	}
+
+	data, err := json.Marshal(r)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"type":"relation","id":123,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]}`)) {
+		t.Errorf("incorrect json: %v", string(data))
+	}
+
+	// with members
+	r = Relation{
+		ID:      123,
+		Members: []Member{{Type: "node", Ref: 123, Role: "outer", Version: 1}},
+	}
+
+	data, err = json.Marshal(r)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"type":"relation","id":123,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[{"type":"node","ref":123,"role":"outer","version":1}]}`)) {
+		t.Errorf("incorrect json: %v", string(data))
+	}
+}
 
 func TestRelationApplyUpdatesUpTo(t *testing.T) {
 	r := Relation{

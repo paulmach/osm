@@ -2,6 +2,7 @@ package osm
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -76,6 +77,22 @@ func TestWayApplyUpdateError(t *testing.T) {
 
 	if e, ok := err.(*UpdateIndexOutOfRangeError); !ok {
 		t.Errorf("incorrect error, got %v", e)
+	}
+}
+
+func TestWayMarshalJSON(t *testing.T) {
+	w := Way{
+		ID:    123,
+		Nodes: WayNodes{{ID: 1}, {ID: 2}, {ID: 4}},
+	}
+
+	data, err := json.Marshal(w)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"type":"way","id":123,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[1,2,4]}`)) {
+		t.Errorf("incorrect json: %v", string(data))
 	}
 }
 

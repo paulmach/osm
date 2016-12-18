@@ -109,8 +109,8 @@ func TestProtobufNodes(t *testing.T) {
 	}
 
 	for i := range ns1 {
-		ns1[i].XMLName = xml.Name{}
-		ns2[i].XMLName = xml.Name{}
+		ns1[i].XMLName = xmlNameJSONTypeNode{}
+		ns2[i].XMLName = xmlNameJSONTypeNode{}
 		if !reflect.DeepEqual(ns1[i], ns2[i]) {
 			t.Errorf("nodes %d are not equal", i)
 			t.Logf("%+v", ns1[i])
@@ -136,8 +136,8 @@ func TestProtobufNodes(t *testing.T) {
 	}
 
 	for i := range ns1 {
-		ns1[i].XMLName = xml.Name{}
-		ns2[i].XMLName = xml.Name{}
+		ns1[i].XMLName = xmlNameJSONTypeNode{}
+		ns2[i].XMLName = xmlNameJSONTypeNode{}
 		if !reflect.DeepEqual(ns1[i], ns2[i]) {
 			t.Errorf("nodes %d are not equal", i)
 			t.Logf("%+v", ns1[i])

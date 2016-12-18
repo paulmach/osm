@@ -1,7 +1,6 @@
 package osm
 
 import (
-	"encoding/xml"
 	"sort"
 	"time"
 
@@ -15,21 +14,21 @@ type NodeID int64
 
 // Node is an osm point and allows for marshalling to/from osm xml.
 type Node struct {
-	XMLName     xml.Name    `xml:"node"`
-	ID          NodeID      `xml:"id,attr"`
-	Lat         float64     `xml:"lat,attr"`
-	Lon         float64     `xml:"lon,attr"`
-	User        string      `xml:"user,attr"`
-	UserID      UserID      `xml:"uid,attr"`
-	Visible     bool        `xml:"visible,attr"`
-	Version     int         `xml:"version,attr"`
-	ChangesetID ChangesetID `xml:"changeset,attr"`
-	Timestamp   time.Time   `xml:"timestamp,attr"`
-	Tags        Tags        `xml:"tag"`
+	XMLName     xmlNameJSONTypeNode `xml:"node" json:"type"`
+	ID          NodeID              `xml:"id,attr" json:"id"`
+	Lat         float64             `xml:"lat,attr" json:"lat"`
+	Lon         float64             `xml:"lon,attr" json:"lon"`
+	User        string              `xml:"user,attr" json:"user,omitempty"`
+	UserID      UserID              `xml:"uid,attr" json:"uid,omitempty"`
+	Visible     bool                `xml:"visible,attr" json:"visible"`
+	Version     int                 `xml:"version,attr" json:"version,omitempty"`
+	ChangesetID ChangesetID         `xml:"changeset,attr" json:"changeset,omitempty"`
+	Timestamp   time.Time           `xml:"timestamp,attr" json:"timestamp"`
+	Tags        Tags                `xml:"tag" json:"tags,omitempty"`
 
 	// Committed, is the estimated time this object was committed
 	// and made visible in the central OSM database.
-	Committed *time.Time `xml:"commited,attr,omitempty"`
+	Committed *time.Time `xml:"commited,attr,omitempty" json:"committed,omitempty"`
 }
 
 // ElementID returns the element id of the node.

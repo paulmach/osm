@@ -1,7 +1,7 @@
 package osm
 
 import (
-	"encoding/xml"
+	"encoding/json"
 	"sort"
 	"time"
 )
@@ -13,40 +13,43 @@ type RelationID int64
 // Relation is an collection of nodes, ways and other relations
 // with some defining attributes.
 type Relation struct {
-	XMLName     xml.Name    `xml:"relation"`
-	ID          RelationID  `xml:"id,attr"`
-	User        string      `xml:"user,attr"`
-	UserID      UserID      `xml:"uid,attr"`
-	Visible     bool        `xml:"visible,attr"`
-	Version     int         `xml:"version,attr"`
-	ChangesetID ChangesetID `xml:"changeset,attr"`
-	Timestamp   time.Time   `xml:"timestamp,attr"`
+	XMLName     xmlNameJSONTypeRel `xml:"relation" json:"type"`
+	ID          RelationID         `xml:"id,attr" json:"id"`
+	User        string             `xml:"user,attr" json:"user,omitempty"`
+	UserID      UserID             `xml:"uid,attr" json:"uid,omitempty"`
+	Visible     bool               `xml:"visible,attr" json:"visible"`
+	Version     int                `xml:"version,attr" json:"version,omitempty"`
+	ChangesetID ChangesetID        `xml:"changeset,attr" json:"changeset,omitempty"`
+	Timestamp   time.Time          `xml:"timestamp,attr" json:"timestamp,omitempty"`
 
-	Tags    Tags     `xml:"tag"`
-	Members []Member `xml:"member"`
+	Tags    Tags    `xml:"tag" json:"tags,omitempty"`
+	Members Members `xml:"member" json:"members"`
 
 	// Committed, is the estimated time this object was committed
 	// and made visible in the central OSM database.
-	Committed *time.Time `xml:"commited,attr,omitempty"`
+	Committed *time.Time `xml:"commited,attr,omitempty" json:"committed,omitempty"`
 
 	// Updates are changes the members of this relation independent
 	// of an update to the relation itself. The OSM api allows a child
 	// to be updatedwithout any changes to the parent.
-	Updates Updates `xml:"update,omitempty"`
+	Updates Updates `xml:"update,omitempty" json:"updates,omitempty"`
 }
+
+// Members represents an ordered list of relation members.
+type Members []Member
 
 // Member is a member of a relation.
 type Member struct {
-	Type ElementType `xml:"type,attr"`
-	Ref  int64       `xml:"ref,attr"`
-	Role string      `xml:"role,attr"`
+	Type ElementType `xml:"type,attr" json:"type"`
+	Ref  int64       `xml:"ref,attr" json:"ref"`
+	Role string      `xml:"role,attr" json:"role"`
 
-	Version     int         `xml:"version,attr,omitempty"`
-	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
+	Version     int         `xml:"version,attr,omitempty" json:"version,omitempty"`
+	ChangesetID ChangesetID `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
 
 	// invalid unless the Type == NodeType
-	Lat float64 `xml:"lat,attr,omitempty"`
-	Lon float64 `xml:"lon,attr,omitempty"`
+	Lat float64 `xml:"lat,attr,omitempty" json:"lat,omitempty"`
+	Lon float64 `xml:"lon,attr,omitempty" json:"lon,omitempty"`
 }
 
 // ElementID returns the element id of the relation.
@@ -87,6 +90,16 @@ func (r *Relation) ApplyUpdate(u Update) error {
 	r.Members[u.Index].Lon = u.Lon
 
 	return nil
+}
+
+// MarshalJSON allows the members to be marshalled as defined by the
+// overpass osmjson. This function is a wrapper to marshal null as [].
+func (ms Members) MarshalJSON() ([]byte, error) {
+	if len(ms) == 0 {
+		return []byte(`[]`), nil
+	}
+
+	return json.Marshal([]Member(ms))
 }
 
 // Relations is a list of relations with some helper functions attached.

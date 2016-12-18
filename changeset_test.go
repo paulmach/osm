@@ -98,7 +98,7 @@ func TestChangeset(t *testing.T) {
 		t.Fatalf("unable to unmarshal changeset: %v", err)
 	}
 
-	cs1.XMLName = xml.Name{}
+	cs1.XMLName = xmlNameJSONTypeCS{}
 	cs1.Change = c
 
 	data, err = cs1.Marshal()
@@ -278,7 +278,7 @@ func TestChangesetMarshalXML(t *testing.T) {
 	}
 
 	// changeset with discussion
-	cs.Discussion = ChangesetDiscussion{
+	cs.Discussion = &ChangesetDiscussion{
 		Comments: []*ChangesetComment{
 			{Text: "foo"},
 		},

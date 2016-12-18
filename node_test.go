@@ -2,6 +2,7 @@ package osm
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -51,6 +52,21 @@ func TestNode(t *testing.T) {
 
 	if v := n.Lon; v != 6.0043943 {
 		t.Errorf("incorrect lon, got %v", v)
+	}
+}
+
+func TestNodeMarshalJSON(t *testing.T) {
+	n := Node{
+		ID: 123,
+	}
+
+	data, err := json.Marshal(n)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"}`)) {
+		t.Errorf("incorrect json: %v", string(data))
 	}
 }
 

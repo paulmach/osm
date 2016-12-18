@@ -17,16 +17,16 @@ var CommitInfoStart = time.Date(2012, 9, 12, 9, 30, 3, 0, time.UTC)
 // The child type, id, ref and/or role are the same as the child
 // at the given index. Lat/Lng are only updated for ways.
 type Update struct {
-	Index   int `xml:"index,attr"`
-	Version int `xml:"version,attr"`
+	Index   int `xml:"index,attr" json:"index"`
+	Version int `xml:"version,attr" json:"version"`
 
 	// Timestamp is the committed at time if time > TODO or the
 	// element timestamp if before that date.
-	Timestamp time.Time `xml:"timestamp,attr"`
+	Timestamp time.Time `xml:"timestamp,attr" json:"timestamp"`
 
-	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
-	Lat         float64     `xml:"lat,attr,omitempty"`
-	Lon         float64     `xml:"lon,attr,omitempty"`
+	ChangesetID ChangesetID `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
+	Lat         float64     `xml:"lat,attr,omitempty" json:"lat,omitempty"`
+	Lon         float64     `xml:"lon,attr,omitempty" json:"lon,omitempty"`
 }
 
 // Updates are collections of updates.

@@ -16,23 +16,23 @@ type Changesets []*Changeset
 
 // A Changeset is a set of metadata around a set of osm changes.
 type Changeset struct {
-	XMLName       xml.Name            `xml:"changeset"`
-	ID            ChangesetID         `xml:"id,attr"`
-	User          string              `xml:"user,attr"`
-	UserID        UserID              `xml:"uid,attr"`
-	CreatedAt     time.Time           `xml:"created_at,attr"`
-	ClosedAt      time.Time           `xml:"closed_at,attr"`
-	Open          bool                `xml:"open,attr"`
-	ChangesCount  int                 `xml:"num_changes,attr,omitempty"`
-	MinLat        float64             `xml:"min_lat,attr"`
-	MaxLat        float64             `xml:"max_lat,attr"`
-	MinLon        float64             `xml:"min_lon,attr"`
-	MaxLon        float64             `xml:"max_lon,attr"`
-	CommentsCount int                 `xml:"comments_count,attr,omitempty"`
-	Tags          Tags                `xml:"tag"`
-	Discussion    ChangesetDiscussion `xml:"discussion,omitempty"`
+	XMLName       xmlNameJSONTypeCS    `xml:"changeset" json:"type"`
+	ID            ChangesetID          `xml:"id,attr" json:"id"`
+	User          string               `xml:"user,attr" json:"user,omitempty"`
+	UserID        UserID               `xml:"uid,attr" json:"uid,omitempty"`
+	CreatedAt     time.Time            `xml:"created_at,attr" json:"created_at"`
+	ClosedAt      time.Time            `xml:"closed_at,attr" json:"closed_at"`
+	Open          bool                 `xml:"open,attr" json:"open"`
+	ChangesCount  int                  `xml:"num_changes,attr,omitempty" json:"num_changes,omitempty"`
+	MinLat        float64              `xml:"min_lat,attr" json:"min_lat,omitempty"`
+	MaxLat        float64              `xml:"max_lat,attr" json:"max_lat,omitempty"`
+	MinLon        float64              `xml:"min_lon,attr" json:"min_lon,omitempty"`
+	MaxLon        float64              `xml:"max_lon,attr" json:"max_lon,omitempty"`
+	CommentsCount int                  `xml:"comments_count,attr,omitempty" json:"comments_count,omitempty"`
+	Tags          Tags                 `xml:"tag" json:"tags,omitempty"`
+	Discussion    *ChangesetDiscussion `xml:"discussion,omitempty" json:"discussion,omitempty"`
 
-	Change *Change `xml:"-"`
+	Change *Change `xml:"-" json:"change,omitempty"`
 }
 
 // ElementID returns the element id of the changeset.
@@ -187,15 +187,15 @@ func (cs Changesets) IDs() []ChangesetID {
 
 // ChangesetDiscussion is a conversation about a changeset.
 type ChangesetDiscussion struct {
-	Comments []*ChangesetComment `xml:"comment"`
+	Comments []*ChangesetComment `xml:"comment" json:"comments"`
 }
 
 // ChangesetComment is a specific comment in a changeset discussion.
 type ChangesetComment struct {
-	User      string    `xml:"user,attr"`
-	UserID    UserID    `xml:"uid,attr"`
-	CreatedAt time.Time `xml:"date,attr"`
-	Text      string    `xml:"text"`
+	User      string    `xml:"user,attr" json:"user"`
+	UserID    UserID    `xml:"uid,attr" json:"uid"`
+	CreatedAt time.Time `xml:"date,attr" json:"date"`
+	Text      string    `xml:"text" json:"text"`
 }
 
 // MarshalXML implements the xml.Marshaller method to exclude this
