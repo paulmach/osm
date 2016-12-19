@@ -61,6 +61,16 @@ func (r *Relation) ElementID() ElementID {
 	}
 }
 
+// CommittedAt returns the best estimate on when this element
+// became was written/committed into the database.
+func (r *Relation) CommittedAt() time.Time {
+	if r.Committed != nil {
+		return *r.Committed
+	}
+
+	return r.Timestamp
+}
+
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (r *Relation) ApplyUpdatesUpTo(t time.Time) error {

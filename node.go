@@ -40,6 +40,16 @@ func (n *Node) ElementID() ElementID {
 	}
 }
 
+// CommittedAt returns the best estimate on when this element
+// became was written/committed into the database.
+func (n *Node) CommittedAt() time.Time {
+	if n.Committed != nil {
+		return *n.Committed
+	}
+
+	return n.Timestamp
+}
+
 // Nodes is a list of nodes with helper functions on top.
 type Nodes []*Node
 

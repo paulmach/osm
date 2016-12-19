@@ -56,6 +56,16 @@ func (w *Way) ElementID() ElementID {
 	}
 }
 
+// CommittedAt returns the best estimate on when this element
+// became was written/committed into the database.
+func (w *Way) CommittedAt() time.Time {
+	if w.Committed != nil {
+		return *w.Committed
+	}
+
+	return w.Timestamp
+}
+
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (w *Way) ApplyUpdatesUpTo(t time.Time) error {
