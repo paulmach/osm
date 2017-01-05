@@ -10,6 +10,15 @@ import (
 // A relation is uniquely identifiable by the id + version.
 type RelationID int64
 
+// ElementID is a helper returning the element id for this relation id.
+// Version is left at 0.
+func (id RelationID) ElementID() ElementID {
+	return ElementID{
+		Type: RelationType,
+		ID:   int64(id),
+	}
+}
+
 // Relation is an collection of nodes, ways and other relations
 // with some defining attributes.
 type Relation struct {
@@ -100,6 +109,20 @@ func (r *Relation) ApplyUpdate(u Update) error {
 	r.Members[u.Index].Lon = u.Lon
 
 	return nil
+}
+
+// ElementIDs returns the a list of element ids for the relation members.
+func (ms Members) ElementIDs() ElementIDs {
+	ids := make(ElementIDs, len(ms)+1)
+	for i, m := range ms {
+		ids[i] = ElementID{
+			Type:    m.Type,
+			ID:      m.Ref,
+			Version: m.Version,
+		}
+	}
+
+	return ids
 }
 
 // MarshalJSON allows the members to be marshalled as defined by the

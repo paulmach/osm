@@ -11,6 +11,14 @@ import (
 // ChangesetID is the primary key for a osm changeset.
 type ChangesetID int
 
+// ElementID is a helper returning the element id for this changeset id.
+func (id ChangesetID) ElementID() ElementID {
+	return ElementID{
+		Type: ChangesetType,
+		ID:   int64(id),
+	}
+}
+
 // Changesets is a collection with some helper functions attached.
 type Changesets []*Changeset
 

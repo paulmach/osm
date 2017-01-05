@@ -10,6 +10,15 @@ import (
 // A way is uniquely identifiable by the id + version.
 type WayID int64
 
+// ElementID is a helper returning the element id for this node id.
+// Version is left at 0.
+func (id WayID) ElementID() ElementID {
+	return ElementID{
+		Type: WayType,
+		ID:   int64(id),
+	}
+}
+
 // Way is an osm way, ie collection of nodes.
 type Way struct {
 	XMLName     xmlNameJSONTypeWay `xml:"way" json:"type"`
@@ -95,6 +104,20 @@ func (w *Way) ApplyUpdate(u Update) error {
 	w.Nodes[u.Index].Lon = u.Lon
 
 	return nil
+}
+
+// ElementIDs returns a list of element ids for the way nodes.
+func (wn WayNodes) ElementIDs() ElementIDs {
+	ids := make(ElementIDs, len(wn)+1)
+	for i, n := range wn {
+		ids[i] = ElementID{
+			Type:    NodeType,
+			ID:      int64(n.ID),
+			Version: n.Version,
+		}
+	}
+
+	return ids
 }
 
 // MarshalJSON allows the waynodes to be marshalled as an array of ids,

@@ -12,6 +12,15 @@ import (
 // The node id + version uniquely identify a node.
 type NodeID int64
 
+// ElementID is a helper returning the element id for this node id.
+// Version is left at 0.
+func (id NodeID) ElementID() ElementID {
+	return ElementID{
+		Type: NodeType,
+		ID:   int64(id),
+	}
+}
+
 // Node is an osm point and allows for marshalling to/from osm xml.
 type Node struct {
 	XMLName     xmlNameJSONTypeNode `xml:"node" json:"type"`
