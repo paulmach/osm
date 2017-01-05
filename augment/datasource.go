@@ -11,11 +11,16 @@ type NodeDatasource interface {
 	NodeHistory(context.Context, osm.NodeID) (osm.Nodes, error)
 }
 
+// A RelationDatasource defines where relation child history data comes from.
+type RelationDatasource interface {
+	RelationHistory(context.Context, osm.RelationID) (osm.Relations, error)
+}
+
 // A Datasource defines where child history data comes from.
 type Datasource interface {
 	NodeDatasource
 	WayHistory(context.Context, osm.WayID) (osm.Ways, error)
-	RelationHistory(context.Context, osm.RelationID) (osm.Relations, error)
+	RelationDatasource
 }
 
 // A MapDatasource wraps maps to implement the DataSource interface.
@@ -25,7 +30,7 @@ type MapDatasource struct {
 	Relations map[osm.RelationID]osm.Relations
 }
 
-// NewDatasource createsa new MapDataSource from the arrays of elements.
+// NewDatasource createsa new MapDatasource from the arrays of elements.
 // It does the convertion of array to map.
 func NewDatasource(nodes osm.Nodes, ways osm.Ways, relations osm.Relations) *MapDatasource {
 	mds := &MapDatasource{}
