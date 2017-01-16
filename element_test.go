@@ -53,7 +53,7 @@ func BenchmarkElementIDSort(b *testing.B) {
 		for j := range ids {
 			ids[j] = ElementID{
 				Type:    n2t[rand.Intn(len(n2t))],
-				ID:      rand.Int63n(int64(len(ids) / 10)),
+				Ref:     rand.Int63n(int64(len(ids) / 10)),
 				Version: rand.Intn(20),
 			}
 		}

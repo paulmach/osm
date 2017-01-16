@@ -17,7 +17,7 @@ type NodeID int64
 func (id NodeID) ElementID() ElementID {
 	return ElementID{
 		Type: NodeType,
-		ID:   int64(id),
+		Ref:  int64(id),
 	}
 }
 
@@ -44,7 +44,7 @@ type Node struct {
 func (n *Node) ElementID() ElementID {
 	return ElementID{
 		Type:    NodeType,
-		ID:      int64(n.ID),
+		Ref:     int64(n.ID),
 		Version: n.Version,
 	}
 }

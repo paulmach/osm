@@ -73,7 +73,7 @@ func (es elementsSort) Less(i, j int) bool {
 // to a unique id.
 type ElementID struct {
 	Type    ElementType
-	ID      int64
+	Ref     int64
 	Version int
 }
 
@@ -84,7 +84,7 @@ func (e ElementID) NodeID() NodeID {
 		panic(fmt.Sprintf("element %v is not a node", e))
 	}
 
-	return NodeID(e.ID)
+	return NodeID(e.Ref)
 }
 
 // WayID returns the id of this element as a way id.
@@ -94,7 +94,7 @@ func (e ElementID) WayID() WayID {
 		panic(fmt.Sprintf("element %v is not a way", e))
 	}
 
-	return WayID(e.ID)
+	return WayID(e.Ref)
 }
 
 // RelationID returns the id of this element as a relation id.
@@ -104,7 +104,7 @@ func (e ElementID) RelationID() RelationID {
 		panic(fmt.Sprintf("element %v is not a relation", e))
 	}
 
-	return RelationID(e.ID)
+	return RelationID(e.Ref)
 }
 
 // ChangesetID returns the id of this element as a changeset id.
@@ -114,7 +114,7 @@ func (e ElementID) ChangesetID() ChangesetID {
 		panic(fmt.Sprintf("element %v is not a changeset", e))
 	}
 
-	return ChangesetID(e.ID)
+	return ChangesetID(e.Ref)
 }
 
 // ElementIDs is a list of element ids with helper functions on top.
@@ -139,8 +139,8 @@ func compIDs(a, b ElementID) bool {
 		return typeToNumber[a.Type] < typeToNumber[b.Type]
 	}
 
-	if a.ID != b.ID {
-		return a.ID < b.ID
+	if a.Ref != b.Ref {
+		return a.Ref < b.Ref
 	}
 
 	return a.Version < b.Version

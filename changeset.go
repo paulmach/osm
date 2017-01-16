@@ -15,7 +15,7 @@ type ChangesetID int
 func (id ChangesetID) ElementID() ElementID {
 	return ElementID{
 		Type: ChangesetType,
-		ID:   int64(id),
+		Ref:  int64(id),
 	}
 }
 
@@ -47,7 +47,7 @@ type Changeset struct {
 func (c *Changeset) ElementID() ElementID {
 	return ElementID{
 		Type: ChangesetType,
-		ID:   int64(c.ID),
+		Ref:  int64(c.ID),
 	}
 }
 

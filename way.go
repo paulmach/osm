@@ -15,7 +15,7 @@ type WayID int64
 func (id WayID) ElementID() ElementID {
 	return ElementID{
 		Type: WayType,
-		ID:   int64(id),
+		Ref:  int64(id),
 	}
 }
 
@@ -60,7 +60,7 @@ type WayNode struct {
 func (w *Way) ElementID() ElementID {
 	return ElementID{
 		Type:    WayType,
-		ID:      int64(w.ID),
+		Ref:     int64(w.ID),
 		Version: w.Version,
 	}
 }
@@ -112,7 +112,7 @@ func (wn WayNodes) ElementIDs() ElementIDs {
 	for i, n := range wn {
 		ids[i] = ElementID{
 			Type:    NodeType,
-			ID:      int64(n.ID),
+			Ref:     int64(n.ID),
 			Version: n.Version,
 		}
 	}

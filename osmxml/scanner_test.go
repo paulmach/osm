@@ -35,7 +35,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("did not set type correctly, got %v", et)
 	}
 
-	if cs := scanner.Element().ElementID().ID; cs != 41227987 {
+	if cs := scanner.Element().ElementID().Ref; cs != 41227987 {
 		t.Fatalf("did not set id correctly, got %v", cs)
 	}
 

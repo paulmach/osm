@@ -15,7 +15,7 @@ type RelationID int64
 func (id RelationID) ElementID() ElementID {
 	return ElementID{
 		Type: RelationType,
-		ID:   int64(id),
+		Ref:  int64(id),
 	}
 }
 
@@ -65,8 +65,17 @@ type Member struct {
 func (r *Relation) ElementID() ElementID {
 	return ElementID{
 		Type:    RelationType,
-		ID:      int64(r.ID),
+		Ref:     int64(r.ID),
 		Version: r.Version,
+	}
+}
+
+// ElementID returns the element id of the member.
+func (m *Member) ElementID() ElementID {
+	return ElementID{
+		Type:    m.Type,
+		Ref:     m.Ref,
+		Version: m.Version,
 	}
 }
 
@@ -117,7 +126,7 @@ func (ms Members) ElementIDs() ElementIDs {
 	for i, m := range ms {
 		ids[i] = ElementID{
 			Type:    m.Type,
-			ID:      m.Ref,
+			Ref:     m.Ref,
 			Version: m.Version,
 		}
 	}
