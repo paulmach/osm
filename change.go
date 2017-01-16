@@ -2,6 +2,7 @@ package osm
 
 import (
 	"encoding/xml"
+	"strconv"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
@@ -11,12 +12,14 @@ import (
 // uploaded or downloaded from the server.
 // See: http://wiki.openstreetmap.org/wiki/OsmChange
 type Change struct {
-	Create *OSM `xml:"create"`
-	Modify *OSM `xml:"modify"`
-	Delete *OSM `xml:"delete"`
+	Version   float64 `xml:"version,attr,omitempty"`
+	Generator string  `xml:"generator,attr,omitempty"`
+	Create    *OSM    `xml:"create"`
+	Modify    *OSM    `xml:"modify"`
+	Delete    *OSM    `xml:"delete"`
 }
 
-// Marshal encodes the osm data using protocol buffers.
+// Marshal encodes the osm change data using protocol buffers.
 func (c *Change) Marshal() ([]byte, error) {
 	ss := &stringSet{}
 	encoded := marshalChange(c, ss, true)
@@ -76,8 +79,11 @@ func unmarshalChange(encoded *osmpb.Change, ss []string, cs *Changeset) (*Change
 func (c Change) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name.Local = "osmChange"
 	start.Attr = []xml.Attr{
-		{Name: xml.Name{Local: "version"}, Value: "0.6"},
-		{Name: xml.Name{Local: "generator"}, Value: "go.osm"},
+		{
+			Name:  xml.Name{Local: "version"},
+			Value: strconv.FormatFloat(c.Version, 'g', -1, 64),
+		},
+		{Name: xml.Name{Local: "generator"}, Value: c.Generator},
 	}
 
 	if err := e.EncodeToken(start); err != nil {

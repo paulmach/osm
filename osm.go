@@ -4,20 +4,39 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"strconv"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
 )
 
+// These values should be returned if the osm data is actual
+// osm data to give some information about the source and license.
+const (
+	Copyright   = "OpenStreetMap and contributors"
+	Attribution = "http://www.openstreetmap.org/copyright"
+	License     = "http://opendatacommons.org/licenses/odbl/1-0/"
+)
+
 // OSM represents the core osm data.
 // I designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
-	Bounds    *Bounds   `xml:"bounds"`
+	Version   float64 `xml:"version,attr,omitempty"`
+	Generator string  `xml:"generator,attr,omitempty"`
+
+	// These three attributes are returned by the osm api.
+	// The Copyright, Attribution and License constants contain
+	// suggested values that match those returned by the official api.
+	Copyright   string `xml:"copyright,attr,omitempty"`
+	Attribution string `xml:"attribution,attr,omitempty"`
+	License     string `xml:"license,attr,omitempty"`
+
+	Bounds    *Bounds   `xml:"bounds,omitempty"`
 	Nodes     Nodes     `xml:"node"`
 	Ways      Ways      `xml:"way"`
 	Relations Relations `xml:"relation"`
 
-	// Changesets will typically not be included with actually data,
+	// Changesets will typically not be included with actual data,
 	// but all this stuff is technically all under the osm xml
 	Changesets Changesets `xml:"changeset"`
 }
@@ -202,10 +221,14 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 // http://overpass-api.de/output_formats.html#json
 func (o OSM) MarshalJSON() ([]byte, error) {
 	s := struct {
-		Version   float64  `json:"version"`
-		Generator string   `json:"generator"`
-		Elements  Elements `json:"elements"`
-	}{0.6, "go.osm", o.Elements()}
+		Version     float64  `json:"version,omitempty"`
+		Generator   string   `json:"generator,omitempty"`
+		Copyright   string   `json:"copyright,omitempty"`
+		Attribution string   `json:"attribution,omitempty"`
+		License     string   `json:"license,omitempty"`
+		Elements    Elements `json:"elements"`
+	}{o.Version, o.Generator, o.Copyright,
+		o.Attribution, o.License, o.Elements()}
 
 	return json.Marshal(s)
 }
@@ -214,9 +237,29 @@ func (o OSM) MarshalJSON() ([]byte, error) {
 // correct wrapper/start element case and attr data.
 func (o OSM) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name.Local = "osm"
-	start.Attr = []xml.Attr{
-		{Name: xml.Name{Local: "version"}, Value: "0.6"},
-		{Name: xml.Name{Local: "generator"}, Value: "go.osm"},
+	start.Attr = make([]xml.Attr, 0, 5)
+
+	if o.Version != 0 {
+		start.Attr = append(start.Attr, xml.Attr{
+			Name:  xml.Name{Local: "version"},
+			Value: strconv.FormatFloat(o.Version, 'g', -1, 64),
+		})
+	}
+
+	if o.Generator != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "generator"}, Value: o.Generator})
+	}
+
+	if o.Copyright != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "copyright"}, Value: o.Copyright})
+	}
+
+	if o.Attribution != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "attribution"}, Value: o.Attribution})
+	}
+
+	if o.License != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "license"}, Value: o.License})
 	}
 
 	if err := e.EncodeToken(start); err != nil {

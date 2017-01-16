@@ -42,6 +42,9 @@ type Relation struct {
 	// of an update to the relation itself. The OSM api allows a child
 	// to be updatedwithout any changes to the parent.
 	Updates Updates `xml:"update,omitempty" json:"updates,omitempty"`
+
+	// Bounds are included by overpass, and maybe others
+	Bounds *Bounds `xml:"bounds,omitempty" json:"bounds,omitempty"`
 }
 
 // Members represents an ordered list of relation members.

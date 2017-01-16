@@ -11,26 +11,6 @@ import (
 	"time"
 )
 
-func TestChangeCompare(t *testing.T) {
-	data := readFile(t, "testdata/changeset_38162206.osc")
-
-	c1 := &Change{}
-	err := xml.Unmarshal(data, &c1)
-	if err != nil {
-		t.Errorf("unable to unmarshal: %v", err)
-	}
-
-	c2 := &Change{}
-	err = xml.Unmarshal(data, &c2)
-	if err != nil {
-		t.Errorf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(c1, c2) {
-		t.Errorf("changes are not equal")
-	}
-}
-
 func TestProtobufNode(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
 	n1 := c.Create.Nodes[12]

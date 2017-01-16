@@ -137,6 +137,8 @@ func TestChange(t *testing.T) {
 func TestChangeMarshalXML(t *testing.T) {
 	// correct case of name
 	c := Change{
+		Version:   0.6,
+		Generator: "go.osm",
 		Create: &OSM{
 			Nodes: Nodes{
 				&Node{ID: 123},
@@ -225,6 +227,8 @@ func TestChangeMarshal(t *testing.T) {
 }
 
 func cleanXMLNameFromChange(c *Change) {
+	c.Version = 0
+	c.Generator = ""
 	if c.Create != nil {
 		cleanXMLNameFromOSM(c.Create)
 	}

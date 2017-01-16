@@ -52,6 +52,8 @@ func TestOSMMarshal(t *testing.T) {
 
 func TestOSMMarshalJSON(t *testing.T) {
 	o := &OSM{
+		Version:   0.6,
+		Generator: "go.osm",
 		Nodes: Nodes{
 			&Node{ID: 123},
 		},
@@ -78,6 +80,8 @@ func TestOSMMarshalJSON(t *testing.T) {
 
 func TestOSMMarshalXML(t *testing.T) {
 	o := &OSM{
+		Version:   0.7,
+		Generator: "go.osm-test",
 		Nodes: Nodes{
 			&Node{ID: 123},
 		},
@@ -88,7 +92,7 @@ func TestOSMMarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<osm version="0.6" generator="go.osm"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
+	expected := `<osm version="0.7" generator="go.osm-test"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
 
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))

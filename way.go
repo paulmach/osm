@@ -40,6 +40,9 @@ type Way struct {
 	// of an update to the way itself. The OSM api allows a child
 	// to be updated without any changes to the parent.
 	Updates Updates `xml:"update,omitempty" json:"updates,omitempty"`
+
+	// Bounds are included by overpass, and maybe others
+	Bounds *Bounds `xml:"bounds,omitempty" json:"bounds,omitempty"`
 }
 
 // WayNodes represents a collection of way nodes.

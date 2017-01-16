@@ -48,7 +48,7 @@ func (us Updates) UpTo(t time.Time) Updates {
 	return result
 }
 
-// UpdateIndexOutOfRangeError is return when apply an update to an object
+// UpdateIndexOutOfRangeError is return when appling an update to an object
 // and the update index is out of range.
 type UpdateIndexOutOfRangeError struct {
 	Index int
