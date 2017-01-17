@@ -55,19 +55,33 @@ func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNu
 	return ChangesetSeqNum(s.SeqNum), s, err
 }
 
+var timeFormats = []string{
+	"2006-01-02 15:04:05.999999999 Z",
+	"2006-01-02 15:04:05.999999999 +00:00",
+}
+
 func decodeChangesetState(data []byte) (State, error) {
 	// example
 	// ---
-	// last_run: 2016-07-02 22:46:01.422137422 Z
+	// last_run: 2016-07-02 22:46:01.422137422 +00:00  (or Z)
 	// sequence: 1912325
 
 	lines := bytes.Split(data, []byte("\n"))
 
 	parts := bytes.Split(lines[1], []byte(":"))
 	timeString := string(bytes.TrimSpace(bytes.Join(parts[1:], []byte(":"))))
-	t, err := time.Parse(
-		"2006-01-02 15:04:05.999999999 Z",
-		timeString)
+
+	var (
+		t   time.Time
+		err error
+	)
+	for _, format := range timeFormats {
+		t, err = time.Parse(format, timeString)
+		if err == nil {
+			break
+		}
+	}
+
 	if err != nil {
 		return State{}, err
 	}
