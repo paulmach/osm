@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"time"
 
 	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmxml"
@@ -21,26 +20,26 @@ type ChangesetSeqNum uint64
 
 // CurrentChangesetState returns the current state of the changeset replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, State, error) {
+func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error) {
 	return DefaultDatasource.CurrentChangesetState(ctx)
 }
 
 // CurrentChangesetState returns the current state of the changeset replication.
-func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, State, error) {
+func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error) {
 	url := ds.baseURL() + "/replication/changesets/state.yaml"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return 0, State{}, err
+		return 0, nil, err
 	}
 
 	resp, err := ds.client().Do(req.WithContext(ctx))
 	if err != nil {
-		return 0, State{}, err
+		return 0, nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return 0, State{}, &UnexpectedStatusCodeError{
+		return 0, nil, &UnexpectedStatusCodeError{
 			Code: resp.StatusCode,
 			URL:  url,
 		}
@@ -48,19 +47,14 @@ func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNu
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, State{}, err
+		return 0, nil, err
 	}
 
 	s, err := decodeChangesetState(data)
 	return ChangesetSeqNum(s.SeqNum), s, err
 }
 
-var timeFormats = []string{
-	"2006-01-02 15:04:05.999999999 Z",
-	"2006-01-02 15:04:05.999999999 +00:00",
-}
-
-func decodeChangesetState(data []byte) (State, error) {
+func decodeChangesetState(data []byte) (*State, error) {
 	// example
 	// ---
 	// last_run: 2016-07-02 22:46:01.422137422 +00:00  (or Z)
@@ -71,28 +65,18 @@ func decodeChangesetState(data []byte) (State, error) {
 	parts := bytes.Split(lines[1], []byte(":"))
 	timeString := string(bytes.TrimSpace(bytes.Join(parts[1:], []byte(":"))))
 
-	var (
-		t   time.Time
-		err error
-	)
-	for _, format := range timeFormats {
-		t, err = time.Parse(format, timeString)
-		if err == nil {
-			break
-		}
-	}
-
+	t, err := decodeTime(timeString)
 	if err != nil {
-		return State{}, err
+		return nil, err
 	}
 
 	parts = bytes.Split(lines[2], []byte(":"))
 	n, err := strconv.ParseUint(string(bytes.TrimSpace(parts[1])), 10, 64)
 	if err != nil {
-		return State{}, err
+		return nil, err
 	}
 
-	return State{
+	return &State{
 		SeqNum:    n,
 		Timestamp: t,
 	}, nil

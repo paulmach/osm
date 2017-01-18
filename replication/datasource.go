@@ -59,3 +59,25 @@ type UnexpectedStatusCodeError struct {
 func (e *UnexpectedStatusCodeError) Error() string {
 	return fmt.Sprintf("replication: unexpected status code of %d for url %s", e.Code, e.URL)
 }
+
+// timeFormats contains the set of different formats we've see the time in.
+var timeFormats = []string{
+	"2006-01-02 15:04:05.999999999 Z",
+	"2006-01-02 15:04:05.999999999 +00:00",
+	"2006-01-02T15\\:04\\:05Z",
+}
+
+func decodeTime(s string) (time.Time, error) {
+	var (
+		t   time.Time
+		err error
+	)
+	for _, format := range timeFormats {
+		t, err = time.Parse(format, s)
+		if err == nil {
+			return t, nil
+		}
+	}
+
+	return t, err
+}

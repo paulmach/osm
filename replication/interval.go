@@ -60,15 +60,15 @@ type DaySeqNum uint64
 
 // CurrentMinuteState returns the current state of the minutely replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
+func CurrentMinuteState(ctx context.Context) (MinuteSeqNum, *State, error) {
 	return DefaultDatasource.CurrentMinuteState(ctx)
 }
 
 // CurrentMinuteState returns the current state of the minutely replication.
-func (ds *Datasource) CurrentMinuteState(ctx context.Context) (MinuteSeqNum, State, error) {
+func (ds *Datasource) CurrentMinuteState(ctx context.Context) (MinuteSeqNum, *State, error) {
 	s, err := ds.MinuteState(ctx, 0)
 	if err != nil {
-		return 0, State{}, err
+		return 0, nil, err
 	}
 
 	return MinuteSeqNum(s.SeqNum), s, err
@@ -76,26 +76,26 @@ func (ds *Datasource) CurrentMinuteState(ctx context.Context) (MinuteSeqNum, Sta
 
 // MinuteState returns the state of the given minutely replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func MinuteState(ctx context.Context, n MinuteSeqNum) (State, error) {
+func MinuteState(ctx context.Context, n MinuteSeqNum) (*State, error) {
 	return DefaultDatasource.MinuteState(ctx, n)
 }
 
 // MinuteState returns the state of the given minutely replication.
-func (ds *Datasource) MinuteState(ctx context.Context, n MinuteSeqNum) (State, error) {
+func (ds *Datasource) MinuteState(ctx context.Context, n MinuteSeqNum) (*State, error) {
 	return ds.fetchIntervalState(ctx, "minute", int(n))
 }
 
 // CurrentHourState returns the current state of the hourly replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
+func CurrentHourState(ctx context.Context) (HourSeqNum, *State, error) {
 	return DefaultDatasource.CurrentHourState(ctx)
 }
 
 // CurrentHourState returns the current state of the hourly replication.
-func (ds *Datasource) CurrentHourState(ctx context.Context) (HourSeqNum, State, error) {
+func (ds *Datasource) CurrentHourState(ctx context.Context) (HourSeqNum, *State, error) {
 	s, err := ds.HourState(ctx, 0)
 	if err != nil {
-		return 0, State{}, err
+		return 0, nil, err
 	}
 
 	return HourSeqNum(s.SeqNum), s, err
@@ -103,26 +103,26 @@ func (ds *Datasource) CurrentHourState(ctx context.Context) (HourSeqNum, State, 
 
 // HourState returns the state of the given hourly replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func HourState(ctx context.Context, n HourSeqNum) (State, error) {
+func HourState(ctx context.Context, n HourSeqNum) (*State, error) {
 	return DefaultDatasource.HourState(ctx, n)
 }
 
 // HourState returns the state of the given hourly replication.
-func (ds *Datasource) HourState(ctx context.Context, n HourSeqNum) (State, error) {
+func (ds *Datasource) HourState(ctx context.Context, n HourSeqNum) (*State, error) {
 	return ds.fetchIntervalState(ctx, "hour", int(n))
 }
 
 // CurrentDayState returns the current state of the daily replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
+func CurrentDayState(ctx context.Context) (DaySeqNum, *State, error) {
 	return DefaultDatasource.CurrentDayState(ctx)
 }
 
 // CurrentDayState returns the current state of the daily replication.
-func (ds *Datasource) CurrentDayState(ctx context.Context) (DaySeqNum, State, error) {
+func (ds *Datasource) CurrentDayState(ctx context.Context) (DaySeqNum, *State, error) {
 	s, err := ds.DayState(ctx, 0)
 	if err != nil {
-		return 0, State{}, err
+		return 0, nil, err
 	}
 
 	return DaySeqNum(s.SeqNum), s, err
@@ -130,16 +130,16 @@ func (ds *Datasource) CurrentDayState(ctx context.Context) (DaySeqNum, State, er
 
 // DayState returns the state of the given daily replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func DayState(ctx context.Context, n DaySeqNum) (State, error) {
+func DayState(ctx context.Context, n DaySeqNum) (*State, error) {
 	return DefaultDatasource.DayState(ctx, n)
 }
 
 // DayState returns the state of the given daily replication.
-func (ds *Datasource) DayState(ctx context.Context, n DaySeqNum) (State, error) {
+func (ds *Datasource) DayState(ctx context.Context, n DaySeqNum) (*State, error) {
 	return ds.fetchIntervalState(ctx, "day", int(n))
 }
 
-func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n int) (State, error) {
+func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n int) (*State, error) {
 	var url string
 	if n != 0 {
 		url = ds.baseIntervalURL(interval, n) + ".state.txt"
@@ -149,28 +149,28 @@ func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return State{}, err
+		return nil, err
 	}
 
 	resp, err := ds.Client.Do(req.WithContext(ctx))
 	if err != nil {
-		return State{}, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return State{}, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return State{}, err
+		return nil, err
 	}
 
 	return decodeIntervalState(data, interval)
 }
 
-func decodeIntervalState(data []byte, interval string) (State, error) {
+func decodeIntervalState(data []byte, interval string) (*State, error) {
 	// example
 	// ---
 	// #Sat Jul 16 06:14:03 UTC 2016
@@ -182,47 +182,36 @@ func decodeIntervalState(data []byte, interval string) (State, error) {
 	// txnActiveList=836439008
 
 	var (
-		state State
-		n     int
-		err   error
+		n   int
+		err error
 	)
 
+	state := &State{}
 	for _, l := range bytes.Split(data, []byte("\n")) {
 		parts := bytes.Split(l, []byte("="))
 
 		if bytes.Equal(parts[0], []byte("sequenceNumber")) {
 			n, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 			if err != nil {
-				return State{}, err
+				return nil, err
 			}
 
-			switch interval {
-			case "minute":
-				state.SeqNum = uint64(n)
-			case "hour":
-				state.SeqNum = uint64(n)
-			case "day":
-				state.SeqNum = uint64(n)
-			default:
-				panic("unsupported interval")
-			}
+			state.SeqNum = uint64(n)
 		} else if bytes.Equal(parts[0], []byte("txnMax")) {
 			state.TxnMax, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 			if err != nil {
-				return State{}, err
+				return nil, err
 			}
 		} else if bytes.Equal(parts[0], []byte("txnMaxQueried")) {
 			state.TxnMaxQueried, err = strconv.Atoi(string(bytes.TrimSpace(parts[1])))
 			if err != nil {
-				return State{}, err
+				return nil, err
 			}
 		} else if bytes.Equal(parts[0], []byte("timestamp")) {
 			timeString := string(bytes.TrimSpace(parts[1]))
-			state.Timestamp, err = time.Parse(
-				"2006-01-02T15\\:04\\:05Z",
-				timeString)
+			state.Timestamp, err = decodeTime(timeString)
 			if err != nil {
-				return State{}, err
+				return nil, err
 			}
 		}
 	}
