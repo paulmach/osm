@@ -19,6 +19,33 @@ type Change struct {
 	Delete    *OSM    `xml:"delete"`
 }
 
+// AppendCreate will append the element to the Create OSM object.
+func (c *Change) AppendCreate(e Element) {
+	if c.Create == nil {
+		c.Create = &OSM{}
+	}
+
+	c.Create.Append(e)
+}
+
+// AppendModify will append the element to the Modify OSM object.
+func (c *Change) AppendModify(e Element) {
+	if c.Modify == nil {
+		c.Modify = &OSM{}
+	}
+
+	c.Modify.Append(e)
+}
+
+// AppendDelete will append the element to the Delete OSM object.
+func (c *Change) AppendDelete(e Element) {
+	if c.Delete == nil {
+		c.Delete = &OSM{}
+	}
+
+	c.Delete.Append(e)
+}
+
 // Marshal encodes the osm change data using protocol buffers.
 func (c *Change) Marshal() ([]byte, error) {
 	ss := &stringSet{}

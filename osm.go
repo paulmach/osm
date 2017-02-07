@@ -77,6 +77,22 @@ func (o *OSM) Marshal() ([]byte, error) {
 	return proto.Marshal(encoded)
 }
 
+// Append will add the given element to the OSM object.
+func (o *OSM) Append(e Element) {
+	switch e.ElementID().Type {
+	case NodeType:
+		o.Nodes = append(o.Nodes, e.(*Node))
+	case WayType:
+		o.Ways = append(o.Ways, e.(*Way))
+	case RelationType:
+		o.Relations = append(o.Relations, e.(*Relation))
+	case ChangesetType:
+		o.Changesets = append(o.Changesets, e.(*Changeset))
+	}
+
+	panic("unsupported type")
+}
+
 // Elements returns all the nodes, way, relation and changesets
 // as a single slice of Elements.
 func (o *OSM) Elements() Elements {
