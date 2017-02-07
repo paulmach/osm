@@ -2,6 +2,7 @@ package main
 
 import (
 	"compress/bzip2"
+	"context"
 	"log"
 	"math"
 	"os"
@@ -10,7 +11,6 @@ import (
 	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/go.osm/osmpbf"
 	"github.com/paulmach/go.osm/osmxml"
-	"golang.org/x/net/context"
 )
 
 func main() {

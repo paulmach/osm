@@ -1,14 +1,18 @@
 package osmapi
 
 import (
+	"context"
+	"os"
 	"testing"
 
 	osm "github.com/paulmach/go.osm"
-
-	"golang.org/x/net/context"
 )
 
 func TestNodes(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
 	ctx := context.Background()
 	nodes, err := Nodes(ctx, []osm.NodeID{2640249171, 2640249172, 2640249173})
 	if err != nil {
@@ -21,6 +25,10 @@ func TestNodes(t *testing.T) {
 }
 
 func TestWays(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
 	ctx := context.Background()
 	ways, err := Ways(ctx, []osm.WayID{106994776, 106994777, 106994778})
 	if err != nil {
@@ -33,6 +41,10 @@ func TestWays(t *testing.T) {
 }
 
 func TestRelations(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
 	ctx := context.Background()
 	relations, err := Relations(ctx, []osm.RelationID{2714790, 2714791, 2714792})
 	if err != nil {
@@ -45,6 +57,10 @@ func TestRelations(t *testing.T) {
 }
 
 func TestMap(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
 	ctx := context.Background()
 	lat, lon := 37.79, -122.27
 	o, err := Map(ctx, lon-0.001, lat-0.001, lon+0.001, lat+0.001)
