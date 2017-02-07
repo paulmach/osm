@@ -25,6 +25,7 @@ func Example_stats() {
 	minLat, maxLat := math.MaxFloat64, -math.MaxFloat64
 	minLon, maxLon := math.MaxFloat64, -math.MaxFloat64
 
+	maxVersion := 0
 	minNodeID, maxNodeID := osm.NodeID(math.MaxInt64), osm.NodeID(0)
 	minWayID, maxWayID := osm.WayID(math.MaxInt64), osm.WayID(0)
 
@@ -81,6 +82,10 @@ func Example_stats() {
 				minNodeID = e.ID
 			}
 
+			if e.Version > maxVersion {
+				maxVersion = e.Version
+			}
+
 			if l := len(e.Tags); l > maxTags {
 				maxTags = l
 				maxTagsType = osm.NodeType
@@ -96,6 +101,10 @@ func Example_stats() {
 
 			if e.ID < minWayID {
 				minWayID = e.ID
+			}
+
+			if e.Version > maxVersion {
+				maxVersion = e.Version
 			}
 
 			if l := len(e.Tags); l > maxTags {
@@ -118,6 +127,10 @@ func Example_stats() {
 
 			if e.ID < minRelationID {
 				minRelationID = e.ID
+			}
+
+			if e.Version > maxVersion {
+				maxVersion = e.Version
 			}
 
 			if l := len(e.Tags); l > maxTags {
@@ -155,6 +168,7 @@ func Example_stats() {
 	fmt.Println("nodes:", nodes)
 	fmt.Println("ways:", ways)
 	fmt.Println("relations:", relations)
+	fmt.Println("version max:", maxVersion)
 	fmt.Println("node id min:", minNodeID)
 	fmt.Println("node id max:", maxNodeID)
 	fmt.Println("way id min:", minWayID)
@@ -178,6 +192,7 @@ func Example_stats() {
 	// nodes: 723870
 	// ways: 73144
 	// relations: 1644
+	// version max: 421
 	// node id min: 75385503
 	// node id max: 4343778904
 	// way id min: 9650669
