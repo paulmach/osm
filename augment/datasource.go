@@ -31,7 +31,7 @@ type MapDatasource struct {
 }
 
 // NewDatasource createsa new MapDatasource from the arrays of elements.
-// It does the convertion of array to map.
+// It does the conversion of array to map.
 func NewDatasource(nodes osm.Nodes, ways osm.Ways, relations osm.Relations) *MapDatasource {
 	mds := &MapDatasource{}
 

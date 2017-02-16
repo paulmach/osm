@@ -9,7 +9,7 @@ import (
 	"github.com/paulmach/go.osm/osmxml"
 )
 
-func ExampleChangesetScanner() {
+func ExampleScanner() {
 	scanner := osmxml.New(context.Background(), os.Stdin)
 	for scanner.Scan() {
 		fmt.Println(scanner.Element().(*osm.Changeset))

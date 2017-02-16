@@ -36,7 +36,7 @@ type Relation struct {
 
 	// Committed, is the estimated time this object was committed
 	// and made visible in the central OSM database.
-	Committed *time.Time `xml:"commited,attr,omitempty" json:"committed,omitempty"`
+	Committed *time.Time `xml:"committed,attr,omitempty" json:"committed,omitempty"`
 
 	// Updates are changes the members of this relation independent
 	// of an update to the relation itself. The OSM api allows a child

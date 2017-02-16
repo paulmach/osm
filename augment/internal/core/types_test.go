@@ -361,7 +361,7 @@ func TestChildListLastVisibleBefore(t *testing.T) {
 			timestamp: time.Date(2016, 1, 1, 0, 0, 70, 0, time.UTC),
 			index:     3,
 		}, {
-			name:      "after timestamp but before committed shoudl return previous",
+			name:      "after timestamp but before committed should return previous",
 			timestamp: time.Date(2016, 1, 1, 0, 0, 40, 0, time.UTC),
 			index:     1,
 		}, {

@@ -37,7 +37,7 @@ type Node struct {
 
 	// Committed, is the estimated time this object was committed
 	// and made visible in the central OSM database.
-	Committed *time.Time `xml:"commited,attr,omitempty" json:"committed,omitempty"`
+	Committed *time.Time `xml:"committed,attr,omitempty" json:"committed,omitempty"`
 }
 
 // ElementID returns the element id of the node.
