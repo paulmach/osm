@@ -2,6 +2,7 @@ package osm
 
 import (
 	"encoding/json"
+	"math"
 	"sort"
 	"time"
 )
@@ -107,6 +108,26 @@ func (w *Way) ApplyUpdate(u Update) error {
 	w.Nodes[u.Index].Lon = u.Lon
 
 	return nil
+}
+
+// Bounds computes the bounds for the given way nodes.
+func (wn WayNodes) Bounds() *Bounds {
+	b := &Bounds{
+		MinLat: math.MaxFloat64,
+		MaxLat: -math.MaxFloat64,
+		MinLon: math.MaxFloat64,
+		MaxLon: -math.MaxFloat64,
+	}
+
+	for _, n := range wn {
+		b.MinLat = math.Min(b.MinLat, n.Lat)
+		b.MaxLat = math.Max(b.MaxLat, n.Lat)
+
+		b.MinLon = math.Min(b.MinLon, n.Lon)
+		b.MaxLon = math.Max(b.MaxLon, n.Lon)
+	}
+
+	return b
 }
 
 // ElementIDs returns a list of element ids for the way nodes.

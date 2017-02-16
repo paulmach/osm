@@ -80,6 +80,19 @@ func TestWayApplyUpdateError(t *testing.T) {
 	}
 }
 
+func TestWayNodesBounds(t *testing.T) {
+	wn := WayNodes{
+		WayNode{Lat: 1, Lon: 2},
+		WayNode{Lat: 3, Lon: 4},
+		WayNode{Lat: 2, Lon: 3},
+	}
+
+	b := wn.Bounds()
+	if !reflect.DeepEqual(b, &Bounds{1, 3, 2, 4}) {
+		t.Errorf("incorrect bounds: %v", b)
+	}
+}
+
 func TestWayMarshalJSON(t *testing.T) {
 	w := Way{
 		ID:    123,
