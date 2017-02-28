@@ -20,7 +20,7 @@ type Update struct {
 	Index   int `xml:"index,attr" json:"index"`
 	Version int `xml:"version,attr" json:"version"`
 
-	// Timestamp is the committed at time if time > TODO or the
+	// Timestamp is the committed at time if time > CommitInfoStart or the
 	// element timestamp if before that date.
 	Timestamp time.Time `xml:"timestamp,attr" json:"timestamp"`
 

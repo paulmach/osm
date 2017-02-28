@@ -132,7 +132,9 @@ func (wn WayNodes) Bounds() *Bounds {
 
 // ElementIDs returns a list of element ids for the way nodes.
 func (wn WayNodes) ElementIDs() ElementIDs {
-	ids := make(ElementIDs, len(wn)+1)
+	// add 1 to the memory length because a common use cases
+	// is to append the way.
+	ids := make(ElementIDs, len(wn), len(wn)+1)
 	for i, n := range wn {
 		ids[i] = ElementID{
 			Type:    NodeType,

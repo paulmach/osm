@@ -77,6 +77,14 @@ type ElementID struct {
 	Version int
 }
 
+// ClearVersion returns a copy of the element id with the version
+// set to zero. This is useful to have a key for the history of an
+// osm element.
+func (e ElementID) ClearVersion() ElementID {
+	e.Version = 0
+	return e
+}
+
 // NodeID returns the id of this element as a node id.
 // The function will panic if this element is not of NodeType.
 func (e ElementID) NodeID() NodeID {

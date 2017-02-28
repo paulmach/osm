@@ -125,7 +125,7 @@ func (r *Relation) ApplyUpdate(u Update) error {
 
 // ElementIDs returns the a list of element ids for the relation members.
 func (ms Members) ElementIDs() ElementIDs {
-	ids := make(ElementIDs, len(ms)+1)
+	ids := make(ElementIDs, len(ms), len(ms)+1)
 	for i, m := range ms {
 		ids[i] = ElementID{
 			Type:    m.Type,
