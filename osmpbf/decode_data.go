@@ -10,9 +10,9 @@ import (
 
 type elementInfo struct {
 	Version   int32
+	UID       int32
 	Timestamp time.Time
 	Changeset int64
-	UID       int32
 	User      string
 	Visible   bool
 }
