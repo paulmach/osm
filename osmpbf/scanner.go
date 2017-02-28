@@ -25,7 +25,6 @@ type Scanner struct {
 	decoder *decoder
 	started bool
 	procs   int
-	restart bool
 	next    osm.Element
 	err     error
 }
