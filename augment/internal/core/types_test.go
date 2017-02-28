@@ -66,7 +66,7 @@ func TestChildListFindVisible(t *testing.T) {
 		},
 	}
 
-	checkChildListFindVisible(t, cl, cases)
+	checkChildListFindVisible(t, 0, cl, cases)
 }
 
 func TestChildListFindVisibleCommitted(t *testing.T) {
@@ -128,7 +128,7 @@ func TestChildListFindVisibleCommitted(t *testing.T) {
 		},
 	}
 
-	checkChildListFindVisible(t, cl, cases)
+	checkChildListFindVisible(t, 0, cl, cases)
 }
 
 func TestChildListFindVisibleWithHidden(t *testing.T) {
@@ -190,7 +190,7 @@ func TestChildListFindVisibleWithHidden(t *testing.T) {
 		},
 	}
 
-	checkChildListFindVisible(t, cl, cases)
+	checkChildListFindVisible(t, 0, cl, cases)
 }
 
 func TestChildListFindVisibleWithinThreshold(t *testing.T) {
@@ -241,7 +241,7 @@ func TestChildListFindVisibleWithinThreshold(t *testing.T) {
 		},
 	}
 
-	checkChildListFindVisible(t, cl, cases)
+	checkChildListFindVisible(t, 0, cl, cases)
 }
 
 func TestChildListFindVisibleHiddenWithinThreshold(t *testing.T) {
@@ -300,13 +300,53 @@ func TestChildListFindVisibleHiddenWithinThreshold(t *testing.T) {
 		},
 	}
 
-	checkChildListFindVisible(t, cl, cases)
+	checkChildListFindVisible(t, 0, cl, cases)
 }
 
-func checkChildListFindVisible(t *testing.T, cl ChildList, cases []findVisibleTestCase) {
+func TestChildListFindVisibleDifferentChangeset(t *testing.T) {
+	cl := ChildList{
+		&testChild{
+			versionIndex: 0, visible: true, changesetID: 1,
+			timestamp: time.Date(2010, 1, 1, 0, 0, 10, 0, time.UTC)},
+		&testChild{
+			versionIndex: 1, visible: true, changesetID: 2,
+			timestamp: time.Date(2010, 1, 1, 0, 0, 20, 0, time.UTC)},
+		&testChild{
+			versionIndex: 2, visible: true, changesetID: 1,
+			timestamp: time.Date(2010, 1, 1, 0, 0, 30, 0, time.UTC)},
+	}
+
+	cases := []findVisibleTestCase{
+		{
+			name:      "not match next if different changeset",
+			timestamp: time.Date(2010, 1, 1, 0, 0, 19, 0, time.UTC),
+			threshold: time.Minute,
+			index:     0,
+		}, {
+			name:      "match previous is different changeset",
+			timestamp: time.Date(2010, 1, 1, 0, 0, 21, 0, time.UTC),
+			threshold: time.Second,
+			index:     1,
+		}, {
+			name:      "should consider only closest change",
+			timestamp: time.Date(2010, 1, 1, 0, 0, 21, 0, time.UTC),
+			threshold: time.Minute,
+			index:     1,
+		}, {
+			name:      "include next if same changeset",
+			timestamp: time.Date(2010, 1, 1, 0, 0, 29, 0, time.UTC),
+			threshold: time.Minute,
+			index:     2,
+		},
+	}
+
+	checkChildListFindVisible(t, 1, cl, cases)
+}
+
+func checkChildListFindVisible(t *testing.T, id osm.ChangesetID, cl ChildList, cases []findVisibleTestCase) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			c := cl.FindVisible(tc.timestamp, tc.threshold)
+			c := cl.FindVisible(id, tc.timestamp, tc.threshold)
 			if c == nil {
 				if tc.index != -1 {
 					t.Errorf("should not be nil, should be %d", tc.index)
@@ -394,16 +434,21 @@ func TestChildListLastVisibleBefore(t *testing.T) {
 var _ Parent = &testParent{}
 
 type testParent struct {
-	version   int
-	visible   bool
-	timestamp time.Time
-	committed time.Time
-	refs      osm.ElementIDs
-	children  ChildList
+	changesetID osm.ChangesetID
+	version     int
+	visible     bool
+	timestamp   time.Time
+	committed   time.Time
+	refs        osm.ElementIDs
+	children    ChildList
 }
 
 func (t testParent) ID() osm.ElementID {
 	return osm.ElementID{Type: "", Ref: 0} // this is only used for logging.
+}
+
+func (t testParent) ChangesetID() osm.ChangesetID {
+	return t.changesetID
 }
 
 func (t testParent) Version() int {
@@ -438,6 +483,7 @@ var _ Child = &testChild{}
 
 type testChild struct {
 	childID      osm.ElementID
+	changesetID  osm.ChangesetID
 	versionIndex int
 	visible      bool
 	timestamp    time.Time
@@ -447,6 +493,10 @@ type testChild struct {
 
 func (t testChild) ID() osm.ElementID {
 	return t.childID
+}
+
+func (t testChild) ChangesetID() osm.ChangesetID {
+	return t.changesetID
 }
 
 func (t testChild) VersionIndex() int {

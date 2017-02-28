@@ -92,6 +92,10 @@ func (w parentWay) ID() osm.ElementID {
 	return w.Way.ElementID()
 }
 
+func (w parentWay) ChangesetID() osm.ChangesetID {
+	return w.Way.ChangesetID
+}
+
 func (w parentWay) Version() int {
 	return w.Way.Version
 }

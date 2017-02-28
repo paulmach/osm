@@ -20,6 +20,10 @@ func (c childNode) ID() osm.ElementID {
 	return c.Node.ElementID()
 }
 
+func (c childNode) ChangesetID() osm.ChangesetID {
+	return c.Node.ChangesetID
+}
+
 func (c childNode) VersionIndex() int {
 	return c.Index
 }
@@ -62,6 +66,10 @@ func (c childWay) ID() osm.ElementID {
 	return c.Way.ElementID()
 }
 
+func (c childWay) ChangesetID() osm.ChangesetID {
+	return c.Way.ChangesetID
+}
+
 func (c childWay) VersionIndex() int {
 	return c.Index
 }
@@ -100,6 +108,10 @@ var _ core.Child = childRelation{}
 
 func (c childRelation) ID() osm.ElementID {
 	return c.Relation.ElementID()
+}
+
+func (c childRelation) ChangesetID() osm.ChangesetID {
+	return c.Relation.ChangesetID
 }
 
 func (c childRelation) VersionIndex() int {

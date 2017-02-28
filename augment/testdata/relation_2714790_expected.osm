@@ -1,4 +1,4 @@
-<osm version="0.6" generator="go.osm">
+<osm>
  <relation id="2714790" user="dchiles" uid="153669" visible="true" version="1" changeset="14724410" timestamp="2013-01-20T18:33:45Z">
   <tag k="from" v="Rockridge BART"></tag>
   <tag k="name" v="Line 51A to Fruitvale BART"></tag>
@@ -308,7 +308,7 @@
   <member type="way" ref="196739922" role="" version="1" changeset="14297427"></member>
   <member type="way" ref="195604784" role="" version="2" changeset="14297427"></member>
   <member type="way" ref="230391158" role="" version="1" changeset="17006132"></member>
-  <member type="way" ref="202317705" role="" version="3" changeset="17006498"></member>
+  <member type="way" ref="202317705" role="" version="2" changeset="17006132"></member>
   <member type="way" ref="195604782" role="" version="2" changeset="14737162"></member>
   <member type="way" ref="202177315" role="" version="1" changeset="14724965"></member>
   <member type="way" ref="195604783" role="" version="2" changeset="14724965"></member>
@@ -341,6 +341,7 @@
   <member type="way" ref="230391151" role="" version="1" changeset="17006132"></member>
   <member type="way" ref="230393400" role="" version="1" changeset="17006321"></member>
   <update index="5" version="8" timestamp="2013-07-19T04:48:48Z" changeset="17007313"></update>
+  <update index="9" version="3" timestamp="2013-07-19T00:43:32Z" changeset="17006498"></update>
   <update index="10" version="3" timestamp="2013-07-19T01:58:16Z" changeset="17006728"></update>
   <update index="40" version="2" timestamp="2013-07-19T00:43:32Z" changeset="17006498"></update>
  </relation>
@@ -1101,7 +1102,7 @@
   <member type="way" ref="168769919" role="" version="4" changeset="33322626"></member>
   <member type="way" ref="202172579" role="" version="1" changeset="14724410"></member>
   <member type="way" ref="24089945" role="" version="8" changeset="14749145"></member>
-  <member type="way" ref="202447071" role="" version="2" changeset="39130818"></member>
+  <member type="way" ref="202447071" role="" version="1" changeset="14749145"></member>
   <member type="way" ref="415860815" role="" version="1" changeset="39128511"></member>
   <member type="way" ref="415860813" role="" version="1" changeset="39128511"></member>
   <member type="way" ref="168769922" role="" version="2" changeset="39128511"></member>
@@ -1123,6 +1124,7 @@
   <member type="node" ref="2640249171" role="" version="1" changeset="20238577" lat="37.8277637" lon="-122.2566831"></member>
   <member type="node" ref="2640249172" role="" version="1" changeset="20238577" lat="37.827768" lon="-122.2567073"></member>
   <member type="relation" ref="3472443" role="" version="1" changeset="20238761"></member>
+  <update index="40" version="2" timestamp="2016-05-05T21:54:54Z" changeset="39130818"></update>
  </relation>
  <relation id="2714790" user="saikabhi" uid="3029661" visible="true" version="20" changeset="39141832" timestamp="2016-05-06T11:45:25Z">
   <tag k="from" v="Rockridge BART"></tag>
@@ -1268,7 +1270,7 @@
   <member type="way" ref="24089923" role="" version="7" changeset="15037420"></member>
   <member type="way" ref="415860807" role="" version="1" changeset="39128511"></member>
   <member type="way" ref="415860808" role="" version="1" changeset="39128511"></member>
-  <member type="way" ref="24089926" role="" version="20" changeset="39143752"></member>
+  <member type="way" ref="24089926" role="" version="19" changeset="39128511"></member>
   <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
   <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
   <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
@@ -1617,7 +1619,7 @@
   <member type="way" ref="416146724" role="" version="1" changeset="39143752"></member>
   <member type="way" ref="416146720" role="" version="1" changeset="39143752"></member>
   <member type="way" ref="168769889" role="" version="4" changeset="16399344"></member>
-  <member type="way" ref="118415845" role="" version="3" changeset="39276183"></member>
+  <member type="way" ref="118415845" role="" version="2" changeset="14724410"></member>
   <member type="way" ref="202172581" role="" version="1" changeset="14724410"></member>
   <member type="way" ref="53772700" role="" version="5" changeset="15603077"></member>
   <member type="way" ref="23591772" role="" version="7" changeset="15603077"></member>

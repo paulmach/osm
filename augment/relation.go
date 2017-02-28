@@ -132,6 +132,10 @@ func (r parentRelation) ID() osm.ElementID {
 	return r.Relation.ElementID()
 }
 
+func (r parentRelation) ChangesetID() osm.ChangesetID {
+	return r.Relation.ChangesetID
+}
+
 func (r parentRelation) Version() int {
 	return r.Relation.Version
 }

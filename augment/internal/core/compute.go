@@ -140,7 +140,7 @@ func setupMajorChildren(
 				return nil, &NoHistoryError{ChildID: ref}
 			}
 
-			c := versions.FindVisible(timeThreshold(p, 0), threshold)
+			c := versions.FindVisible(p.ChangesetID(), timeThreshold(p, 0), threshold)
 			if c == nil {
 				return nil, &NoVisibleChildError{
 					ChildID:   ref,

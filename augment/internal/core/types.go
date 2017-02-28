@@ -10,6 +10,7 @@ import (
 // and relations can have nodes, ways and relations as children.
 type Parent interface {
 	ID() osm.ElementID // used for logging
+	ChangesetID() osm.ChangesetID
 
 	Version() int
 	Visible() bool
@@ -25,6 +26,7 @@ type Parent interface {
 // and/or relations for relations.
 type Child interface {
 	ID() osm.ElementID
+	ChangesetID() osm.ChangesetID
 
 	// VersionIndex is the index of the version if sorted from lowest to highest.
 	// This is necessary since version don't have to start at 1 or be sequential.
@@ -42,9 +44,10 @@ type ChildList []Child
 // If 'at' is on or after osm.CommitInfoStart the committed
 // time is used to determine visiblity. If 'at' is before, a range +-eps
 // around the give time. Will return the closes visible node within that
-// range, or the previous node if visible. If the previous node is not
-// visible, or does not exits will return nil.
-func (cl ChildList) FindVisible(at time.Time, eps time.Duration) Child {
+// range, or the previous node if visible. Children after 'at' but within
+// the eps must have the same changeset id as provided (the parent's).
+// If the previous node is not visible, or does not exits will return nil.
+func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Duration) Child {
 	var (
 		diff    time.Duration = -1
 		nearest Child
@@ -84,7 +87,16 @@ func (cl ChildList) FindVisible(at time.Time, eps time.Duration) Child {
 				// only update nearest if visible since we want
 				// the closest visible within the range.
 				if visible {
-					nearest = c
+					if offset <= eps {
+						// if we're before at, pick it
+						nearest = c
+					} else if c.ChangesetID() == cid {
+						// if we're after at, changeset must be same
+						nearest = c
+					} else {
+						// after at, not same changeset, ignore.
+						continue
+					}
 				}
 
 				diff = d
