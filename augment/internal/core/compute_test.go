@@ -11,42 +11,41 @@ import (
 
 var (
 	start  = time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)
-	child1 = ChildID{NodeType, 1}
-	child2 = ChildID{NodeType, 2}
+	child1 = osm.ElementID{Type: osm.NodeType, Ref: 1}
+	child2 = osm.ElementID{Type: osm.NodeType, Ref: 2}
 )
 
 func TestCompute(t *testing.T) {
 	// this is the basic test case where the first parent version
 	// gets an update because there is a node update before the parents next version.
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 2, visible: true,
 			timestamp: start.Add(2 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 3, visible: true,
 			timestamp: start.Add(3 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 4, visible: true,
 			timestamp: start.Add(4 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 	}
 
@@ -56,10 +55,10 @@ func TestCompute(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0]}, // index skip requires an update
-		{histories[child1][2]},
-		{histories[child1][3]},
-		{histories[child1][3]},
+		{histories.Get(child1)[0]}, // index skip requires an update
+		{histories.Get(child1)[2]},
+		{histories.Get(child1)[3]},
+		{histories.Get(child1)[3]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -77,37 +76,36 @@ func TestComputeDeletedParent(t *testing.T) {
 	// Verifies behavior when a parent is deleted and then recreated.
 	// The last living parent needs to have updates up to the deleted time.
 	// When the parent comes back it needs to start from where its at.
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 4, timestamp: start.Add(4 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 5, timestamp: start.Add(5 * time.Hour), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 4, timestamp: start.Add(4 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 5, timestamp: start.Add(5 * time.Hour), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 1, visible: false,
 			timestamp: start.Add(2 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 2, visible: true,
 			timestamp: start.Add(4 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 3, visible: true,
 			timestamp: start.Add(6 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 	}
 
@@ -117,10 +115,10 @@ func TestComputeDeletedParent(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0]},
+		{histories.Get(child1)[0]},
 		nil,
-		{histories[child1][4]}, // index 5 is created before the 4th parent
-		{histories[child1][5]},
+		{histories.Get(child1)[4]}, // index 5 is created before the 4th parent
+		{histories.Get(child1)[5]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -141,19 +139,18 @@ func TestComputeDeletedParent(t *testing.T) {
 func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 	// If a child is updated after the only version of a parent,
 	// an update should be created.
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 	}
 
@@ -163,7 +160,7 @@ func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0]},
+		{histories.Get(child1)[0]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -181,35 +178,34 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 	// If a child is updated right before (based on threshold) a parent is DELETED,
 	// this should create an update. This also tests a child is missing in
 	// the next version. All of these histories should returned the same results.
-	histories := []map[ChildID]ChildList{
-		{
-			child1: {
-				&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
-				// child is updated within threshold
-				&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
-			},
-		},
-		{
-			child1: {
-				// initial child is created BEFORE parent
-				&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(-time.Second), visible: true},
-				&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
-			},
-		},
-		{
-			child1: {
-				// initial child is created AFTER parent
-				&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(time.Second), visible: true},
-				&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
-			},
-		},
-	}
+	histories := []*Histories{}
+	h := &Histories{}
+	h.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
+		// child is updated within threshold
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
+	})
+	histories = append(histories, h)
+	h = &Histories{}
+	h.Set(child1, ChildList{
+		// initial child is created BEFORE parent
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(-time.Second), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
+	})
+	histories = append(histories, h)
+	h = &Histories{}
+	h.Set(child1, ChildList{
+		// initial child is created AFTER parent
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(time.Second), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
+	})
+	histories = append(histories, h)
 
 	parents := []Parent{
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start,
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 1, visible: false,
@@ -222,7 +218,7 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 	for i, h := range histories {
 		t.Run(fmt.Sprintf("history %d", i), func(t *testing.T) {
 			expected := []ChildList{
-				{h[child1][0]},
+				{h.Get(child1)[0]},
 				nil,
 			}
 
@@ -240,24 +236,23 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 	// If a child is updated right before (based on threshold) a parent is UPDATED,
 	// this should not trigger an updates.
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			// updated exactly 1 threshold before next parent does not create an update.
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1*time.Hour - time.Minute), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		// updated exactly 1 threshold before next parent does not create an update.
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1*time.Hour - time.Minute), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(1 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 	}
 
@@ -267,8 +262,8 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0]},
-		{histories[child1][1]},
+		{histories.Get(child1)[0]},
+		{histories.Get(child1)[1]},
 	}
 
 	expUpdates := []osm.Updates{nil, nil}
@@ -279,29 +274,28 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 
 func TestComputeMultipleChildren(t *testing.T) {
 	// A parent with multiple children should handle each child independently.
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(5 * time.Hour), visible: true},
-		},
-		child2: {
-			&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
-			&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(5 * time.Hour), visible: true},
+	})
+	histories.Set(child2, ChildList{
+		&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
+		&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1, child2},
+			refs:      osm.ElementIDs{child1, child2},
 		},
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(3 * time.Hour),
-			refs:      []ChildID{child1, child2},
+			refs:      osm.ElementIDs{child1, child2},
 		},
 	}
 
@@ -311,8 +305,8 @@ func TestComputeMultipleChildren(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0], histories[child2][0]},
-		{histories[child1][1], histories[child2][1]},
+		{histories.Get(child1)[0], histories.Get(child2)[0]},
+		{histories.Get(child1)[1], histories.Get(child2)[1]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -332,34 +326,33 @@ func TestComputeMultipleChildren(t *testing.T) {
 
 func TestComputeChangedChildList(t *testing.T) {
 	// A change in the child list should be supported.
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
-		},
-		child2: {
-			&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-			&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
-			&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
+	})
+	histories.Set(child2, ChildList{
+		&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
+		&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1, child2},
+			refs:      osm.ElementIDs{child1, child2},
 		},
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(2 * time.Hour),
-			refs:      []ChildID{child2},
+			refs:      osm.ElementIDs{child2},
 		},
 		&testParent{
 			version: 2, visible: true,
 			timestamp: start.Add(5 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 	}
 
@@ -369,9 +362,9 @@ func TestComputeChangedChildList(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0], histories[child2][0]},
-		{histories[child2][1]},
-		{histories[child1][2]},
+		{histories.Get(child1)[0], histories.Get(child2)[0]},
+		{histories.Get(child2)[1]},
+		{histories.Get(child1)[2]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -389,30 +382,29 @@ func TestComputeChangedChildList(t *testing.T) {
 }
 
 func TestSetupMajorChildren(t *testing.T) {
-	histories := map[ChildID]ChildList{
-		child1: {
-			&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
-			&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-			&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: false},
-			&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
-		},
-	}
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
+		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: false},
+		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
+	})
 
 	parents := []Parent{
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 2, visible: false,
 			timestamp: start.Add(3 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 		&testParent{
 			version: 3, visible: true,
 			timestamp: start.Add(4 * time.Hour),
-			refs:      []ChildID{child1},
+			refs:      osm.ElementIDs{child1},
 		},
 	}
 
@@ -422,9 +414,9 @@ func TestSetupMajorChildren(t *testing.T) {
 	}
 
 	expected := []ChildList{
-		{histories[child1][0]},
+		{histories.Get(child1)[0]},
 		nil,
-		{histories[child1][3]},
+		{histories.Get(child1)[3]},
 	}
 
 	compareParents(t, parents, expected)
@@ -439,8 +431,9 @@ func TestSetupMajorChildren(t *testing.T) {
 
 	// one of the child's histories was not provided
 	parents[0].(*testParent).timestamp = start
-	histories[ChildID{NodeType, 2}] = histories[child1]
-	delete(histories, child1)
+
+	histories.Set(osm.ElementID{Type: osm.NodeType, Ref: 2}, histories.Get(child1))
+	histories.Set(child1, nil)
 
 	_, err = setupMajorChildren(parents, histories, time.Minute)
 	if _, ok := err.(*NoHistoryError); !ok {

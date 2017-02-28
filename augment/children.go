@@ -16,8 +16,8 @@ type childNode struct {
 
 var _ core.Child = childNode{}
 
-func (c childNode) ID() core.ChildID {
-	return core.ChildID{Type: core.NodeType, ID: int64(c.Node.ID)}
+func (c childNode) ID() osm.ElementID {
+	return c.Node.ElementID()
 }
 
 func (c childNode) VersionIndex() int {
@@ -58,8 +58,8 @@ type childWay struct {
 
 var _ core.Child = childWay{}
 
-func (c childWay) ID() core.ChildID {
-	return core.ChildID{Type: core.WayType, ID: int64(c.Way.ID)}
+func (c childWay) ID() osm.ElementID {
+	return c.Way.ElementID()
 }
 
 func (c childWay) VersionIndex() int {
@@ -98,8 +98,8 @@ type childRelation struct {
 
 var _ core.Child = childRelation{}
 
-func (c childRelation) ID() core.ChildID {
-	return core.ChildID{Type: core.RelationType, ID: int64(c.Relation.ID)}
+func (c childRelation) ID() osm.ElementID {
+	return c.Relation.ElementID()
 }
 
 func (c childRelation) VersionIndex() int {

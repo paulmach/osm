@@ -11,26 +11,24 @@ import (
 // NoHistoryError is returned if there is no entry in the history
 // map for a specific child.
 type NoHistoryError struct {
-	ElementType osm.ElementType
-	ElementID   int64
+	ID osm.ElementID
 }
 
 // Error returns a pretty string of the error.
 func (e *NoHistoryError) Error() string {
-	return fmt.Sprintf("element history not found for %s %d", e.ElementType, e.ElementID)
+	return fmt.Sprintf("element history not found for %v", e.ID)
 }
 
 // NoVisibleChildError is returned if there are no visible children
 // for a parent at a given time.
 type NoVisibleChildError struct {
-	ElementType osm.ElementType
-	ElementID   int64
-	Timestamp   time.Time
+	ID        osm.ElementID
+	Timestamp time.Time
 }
 
 // Error returns a pretty string of the error.
 func (e *NoVisibleChildError) Error() string {
-	return fmt.Sprintf("no visible child for %s %d at %v", e.ElementType, e.ElementID, e.Timestamp)
+	return fmt.Sprintf("no visible child for %v at %v", e.ID, e.Timestamp)
 }
 
 // UnsupportedMemberTypeError is returned if a relation member is not a
@@ -50,14 +48,12 @@ func mapErrors(err error) error {
 	switch t := err.(type) {
 	case *core.NoHistoryError:
 		return &NoHistoryError{
-			ElementType: core.TypeMapToOSM[t.ChildID.Type],
-			ElementID:   t.ChildID.ID,
+			ID: t.ChildID,
 		}
 	case *core.NoVisibleChildError:
 		return &NoVisibleChildError{
-			ElementType: core.TypeMapToOSM[t.ChildID.Type],
-			ElementID:   t.ChildID.ID,
-			Timestamp:   t.Timestamp,
+			ID:        t.ChildID,
+			Timestamp: t.Timestamp,
 		}
 	}
 

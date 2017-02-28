@@ -1,72 +1,22 @@
 package core
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/paulmach/go.osm"
 )
 
-// ChildType indicates a specific type of child, ie. node, way, relation.
-// We use integers here to they are sortable.
-type ChildType int
-
-// The enumerated list of Child types.
-const (
-	NodeType ChildType = iota + 1
-	WayType
-	RelationType
-)
-
-func (ct ChildType) String() string {
-	switch ct {
-	case NodeType:
-		return "node"
-	case WayType:
-		return "way"
-	case RelationType:
-		return "relation"
-	}
-
-	return fmt.Sprintf("unknown type %d", ct)
-}
-
-// TypeMapToOSM is here to help of conversion fo the different types.
-var TypeMapToOSM = map[ChildType]osm.ElementType{
-	NodeType:     osm.NodeType,
-	WayType:      osm.WayType,
-	RelationType: osm.RelationType,
-}
-
-// TypeMapToCore is here to help of conversion fo the different types.
-var TypeMapToCore = map[osm.ElementType]ChildType{
-	osm.NodeType:     NodeType,
-	osm.WayType:      WayType,
-	osm.RelationType: RelationType,
-}
-
-// ChildID represent a specific child by both its type and id.
-type ChildID struct {
-	Type ChildType
-	ID   int64
-}
-
-func (cid ChildID) String() string {
-	return fmt.Sprintf("%v %v", cid.Type, cid.ID)
-}
-
 // A Parent is something that holds children. ie. ways have nodes as children
 // and relations can have nodes, ways and relations as children.
 type Parent interface {
-	// used for logging
-	ID() (osm.ElementType, int64)
+	ID() osm.ElementID // used for logging
 
 	Version() int
 	Visible() bool
 	Timestamp() time.Time
 	Committed() time.Time
 
-	Refs() []ChildID
+	Refs() osm.ElementIDs
 	Children() ChildList
 	SetChildren(ChildList)
 }
@@ -74,7 +24,7 @@ type Parent interface {
 // A Child a thing contained by parents such as nodes for ways or nodes, ways
 // and/or relations for relations.
 type Child interface {
-	ID() ChildID
+	ID() osm.ElementID
 
 	// VersionIndex is the index of the version if sorted from lowest to highest.
 	// This is necessary since version don't have to start at 1 or be sequential.
@@ -88,7 +38,7 @@ type Child interface {
 // A ChildList is a set
 type ChildList []Child
 
-// FindVisible find the child visible at the given time.
+// FindVisible locates the child visible at the given time.
 // If 'at' is on or after osm.CommitInfoStart the committed
 // time is used to determine visiblity. If 'at' is before, a range +-eps
 // around the give time. Will return the closes visible node within that

@@ -17,12 +17,12 @@ func Ways(
 	datasource NodeDatasource,
 	threshold time.Duration,
 ) error {
-	parents, children, err := convertWayData(ctx, ways, datasource)
+	parents, histories, err := convertWayData(ctx, ways, datasource)
 	if err != nil {
 		return mapErrors(err)
 	}
 
-	updatesForParents, err := core.Compute(parents, children, threshold)
+	updatesForParents, err := core.Compute(parents, histories, threshold)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -39,19 +39,19 @@ func convertWayData(
 	ctx context.Context,
 	ways osm.Ways,
 	datasource NodeDatasource,
-) ([]core.Parent, map[core.ChildID]core.ChildList, error) {
+) ([]core.Parent, *core.Histories, error) {
 
 	ways.SortByIDVersion()
 
 	parents := make([]core.Parent, len(ways))
-	children := make(map[core.ChildID]core.ChildList)
+	histories := &core.Histories{}
 
 	for i, w := range ways {
 		parents[i] = &parentWay{Way: w}
 
 		for _, n := range w.Nodes {
-			childID := core.ChildID{Type: core.NodeType, ID: int64(n.ID)}
-			if children[childID] != nil {
+			childID := osm.ElementID{Type: osm.NodeType, Ref: int64(n.ID)}
+			if histories.Get(childID) != nil {
 				continue
 			}
 
@@ -60,11 +60,11 @@ func convertWayData(
 				return nil, nil, err
 			}
 
-			children[childID] = nodesToChildList(nodes)
+			histories.Set(childID, nodesToChildList(nodes))
 		}
 	}
 
-	return parents, children, nil
+	return parents, histories, nil
 }
 
 func nodesToChildList(nodes osm.Nodes) core.ChildList {
@@ -88,8 +88,8 @@ type parentWay struct {
 	children core.ChildList
 }
 
-func (w parentWay) ID() (osm.ElementType, int64) {
-	return osm.WayType, int64(w.Way.ID)
+func (w parentWay) ID() osm.ElementID {
+	return w.Way.ElementID()
 }
 
 func (w parentWay) Version() int {
@@ -112,16 +112,8 @@ func (w parentWay) Committed() time.Time {
 	return *w.Way.Committed
 }
 
-func (w parentWay) Refs() []core.ChildID {
-	result := make([]core.ChildID, len(w.Way.Nodes))
-	for i, n := range w.Way.Nodes {
-		result[i] = core.ChildID{
-			Type: core.NodeType,
-			ID:   int64(n.ID),
-		}
-	}
-
-	return result
+func (w parentWay) Refs() osm.ElementIDs {
+	return w.Way.Nodes.ElementIDs()
 }
 
 func (w parentWay) Children() core.ChildList {

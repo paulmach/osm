@@ -39,56 +39,47 @@ func convertRelationData(
 	ctx context.Context,
 	relations osm.Relations,
 	datasource Datasource,
-) ([]core.Parent, map[core.ChildID]core.ChildList, error) {
+) ([]core.Parent, *core.Histories, error) {
 	relations.SortByIDVersion()
 
 	parents := make([]core.Parent, len(relations))
-	children := make(map[core.ChildID]core.ChildList)
+	histories := &core.Histories{}
 
 	for i, r := range relations {
 		parents[i] = &parentRelation{Relation: r}
 
 		for j, m := range r.Members {
-			switch m.Type {
+			childID := m.ElementID()
+			if histories.Get(childID) != nil {
+				continue
+			}
+
+			var list core.ChildList
+			switch childID.Type {
 			case osm.NodeType:
-				childID := core.ChildID{Type: core.NodeType, ID: m.Ref}
-				if children[childID] != nil {
-					continue
-				}
-
-				nodes, err := datasource.NodeHistory(ctx, osm.NodeID(m.Ref))
+				nodes, err := datasource.NodeHistory(ctx, childID.NodeID())
 				if err != nil {
 					return nil, nil, err
 				}
 
-				children[childID] = nodesToChildList(nodes)
-
+				list = nodesToChildList(nodes)
+				histories.Set(childID, list)
 			case osm.WayType:
-				childID := core.ChildID{Type: core.WayType, ID: m.Ref}
-				if children[childID] != nil {
-					continue
-				}
-
-				ways, err := datasource.WayHistory(ctx, osm.WayID(m.Ref))
+				ways, err := datasource.WayHistory(ctx, childID.WayID())
 				if err != nil {
 					return nil, nil, err
 				}
 
-				children[childID] = waysToChildList(ways)
-
+				list = waysToChildList(ways)
+				histories.Set(childID, list)
 			case osm.RelationType:
-				childID := core.ChildID{Type: core.RelationType, ID: m.Ref}
-				if children[childID] != nil {
-					continue
-				}
-
-				relations, err := datasource.RelationHistory(ctx, osm.RelationID(m.Ref))
+				relations, err := datasource.RelationHistory(ctx, childID.RelationID())
 				if err != nil {
 					return nil, nil, err
 				}
 
-				children[childID] = relationsToChildList(relations)
-
+				list = relationsToChildList(relations)
+				histories.Set(childID, list)
 			default:
 				return nil, nil, &UnsupportedMemberTypeError{
 					RelationID: r.ID,
@@ -99,7 +90,7 @@ func convertRelationData(
 		}
 	}
 
-	return parents, children, nil
+	return parents, histories, nil
 }
 
 func waysToChildList(ways osm.Ways) core.ChildList {
@@ -137,8 +128,8 @@ type parentRelation struct {
 	children core.ChildList
 }
 
-func (r parentRelation) ID() (osm.ElementType, int64) {
-	return osm.RelationType, int64(r.Relation.ID)
+func (r parentRelation) ID() osm.ElementID {
+	return r.Relation.ElementID()
 }
 
 func (r parentRelation) Version() int {
@@ -161,16 +152,8 @@ func (r parentRelation) Committed() time.Time {
 	return *r.Relation.Committed
 }
 
-func (r parentRelation) Refs() []core.ChildID {
-	result := make([]core.ChildID, len(r.Relation.Members))
-	for i, m := range r.Relation.Members {
-		result[i] = core.ChildID{
-			Type: core.TypeMapToCore[m.Type],
-			ID:   m.Ref,
-		}
-	}
-
-	return result
+func (r parentRelation) Refs() osm.ElementIDs {
+	return r.Relation.Members.ElementIDs()
 }
 
 func (r parentRelation) Children() core.ChildList {

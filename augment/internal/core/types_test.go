@@ -398,13 +398,12 @@ type testParent struct {
 	visible   bool
 	timestamp time.Time
 	committed time.Time
-	refs      []ChildID
+	refs      osm.ElementIDs
 	children  ChildList
 }
 
-func (t testParent) ID() (osm.ElementType, int64) {
-	// this is only used for logging.
-	return "", 0
+func (t testParent) ID() osm.ElementID {
+	return osm.ElementID{Type: "", Ref: 0} // this is only used for logging.
 }
 
 func (t testParent) Version() int {
@@ -423,7 +422,7 @@ func (t testParent) Committed() time.Time {
 	return t.committed
 }
 
-func (t testParent) Refs() []ChildID {
+func (t testParent) Refs() osm.ElementIDs {
 	return t.refs
 }
 
@@ -438,7 +437,7 @@ func (t *testParent) SetChildren(cl ChildList) {
 var _ Child = &testChild{}
 
 type testChild struct {
-	childID      ChildID
+	childID      osm.ElementID
 	versionIndex int
 	visible      bool
 	timestamp    time.Time
@@ -446,7 +445,7 @@ type testChild struct {
 	updates      osm.Updates
 }
 
-func (t testChild) ID() ChildID {
+func (t testChild) ID() osm.ElementID {
 	return t.childID
 }
 

@@ -8,7 +8,7 @@ import (
 )
 
 type parentChild struct {
-	ChildID       ChildID
+	ChildID       osm.ElementID
 	ParentVersion int
 }
 
@@ -17,7 +17,7 @@ type parentChild struct {
 // for each version of the parent.
 func Compute(
 	parents []Parent,
-	histories map[ChildID]ChildList,
+	histories *Histories,
 	threshold time.Duration,
 ) ([]osm.Updates, error) {
 
@@ -57,11 +57,11 @@ func Compute(
 			if nextParent == nil {
 				// No next parent version, so we need to include all
 				// future versions of this child.
-				ns := histories[c.ID()]
+				ns := histories.Get(c.ID())
 				nextVersion = ns[len(ns)-1].VersionIndex() + 1
 			} else {
 				next := elementMap[parentChild{
-					ChildID:       c.ID(),
+					ChildID:       c.ID().ClearVersion(),
 					ParentVersion: nextParentVersion}]
 				if next == nil {
 					// child is not in the next parent version, or next parent is deleted,
@@ -76,12 +76,11 @@ func Compute(
 					if !ts.After(timeThreshold(c, 0)) { // before and equal still matches
 						nextVersion = c.VersionIndex() // ie. no updates
 					} else {
-						next = histories[c.ID()].LastVisibleBefore(ts)
+						next = histories.Get(c.ID()).LastVisibleBefore(ts)
 						if next == nil {
 							// This a is a data inconsistency that should be looked at more closely.
-							t, id := p.ID()
-							return nil, fmt.Errorf("%v %d: %v: not visible at next parent timestamp %v",
-								t, id, c.ID(), ts)
+							return nil, fmt.Errorf("%v: %v: not visible at next parent timestamp %v",
+								p.ID(), c.ID(), ts)
 						}
 
 						nextVersion = next.VersionIndex() + 1
@@ -99,16 +98,15 @@ func Compute(
 			}
 
 			for k := c.VersionIndex() + 1; k < nextVersion; k++ {
-				if histories[c.ID()][k].Visible() {
-					u := histories[c.ID()][k].Update()
+				if histories.Get(c.ID())[k].Visible() {
+					u := histories.Get(c.ID())[k].Update()
 					u.Index = j
 					updates = append(updates, u)
 				} else {
 					// A child has become not-visible between parent version.
 					// This is a data inconsistency that needs to be looked into.
-					t, id := p.ID()
-					return nil, fmt.Errorf("%v %d: %v: child deleted between parent versions",
-						t, id, c.ID())
+					return nil, fmt.Errorf("%v: %v: child deleted between parent versions",
+						p.ID(), c.ID())
 				}
 			}
 		}
@@ -124,7 +122,7 @@ func Compute(
 // for each visible parent version.
 func setupMajorChildren(
 	parents []Parent,
-	histories map[ChildID]ChildList,
+	histories *Histories,
 	threshold time.Duration,
 ) (map[parentChild]Child, error) {
 	elementMap := make(map[parentChild]Child)
@@ -137,8 +135,8 @@ func setupMajorChildren(
 		refs := p.Refs()
 		cl := make(ChildList, len(refs))
 		for j, ref := range refs {
-			versions, ok := histories[ref]
-			if !ok {
+			versions := histories.Get(ref)
+			if versions == nil {
 				return nil, &NoHistoryError{ChildID: ref}
 			}
 

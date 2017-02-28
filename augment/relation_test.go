@@ -32,7 +32,7 @@ func TestRelation(t *testing.T) {
 		relations := ds.Relations[id]
 		err := Relations(context.Background(), relations, ds, 30*time.Minute)
 		if err != nil {
-			t.Fatalf("compute error: %v", err)
+			t.Fatalf("compute error for %d: %v", id, err)
 		}
 
 		expected := loadTestdata(t, fmt.Sprintf("testdata/relation_%d_expected.osm", id))
