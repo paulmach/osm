@@ -35,7 +35,7 @@ func TestProtobufNode(t *testing.T) {
 	}
 
 	// with committed at
-	tp := time.Now().UTC().Truncate(time.Second)
+	tp := time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)
 	n1.Committed = &tp
 
 	ss = &stringSet{}
