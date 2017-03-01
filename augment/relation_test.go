@@ -14,6 +14,8 @@ import (
 
 func TestRelation(t *testing.T) {
 	ids := []osm.RelationID{
+		1, // circular relations test
+		2, // self referencing relation
 		2714790,
 		4017808,
 	}

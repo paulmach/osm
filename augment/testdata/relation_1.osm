@@ -1,0 +1,11 @@
+<osm version="0.6" generator="go.osm">
+ <relation id="1" timestamp="2010-01-01T00:01:00Z">
+  <member type="relation" ref="2"></member>
+ </relation>
+ <relation id="2" timestamp="2010-01-01T00:02:00Z">
+  <member type="relation" ref="3"></member>
+ </relation>
+ <relation id="3" timestamp="2010-01-01T00:03:00Z">
+  <member type="relation" ref="1"></member>
+ </relation>
+</osm>
