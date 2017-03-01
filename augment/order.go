@@ -2,7 +2,6 @@ package augment
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	osm "github.com/paulmach/go.osm"
@@ -122,7 +121,12 @@ func (o *ChildFirstOrdering) walk(id osm.RelationID, path []osm.RelationID) erro
 			mid := osm.RelationID(m.Ref)
 			for _, pid := range path {
 				if pid == mid {
-					return fmt.Errorf("augment: relation cycle found for %d", mid)
+					// circular relations are allowed,
+					// source: https://github.com/openstreetmap/openstreetmap-website/issues/1465#issuecomment-282323187
+
+					// since this relation is already being worked through higher
+					// up the stack, we can just return here.
+					return nil
 				}
 			}
 

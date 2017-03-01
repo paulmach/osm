@@ -7,7 +7,7 @@ import (
 	osm "github.com/paulmach/go.osm"
 )
 
-func TestDeptFirstOrdering(t *testing.T) {
+func TestChildFirstOrdering(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		8: {
 			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
@@ -59,7 +59,73 @@ func TestDeptFirstOrdering(t *testing.T) {
 	}
 }
 
-func TestDeptFirtOrderingCancel(t *testing.T) {
+func TestChildFirstOrderingCycle(t *testing.T) {
+	relations := map[osm.RelationID]osm.Relations{
+		1: {
+			{Members: osm.Members{
+				{Type: osm.RelationType, Ref: 2},
+				{Type: osm.RelationType, Ref: 3},
+			}},
+			{Members: osm.Members{
+				{Type: osm.RelationType, Ref: 2},
+				{Type: osm.RelationType, Ref: 3},
+				{Type: osm.RelationType, Ref: 5},
+			}},
+		},
+		2: {
+			{Members: osm.Members{
+				{Type: osm.RelationType, Ref: 4},
+				{Type: osm.RelationType, Ref: 1},
+			}},
+			{Members: osm.Members{
+				{Type: osm.RelationType, Ref: 6},
+			}},
+		},
+		3: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
+		4: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
+		5: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
+		6: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
+
+		// self cycle
+		9: {{Members: osm.Members{{Type: osm.RelationType, Ref: 9}}}},
+	}
+	ids := make([]osm.RelationID, 0, len(relations))
+	for k := range relations {
+		ids = append(ids, k)
+	}
+
+	ordering := NewChildFirstOrdering(context.Background(),
+		ids, &MapDatasource{Relations: relations})
+
+	ids = make([]osm.RelationID, 0, len(relations))
+	for ordering.Next() {
+		ids = append(ids, ordering.RelationID())
+	}
+
+	if len(ids) != len(relations) {
+		t.Errorf("wrong number of ids, %v != %v", len(ids), len(relations))
+	}
+
+	aheadOf := [][2]osm.RelationID{
+		{3, 1}, // 3 ahead of, or before 1
+		{4, 2}, // 4 before 2
+		{6, 2},
+		{5, 1},
+	}
+
+	for i, p := range aheadOf {
+		if indexOf(ids, p[0]) > indexOf(ids, p[1]) {
+			t.Errorf("incorrect ordering, test %v", i)
+			t.Logf("ids: %v", ids)
+		}
+	}
+
+	if err := ordering.Err(); err != nil {
+		t.Errorf("unexpected error, got %v", err)
+	}
+}
+
+func TestChildFirstOrderingCancel(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		8: {
 			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
@@ -93,7 +159,7 @@ func TestDeptFirtOrderingCancel(t *testing.T) {
 	}
 }
 
-func TestDeptFirtOrderingClose(t *testing.T) {
+func TestChildFirstOrderingClose(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		8: {
 			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
@@ -125,7 +191,7 @@ func TestDeptFirtOrderingClose(t *testing.T) {
 		t.Errorf("incorrect error, got %v", err)
 	}
 }
-func TestDeptFirstOrderingWalk(t *testing.T) {
+func TestChildFirstOrderingWalk(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		2: {
 			{Members: osm.Members{
@@ -152,6 +218,13 @@ func TestDeptFirstOrderingWalk(t *testing.T) {
 				{Type: osm.RelationType, Ref: 8},
 			}},
 		},
+
+		// circular relation of self.
+		16: {
+			{Members: osm.Members{
+				{Type: osm.RelationType, Ref: 16},
+			}},
+		},
 	}
 
 	ordering := &ChildFirstOrdering{
@@ -162,11 +235,12 @@ func TestDeptFirstOrderingWalk(t *testing.T) {
 	}
 
 	// start at all parts of cycle
+	// basically should not infinite loop
 	path := make([]osm.RelationID, 0, 100)
 	for k := range relations {
 		err := ordering.walk(k, path)
-		if err == nil {
-			t.Errorf("should get cycle error starting at %v", k)
+		if err != nil {
+			t.Errorf("should process cycle without problem: %v", err)
 		}
 	}
 }
