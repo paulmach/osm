@@ -1,5 +1,0 @@
-<osm>
- <relation id="2" timestamp="2010-01-01T00:01:00Z">
-  <member type="relation" ref="2"></member>
- </relation>
-</osm>
