@@ -74,7 +74,7 @@ func (r *Relation) ElementID() ElementID {
 }
 
 // ElementID returns the element id of the member.
-func (m *Member) ElementID() ElementID {
+func (m Member) ElementID() ElementID {
 	return ElementID{
 		Type:    m.Type,
 		Ref:     m.Ref,

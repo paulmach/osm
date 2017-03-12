@@ -69,6 +69,14 @@ func (w *Way) ElementID() ElementID {
 	}
 }
 
+// ElementID returns the element id of the way node.
+func (wn WayNode) ElementID() ElementID {
+	id := wn.ID.ElementID()
+	id.Version = wn.Version
+
+	return id
+}
+
 // CommittedAt returns the best estimate on when this element
 // became was written/committed into the database.
 func (w *Way) CommittedAt() time.Time {
