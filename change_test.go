@@ -229,6 +229,9 @@ func TestChangeMarshal(t *testing.T) {
 func cleanXMLNameFromChange(c *Change) {
 	c.Version = 0
 	c.Generator = ""
+	c.Copyright = ""
+	c.Attribution = ""
+	c.License = ""
 	if c.Create != nil {
 		cleanXMLNameFromOSM(c.Create)
 	}

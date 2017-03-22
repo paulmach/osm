@@ -14,9 +14,15 @@ import (
 type Change struct {
 	Version   float64 `xml:"version,attr,omitempty"`
 	Generator string  `xml:"generator,attr,omitempty"`
-	Create    *OSM    `xml:"create"`
-	Modify    *OSM    `xml:"modify"`
-	Delete    *OSM    `xml:"delete"`
+
+	// Maybe the returned to indicate the origin of the data.
+	Copyright   string `xml:"copyright,attr,omitempty"`
+	Attribution string `xml:"attribution,attr,omitempty"`
+	License     string `xml:"license,attr,omitempty"`
+
+	Create *OSM `xml:"create"`
+	Modify *OSM `xml:"modify"`
+	Delete *OSM `xml:"delete"`
 }
 
 // AppendCreate will append the element to the Create OSM object.
