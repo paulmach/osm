@@ -80,9 +80,9 @@ func (o *OSM) Append(e Element) {
 		o.Relations = append(o.Relations, e.(*Relation))
 	case ChangesetType:
 		o.Changesets = append(o.Changesets, e.(*Changeset))
+	default:
+		panic("unsupported type")
 	}
-
-	panic("unsupported type")
 }
 
 // Elements returns all the nodes, way, relation and changesets
