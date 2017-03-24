@@ -88,6 +88,10 @@ func (o *OSM) Append(e Element) {
 // Elements returns all the nodes, way, relation and changesets
 // as a single slice of Elements.
 func (o *OSM) Elements() Elements {
+	if o == nil {
+		return nil
+	}
+
 	result := make(Elements, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
 	for _, e := range o.Nodes {
 		result = append(result, e)

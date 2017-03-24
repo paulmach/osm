@@ -57,6 +57,20 @@ type Elements []Element
 
 type elementsSort Elements
 
+// IDs returns a slice of the element ids of the elements.
+func (es Elements) IDs() ElementIDs {
+	if len(es) == 0 {
+		return nil
+	}
+
+	ids := make(ElementIDs, 0, len(es))
+	for _, e := range es {
+		ids = append(ids, e.ElementID())
+	}
+
+	return ids
+}
+
 // Sort will order the elements by type, node, way, relation, changeset,
 // and then id and version.
 func (es Elements) Sort() {
