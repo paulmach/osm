@@ -155,11 +155,14 @@ func UnmarshalChangeset(data []byte) (*Changeset, error) {
 	cs := &Changeset{
 		ID:        ChangesetID(encoded.GetId()),
 		UserID:    UserID(encoded.GetUserId()),
-		User:      ss[encoded.GetUserSid()],
 		CreatedAt: unixToTime(encoded.GetCreatedAt()),
 		ClosedAt:  unixToTime(encoded.GetClosedAt()),
 		Open:      encoded.GetOpen(),
 		Tags:      tags,
+	}
+
+	if encoded.UserSid != nil {
+		cs.User = ss[encoded.GetUserSid()]
 	}
 
 	if encoded.Bounds != nil {
