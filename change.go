@@ -15,7 +15,7 @@ type Change struct {
 	Version   float64 `xml:"version,attr,omitempty"`
 	Generator string  `xml:"generator,attr,omitempty"`
 
-	// Maybe the returned to indicate the origin of the data.
+	// to indicate the origin of the data
 	Copyright   string `xml:"copyright,attr,omitempty"`
 	Attribution string `xml:"attribution,attr,omitempty"`
 	License     string `xml:"license,attr,omitempty"`
@@ -111,12 +111,29 @@ func unmarshalChange(encoded *osmpb.Change, ss []string, cs *Changeset) (*Change
 // correct wrapper/start element case and attr data.
 func (c Change) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name.Local = "osmChange"
-	start.Attr = []xml.Attr{
-		{
+	start.Attr = []xml.Attr{}
+
+	if c.Version != 0 {
+		start.Attr = append(start.Attr, xml.Attr{
 			Name:  xml.Name{Local: "version"},
 			Value: strconv.FormatFloat(c.Version, 'g', -1, 64),
-		},
-		{Name: xml.Name{Local: "generator"}, Value: c.Generator},
+		})
+	}
+
+	if c.Generator != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "generator"}, Value: c.Generator})
+	}
+
+	if c.Copyright != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "copyright"}, Value: c.Copyright})
+	}
+
+	if c.Attribution != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "attribution"}, Value: c.Attribution})
+	}
+
+	if c.License != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "license"}, Value: c.License})
 	}
 
 	if err := e.EncodeToken(start); err != nil {
