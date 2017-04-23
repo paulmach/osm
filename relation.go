@@ -11,7 +11,6 @@ import (
 type RelationID int64
 
 // ElementID is a helper returning the element id for this relation id.
-// Version is left at 0.
 func (id RelationID) ElementID() ElementID {
 	return ElementID{
 		Type: RelationType,
@@ -52,9 +51,9 @@ type Members []Member
 
 // Member is a member of a relation.
 type Member struct {
-	Type ElementType `xml:"type,attr" json:"type"`
-	Ref  int64       `xml:"ref,attr" json:"ref"`
-	Role string      `xml:"role,attr" json:"role"`
+	Type Type   `xml:"type,attr" json:"type"`
+	Ref  int64  `xml:"ref,attr" json:"ref"`
+	Role string `xml:"role,attr" json:"role"`
 
 	Version     int         `xml:"version,attr,omitempty" json:"version,omitempty"`
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
@@ -67,18 +66,16 @@ type Member struct {
 // ElementID returns the element id of the relation.
 func (r *Relation) ElementID() ElementID {
 	return ElementID{
-		Type:    RelationType,
-		Ref:     int64(r.ID),
-		Version: r.Version,
+		Type: RelationType,
+		Ref:  int64(r.ID),
 	}
 }
 
 // ElementID returns the element id of the member.
 func (m Member) ElementID() ElementID {
 	return ElementID{
-		Type:    m.Type,
-		Ref:     m.Ref,
-		Version: m.Version,
+		Type: m.Type,
+		Ref:  m.Ref,
 	}
 }
 
@@ -123,15 +120,11 @@ func (r *Relation) ApplyUpdate(u Update) error {
 	return nil
 }
 
-// ElementIDs returns the a list of element ids for the relation members.
+// ElementIDs returns the a list of element ids for the members.
 func (ms Members) ElementIDs() ElementIDs {
 	ids := make(ElementIDs, len(ms), len(ms)+1)
 	for i, m := range ms {
-		ids[i] = ElementID{
-			Type:    m.Type,
-			Ref:     m.Ref,
-			Version: m.Version,
-		}
+		ids[i] = m.ElementID()
 	}
 
 	return ids

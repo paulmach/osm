@@ -35,7 +35,7 @@ func Example_stats() {
 
 	var (
 		maxTags     int
-		maxTagsType osm.ElementType
+		maxTagsType osm.Type
 		maxTagsID   int64
 	)
 

@@ -12,7 +12,6 @@ import (
 type WayID int64
 
 // ElementID is a helper returning the element id for this node id.
-// Version is left at 0.
 func (id WayID) ElementID() ElementID {
 	return ElementID{
 		Type: WayType,
@@ -63,18 +62,14 @@ type WayNode struct {
 // ElementID returns the element id of the way.
 func (w *Way) ElementID() ElementID {
 	return ElementID{
-		Type:    WayType,
-		Ref:     int64(w.ID),
-		Version: w.Version,
+		Type: WayType,
+		Ref:  int64(w.ID),
 	}
 }
 
 // ElementID returns the element id of the way node.
 func (wn WayNode) ElementID() ElementID {
-	id := wn.ID.ElementID()
-	id.Version = wn.Version
-
-	return id
+	return wn.ID.ElementID()
 }
 
 // CommittedAt returns the best estimate on when this element
@@ -144,11 +139,19 @@ func (wn WayNodes) ElementIDs() ElementIDs {
 	// is to append the way.
 	ids := make(ElementIDs, len(wn), len(wn)+1)
 	for i, n := range wn {
-		ids[i] = ElementID{
-			Type:    NodeType,
-			Ref:     int64(n.ID),
-			Version: n.Version,
-		}
+		ids[i] = n.ElementID()
+	}
+
+	return ids
+}
+
+// NodeIDs returns a list of node ids for the way nodes.
+func (wn WayNodes) NodeIDs() []NodeID {
+	// add 1 to the memory length because a common use cases
+	// is to append the way.
+	ids := make([]NodeID, len(wn), len(wn)+1)
+	for i, n := range wn {
+		ids[i] = n.ID
 	}
 
 	return ids

@@ -9,13 +9,13 @@ import (
 
 const locMultiple = 10000000.0
 
-var memberTypeMap = map[ElementType]osmpb.Relation_MemberType{
+var memberTypeMap = map[Type]osmpb.Relation_MemberType{
 	NodeType:     osmpb.Relation_NODE,
 	WayType:      osmpb.Relation_WAY,
 	RelationType: osmpb.Relation_RELATION,
 }
 
-var memberTypeMapRev = map[osmpb.Relation_MemberType]ElementType{
+var memberTypeMapRev = map[osmpb.Relation_MemberType]Type{
 	osmpb.Relation_NODE:     NodeType,
 	osmpb.Relation_WAY:      WayType,
 	osmpb.Relation_RELATION: RelationType,

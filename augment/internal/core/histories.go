@@ -15,7 +15,7 @@ func (h *Histories) Get(id osm.ElementID) ChildList {
 		return nil
 	}
 
-	return h.data[id.ClearVersion()]
+	return h.data[id]
 }
 
 // Set sets the element and history into the map.
@@ -26,8 +26,8 @@ func (h *Histories) Set(id osm.ElementID, list ChildList) {
 	}
 
 	if list == nil {
-		delete(h.data, id.ClearVersion())
+		delete(h.data, id)
 	}
 
-	h.data[id.ClearVersion()] = list
+	h.data[id] = list
 }

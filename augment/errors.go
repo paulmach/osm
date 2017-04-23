@@ -35,7 +35,7 @@ func (e *NoVisibleChildError) Error() string {
 // node, way or relation.
 type UnsupportedMemberTypeError struct {
 	RelationID osm.RelationID
-	MemberType osm.ElementType
+	MemberType osm.Type
 	Index      int
 }
 

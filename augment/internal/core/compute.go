@@ -61,7 +61,7 @@ func Compute(
 				nextVersion = ns[len(ns)-1].VersionIndex() + 1
 			} else {
 				next := elementMap[parentChild{
-					ChildID:       c.ID().ClearVersion(),
+					ChildID:       c.ID(),
 					ParentVersion: nextParentVersion}]
 				if next == nil {
 					// child is not in the next parent version, or next parent is deleted,

@@ -12,91 +12,23 @@ var (
 	ErrScannerClosed = errors.New("osmxml: scanner closed by user")
 )
 
-// ElementType is the type of different osm elements.
+// Type is the type of different osm elements.
 // ie. node, way, relation
-type ElementType string
+type Type string
 
 // Enums for the different element types.
 const (
-	NodeType      ElementType = "node"
-	WayType                   = "way"
-	RelationType              = "relation"
-	ChangesetType             = "changeset"
+	NodeType      Type = "node"
+	WayType            = "way"
+	RelationType       = "relation"
+	ChangesetType      = "changeset"
 )
 
-// Scanner allows osm data from dump files to be read.
-// It is based on the bufio.Scanner, common usage.
-// Scanners are not safe for parallel use. One should feed the
-// elements into their own channel and have workers read from that.
-//
-//	s := scanner.New(r)
-//  defer s.Close()
-//
-//	for s.Next() {
-//		e := s.Element()
-//		// do something
-//	}
-//
-//	if s.Err() != nil {
-//		// scanner did no complete fully
-//	}
-type Scanner interface {
-	Scan() bool
-	Element() Element
-	Err() error
-	Close() error
-}
-
-// An Element represents a Node, Way, Relation or Changeset.
-type Element interface {
-	ElementID() ElementID
-}
-
-// Elements is a collection of the Element type.
-type Elements []Element
-
-type elementsSort Elements
-
-// IDs returns a slice of the element ids of the elements.
-func (es Elements) IDs() ElementIDs {
-	if len(es) == 0 {
-		return nil
-	}
-
-	ids := make(ElementIDs, 0, len(es))
-	for _, e := range es {
-		ids = append(ids, e.ElementID())
-	}
-
-	return ids
-}
-
-// Sort will order the elements by type, node, way, relation, changeset,
-// and then id and version.
-func (es Elements) Sort() {
-	sort.Sort(elementsSort(es))
-}
-
-func (es elementsSort) Len() int      { return len(es) }
-func (es elementsSort) Swap(i, j int) { es[i], es[j] = es[j], es[i] }
-func (es elementsSort) Less(i, j int) bool {
-	return compIDs(es[i].ElementID(), es[j].ElementID())
-}
-
-// An ElementID is a identifier that maps a thing is osm
-// to a unique id.
+// An ElementID is a identifier that maps a thing in osm
+// to a unique id. Note, does not include the element version.
 type ElementID struct {
-	Type    ElementType
-	Ref     int64
-	Version int
-}
-
-// ClearVersion returns a copy of the element id with the version
-// set to zero. This is useful to have a key for the history of an
-// osm element.
-func (e ElementID) ClearVersion() ElementID {
-	e.Version = 0
-	return e
+	Type Type
+	Ref  int64
 }
 
 // NodeID returns the id of this element as a node id.
@@ -139,13 +71,87 @@ func (e ElementID) ChangesetID() ChangesetID {
 	return ChangesetID(e.Ref)
 }
 
+// Scanner allows osm data from dump files to be read.
+// It is based on the bufio.Scanner, common usage.
+// Scanners are not safe for parallel use. One should feed the
+// elements into their own channel and have workers read from that.
+//
+//	s := scanner.New(r)
+//  defer s.Close()
+//
+//	for s.Next() {
+//		e := s.Element()
+//		// do something
+//	}
+//
+//	if s.Err() != nil {
+//		// scanner did no complete fully
+//	}
+type Scanner interface {
+	Scan() bool
+	Element() Element
+	Err() error
+	Close() error
+}
+
+// An Element represents a Node, Way, Relation or Changeset.
+type Element interface {
+	ElementID() ElementID
+
+	// WayNode and Member also have the above functions but are
+	// not elements. This is to help keep the meanings.
+	private()
+}
+
+func (n *Node) private()      {}
+func (w *Way) private()       {}
+func (r *Relation) private()  {}
+func (c *Changeset) private() {}
+
+// Elements is a collection of the Element type.
+type Elements []Element
+
+type elementsSort Elements
+
+// ElementIDs returns a slice of the element ids of the elements.
+func (es Elements) ElementIDs() ElementIDs {
+	if len(es) == 0 {
+		return nil
+	}
+
+	ids := make(ElementIDs, 0, len(es))
+	for _, e := range es {
+		ids = append(ids, e.ElementID())
+	}
+
+	return ids
+}
+
+// Sort will order the elements by type, node, way, relation, changeset,
+// and then id.
+func (es Elements) Sort() {
+	sort.Sort(elementsSort(es))
+}
+
+func (es elementsSort) Len() int      { return len(es) }
+func (es elementsSort) Swap(i, j int) { es[i], es[j] = es[j], es[i] }
+func (es elementsSort) Less(i, j int) bool {
+	a := es[i].ElementID()
+	b := es[j].ElementID()
+	if a.Type != b.Type {
+		return typeToNumber[a.Type] < typeToNumber[b.Type]
+	}
+
+	return a.Ref < b.Ref
+}
+
 // ElementIDs is a list of element ids with helper functions on top.
 type ElementIDs []ElementID
 
 type elementIDsSort ElementIDs
 
 // Sort will order the ids by type, node, way, relation, changeset,
-// and then id and version.
+// and then id.
 func (ids ElementIDs) Sort() {
 	sort.Sort(elementIDsSort(ids))
 }
@@ -153,22 +159,17 @@ func (ids ElementIDs) Sort() {
 func (ids elementIDsSort) Len() int      { return len(ids) }
 func (ids elementIDsSort) Swap(i, j int) { ids[i], ids[j] = ids[j], ids[i] }
 func (ids elementIDsSort) Less(i, j int) bool {
-	return compIDs(ids[i], ids[j])
-}
+	a := ids[i]
+	b := ids[j]
 
-func compIDs(a, b ElementID) bool {
 	if a.Type != b.Type {
 		return typeToNumber[a.Type] < typeToNumber[b.Type]
 	}
 
-	if a.Ref != b.Ref {
-		return a.Ref < b.Ref
-	}
-
-	return a.Version < b.Version
+	return a.Ref < b.Ref
 }
 
-var typeToNumber = map[ElementType]int{
+var typeToNumber = map[Type]int{
 	NodeType:      1,
 	WayType:       2,
 	RelationType:  3,

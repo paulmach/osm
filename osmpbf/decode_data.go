@@ -171,7 +171,7 @@ func extractMembers(stringTable []string, rel *osmpbf.Relation) []osm.Member {
 	for index := range memIDs {
 		memID = memIDs[index] + memID // delta encoding
 
-		var memType osm.ElementType
+		var memType osm.Type
 		switch types[index] {
 		case osmpbf.Relation_NODE:
 			memType = osm.NodeType

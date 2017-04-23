@@ -13,7 +13,6 @@ import (
 type NodeID int64
 
 // ElementID is a helper returning the element id for this node id.
-// Version is left at 0.
 func (id NodeID) ElementID() ElementID {
 	return ElementID{
 		Type: NodeType,
@@ -43,9 +42,8 @@ type Node struct {
 // ElementID returns the element id of the node.
 func (n *Node) ElementID() ElementID {
 	return ElementID{
-		Type:    NodeType,
-		Ref:     int64(n.ID),
-		Version: n.Version,
+		Type: NodeType,
+		Ref:  int64(n.ID),
 	}
 }
 
