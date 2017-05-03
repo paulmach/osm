@@ -22,7 +22,7 @@ func (id ChangesetID) FeatureID() FeatureID {
 // ElementID is a helper to convert the id to an element id.
 func (id ChangesetID) ElementID() ElementID {
 	return ElementID{
-		Type: NodeType,
+		Type: ChangesetType,
 		Ref:  int64(id),
 	}
 }
