@@ -8,7 +8,7 @@ import (
 )
 
 type parentChild struct {
-	ChildID       osm.ElementID
+	ChildID       osm.FeatureID
 	ParentVersion int
 }
 

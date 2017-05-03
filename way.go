@@ -11,11 +11,20 @@ import (
 // A way is uniquely identifiable by the id + version.
 type WayID int64
 
-// ElementID is a helper returning the element id for this node id.
-func (id WayID) ElementID() ElementID {
-	return ElementID{
+// FeatureID is a helper returning the feature id for this way id.
+func (id WayID) FeatureID() FeatureID {
+	return FeatureID{
 		Type: WayType,
 		Ref:  int64(id),
+	}
+}
+
+// ElementID is a helper to convert the id to an element id.
+func (id WayID) ElementID(v int) ElementID {
+	return ElementID{
+		Type:    WayType,
+		Ref:     int64(id),
+		Version: v,
 	}
 }
 
@@ -59,17 +68,35 @@ type WayNode struct {
 	Lon         float64     `xml:"lon,attr,omitempty"`
 }
 
-// ElementID returns the element id of the way.
-func (w *Way) ElementID() ElementID {
-	return ElementID{
+// FeatureID returns the feature id of the way.
+func (w *Way) FeatureID() FeatureID {
+	return FeatureID{
 		Type: WayType,
 		Ref:  int64(w.ID),
 	}
 }
 
+// ElementID returns the element id of the way.
+func (w *Way) ElementID() ElementID {
+	return ElementID{
+		Type:    WayType,
+		Ref:     int64(w.ID),
+		Version: w.Version,
+	}
+}
+
+// FeatureID returns the feature id of the way node.
+func (wn WayNode) FeatureID() FeatureID {
+	return wn.ID.FeatureID()
+}
+
 // ElementID returns the element id of the way node.
 func (wn WayNode) ElementID() ElementID {
-	return wn.ID.ElementID()
+	return ElementID{
+		Type:    NodeType,
+		Ref:     int64(wn.ID),
+		Version: wn.Version,
+	}
 }
 
 // CommittedAt returns the best estimate on when this element
@@ -85,22 +112,29 @@ func (w *Way) CommittedAt() time.Time {
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (w *Way) ApplyUpdatesUpTo(t time.Time) error {
-	for _, u := range w.Updates {
+	lastApplied := -1
+	for i, u := range w.Updates {
 		if u.Timestamp.After(t) {
-			continue
+			break
 		}
 
-		if err := w.ApplyUpdate(u); err != nil {
+		if err := w.applyUpdate(u); err != nil {
 			return err
 		}
+
+		lastApplied = i
 	}
 
+	w.Updates = w.Updates[lastApplied+1:]
+	if len(w.Updates) == 0 {
+		w.Updates = nil
+	}
 	return nil
 }
 
-// ApplyUpdate will modify the current way and dictated by the given update.
+// applyUpdate will modify the current way and dictated by the given update.
 // Will return UpdateIndexOutOfRangeError if the update index is too large.
-func (w *Way) ApplyUpdate(u Update) error {
+func (w *Way) applyUpdate(u Update) error {
 	if u.Index >= len(w.Nodes) {
 		return &UpdateIndexOutOfRangeError{Index: u.Index}
 	}
@@ -140,6 +174,18 @@ func (wn WayNodes) ElementIDs() ElementIDs {
 	ids := make(ElementIDs, len(wn), len(wn)+1)
 	for i, n := range wn {
 		ids[i] = n.ElementID()
+	}
+
+	return ids
+}
+
+// FeatureIDs returns a list of feature ids for the way nodes.
+func (wn WayNodes) FeatureIDs() FeatureIDs {
+	// add 1 to the memory length because a common use cases
+	// is to append the way.
+	ids := make(FeatureIDs, len(wn), len(wn)+1)
+	for i, n := range wn {
+		ids[i] = n.FeatureID()
 	}
 
 	return ids

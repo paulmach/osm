@@ -6,11 +6,11 @@ import osm "github.com/paulmach/go.osm"
 // It simplifies access by abstracting the clearing of
 // the version number from the element id.
 type Histories struct {
-	data map[osm.ElementID]ChildList
+	data map[osm.FeatureID]ChildList
 }
 
 // Get returns the history in ChildList form.
-func (h *Histories) Get(id osm.ElementID) ChildList {
+func (h *Histories) Get(id osm.FeatureID) ChildList {
 	if h.data == nil {
 		return nil
 	}
@@ -18,11 +18,11 @@ func (h *Histories) Get(id osm.ElementID) ChildList {
 	return h.data[id]
 }
 
-// Set sets the element and history into the map.
+// Set sets the element history into the map.
 // The element is deleted if list is nil.
-func (h *Histories) Set(id osm.ElementID, list ChildList) {
+func (h *Histories) Set(id osm.FeatureID, list ChildList) {
 	if h.data == nil {
-		h.data = make(map[osm.ElementID]ChildList)
+		h.data = make(map[osm.FeatureID]ChildList)
 	}
 
 	if list == nil {

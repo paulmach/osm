@@ -10,11 +10,20 @@ import (
 // A relation is uniquely identifiable by the id + version.
 type RelationID int64
 
-// ElementID is a helper returning the element id for this relation id.
-func (id RelationID) ElementID() ElementID {
-	return ElementID{
+// FeatureID is a helper returning the feature id for this relation id.
+func (id RelationID) FeatureID() FeatureID {
+	return FeatureID{
 		Type: RelationType,
 		Ref:  int64(id),
+	}
+}
+
+// ElementID is a helper to convert the id to an element id.
+func (id RelationID) ElementID(v int) ElementID {
+	return ElementID{
+		Type:    RelationType,
+		Ref:     int64(id),
+		Version: v,
 	}
 }
 
@@ -63,19 +72,37 @@ type Member struct {
 	Lon float64 `xml:"lon,attr,omitempty" json:"lon,omitempty"`
 }
 
+// FeatureID returns the feature id of the relation.
+func (r *Relation) FeatureID() FeatureID {
+	return FeatureID{
+		Type: RelationType,
+		Ref:  int64(r.ID),
+	}
+}
+
 // ElementID returns the element id of the relation.
 func (r *Relation) ElementID() ElementID {
 	return ElementID{
-		Type: RelationType,
-		Ref:  int64(r.ID),
+		Type:    RelationType,
+		Ref:     int64(r.ID),
+		Version: r.Version,
+	}
+}
+
+// FeatureID returns the feature id of the member.
+func (m Member) FeatureID() FeatureID {
+	return FeatureID{
+		Type: m.Type,
+		Ref:  m.Ref,
 	}
 }
 
 // ElementID returns the element id of the member.
 func (m Member) ElementID() ElementID {
 	return ElementID{
-		Type: m.Type,
-		Ref:  m.Ref,
+		Type:    m.Type,
+		Ref:     m.Ref,
+		Version: m.Version,
 	}
 }
 
@@ -92,22 +119,29 @@ func (r *Relation) CommittedAt() time.Time {
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (r *Relation) ApplyUpdatesUpTo(t time.Time) error {
-	for _, u := range r.Updates {
+	lastApplied := -1
+	for i, u := range r.Updates {
 		if u.Timestamp.After(t) {
 			continue
 		}
 
-		if err := r.ApplyUpdate(u); err != nil {
+		if err := r.applyUpdate(u); err != nil {
 			return err
 		}
+
+		lastApplied = i
 	}
 
+	r.Updates = r.Updates[lastApplied+1:]
+	if len(r.Updates) == 0 {
+		r.Updates = nil
+	}
 	return nil
 }
 
-// ApplyUpdate will modify the current relation and dictated by the given update.
+// applyUpdate will modify the current relation and dictated by the given update.
 // Will return UpdateIndexOutOfRangeError if the update index is too large.
-func (r *Relation) ApplyUpdate(u Update) error {
+func (r *Relation) applyUpdate(u Update) error {
 	if u.Index >= len(r.Members) {
 		return &UpdateIndexOutOfRangeError{Index: u.Index}
 	}
@@ -118,6 +152,16 @@ func (r *Relation) ApplyUpdate(u Update) error {
 	r.Members[u.Index].Lon = u.Lon
 
 	return nil
+}
+
+// FeatureIDs returns the a list of feature ids for the members.
+func (ms Members) FeatureIDs() FeatureIDs {
+	ids := make(FeatureIDs, len(ms), len(ms)+1)
+	for i, m := range ms {
+		ids[i] = m.FeatureID()
+	}
+
+	return ids
 }
 
 // ElementIDs returns the a list of element ids for the members.

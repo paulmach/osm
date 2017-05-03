@@ -11,8 +11,8 @@ import (
 
 var (
 	start  = time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)
-	child1 = osm.ElementID{Type: osm.NodeType, Ref: 1}
-	child2 = osm.ElementID{Type: osm.NodeType, Ref: 2}
+	child1 = osm.FeatureID{Type: osm.NodeType, Ref: 1}
+	child2 = osm.FeatureID{Type: osm.NodeType, Ref: 2}
 )
 
 func TestCompute(t *testing.T) {
@@ -30,22 +30,22 @@ func TestCompute(t *testing.T) {
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 2, visible: true,
 			timestamp: start.Add(2 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 3, visible: true,
 			timestamp: start.Add(3 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 4, visible: true,
 			timestamp: start.Add(4 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
@@ -90,22 +90,22 @@ func TestComputeDeletedParent(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 1, visible: false,
 			timestamp: start.Add(2 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 2, visible: true,
 			timestamp: start.Add(4 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 3, visible: true,
 			timestamp: start.Add(6 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
@@ -150,7 +150,7 @@ func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
@@ -205,7 +205,7 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start,
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 1, visible: false,
@@ -247,12 +247,12 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(1 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
@@ -290,12 +290,12 @@ func TestComputeMultipleChildren(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1, child2},
+			refs:      osm.FeatureIDs{child1, child2},
 		},
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(3 * time.Hour),
-			refs:      osm.ElementIDs{child1, child2},
+			refs:      osm.FeatureIDs{child1, child2},
 		},
 	}
 
@@ -342,17 +342,17 @@ func TestComputeChangedChildList(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1, child2},
+			refs:      osm.FeatureIDs{child1, child2},
 		},
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(2 * time.Hour),
-			refs:      osm.ElementIDs{child2},
+			refs:      osm.FeatureIDs{child2},
 		},
 		&testParent{
 			version: 2, visible: true,
 			timestamp: start.Add(5 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
@@ -394,17 +394,17 @@ func TestSetupMajorChildren(t *testing.T) {
 		&testParent{
 			version: 1, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 2, visible: false,
 			timestamp: start.Add(3 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 		&testParent{
 			version: 3, visible: true,
 			timestamp: start.Add(4 * time.Hour),
-			refs:      osm.ElementIDs{child1},
+			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
@@ -432,7 +432,7 @@ func TestSetupMajorChildren(t *testing.T) {
 	// one of the child's histories was not provided
 	parents[0].(*testParent).timestamp = start
 
-	histories.Set(osm.ElementID{Type: osm.NodeType, Ref: 2}, histories.Get(child1))
+	histories.Set(osm.FeatureID{Type: osm.NodeType, Ref: 2}, histories.Get(child1))
 	histories.Set(child1, nil)
 
 	_, err = setupMajorChildren(parents, histories, time.Minute)

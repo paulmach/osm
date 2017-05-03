@@ -11,7 +11,7 @@ import (
 // NoHistoryError is returned if there is no entry in the history
 // map for a specific child.
 type NoHistoryError struct {
-	ID osm.ElementID
+	ID osm.FeatureID
 }
 
 // Error returns a pretty string of the error.
@@ -22,7 +22,7 @@ func (e *NoHistoryError) Error() string {
 // NoVisibleChildError is returned if there are no visible children
 // for a parent at a given time.
 type NoVisibleChildError struct {
-	ID        osm.ElementID
+	ID        osm.FeatureID
 	Timestamp time.Time
 }
 

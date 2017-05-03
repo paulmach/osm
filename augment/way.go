@@ -50,7 +50,7 @@ func convertWayData(
 		parents[i] = &parentWay{Way: w}
 
 		for _, n := range w.Nodes {
-			childID := osm.ElementID{Type: osm.NodeType, Ref: int64(n.ID)}
+			childID := osm.FeatureID{Type: osm.NodeType, Ref: int64(n.ID)}
 			if histories.Get(childID) != nil {
 				continue
 			}
@@ -88,8 +88,8 @@ type parentWay struct {
 	children core.ChildList
 }
 
-func (w parentWay) ID() osm.ElementID {
-	return w.Way.ElementID()
+func (w parentWay) ID() osm.FeatureID {
+	return w.Way.FeatureID()
 }
 
 func (w parentWay) ChangesetID() osm.ChangesetID {
@@ -116,8 +116,8 @@ func (w parentWay) Committed() time.Time {
 	return *w.Way.Committed
 }
 
-func (w parentWay) Refs() osm.ElementIDs {
-	return w.Way.Nodes.ElementIDs()
+func (w parentWay) Refs() osm.FeatureIDs {
+	return w.Way.Nodes.FeatureIDs()
 }
 
 func (w parentWay) Children() core.ChildList {

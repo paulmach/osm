@@ -14,9 +14,14 @@ func TestElementImplementations(t *testing.T) {
 
 	// These should not implement the Element interface
 	noImplement := []interface{}{
+		FeatureID{},
 		ElementID{},
 		WayNode{},
 		Member{},
+		NodeID(0),
+		WayID(0),
+		RelationID(0),
+		ChangesetID(0),
 	}
 
 	for _, ni := range noImplement {
@@ -28,23 +33,23 @@ func TestElementImplementations(t *testing.T) {
 
 func TestElementIDsSort(t *testing.T) {
 	ids := ElementIDs{
-		{RelationType, 1},
-		{ChangesetType, 1},
-		{NodeType, 1},
-		{WayType, 2},
-		{WayType, 1},
-		{ChangesetType, 3},
-		{ChangesetType, 1},
+		{RelationType, 1, 1},
+		{ChangesetType, 1, 2},
+		{NodeType, 1, 2},
+		{WayType, 2, 3},
+		{WayType, 1, 2},
+		{ChangesetType, 3, 2},
+		{ChangesetType, 1, 3},
 	}
 
 	expected := ElementIDs{
-		{NodeType, 1},
-		{WayType, 1},
-		{WayType, 2},
-		{RelationType, 1},
-		{ChangesetType, 1},
-		{ChangesetType, 1},
-		{ChangesetType, 3},
+		{NodeType, 1, 2},
+		{WayType, 1, 2},
+		{WayType, 2, 3},
+		{RelationType, 1, 1},
+		{ChangesetType, 1, 2},
+		{ChangesetType, 1, 3},
+		{ChangesetType, 3, 2},
 	}
 
 	ids.Sort()
@@ -72,8 +77,9 @@ func BenchmarkElementIDSort(b *testing.B) {
 
 		for j := range ids {
 			ids[j] = ElementID{
-				Type: n2t[rand.Intn(len(n2t))],
-				Ref:  rand.Int63n(int64(len(ids) / 10)),
+				Type:    n2t[rand.Intn(len(n2t))],
+				Ref:     rand.Int63n(int64(len(ids) / 10)),
+				Version: rand.Intn(20),
 			}
 		}
 		tests[i] = ids

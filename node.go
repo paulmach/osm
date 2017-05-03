@@ -12,11 +12,20 @@ import (
 // The node id + version uniquely identify a node.
 type NodeID int64
 
-// ElementID is a helper returning the element id for this node id.
-func (id NodeID) ElementID() ElementID {
-	return ElementID{
+// FeatureID is a helper returning the feature id for this node id.
+func (id NodeID) FeatureID() FeatureID {
+	return FeatureID{
 		Type: NodeType,
 		Ref:  int64(id),
+	}
+}
+
+// ElementID is a helper to convert the id to an element id.
+func (id NodeID) ElementID(v int) ElementID {
+	return ElementID{
+		Type:    NodeType,
+		Ref:     int64(id),
+		Version: v,
 	}
 }
 
@@ -39,11 +48,20 @@ type Node struct {
 	Committed *time.Time `xml:"committed,attr,omitempty" json:"committed,omitempty"`
 }
 
+// FeatureID returns the feature id of the node.
+func (n *Node) FeatureID() FeatureID {
+	return FeatureID{
+		Type: NodeType,
+		Ref:  int64(n.ID),
+	}
+}
+
 // ElementID returns the element id of the node.
 func (n *Node) ElementID() ElementID {
 	return ElementID{
-		Type: NodeType,
-		Ref:  int64(n.ID),
+		Type:    NodeType,
+		Ref:     int64(n.ID),
+		Version: n.Version,
 	}
 }
 

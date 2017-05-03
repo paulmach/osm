@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/gogo/protobuf/proto"
@@ -71,7 +72,7 @@ func (o *OSM) Marshal() ([]byte, error) {
 
 // Append will add the given element to the OSM object.
 func (o *OSM) Append(e Element) {
-	switch e.ElementID().Type {
+	switch e.FeatureID().Type {
 	case NodeType:
 		o.Nodes = append(o.Nodes, e.(*Node))
 	case WayType:
@@ -81,7 +82,7 @@ func (o *OSM) Append(e Element) {
 	case ChangesetType:
 		o.Changesets = append(o.Changesets, e.(*Changeset))
 	default:
-		panic("unsupported type")
+		panic(fmt.Sprintf("unsupported type: %T: %v", e, e))
 	}
 }
 
@@ -112,28 +113,28 @@ func (o *OSM) Elements() Elements {
 	return result
 }
 
-// ElementIDs returns the slice of element ids for all the
+// FeatureIDs returns the slice of feature ids for all the
 // nodes, ways, relations and changesets.
-func (o *OSM) ElementIDs() ElementIDs {
+func (o *OSM) FeatureIDs() FeatureIDs {
 	if o == nil {
 		return nil
 	}
 
-	result := make(ElementIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
+	result := make(FeatureIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
 	for _, e := range o.Nodes {
-		result = append(result, e.ElementID())
+		result = append(result, e.FeatureID())
 	}
 
 	for _, e := range o.Ways {
-		result = append(result, e.ElementID())
+		result = append(result, e.FeatureID())
 	}
 
 	for _, e := range o.Relations {
-		result = append(result, e.ElementID())
+		result = append(result, e.FeatureID())
 	}
 
 	for _, e := range o.Changesets {
-		result = append(result, e.ElementID())
+		result = append(result, e.FeatureID())
 	}
 
 	return result

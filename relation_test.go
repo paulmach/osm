@@ -75,7 +75,7 @@ func TestRelationApplyUpdate(t *testing.T) {
 		Members: []Member{{Ref: 1, Type: NodeType}},
 	}
 
-	err := r.ApplyUpdate(Update{
+	err := r.applyUpdate(Update{
 		Index:       0,
 		Version:     1,
 		ChangesetID: 2,
@@ -102,7 +102,7 @@ func TestRelationApplyUpdateError(t *testing.T) {
 		Members: []Member{{Ref: 1, Type: NodeType}},
 	}
 
-	err := r.ApplyUpdate(Update{
+	err := r.applyUpdate(Update{
 		Index: 1,
 	})
 

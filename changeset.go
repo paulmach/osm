@@ -11,10 +11,18 @@ import (
 // ChangesetID is the primary key for a osm changeset.
 type ChangesetID int
 
-// ElementID is a helper returning the element id for this changeset id.
+// FeatureID is a helper returning the feature id for this changeset id.
+func (id ChangesetID) FeatureID() FeatureID {
+	return FeatureID{
+		Type: ChangesetType,
+		Ref:  int64(id),
+	}
+}
+
+// ElementID is a helper to convert the id to an element id.
 func (id ChangesetID) ElementID() ElementID {
 	return ElementID{
-		Type: ChangesetType,
+		Type: NodeType,
 		Ref:  int64(id),
 	}
 }
@@ -41,6 +49,14 @@ type Changeset struct {
 	Discussion    *ChangesetDiscussion `xml:"discussion,omitempty" json:"discussion,omitempty"`
 
 	Change *Change `xml:"-" json:"change,omitempty"`
+}
+
+// FeatureID returns the feature id of the changeset.
+func (c *Changeset) FeatureID() FeatureID {
+	return FeatureID{
+		Type: ChangesetType,
+		Ref:  int64(c.ID),
+	}
 }
 
 // ElementID returns the element id of the changeset.

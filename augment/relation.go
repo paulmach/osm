@@ -49,7 +49,7 @@ func convertRelationData(
 		parents[i] = &parentRelation{Relation: r}
 
 		for j, m := range r.Members {
-			childID := m.ElementID()
+			childID := m.FeatureID()
 			if histories.Get(childID) != nil {
 				continue
 			}
@@ -128,8 +128,8 @@ type parentRelation struct {
 	children core.ChildList
 }
 
-func (r parentRelation) ID() osm.ElementID {
-	return r.Relation.ElementID()
+func (r parentRelation) ID() osm.FeatureID {
+	return r.Relation.FeatureID()
 }
 
 func (r parentRelation) ChangesetID() osm.ChangesetID {
@@ -156,8 +156,8 @@ func (r parentRelation) Committed() time.Time {
 	return *r.Relation.Committed
 }
 
-func (r parentRelation) Refs() osm.ElementIDs {
-	return r.Relation.Members.ElementIDs()
+func (r parentRelation) Refs() osm.FeatureIDs {
+	return r.Relation.Members.FeatureIDs()
 }
 
 func (r parentRelation) Children() core.ChildList {

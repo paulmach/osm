@@ -15,8 +15,8 @@ func TestWayApplyUpdatesUpTo(t *testing.T) {
 		Nodes: []WayNode{{Lat: 1}, {Lat: 2}, {Lat: 3}},
 		Updates: Updates{
 			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 11},
-			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 12},
 			{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 13},
+			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 12},
 		},
 	}
 
@@ -37,7 +37,7 @@ func TestWayApplyUpdate(t *testing.T) {
 		Nodes: []WayNode{{Lat: 1, Lon: 2}},
 	}
 
-	err := w.ApplyUpdate(Update{
+	err := w.applyUpdate(Update{
 		Index:       0,
 		Version:     1,
 		ChangesetID: 2,
@@ -67,7 +67,7 @@ func TestWayApplyUpdateError(t *testing.T) {
 		Nodes: []WayNode{{Lat: 1, Lon: 2}},
 	}
 
-	err := w.ApplyUpdate(Update{
+	err := w.applyUpdate(Update{
 		Index: 1,
 	})
 

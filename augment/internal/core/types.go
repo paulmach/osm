@@ -9,7 +9,7 @@ import (
 // A Parent is something that holds children. ie. ways have nodes as children
 // and relations can have nodes, ways and relations as children.
 type Parent interface {
-	ID() osm.ElementID // used for logging
+	ID() osm.FeatureID // used for logging
 	ChangesetID() osm.ChangesetID
 
 	Version() int
@@ -17,7 +17,7 @@ type Parent interface {
 	Timestamp() time.Time
 	Committed() time.Time
 
-	Refs() osm.ElementIDs
+	Refs() osm.FeatureIDs
 	Children() ChildList
 	SetChildren(ChildList)
 }
@@ -25,7 +25,7 @@ type Parent interface {
 // A Child a thing contained by parents such as nodes for ways or nodes, ways
 // and/or relations for relations.
 type Child interface {
-	ID() osm.ElementID
+	ID() osm.FeatureID
 	ChangesetID() osm.ChangesetID
 
 	// VersionIndex is the index of the version if sorted from lowest to highest.

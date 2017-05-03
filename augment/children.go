@@ -16,8 +16,8 @@ type childNode struct {
 
 var _ core.Child = childNode{}
 
-func (c childNode) ID() osm.ElementID {
-	return c.Node.ElementID()
+func (c childNode) ID() osm.FeatureID {
+	return c.Node.FeatureID()
 }
 
 func (c childNode) ChangesetID() osm.ChangesetID {
@@ -62,8 +62,8 @@ type childWay struct {
 
 var _ core.Child = childWay{}
 
-func (c childWay) ID() osm.ElementID {
-	return c.Way.ElementID()
+func (c childWay) ID() osm.FeatureID {
+	return c.Way.FeatureID()
 }
 
 func (c childWay) ChangesetID() osm.ChangesetID {
@@ -106,8 +106,8 @@ type childRelation struct {
 
 var _ core.Child = childRelation{}
 
-func (c childRelation) ID() osm.ElementID {
-	return c.Relation.ElementID()
+func (c childRelation) ID() osm.FeatureID {
+	return c.Relation.FeatureID()
 }
 
 func (c childRelation) ChangesetID() osm.ChangesetID {
