@@ -87,16 +87,11 @@ type Scanner interface {
 type Element interface {
 	FeatureID() FeatureID
 	ElementID() ElementID
+	TagMap() map[string]string
 
-	// WayNode and Member also have the above functions but are
-	// not elements. This is to help keep the meanings.
-	private()
+	// TagMap keeps waynodes and members from matching the interface.
+	// This keeps the meaning of what an element is.
 }
-
-func (n *Node) private()      {}
-func (w *Way) private()       {}
-func (r *Relation) private()  {}
-func (c *Changeset) private() {}
 
 // Elements is a collection of the Element type.
 type Elements []Element

@@ -109,6 +109,11 @@ func (w *Way) CommittedAt() time.Time {
 	return w.Timestamp
 }
 
+// TagMap returns the element tags as a key/value map.
+func (w *Way) TagMap() map[string]string {
+	return w.Tags.Map()
+}
+
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (w *Way) ApplyUpdatesUpTo(t time.Time) error {

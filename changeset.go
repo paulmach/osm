@@ -67,6 +67,11 @@ func (c *Changeset) ElementID() ElementID {
 	}
 }
 
+// TagMap returns the element tags as a key/value map.
+func (c *Changeset) TagMap() map[string]string {
+	return c.Tags.Map()
+}
+
 // Comment is a helper and returns the changeset comment from the tag.
 func (c *Changeset) Comment() string {
 	return c.Tags.Find("comment")

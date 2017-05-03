@@ -28,6 +28,17 @@ func (ts Tags) Find(k string) string {
 	return ""
 }
 
+// Map returns the tags as a key/value map.
+func (ts Tags) Map() map[string]string {
+	result := make(map[string]string, len(ts))
+	for _, t := range ts {
+		result[t.Key] = t.Value
+
+	}
+
+	return result
+}
+
 // MarshalJSON allows the tags to be marshalled as a key/value object,
 // as defined by the overpass osmjson.
 func (ts Tags) MarshalJSON() ([]byte, error) {

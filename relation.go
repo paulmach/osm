@@ -116,6 +116,11 @@ func (r *Relation) CommittedAt() time.Time {
 	return r.Timestamp
 }
 
+// TagMap returns the element tags as a key/value map.
+func (r *Relation) TagMap() map[string]string {
+	return r.Tags.Map()
+}
+
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (r *Relation) ApplyUpdatesUpTo(t time.Time) error {

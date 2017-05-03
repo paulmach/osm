@@ -75,6 +75,11 @@ func (n *Node) CommittedAt() time.Time {
 	return n.Timestamp
 }
 
+// TagMap returns the element tags as a key/value map.
+func (n *Node) TagMap() map[string]string {
+	return n.Tags.Map()
+}
+
 // Nodes is a list of nodes with helper functions on top.
 type Nodes []*Node
 
