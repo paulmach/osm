@@ -114,7 +114,7 @@ func (o *ChildFirstOrdering) walk(id osm.RelationID, path []osm.RelationID) erro
 
 	for _, r := range relations {
 		for _, m := range r.Members {
-			if m.Type != osm.RelationType {
+			if m.Type != osm.TypeRelation {
 				continue
 			}
 

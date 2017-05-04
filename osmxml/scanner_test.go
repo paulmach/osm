@@ -31,7 +31,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
-	if et := scanner.Element().FeatureID().Type; et != osm.ChangesetType {
+	if et := scanner.Element().FeatureID().Type; et != osm.TypeChangeset {
 		t.Fatalf("did not set type correctly, got %v", et)
 	}
 

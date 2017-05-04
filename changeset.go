@@ -14,7 +14,7 @@ type ChangesetID int
 // FeatureID is a helper returning the feature id for this changeset id.
 func (id ChangesetID) FeatureID() FeatureID {
 	return FeatureID{
-		Type: ChangesetType,
+		Type: TypeChangeset,
 		Ref:  int64(id),
 	}
 }
@@ -22,7 +22,7 @@ func (id ChangesetID) FeatureID() FeatureID {
 // ElementID is a helper to convert the id to an element id.
 func (id ChangesetID) ElementID() ElementID {
 	return ElementID{
-		Type: ChangesetType,
+		Type: TypeChangeset,
 		Ref:  int64(id),
 	}
 }
@@ -54,7 +54,7 @@ type Changeset struct {
 // FeatureID returns the feature id of the changeset.
 func (c *Changeset) FeatureID() FeatureID {
 	return FeatureID{
-		Type: ChangesetType,
+		Type: TypeChangeset,
 		Ref:  int64(c.ID),
 	}
 }
@@ -62,7 +62,7 @@ func (c *Changeset) FeatureID() FeatureID {
 // ElementID returns the element id of the changeset.
 func (c *Changeset) ElementID() ElementID {
 	return ElementID{
-		Type: ChangesetType,
+		Type: TypeChangeset,
 		Ref:  int64(c.ID),
 	}
 }

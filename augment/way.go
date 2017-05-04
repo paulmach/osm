@@ -50,7 +50,7 @@ func convertWayData(
 		parents[i] = &parentWay{Way: w}
 
 		for _, n := range w.Nodes {
-			childID := osm.FeatureID{Type: osm.NodeType, Ref: int64(n.ID)}
+			childID := osm.FeatureID{Type: osm.TypeNode, Ref: int64(n.ID)}
 			if histories.Get(childID) != nil {
 				continue
 			}

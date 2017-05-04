@@ -10,15 +10,15 @@ import (
 const locMultiple = 10000000.0
 
 var memberTypeMap = map[Type]osmpb.Relation_MemberType{
-	NodeType:     osmpb.Relation_NODE,
-	WayType:      osmpb.Relation_WAY,
-	RelationType: osmpb.Relation_RELATION,
+	TypeNode:     osmpb.Relation_NODE,
+	TypeWay:      osmpb.Relation_WAY,
+	TypeRelation: osmpb.Relation_RELATION,
 }
 
 var memberTypeMapRev = map[osmpb.Relation_MemberType]Type{
-	osmpb.Relation_NODE:     NodeType,
-	osmpb.Relation_WAY:      WayType,
-	osmpb.Relation_RELATION: RelationType,
+	osmpb.Relation_NODE:     TypeNode,
+	osmpb.Relation_WAY:      TypeWay,
+	osmpb.Relation_RELATION: TypeRelation,
 }
 
 func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
@@ -502,7 +502,7 @@ func encodeDenseMembers(members []Member) *osmpb.DenseMembers {
 
 	nodes := 0
 	for i, m := range members {
-		if m.Type == NodeType {
+		if m.Type == TypeNode {
 			nodes++
 		}
 

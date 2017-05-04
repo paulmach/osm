@@ -105,8 +105,8 @@ var (
 	er = &osm.Relation{
 		ID: 7677,
 		Members: []osm.Member{
-			{Ref: 4875932, Type: osm.WayType, Role: "outer"},
-			{Ref: 4894305, Type: osm.WayType, Role: "inner"},
+			{Ref: 4875932, Type: osm.TypeWay, Role: "outer"},
+			{Ref: 4894305, Type: osm.TypeWay, Role: "inner"},
 		},
 		Tags: osm.Tags([]osm.Tag{
 			{Key: "created_by", Value: "Potlatch 0.9c"},

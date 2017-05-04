@@ -72,7 +72,7 @@ func TestRelationApplyUpdatesUpTo(t *testing.T) {
 func TestRelationApplyUpdate(t *testing.T) {
 	r := Relation{
 		ID:      123,
-		Members: []Member{{Ref: 1, Type: NodeType}},
+		Members: []Member{{Ref: 1, Type: TypeNode}},
 	}
 
 	err := r.applyUpdate(Update{
@@ -86,7 +86,7 @@ func TestRelationApplyUpdate(t *testing.T) {
 
 	expected := Member{
 		Ref:         1,
-		Type:        NodeType,
+		Type:        TypeNode,
 		Version:     1,
 		ChangesetID: 2,
 	}
@@ -99,7 +99,7 @@ func TestRelationApplyUpdate(t *testing.T) {
 func TestRelationApplyUpdateError(t *testing.T) {
 	r := Relation{
 		ID:      123,
-		Members: []Member{{Ref: 1, Type: NodeType}},
+		Members: []Member{{Ref: 1, Type: TypeNode}},
 	}
 
 	err := r.applyUpdate(Update{

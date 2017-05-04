@@ -88,7 +88,7 @@ func Example_stats() {
 
 			if l := len(e.Tags); l > maxTags {
 				maxTags = l
-				maxTagsType = osm.NodeType
+				maxTagsType = osm.TypeNode
 				maxTagsID = int64(e.ID)
 			}
 		case *osm.Way:
@@ -109,7 +109,7 @@ func Example_stats() {
 
 			if l := len(e.Tags); l > maxTags {
 				maxTags = l
-				maxTagsType = osm.WayType
+				maxTagsType = osm.TypeWay
 				maxTagsID = int64(e.ID)
 			}
 
@@ -135,7 +135,7 @@ func Example_stats() {
 
 			if l := len(e.Tags); l > maxTags {
 				maxTags = l
-				maxTagsType = osm.RelationType
+				maxTagsType = osm.TypeRelation
 				maxTagsID = int64(e.ID)
 			}
 

@@ -73,13 +73,13 @@ func (o *OSM) Marshal() ([]byte, error) {
 // Append will add the given element to the OSM object.
 func (o *OSM) Append(e Element) {
 	switch e.FeatureID().Type {
-	case NodeType:
+	case TypeNode:
 		o.Nodes = append(o.Nodes, e.(*Node))
-	case WayType:
+	case TypeWay:
 		o.Ways = append(o.Ways, e.(*Way))
-	case RelationType:
+	case TypeRelation:
 		o.Relations = append(o.Relations, e.(*Relation))
-	case ChangesetType:
+	case TypeChangeset:
 		o.Changesets = append(o.Changesets, e.(*Changeset))
 	default:
 		panic(fmt.Sprintf("unsupported type: %T: %v", e, e))

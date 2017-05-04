@@ -10,19 +10,19 @@ import (
 func TestChildFirstOrdering(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		8: {
-			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
+			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 		},
 		10: {
 			{Members: osm.Members{
-				{Type: osm.WayType, Ref: 8},
-				{Type: osm.RelationType, Ref: 8},
+				{Type: osm.TypeWay, Ref: 8},
+				{Type: osm.TypeRelation, Ref: 8},
 			}},
 		},
 		12: {
-			{Members: osm.Members{{Type: osm.RelationType, Ref: 10}}},
+			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
 		},
 		14: {
-			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
+			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 		},
 	}
 	ids := make([]osm.RelationID, 0, len(relations))
@@ -63,31 +63,31 @@ func TestChildFirstOrderingCycle(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		1: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 2},
-				{Type: osm.RelationType, Ref: 3},
+				{Type: osm.TypeRelation, Ref: 2},
+				{Type: osm.TypeRelation, Ref: 3},
 			}},
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 2},
-				{Type: osm.RelationType, Ref: 3},
-				{Type: osm.RelationType, Ref: 5},
+				{Type: osm.TypeRelation, Ref: 2},
+				{Type: osm.TypeRelation, Ref: 3},
+				{Type: osm.TypeRelation, Ref: 5},
 			}},
 		},
 		2: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 4},
-				{Type: osm.RelationType, Ref: 1},
+				{Type: osm.TypeRelation, Ref: 4},
+				{Type: osm.TypeRelation, Ref: 1},
 			}},
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 6},
+				{Type: osm.TypeRelation, Ref: 6},
 			}},
 		},
-		3: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
-		4: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
-		5: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
-		6: {{Members: osm.Members{{Type: osm.WayType, Ref: 8}}}},
+		3: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
+		4: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
+		5: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
+		6: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
 
 		// self cycle
-		9: {{Members: osm.Members{{Type: osm.RelationType, Ref: 9}}}},
+		9: {{Members: osm.Members{{Type: osm.TypeRelation, Ref: 9}}}},
 	}
 	ids := make([]osm.RelationID, 0, len(relations))
 	for k := range relations {
@@ -128,13 +128,13 @@ func TestChildFirstOrderingCycle(t *testing.T) {
 func TestChildFirstOrderingCancel(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		8: {
-			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
+			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 		},
 		10: {
-			{Members: osm.Members{{Type: osm.RelationType, Ref: 8}}},
+			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
 		},
 		12: {
-			{Members: osm.Members{{Type: osm.RelationType, Ref: 10}}},
+			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
 		},
 	}
 	ids := make([]osm.RelationID, 0, len(relations))
@@ -162,13 +162,13 @@ func TestChildFirstOrderingCancel(t *testing.T) {
 func TestChildFirstOrderingClose(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		8: {
-			{Members: osm.Members{{Type: osm.NodeType, Ref: 12}}},
+			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 		},
 		10: {
-			{Members: osm.Members{{Type: osm.RelationType, Ref: 8}}},
+			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
 		},
 		12: {
-			{Members: osm.Members{{Type: osm.RelationType, Ref: 10}}},
+			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
 		},
 	}
 	ids := make([]osm.RelationID, 0, len(relations))
@@ -195,34 +195,34 @@ func TestChildFirstOrderingWalk(t *testing.T) {
 	relations := map[osm.RelationID]osm.Relations{
 		2: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 4},
+				{Type: osm.TypeRelation, Ref: 4},
 			}},
 		},
 		4: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 6},
+				{Type: osm.TypeRelation, Ref: 6},
 			}},
 		},
 		6: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 10},
+				{Type: osm.TypeRelation, Ref: 10},
 			}},
 		},
 		8: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 6},
+				{Type: osm.TypeRelation, Ref: 6},
 			}},
 		},
 		10: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 8},
+				{Type: osm.TypeRelation, Ref: 8},
 			}},
 		},
 
 		// circular relation of self.
 		16: {
 			{Members: osm.Members{
-				{Type: osm.RelationType, Ref: 16},
+				{Type: osm.TypeRelation, Ref: 16},
 			}},
 		},
 	}

@@ -11,10 +11,10 @@ type Type string
 
 // Constants for the different element types.
 const (
-	NodeType      Type = "node"
-	WayType            = "way"
-	RelationType       = "relation"
-	ChangesetType      = "changeset"
+	TypeNode      Type = "node"
+	TypeWay            = "way"
+	TypeRelation       = "relation"
+	TypeChangeset      = "changeset"
 )
 
 // A FeatureID is a identifier for a feature in OSM.
@@ -36,7 +36,7 @@ func (f FeatureID) ElementID(v int) ElementID {
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
 func (f FeatureID) NodeID() NodeID {
-	if f.Type != NodeType {
+	if f.Type != TypeNode {
 		panic(fmt.Sprintf("not a node: %v", f))
 	}
 
@@ -46,7 +46,7 @@ func (f FeatureID) NodeID() NodeID {
 // WayID returns the id of this feature as a way id.
 // The function will panic if this feature is not of WayType.
 func (f FeatureID) WayID() WayID {
-	if f.Type != WayType {
+	if f.Type != TypeWay {
 		panic(fmt.Sprintf("not a way: %v", f))
 	}
 
@@ -56,7 +56,7 @@ func (f FeatureID) WayID() WayID {
 // RelationID returns the id of this feature as a relation id.
 // The function will panic if this feature is not of RelationType.
 func (f FeatureID) RelationID() RelationID {
-	if f.Type != RelationType {
+	if f.Type != TypeRelation {
 		panic(fmt.Sprintf("not a relation: %v", f))
 	}
 
@@ -66,7 +66,7 @@ func (f FeatureID) RelationID() RelationID {
 // ChangesetID returns the id of this feature as a changeset id.
 // The function will panic if this feature is not of ChangesetType.
 func (f FeatureID) ChangesetID() ChangesetID {
-	if f.Type != ChangesetType {
+	if f.Type != TypeChangeset {
 		panic(fmt.Sprintf("not a changeset: %v", f))
 	}
 
@@ -112,8 +112,8 @@ func (ids featureIDsSort) Less(i, j int) bool {
 }
 
 var typeToNumber = map[Type]int{
-	NodeType:      1,
-	WayType:       2,
-	RelationType:  3,
-	ChangesetType: 4,
+	TypeNode:      1,
+	TypeWay:       2,
+	TypeRelation:  3,
+	TypeChangeset: 4,
 }

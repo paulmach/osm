@@ -33,23 +33,23 @@ func TestElementImplementations(t *testing.T) {
 
 func TestElementIDsSort(t *testing.T) {
 	ids := ElementIDs{
-		{RelationType, 1, 1},
-		{ChangesetType, 1, 2},
-		{NodeType, 1, 2},
-		{WayType, 2, 3},
-		{WayType, 1, 2},
-		{ChangesetType, 3, 2},
-		{ChangesetType, 1, 3},
+		{TypeRelation, 1, 1},
+		{TypeChangeset, 1, 2},
+		{TypeNode, 1, 2},
+		{TypeWay, 2, 3},
+		{TypeWay, 1, 2},
+		{TypeChangeset, 3, 2},
+		{TypeChangeset, 1, 3},
 	}
 
 	expected := ElementIDs{
-		{NodeType, 1, 2},
-		{WayType, 1, 2},
-		{WayType, 2, 3},
-		{RelationType, 1, 1},
-		{ChangesetType, 1, 2},
-		{ChangesetType, 1, 3},
-		{ChangesetType, 3, 2},
+		{TypeNode, 1, 2},
+		{TypeWay, 1, 2},
+		{TypeWay, 2, 3},
+		{TypeRelation, 1, 1},
+		{TypeChangeset, 1, 2},
+		{TypeChangeset, 1, 3},
+		{TypeChangeset, 3, 2},
 	}
 
 	ids.Sort()
@@ -65,10 +65,10 @@ func BenchmarkElementIDSort(b *testing.B) {
 	rand.Seed(1024)
 
 	n2t := map[int]Type{
-		0: NodeType,
-		1: WayType,
-		2: RelationType,
-		3: ChangesetType,
+		0: TypeNode,
+		1: TypeWay,
+		2: TypeRelation,
+		3: TypeChangeset,
 	}
 
 	tests := make([]ElementIDs, b.N)

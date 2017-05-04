@@ -56,7 +56,7 @@ func convertRelationData(
 
 			var list core.ChildList
 			switch childID.Type {
-			case osm.NodeType:
+			case osm.TypeNode:
 				nodes, err := datasource.NodeHistory(ctx, childID.NodeID())
 				if err != nil {
 					return nil, nil, err
@@ -64,7 +64,7 @@ func convertRelationData(
 
 				list = nodesToChildList(nodes)
 				histories.Set(childID, list)
-			case osm.WayType:
+			case osm.TypeWay:
 				ways, err := datasource.WayHistory(ctx, childID.WayID())
 				if err != nil {
 					return nil, nil, err
@@ -72,7 +72,7 @@ func convertRelationData(
 
 				list = waysToChildList(ways)
 				histories.Set(childID, list)
-			case osm.RelationType:
+			case osm.TypeRelation:
 				relations, err := datasource.RelationHistory(ctx, childID.RelationID())
 				if err != nil {
 					return nil, nil, err

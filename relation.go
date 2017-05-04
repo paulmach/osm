@@ -13,7 +13,7 @@ type RelationID int64
 // FeatureID is a helper returning the feature id for this relation id.
 func (id RelationID) FeatureID() FeatureID {
 	return FeatureID{
-		Type: RelationType,
+		Type: TypeRelation,
 		Ref:  int64(id),
 	}
 }
@@ -21,7 +21,7 @@ func (id RelationID) FeatureID() FeatureID {
 // ElementID is a helper to convert the id to an element id.
 func (id RelationID) ElementID(v int) ElementID {
 	return ElementID{
-		Type:    RelationType,
+		Type:    TypeRelation,
 		Ref:     int64(id),
 		Version: v,
 	}
@@ -75,7 +75,7 @@ type Member struct {
 // FeatureID returns the feature id of the relation.
 func (r *Relation) FeatureID() FeatureID {
 	return FeatureID{
-		Type: RelationType,
+		Type: TypeRelation,
 		Ref:  int64(r.ID),
 	}
 }
@@ -83,7 +83,7 @@ func (r *Relation) FeatureID() FeatureID {
 // ElementID returns the element id of the relation.
 func (r *Relation) ElementID() ElementID {
 	return ElementID{
-		Type:    RelationType,
+		Type:    TypeRelation,
 		Ref:     int64(r.ID),
 		Version: r.Version,
 	}

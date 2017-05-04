@@ -14,7 +14,7 @@ type WayID int64
 // FeatureID is a helper returning the feature id for this way id.
 func (id WayID) FeatureID() FeatureID {
 	return FeatureID{
-		Type: WayType,
+		Type: TypeWay,
 		Ref:  int64(id),
 	}
 }
@@ -22,7 +22,7 @@ func (id WayID) FeatureID() FeatureID {
 // ElementID is a helper to convert the id to an element id.
 func (id WayID) ElementID(v int) ElementID {
 	return ElementID{
-		Type:    WayType,
+		Type:    TypeWay,
 		Ref:     int64(id),
 		Version: v,
 	}
@@ -71,7 +71,7 @@ type WayNode struct {
 // FeatureID returns the feature id of the way.
 func (w *Way) FeatureID() FeatureID {
 	return FeatureID{
-		Type: WayType,
+		Type: TypeWay,
 		Ref:  int64(w.ID),
 	}
 }
@@ -79,7 +79,7 @@ func (w *Way) FeatureID() FeatureID {
 // ElementID returns the element id of the way.
 func (w *Way) ElementID() ElementID {
 	return ElementID{
-		Type:    WayType,
+		Type:    TypeWay,
 		Ref:     int64(w.ID),
 		Version: w.Version,
 	}
@@ -93,7 +93,7 @@ func (wn WayNode) FeatureID() FeatureID {
 // ElementID returns the element id of the way node.
 func (wn WayNode) ElementID() ElementID {
 	return ElementID{
-		Type:    NodeType,
+		Type:    TypeNode,
 		Ref:     int64(wn.ID),
 		Version: wn.Version,
 	}

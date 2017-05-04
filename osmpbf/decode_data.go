@@ -174,11 +174,11 @@ func extractMembers(stringTable []string, rel *osmpbf.Relation) []osm.Member {
 		var memType osm.Type
 		switch types[index] {
 		case osmpbf.Relation_NODE:
-			memType = osm.NodeType
+			memType = osm.TypeNode
 		case osmpbf.Relation_WAY:
-			memType = osm.WayType
+			memType = osm.TypeWay
 		case osmpbf.Relation_RELATION:
-			memType = osm.RelationType
+			memType = osm.TypeRelation
 		}
 
 		members[index] = osm.Member{

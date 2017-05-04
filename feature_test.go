@@ -8,23 +8,23 @@ import (
 
 func TestFeatureIDsSort(t *testing.T) {
 	ids := FeatureIDs{
-		{RelationType, 1},
-		{ChangesetType, 1},
-		{NodeType, 1},
-		{WayType, 2},
-		{WayType, 1},
-		{ChangesetType, 3},
-		{ChangesetType, 1},
+		{TypeRelation, 1},
+		{TypeChangeset, 1},
+		{TypeNode, 1},
+		{TypeWay, 2},
+		{TypeWay, 1},
+		{TypeChangeset, 3},
+		{TypeChangeset, 1},
 	}
 
 	expected := FeatureIDs{
-		{NodeType, 1},
-		{WayType, 1},
-		{WayType, 2},
-		{RelationType, 1},
-		{ChangesetType, 1},
-		{ChangesetType, 1},
-		{ChangesetType, 3},
+		{TypeNode, 1},
+		{TypeWay, 1},
+		{TypeWay, 2},
+		{TypeRelation, 1},
+		{TypeChangeset, 1},
+		{TypeChangeset, 1},
+		{TypeChangeset, 3},
 	}
 
 	ids.Sort()
@@ -40,10 +40,10 @@ func BenchmarkFeatureIDsSort(b *testing.B) {
 	rand.Seed(1024)
 
 	n2t := map[int]Type{
-		0: NodeType,
-		1: WayType,
-		2: RelationType,
-		3: ChangesetType,
+		0: TypeNode,
+		1: TypeWay,
+		2: TypeRelation,
+		3: TypeChangeset,
 	}
 
 	tests := make([]FeatureIDs, b.N)

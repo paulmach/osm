@@ -23,7 +23,7 @@ type ElementID struct {
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
 func (e ElementID) NodeID() NodeID {
-	if e.Type != NodeType {
+	if e.Type != TypeNode {
 		panic(fmt.Sprintf("not a node: %v", e))
 	}
 
@@ -33,7 +33,7 @@ func (e ElementID) NodeID() NodeID {
 // WayID returns the id of this feature as a way id.
 // The function will panic if this feature is not of WayType.
 func (e ElementID) WayID() WayID {
-	if e.Type != WayType {
+	if e.Type != TypeWay {
 		panic(fmt.Sprintf("not a way: %v", e))
 	}
 
@@ -43,7 +43,7 @@ func (e ElementID) WayID() WayID {
 // RelationID returns the id of this feature as a relation id.
 // The function will panic if this feature is not of RelationType.
 func (e ElementID) RelationID() RelationID {
-	if e.Type != RelationType {
+	if e.Type != TypeRelation {
 		panic(fmt.Sprintf("not a relation: %v", e))
 	}
 
@@ -53,7 +53,7 @@ func (e ElementID) RelationID() RelationID {
 // ChangesetID returns the id of this feature as a changeset id.
 // The function will panic if this feature is not of ChangesetType.
 func (e ElementID) ChangesetID() ChangesetID {
-	if e.Type != ChangesetType {
+	if e.Type != TypeChangeset {
 		panic(fmt.Sprintf("not a changeset: %v", e))
 	}
 

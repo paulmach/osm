@@ -50,34 +50,34 @@ func TestRelationCircular(t *testing.T) {
 	relations := osm.Relations{
 		&osm.Relation{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 2},
-				osm.Member{Type: osm.RelationType, Ref: 3},
+				osm.Member{Type: osm.TypeRelation, Ref: 2},
+				osm.Member{Type: osm.TypeRelation, Ref: 3},
 			}},
 		&osm.Relation{ID: 1, Version: 2, Visible: true, Timestamp: time.Date(2012, 1, 2, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 2},
-				osm.Member{Type: osm.RelationType, Ref: 3},
+				osm.Member{Type: osm.TypeRelation, Ref: 2},
+				osm.Member{Type: osm.TypeRelation, Ref: 3},
 			}},
 		&osm.Relation{ID: 1, Version: 3, Visible: true, Timestamp: time.Date(2012, 1, 3, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 2},
-				osm.Member{Type: osm.RelationType, Ref: 3},
+				osm.Member{Type: osm.TypeRelation, Ref: 2},
+				osm.Member{Type: osm.TypeRelation, Ref: 3},
 			}},
 		&osm.Relation{ID: 2, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 3},
+				osm.Member{Type: osm.TypeRelation, Ref: 3},
 			}},
 		&osm.Relation{ID: 2, Version: 2, Visible: true, Timestamp: time.Date(2012, 1, 4, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 3},
+				osm.Member{Type: osm.TypeRelation, Ref: 3},
 			}},
 		&osm.Relation{ID: 3, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 1},
+				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
 		&osm.Relation{ID: 3, Version: 2, Visible: true, Timestamp: time.Date(2012, 1, 1, 10, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 1},
+				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
 	}
 
@@ -90,8 +90,8 @@ func TestRelationCircular(t *testing.T) {
 
 	// verify the members were annotated with the version numbers
 	expected := osm.Members{
-		{Type: osm.RelationType, Ref: 2, Version: 1},
-		{Type: osm.RelationType, Ref: 3, Version: 1},
+		{Type: osm.TypeRelation, Ref: 2, Version: 1},
+		{Type: osm.TypeRelation, Ref: 3, Version: 1},
 	}
 	if !reflect.DeepEqual(rs[0].Members, expected) {
 		t.Errorf("incorrect members: %v", rs[0].Members)
@@ -104,8 +104,8 @@ func TestRelationCircular(t *testing.T) {
 
 	// version 2
 	expected = osm.Members{
-		{Type: osm.RelationType, Ref: 2, Version: 1},
-		{Type: osm.RelationType, Ref: 3, Version: 2},
+		{Type: osm.TypeRelation, Ref: 2, Version: 1},
+		{Type: osm.TypeRelation, Ref: 3, Version: 2},
 	}
 	if !reflect.DeepEqual(rs[1].Members, expected) {
 		t.Errorf("incorrect members: %v", rs[1].Members)
@@ -117,8 +117,8 @@ func TestRelationCircular(t *testing.T) {
 
 	// version 3
 	expected = osm.Members{
-		{Type: osm.RelationType, Ref: 2, Version: 1},
-		{Type: osm.RelationType, Ref: 3, Version: 2},
+		{Type: osm.TypeRelation, Ref: 2, Version: 1},
+		{Type: osm.TypeRelation, Ref: 3, Version: 2},
 	}
 	if !reflect.DeepEqual(rs[2].Members, expected) {
 		t.Errorf("incorrect members: %v", rs[2].Members)
@@ -133,15 +133,15 @@ func TestRelationSelfCircular(t *testing.T) {
 	rs := osm.Relations{
 		&osm.Relation{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 1},
+				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
 		&osm.Relation{ID: 1, Version: 2, Visible: true, Timestamp: time.Date(2012, 1, 2, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 1},
+				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
 		&osm.Relation{ID: 1, Version: 3, Visible: true, Timestamp: time.Date(2012, 1, 3, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
-				osm.Member{Type: osm.RelationType, Ref: 1},
+				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
 	}
 
