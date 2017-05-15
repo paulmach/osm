@@ -12,14 +12,30 @@ import (
 // a dev server, for example, http://api06.dev.openstreetmap.org/api/0.6
 const BaseURL = "http://api.openstreetmap.org/api/0.6"
 
+// A RateLimit is something that can wait until its next allowed request.
+// This interface is met by `golang.org/x/time/rate.Limiter` and is meant
+// to be used with it. For example:
+//		// 10 qps
+//		osmapi.DefaultDatasource.Limiter = rate.NewLimiter(10, 1)
+type RateLimiter interface {
+	Wait(context.Context) error
+}
+
 // Datasource defines context about the http client to use to make requests.
 type Datasource struct {
+	// If Limiter is non-nil. The datasource will wait/block until the request
+	// is allowed by the rate limiter. To be a good citizen, it is recommended
+	// to use this when making may concurrent requests against the prod osm api.
+	// See the RateLimiter docs for more information.
+	Limiter RateLimiter
+
 	BaseURL string
 	Client  *http.Client
 }
 
 // DefaultDatasource is the Datasource used by package level convenience functions.
 var DefaultDatasource = &Datasource{
+	BaseURL: BaseURL,
 	Client: &http.Client{
 		Timeout: 6 * time.Minute, // looks like the api server has a 5 min timeout.
 	},
@@ -40,6 +56,13 @@ func (ds *Datasource) getFromAPI(ctx context.Context, url string, item interface
 
 	if client == nil {
 		client = http.DefaultClient
+	}
+
+	if ds.Limiter != nil {
+		err := ds.Limiter.Wait(ctx)
+		if err != nil {
+			return err
+		}
 	}
 
 	req, err := http.NewRequest("GET", url, nil)

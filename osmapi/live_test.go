@@ -5,8 +5,12 @@ import (
 	"os"
 	"testing"
 
+	"golang.org/x/time/rate"
+
 	osm "github.com/paulmach/go.osm"
 )
+
+var _ RateLimiter = &rate.Limiter{}
 
 func TestNodes(t *testing.T) {
 	if os.Getenv("LIVE_TEST") != "true" {
