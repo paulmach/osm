@@ -140,6 +140,33 @@ func (o *OSM) FeatureIDs() FeatureIDs {
 	return result
 }
 
+// ElementIDs returns the slice of element ids for all the
+// nodes, ways, relations and changesets.
+func (o *OSM) ElementIDs() ElementIDs {
+	if o == nil {
+		return nil
+	}
+
+	result := make(ElementIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
+	for _, e := range o.Nodes {
+		result = append(result, e.ElementID())
+	}
+
+	for _, e := range o.Ways {
+		result = append(result, e.ElementID())
+	}
+
+	for _, e := range o.Relations {
+		result = append(result, e.ElementID())
+	}
+
+	for _, e := range o.Changesets {
+		result = append(result, e.ElementID())
+	}
+
+	return result
+}
+
 // UnmarshalOSM will unmarshal the data into a OSM object.
 func UnmarshalOSM(data []byte) (*OSM, error) {
 
