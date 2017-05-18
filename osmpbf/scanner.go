@@ -55,6 +55,7 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 // by Type, ID, Version in OMS protobuf files, versions of given element may
 // span blocks.
 func (s *Scanner) FullyScannedBytes() int64 {
+	// TODO: reading of this needs to be atomic right?
 	return s.decoder.cOffset
 }
 
