@@ -92,9 +92,9 @@ func (dec *decoder) Start(n int) error {
 	}
 	dec.serializer = make(chan oPair, n)
 
-	sizeBuf := make([]byte, 4, 4)
-	headerBuf := make([]byte, maxBlobHeaderSize, maxBlobHeaderSize)
-	blobBuf := make([]byte, maxBlobSize, maxBlobSize)
+	sizeBuf := make([]byte, 4)
+	headerBuf := make([]byte, maxBlobHeaderSize)
+	blobBuf := make([]byte, maxBlobSize)
 
 	// read OSMHeader
 	blobHeader, blob, err := dec.readFileBlock(sizeBuf, headerBuf, blobBuf)
@@ -255,6 +255,9 @@ func (dec *decoder) readFileBlock(sizeBuf, headerBuf, blobBuf []byte) (*osmpbf.B
 
 	headerBuf = headerBuf[:blobHeaderSize]
 	blobHeader, err := dec.readBlobHeader(headerBuf)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	blobBuf = blobBuf[:blobHeader.GetDatasize()]
 	blob, err := dec.readBlob(blobHeader, blobBuf)

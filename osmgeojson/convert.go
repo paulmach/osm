@@ -115,7 +115,6 @@ func Convert(o *osm.OSM, opts ...Option) (*geojson.FeatureCollection, error) {
 			if feature != nil {
 				features = append(features, feature)
 			}
-		} else {
 		}
 
 		// NOTE: we skip/ignore relation that aren't multipolygons, boundaries or routes

@@ -192,14 +192,14 @@ func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 	}
 
 	if len(o.Ways) > 0 {
-		encoded.Ways = make([]*osmpb.Way, len(o.Ways), len(o.Ways))
+		encoded.Ways = make([]*osmpb.Way, len(o.Ways))
 		for i, w := range o.Ways {
 			encoded.Ways[i] = marshalWay(w, ss, includeChangeset)
 		}
 	}
 
 	if len(o.Relations) > 0 {
-		encoded.Relations = make([]*osmpb.Relation, len(o.Relations), len(o.Relations))
+		encoded.Relations = make([]*osmpb.Relation, len(o.Relations))
 		for i, r := range o.Relations {
 			encoded.Relations[i] = marshalRelation(r, ss, includeChangeset)
 		}
@@ -228,7 +228,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	}
 
 	if len(encoded.Nodes) != 0 {
-		o.Nodes = make([]*Node, len(encoded.Nodes), len(encoded.Nodes))
+		o.Nodes = make([]*Node, len(encoded.Nodes))
 		for i, en := range encoded.Nodes {
 			n, err := unmarshalNode(en, ss, cs)
 			if err != nil {
@@ -248,7 +248,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	}
 
 	if len(encoded.Ways) != 0 {
-		o.Ways = make([]*Way, len(encoded.Ways), len(encoded.Ways))
+		o.Ways = make([]*Way, len(encoded.Ways))
 		for i, ew := range encoded.Ways {
 			w, err := unmarshalWay(ew, ss, cs)
 			if err != nil {
@@ -260,7 +260,7 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 	}
 
 	if len(encoded.Relations) != 0 {
-		o.Relations = make([]*Relation, len(encoded.Relations), len(encoded.Relations))
+		o.Relations = make([]*Relation, len(encoded.Relations))
 		for i, er := range encoded.Relations {
 			r, err := unmarshalRelation(er, ss, cs)
 			if err != nil {

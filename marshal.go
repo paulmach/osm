@@ -468,8 +468,6 @@ func decodeDenseWayNodes(waynodes []WayNode, encoded *osmpb.DenseMembers) {
 		waynodes[i].Lat = float64(encoded.Lats[i]) / locMultiple
 		waynodes[i].Lon = float64(encoded.Lons[i]) / locMultiple
 	}
-
-	return
 }
 
 func decodeMembers(
@@ -544,8 +542,6 @@ func decodeDenseMembers(members []Member, encoded *osmpb.DenseMembers) {
 			members[i].Lon = float64(encoded.Lons[i]) / locMultiple
 		}
 	}
-
-	return
 }
 
 func encodeInt32(vals []int32) []int32 {
