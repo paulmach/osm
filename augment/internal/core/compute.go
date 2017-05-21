@@ -12,6 +12,11 @@ type parentChild struct {
 	ParentVersion int
 }
 
+// Options allow for passing som parameters to the matching process.
+type Options struct {
+	IgnoreInconsistency bool
+}
+
 // Compute does two things: first it computes the exact version of
 // the children in each parent. Then it returns a set of updates
 // for each version of the parent.
@@ -19,14 +24,18 @@ func Compute(
 	parents []Parent,
 	histories *Histories,
 	threshold time.Duration,
+	opts *Options,
 ) ([]osm.Updates, error) {
+	if opts == nil {
+		opts = &Options{}
+	}
 
 	// elementMap is a reverse index of the specific version of a
 	// child that is part of a given parent version. This is used to
 	// determine the version of the member that is part of the base of
 	// the next parent version. If there is gap, we know something changed
 	// and need to insert a update there.
-	elementMap, err := setupMajorChildren(parents, histories, threshold)
+	elementMap, err := setupMajorChildren(parents, histories, threshold, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -34,8 +43,8 @@ func Compute(
 	/////////////////////////////////////////////////////////////////
 	// figure out if there are any child changes between parent versions.
 	results := make([]osm.Updates, 0, len(parents))
-	for i, p := range parents {
-		if !p.Visible() {
+	for i, parent := range parents {
+		if !parent.Visible() {
 			results = append(results, nil)
 			continue
 		}
@@ -51,44 +60,54 @@ func Compute(
 		}
 
 		var updates osm.Updates
-		for j, c := range p.Children() {
+		for j, fid := range parent.Refs() {
 			var nextVersion int
+			c := elementMap[parentChild{
+				ChildID:       fid,
+				ParentVersion: parent.Version()}]
 
 			if nextParent == nil {
 				// No next parent version, so we need to include all
 				// future versions of this child.
-				ns := histories.Get(c.ID())
+				ns := histories.Get(fid)
 				nextVersion = ns[len(ns)-1].VersionIndex() + 1
 			} else {
 				next := elementMap[parentChild{
-					ChildID:       c.ID(),
+					ChildID:       fid,
 					ParentVersion: nextParentVersion}]
 				if next == nil {
-					// child is not in the next parent version, or next parent is deleted,
-					// so we need to know what was the last visible before it was removed
-					// from the next parent.
+					// child is one of:
+					// - not in the next parent version,
+					// - next parent is deleted,
+					// - data inconsistency and not visible for the next parent
+					// so we need to know what was the last available before the next parent.
 
-					// this timestamp will help to create updates.
-					// We want to make sure it is:
+					// this timestamp will help to create updates,
+					// we want to make sure it is:
 					// - 1 threshold before the next parent
 					// - not before the current child timestamp
 					ts := timeThreshold(nextParent, -threshold)
-					if !ts.After(timeThreshold(c, 0)) { // before and equal still matches
-						nextVersion = c.VersionIndex() // ie. no updates
-					} else {
-						next = histories.Get(c.ID()).LastVisibleBefore(ts)
-						if next == nil {
-							// This a is a data inconsistency that should be looked at more closely.
-							return nil, fmt.Errorf("%v: %v: not visible at next parent timestamp %v",
-								p.ID(), c.ID(), ts)
-						}
 
-						nextVersion = next.VersionIndex() + 1
+					if c != nil && !ts.After(timeThreshold(c, 0)) { // before and equal still matches
+						// visible in current but child and next parent are
+						// within the same threshold, no updates.
+						// i.e. next version is same as current version
+						nextVersion = 0 // no updates.
+					} else {
+						// current child and next parent are far apart.
+						next = histories.Get(fid).VersionBefore(ts)
+						if next == nil {
+							// missing at current and next parent.
+							nextVersion = 0 // no updates.
+						} else {
+							// visble or not, we want to want to include it.
+							// novisible versions of this child will be filtered out below.
+							nextVersion = next.VersionIndex() + 1
+						}
 					}
 				} else {
 					// if the child was updated enough before the next parent
 					// include it in the minor versions.
-
 					if timeThreshold(next, 0).Before(timeThreshold(nextParent, -threshold)) {
 						nextVersion = next.VersionIndex() + 1
 					} else {
@@ -97,16 +116,35 @@ func Compute(
 				}
 			}
 
-			for k := c.VersionIndex() + 1; k < nextVersion; k++ {
-				if histories.Get(c.ID())[k].Visible() {
-					u := histories.Get(c.ID())[k].Update()
+			start := 0
+			if c != nil {
+				start = c.VersionIndex() + 1
+			} else {
+				// current child is not defined, is next child
+				next := histories.Get(fid).VersionBefore(timeThreshold(parent, 0))
+				if next == nil {
+					start = 0
+				} else {
+					start = next.VersionIndex() + 1
+				}
+			}
+
+			for k := start; k < nextVersion; k++ {
+				if histories.Get(fid)[k].Visible() {
+					u := histories.Get(fid)[k].Update()
 					u.Index = j
 					updates = append(updates, u)
 				} else {
 					// A child has become not-visible between parent version.
-					// This is a data inconsistency that needs to be looked into.
-					return nil, fmt.Errorf("%v: %v: child deleted between parent versions",
-						p.ID(), c.ID())
+					// This is a data inconsistency that can happen in old data
+					// i.e. pre element versioning.
+					//
+					// see node 321452894, changed 7 times in
+					// the same changeset, version 5 was a delete. (also node 65172196)
+					if !opts.IgnoreInconsistency {
+						return nil, fmt.Errorf("%v: %v: child deleted between parent versions",
+							parent.ID(), fid)
+					}
 				}
 			}
 		}
@@ -124,6 +162,7 @@ func setupMajorChildren(
 	parents []Parent,
 	histories *Histories,
 	threshold time.Duration,
+	opts *Options,
 ) (map[parentChild]Child, error) {
 	elementMap := make(map[parentChild]Child)
 	for _, p := range parents {
@@ -141,7 +180,7 @@ func setupMajorChildren(
 			}
 
 			c := versions.FindVisible(p.ChangesetID(), timeThreshold(p, 0), threshold)
-			if c == nil {
+			if c == nil && !opts.IgnoreInconsistency {
 				return nil, &NoVisibleChildError{
 					ChildID:   ref,
 					Timestamp: timeThreshold(p, 0)}

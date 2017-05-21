@@ -49,7 +49,7 @@ func TestCompute(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute)
+	updates, err := Compute(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -109,7 +109,7 @@ func TestComputeDeletedParent(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute)
+	updates, err := Compute(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -154,7 +154,7 @@ func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute)
+	updates, err := Compute(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -222,7 +222,7 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 				nil,
 			}
 
-			updates, err := Compute(parents, h, time.Minute)
+			updates, err := Compute(parents, h, time.Minute, nil)
 			if err != nil {
 				t.Fatalf("compute error: %v", err)
 			}
@@ -256,7 +256,7 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute)
+	updates, err := Compute(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -299,7 +299,7 @@ func TestComputeMultipleChildren(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute)
+	updates, err := Compute(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -356,7 +356,7 @@ func TestComputeChangedChildList(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute)
+	updates, err := Compute(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -408,7 +408,7 @@ func TestSetupMajorChildren(t *testing.T) {
 		},
 	}
 
-	_, err := setupMajorChildren(parents, histories, time.Minute)
+	_, err := setupMajorChildren(parents, histories, time.Minute, nil)
 	if err != nil {
 		t.Fatalf("setup error: %v", err)
 	}
@@ -424,7 +424,7 @@ func TestSetupMajorChildren(t *testing.T) {
 	// child is not visible for this parent's timestamp
 	parents[0].(*testParent).timestamp = start.Add(-time.Hour)
 
-	_, err = setupMajorChildren(parents, histories, time.Minute)
+	_, err = setupMajorChildren(parents, histories, time.Minute, &Options{})
 	if _, ok := err.(*NoVisibleChildError); !ok {
 		t.Errorf("did not return correct error, got %v", err)
 	}
@@ -435,7 +435,7 @@ func TestSetupMajorChildren(t *testing.T) {
 	histories.Set(osm.FeatureID{Type: osm.TypeNode, Ref: 2}, histories.Get(child1))
 	histories.Set(child1, nil)
 
-	_, err = setupMajorChildren(parents, histories, time.Minute)
+	_, err = setupMajorChildren(parents, histories, time.Minute, &Options{})
 	if _, ok := err.(*NoHistoryError); !ok {
 		t.Errorf("Did not return correct error, got %v", err)
 	}

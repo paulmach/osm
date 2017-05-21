@@ -17,13 +17,22 @@ func Relations(
 	relations osm.Relations,
 	datasource Datasource,
 	threshold time.Duration,
+	opts ...Option,
 ) error {
 	parents, children, err := convertRelationData(ctx, relations, datasource)
 	if err != nil {
 		return mapErrors(err)
 	}
 
-	updatesForParents, err := core.Compute(parents, children, threshold)
+	computeOpts := &core.Options{}
+	for _, o := range opts {
+		err := o(computeOpts)
+		if err != nil {
+			return err
+		}
+	}
+
+	updatesForParents, err := core.Compute(parents, children, threshold, computeOpts)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -168,6 +177,10 @@ func (r *parentRelation) SetChildren(list core.ChildList) {
 	r.children = list
 
 	for i, child := range list {
+		if child == nil {
+			continue
+		}
+
 		switch t := child.(type) {
 		case *childNode:
 			r.Relation.Members[i].Version = t.Node.Version

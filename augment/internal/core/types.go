@@ -119,8 +119,8 @@ func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Dura
 	return nearest
 }
 
-// LastVisibleBefore finds the last visible child before a given time.
-func (cl ChildList) LastVisibleBefore(end time.Time) Child {
+// VersionBefore finds the last child before a given time.
+func (cl ChildList) VersionBefore(end time.Time) Child {
 	var latest Child
 
 	for _, c := range cl {
@@ -128,9 +128,7 @@ func (cl ChildList) LastVisibleBefore(end time.Time) Child {
 			break
 		}
 
-		if c.Visible() {
-			latest = c
-		}
+		latest = c
 	}
 
 	return latest

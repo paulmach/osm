@@ -16,13 +16,22 @@ func Ways(
 	ways osm.Ways,
 	datasource NodeDatasource,
 	threshold time.Duration,
+	opts ...Option,
 ) error {
 	parents, histories, err := convertWayData(ctx, ways, datasource)
 	if err != nil {
 		return mapErrors(err)
 	}
 
-	updatesForParents, err := core.Compute(parents, histories, threshold)
+	computeOpts := &core.Options{}
+	for _, o := range opts {
+		err := o(computeOpts)
+		if err != nil {
+			return err
+		}
+	}
+
+	updatesForParents, err := core.Compute(parents, histories, threshold, computeOpts)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -129,6 +138,10 @@ func (w *parentWay) SetChildren(list core.ChildList) {
 
 	// copy back in the node information
 	for i, child := range list {
+		if child == nil {
+			continue
+		}
+
 		n := child.(*childNode).Node
 
 		w.Way.Nodes[i].Version = n.Version

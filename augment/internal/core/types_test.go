@@ -363,7 +363,7 @@ func checkChildListFindVisible(t *testing.T, id osm.ChangesetID, cl ChildList, c
 	}
 }
 
-func TestChildListLastVisibleBefore(t *testing.T) {
+func TestChildListVersionBefore(t *testing.T) {
 	cl := ChildList{
 		&testChild{
 			versionIndex: 0, visible: false,
@@ -391,19 +391,19 @@ func TestChildListLastVisibleBefore(t *testing.T) {
 		}, {
 			name:      "right on time should return previous",
 			timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC),
-			index:     -1,
+			index:     0,
 		}, {
 			name:      "after first visible",
 			timestamp: time.Date(2016, 1, 1, 0, 0, 20, 1, time.UTC),
 			index:     1,
 		}, {
-			name:      "after all should return last visible",
+			name:      "after all should return last",
 			timestamp: time.Date(2016, 1, 1, 0, 0, 70, 0, time.UTC),
-			index:     3,
+			index:     4,
 		}, {
 			name:      "after timestamp but before committed should return previous",
 			timestamp: time.Date(2016, 1, 1, 0, 0, 40, 0, time.UTC),
-			index:     1,
+			index:     2,
 		}, {
 			name:      "right after committed time should return element",
 			timestamp: time.Date(2016, 1, 1, 0, 0, 40, 1, time.UTC),
@@ -414,7 +414,7 @@ func TestChildListLastVisibleBefore(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 
-			c := cl.LastVisibleBefore(tc.timestamp)
+			c := cl.VersionBefore(tc.timestamp)
 			if c == nil {
 				if tc.index != -1 {
 					t.Errorf("should not be nil, should be %d", tc.index)
@@ -488,7 +488,6 @@ type testChild struct {
 	visible      bool
 	timestamp    time.Time
 	committed    time.Time
-	updates      osm.Updates
 }
 
 func (t testChild) ID() osm.FeatureID {
