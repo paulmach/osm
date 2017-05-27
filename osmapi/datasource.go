@@ -12,7 +12,7 @@ import (
 // a dev server, for example, http://api06.dev.openstreetmap.org/api/0.6
 const BaseURL = "http://api.openstreetmap.org/api/0.6"
 
-// A RateLimit is something that can wait until its next allowed request.
+// A RateLimiter is something that can wait until its next allowed request.
 // This interface is met by `golang.org/x/time/rate.Limiter` and is meant
 // to be used with it. For example:
 //		// 10 qps

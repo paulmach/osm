@@ -41,7 +41,7 @@ type relationSummary struct {
 	Tags map[string]string `json:"tags"`
 }
 
-// Converts takes a set of osm elements and converts them
+// Convert takes a set of osm elements and converts them
 // to a geojson feature collection.
 func Convert(o *osm.OSM, opts ...Option) (*geojson.FeatureCollection, error) {
 	ctx := &context{
@@ -441,7 +441,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		f.ID = fmt.Sprintf("%s/%d", featureID.Type, featureID.Ref)
 	}
 	f.Properties["id"] = int(featureID.Ref)
-	f.Properties["type"] = featureID.Type
+	f.Properties["type"] = string(featureID.Type)
 
 	if tainted {
 		f.Properties["tainted"] = true
