@@ -1,15 +1,15 @@
-package augment
+package annotate
 
 import (
 	"context"
 	"time"
 
 	osm "github.com/paulmach/go.osm"
-	"github.com/paulmach/go.osm/augment/internal/core"
+	"github.com/paulmach/go.osm/annotate/internal/core"
 )
 
 // Ways computes the updates for the given ways
-// and augments the way nodes with changeset and lon/lat data.
+// and annotate the way nodes with changeset and lon/lat data.
 // The input ways are modified to include this information.
 func Ways(
 	ctx context.Context,

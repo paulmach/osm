@@ -6,7 +6,7 @@ import (
 )
 
 func TestDiff(t *testing.T) {
-	data := readFile(t, "testdata/augmented_diff.xml")
+	data := readFile(t, "testdata/annotated_diff.xml")
 
 	diff := &Diff{}
 	err := xml.Unmarshal(data, &diff)

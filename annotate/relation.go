@@ -1,4 +1,4 @@
-package augment
+package annotate
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"time"
 
 	osm "github.com/paulmach/go.osm"
-	"github.com/paulmach/go.osm/augment/internal/core"
+	"github.com/paulmach/go.osm/annotate/internal/core"
 )
 
 // Relations computes the updates for the given relations
-// and augments members with stuff like changeset and lon/lat data.
+// and annotate members with stuff like changeset and lon/lat data.
 // The input relations are modified to include this information.
 func Relations(
 	ctx context.Context,

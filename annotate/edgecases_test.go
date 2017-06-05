@@ -1,4 +1,4 @@
-package augment
+package annotate
 
 import (
 	"context"
@@ -30,11 +30,11 @@ func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment the way, but add an update when the node comes online.
+		// should not annotate the way, but add an update when the node comes online.
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		if l := len(ways[0].Updates); l != 1 {
@@ -65,11 +65,11 @@ func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment the way, but add an update when the node comes online.
+		// should not annotate the way, but add an update when the node comes online.
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		if l := len(ways[0].Updates); l != 1 {
@@ -85,10 +85,10 @@ func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
 			t.Fatalf("way should have 0 updates: %d", l)
 		}
 
-		// should augment second way just fine.
+		// should annotate second way just fine.
 		node = ways[1].Nodes[0]
 		if node.Lat != 1 || node.Lon != 2 {
-			t.Errorf("should augment node in second way: %v", node)
+			t.Errorf("should annotate node in second way: %v", node)
 		}
 	})
 
@@ -111,21 +111,21 @@ func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment the way, but add an update when the node comes online.
+		// should not annotate the way, but add an update when the node comes online.
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		if l := len(ways[0].Updates); l != 0 {
 			t.Fatalf("way should have 0 updates: %d", l)
 		}
 
-		// should augment second way just fine.
+		// should annotate second way just fine.
 		node = ways[1].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		if l := len(ways[1].Updates); l != 1 {
@@ -204,16 +204,16 @@ func TestEdgeCase_NodeRedacted(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment
+		// should not annotate
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		node = ways[1].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 	})
 
@@ -235,16 +235,16 @@ func TestEdgeCase_NodeRedacted(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment
+		// should not annotate
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		node = ways[1].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 	})
 
@@ -266,16 +266,16 @@ func TestEdgeCase_NodeRedacted(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment
+		// should not annotate
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		node = ways[1].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 	})
 
@@ -298,26 +298,26 @@ func TestEdgeCase_NodeRedacted(t *testing.T) {
 			t.Fatalf("compute error: %v", err)
 		}
 
-		// should not augment the redacted node, otherwise okay.
+		// should not annotate the redacted node, otherwise okay.
 
 		node := ways[0].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		node = ways[1].Nodes[0]
 		if node.Lat != 0 || node.Lon != 0 {
-			t.Errorf("should not augment node: %v", node)
+			t.Errorf("should not annotate node: %v", node)
 		}
 
 		node = ways[0].Nodes[1]
 		if node.Lat != 1 || node.Lon != 2 {
-			t.Errorf("should augment second node: %v", node)
+			t.Errorf("should annotate second node: %v", node)
 		}
 
 		node = ways[1].Nodes[1]
 		if node.Lat != 1 || node.Lon != 2 {
-			t.Errorf("should augment second node: %v", node)
+			t.Errorf("should annotate second node: %v", node)
 		}
 	})
 }

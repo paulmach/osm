@@ -1,4 +1,4 @@
-package augment
+package annotate
 
 import (
 	"context"

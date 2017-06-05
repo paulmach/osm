@@ -1,10 +1,10 @@
-package augment
+package annotate
 
 import (
 	"time"
 
 	osm "github.com/paulmach/go.osm"
-	"github.com/paulmach/go.osm/augment/internal/core"
+	"github.com/paulmach/go.osm/annotate/internal/core"
 )
 
 // A childNode wraps a node into a core.Child interface

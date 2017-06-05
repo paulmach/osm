@@ -1,11 +1,11 @@
-package augment
+package annotate
 
 import (
 	"fmt"
 	"time"
 
 	osm "github.com/paulmach/go.osm"
-	"github.com/paulmach/go.osm/augment/internal/core"
+	"github.com/paulmach/go.osm/annotate/internal/core"
 )
 
 // NoHistoryError is returned if there is no entry in the history

@@ -1,8 +1,8 @@
-package augment
+package annotate
 
-import "github.com/paulmach/go.osm/augment/internal/core"
+import "github.com/paulmach/go.osm/annotate/internal/core"
 
-// Option is a parameter that can be used for augmentation
+// Option is a parameter that can be used for annotationg.
 type Option func(*core.Options) error
 
 // IgnoreInconsistency will try to match children even if they are missing.

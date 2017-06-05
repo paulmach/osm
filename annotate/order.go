@@ -1,4 +1,4 @@
-package augment
+package annotate
 
 import (
 	"context"
@@ -28,7 +28,7 @@ type ChildFirstOrdering struct {
 
 // NewChildFirstOrdering creates a new ordering object. It is used to provided
 // a child before parent ordering for relations. This order must be used when
-// inserting+augmenting relations into the datastore.
+// inserting+annotating relations into the datastore.
 func NewChildFirstOrdering(
 	ctx context.Context,
 	ids []osm.RelationID,
