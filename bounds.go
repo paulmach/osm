@@ -13,8 +13,8 @@ type Bounds struct {
 	MaxLon float64 `xml:"maxlon,attr"`
 }
 
-// NewBoundFromTile creates a bound given an online map tile index.
-func NewBoundFromTile(x, y, z uint64) (*Bounds, error) {
+// NewBoundsFromTile creates a bound given an online map tile index.
+func NewBoundsFromTile(x, y, z uint64) (*Bounds, error) {
 	maxIndex := uint64(1) << z
 	if x >= maxIndex {
 		return nil, errors.New("osm: x index out of range for this zoom")

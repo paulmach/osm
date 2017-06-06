@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewBoundFromTile(t *testing.T) {
-	bounds, _ := NewBoundFromTile(7, 8, 9)
+	bounds, _ := NewBoundsFromTile(7, 8, 9)
 
 	// check 9 tiles around bounds
 	for i := -1; i <= 1; i++ {
@@ -50,9 +50,9 @@ func TestBoundsContainsNode(t *testing.T) {
 }
 
 func mustBounds(t *testing.T, x, y, z uint64) *Bounds {
-	bounds, err := NewBoundFromTile(x, y, z)
+	bounds, err := NewBoundsFromTile(x, y, z)
 	if err != nil {
-		t.Fatalf("invalid bound: %v", err)
+		t.Fatalf("invalid bounds: %v", err)
 	}
 
 	return bounds
