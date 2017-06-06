@@ -67,7 +67,14 @@ func TestMap(t *testing.T) {
 
 	ctx := context.Background()
 	lat, lon := 37.79, -122.27
-	o, err := Map(ctx, lon-0.001, lat-0.001, lon+0.001, lat+0.001)
+
+	b := &osm.Bounds{
+		MinLat: lat - 0.001,
+		MaxLat: lat + 0.001,
+		MinLon: lon - 0.001,
+		MaxLon: lon + 0.001,
+	}
+	o, err := Map(ctx, b)
 	if err != nil {
 		t.Fatalf("request error: %v", err)
 	}
