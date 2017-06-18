@@ -5,6 +5,8 @@ import (
 	"math"
 	"sort"
 	"time"
+
+	"github.com/paulmach/orb/geo"
 )
 
 // WayID is the primary key of a way.
@@ -97,6 +99,12 @@ func (wn WayNode) ElementID() ElementID {
 		Ref:     int64(wn.ID),
 		Version: wn.Version,
 	}
+}
+
+// Point returns the geo.Point location for the way node.
+// Will be (0, 0) if the way is not annotated.
+func (wn WayNode) Point() geo.Point {
+	return geo.Point{wn.Lon, wn.Lat}
 }
 
 // CommittedAt returns the best estimate on when this element

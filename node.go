@@ -6,6 +6,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/go.osm/internal/osmpb"
+	"github.com/paulmach/orb/geo"
 )
 
 // NodeID corresponds the primary key of a node.
@@ -78,6 +79,12 @@ func (n *Node) CommittedAt() time.Time {
 // TagMap returns the element tags as a key/value map.
 func (n *Node) TagMap() map[string]string {
 	return n.Tags.Map()
+}
+
+// Point returns the geo.Point location for the node.
+// Will be (0, 0) for "deleted" nodes.
+func (n *Node) Point() geo.Point {
+	return geo.Point{n.Lon, n.Lat}
 }
 
 // Nodes is a list of nodes with helper functions on top.
