@@ -18,6 +18,17 @@ func BenchmarkConvert(b *testing.B) {
 	}
 }
 
+func BenchmarkConvertAnnotated(b *testing.B) {
+	o := parseFile(b, "testdata/benchmark.osm")
+	annotate(o)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		Convert(o)
+	}
+}
+
 func BenchmarkConvert_NoID(b *testing.B) {
 	o := parseFile(b, "testdata/benchmark.osm")
 
@@ -71,4 +82,24 @@ func parseFile(t testing.TB, filename string) *osm.OSM {
 	}
 
 	return o
+}
+
+func annotate(o *osm.OSM) {
+	nodes := make(map[osm.NodeID]*osm.Node)
+	for _, n := range o.Nodes {
+		nodes[n.ID] = n
+	}
+
+	for _, w := range o.Ways {
+		for i, wn := range w.Nodes {
+			n := nodes[wn.ID]
+			if n == nil {
+				continue
+			}
+
+			w.Nodes[i].Lat = n.Lat
+			w.Nodes[i].Lon = n.Lon
+			w.Nodes[i].Version = n.Version
+		}
+	}
 }

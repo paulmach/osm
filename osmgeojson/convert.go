@@ -467,9 +467,9 @@ func (ctx *context) addMetaProperties(props geojson.Properties, e osm.Element) {
 		return
 	}
 
+	meta := make(map[string]interface{}, 5)
 	switch e := e.(type) {
 	case *osm.Node:
-		meta := make(map[string]interface{}, 5)
 		if !e.Timestamp.IsZero() {
 			meta["timestamp"] = e.Timestamp
 		}
@@ -489,10 +489,8 @@ func (ctx *context) addMetaProperties(props geojson.Properties, e osm.Element) {
 		if e.UserID != 0 {
 			meta["uid"] = e.UserID
 		}
-		props["meta"] = meta
 
 	case *osm.Way:
-		meta := make(map[string]interface{}, 5)
 		if !e.Timestamp.IsZero() {
 			meta["timestamp"] = e.Timestamp
 		}
@@ -512,10 +510,8 @@ func (ctx *context) addMetaProperties(props geojson.Properties, e osm.Element) {
 		if e.UserID != 0 {
 			meta["uid"] = e.UserID
 		}
-		props["meta"] = meta
 
 	case *osm.Relation:
-		meta := make(map[string]interface{}, 5)
 		if !e.Timestamp.IsZero() {
 			meta["timestamp"] = e.Timestamp
 		}
@@ -535,11 +531,12 @@ func (ctx *context) addMetaProperties(props geojson.Properties, e osm.Element) {
 		if e.UserID != 0 {
 			meta["uid"] = e.UserID
 		}
-		props["meta"] = meta
 
 	default:
 		panic("unsupported type")
 	}
+
+	props["meta"] = meta
 }
 
 func hasInterestingTags(tags osm.Tags, ignore map[string]string) bool {
