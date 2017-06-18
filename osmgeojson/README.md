@@ -59,12 +59,12 @@ These benchmarks are meant to show the performance impacts of the different opti
 They were run on a 2012 MacBook Air with a 2 ghz processor and 8 gigs of ram.
 
 ```
-BenchmarkConvert-4                     	   10000	2520891 ns/op	935697 B/op	   11299 allocs/op
-BenchmarkConvertAnnotated-4            	   10000	2196433 ns/op	853544 B/op	   11239 allocs/op
-BenchmarkConvert_NoID-4                	   10000	2310816 ns/op	913915 B/op	    9687 allocs/op
-BenchmarkConvert_NoMeta-4              	   10000	2026031 ns/op	716953 B/op	    7546 allocs/op
-BenchmarkConvert_NoRelationMembership-4	   10000	2397634 ns/op	912454 B/op	   10716 allocs/op
-BenchmarkConvert_NoIDsMetaMembership-4 	   20000	1718224 ns/op	671984 B/op	    5353 allocs/op
+BenchmarkConvert-4                        10000     2520891 ns/op     935697 B/op     11299 allocs/op
+BenchmarkConvertAnnotated-4               10000     2196433 ns/op     853544 B/op     11239 allocs/op
+BenchmarkConvert_NoID-4                   10000     2310816 ns/op     913915 B/op      9687 allocs/op
+BenchmarkConvert_NoMeta-4                 10000     2026031 ns/op     716953 B/op      7546 allocs/op
+BenchmarkConvert_NoRelationMembership-4   10000     2397634 ns/op     912454 B/op     10716 allocs/op
+BenchmarkConvert_NoIDsMetaMembership-4    20000     1718224 ns/op     671984 B/op      5353 allocs/op
 ```
 
 #### Similar libraries in other languages:
