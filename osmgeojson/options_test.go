@@ -77,7 +77,7 @@ func TestOptionNoID(t *testing.T) {
 			t.Errorf("id should be set: %v", v)
 		}
 
-		feature = convertXML(t, xml, NoID).Features[0]
+		feature = convertXML(t, xml, NoID(true)).Features[0]
 		if v := feature.ID; v != nil {
 			t.Errorf("id should be nil: %v", v)
 		}
@@ -103,7 +103,7 @@ func TestOptionNoMeta(t *testing.T) {
 			t.Errorf("meta should be set: %v", v)
 		}
 
-		feature = convertXML(t, xml, NoMeta).Features[0]
+		feature = convertXML(t, xml, NoMeta(true)).Features[0]
 		if v := feature.Properties["meta"]; v != nil {
 			t.Errorf("meta should be nil: %v", v)
 		}
@@ -129,7 +129,7 @@ func TestOptionNoRelationMembership(t *testing.T) {
 			t.Errorf("relations should be set: %v", v)
 		}
 
-		feature = convertXML(t, xml, NoRelationMembership).Features[0]
+		feature = convertXML(t, xml, NoRelationMembership(true)).Features[0]
 		if v := feature.Properties["relations"]; v != nil {
 			t.Errorf("relations should be nil: %v", v)
 		}

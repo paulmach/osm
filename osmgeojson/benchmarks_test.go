@@ -35,7 +35,7 @@ func BenchmarkConvert_NoID(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoID)
+		Convert(o, NoID(true))
 	}
 }
 
@@ -45,7 +45,7 @@ func BenchmarkConvert_NoMeta(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoMeta)
+		Convert(o, NoMeta(true))
 	}
 }
 
@@ -55,7 +55,7 @@ func BenchmarkConvert_NoRelationMembership(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoRelationMembership)
+		Convert(o, NoRelationMembership(true))
 	}
 }
 
@@ -65,7 +65,7 @@ func BenchmarkConvert_NoIDsMetaMembership(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoID, NoMeta, NoRelationMembership)
+		Convert(o, NoID(true), NoMeta(true), NoRelationMembership(true))
 	}
 }
 
