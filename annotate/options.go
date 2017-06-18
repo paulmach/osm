@@ -24,3 +24,14 @@ func IgnoreInconsistency(yes bool) Option {
 		return nil
 	}
 }
+
+// IgnoreMissingChildren will ignore children for which the datasource returns
+// datasource.ErrNotFound. This can be useful for partial history extracts where
+// there may be relations for which the way was not included, e.g. a relation has
+// a way inside the extract bounds and other ways outside the bounds.
+func IgnoreMissingChildren(yes bool) Option {
+	return func(o *core.Options) error {
+		o.IgnoreMissingChildren = yes
+		return nil
+	}
+}

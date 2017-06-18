@@ -72,6 +72,33 @@ func TestCompute(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
+func TestComputeMissingChildren(t *testing.T) {
+	histories := &Histories{}
+	histories.Set(child1, ChildList{
+		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+	})
+
+	parents := []Parent{
+		&testParent{
+			version: 0, visible: true,
+			timestamp: start.Add(0 * time.Hour),
+			refs:      osm.FeatureIDs{child1, osm.FeatureID{}},
+		},
+	}
+
+	_, err := Compute(parents, histories, time.Minute, &Options{IgnoreMissingChildren: true})
+	if err != nil {
+		t.Fatalf("compute error: %v", err)
+	}
+
+	expected := []ChildList{
+		{histories.Get(child1)[0]},
+		nil,
+	}
+
+	compareParents(t, parents, expected)
+}
+
 func TestComputeDeletedParent(t *testing.T) {
 	// Verifies behavior when a parent is deleted and then recreated.
 	// The last living parent needs to have updates up to the deleted time.

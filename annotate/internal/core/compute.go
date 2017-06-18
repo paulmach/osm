@@ -14,7 +14,8 @@ type parentChild struct {
 
 // Options allow for passing som parameters to the matching process.
 type Options struct {
-	IgnoreInconsistency bool
+	IgnoreInconsistency   bool
+	IgnoreMissingChildren bool
 }
 
 // Compute does two things: first it computes the exact version of
@@ -65,6 +66,10 @@ func Compute(
 			c := elementMap[parentChild{
 				ChildID:       fid,
 				ParentVersion: parent.Version()}]
+
+			if opts.IgnoreMissingChildren && histories.Get(fid) == nil {
+				continue
+			}
 
 			if nextParent == nil {
 				// No next parent version, so we need to include all
@@ -176,6 +181,10 @@ func setupMajorChildren(
 		for j, ref := range refs {
 			versions := histories.Get(ref)
 			if versions == nil {
+				if opts.IgnoreMissingChildren {
+					continue
+				}
+
 				return nil, &NoHistoryError{ChildID: ref}
 			}
 
