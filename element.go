@@ -20,6 +20,14 @@ type ElementID struct {
 	Version int
 }
 
+// FeatureID returns the feature id for the element id. i.e removing the version.
+func (e ElementID) FeatureID() FeatureID {
+	return FeatureID{
+		Type: e.Type,
+		Ref:  e.Ref,
+	}
+}
+
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
 func (e ElementID) NodeID() NodeID {
@@ -136,6 +144,24 @@ func (es elementsSort) Less(i, j int) bool {
 
 // ElementIDs is a list of element ids with helper functions on top.
 type ElementIDs []ElementID
+
+// Counts returns the number of each type of element in the set of ids.
+func (ids ElementIDs) Counts() (nodes, ways, relations, changesets int) {
+	for _, id := range ids {
+		switch id.Type {
+		case TypeNode:
+			nodes++
+		case TypeWay:
+			ways++
+		case TypeRelation:
+			relations++
+		case TypeChangeset:
+			changesets++
+		}
+	}
+
+	return
+}
 
 type elementIDsSort ElementIDs
 

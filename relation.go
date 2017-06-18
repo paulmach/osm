@@ -192,6 +192,26 @@ func (ms Members) MarshalJSON() ([]byte, error) {
 // Relations is a list of relations with some helper functions attached.
 type Relations []*Relation
 
+// FeatureIDs returns the feature ids for all the relations.
+func (rs Relations) FeatureIDs() FeatureIDs {
+	result := make(FeatureIDs, len(rs))
+	for i, r := range rs {
+		result[i] = r.FeatureID()
+	}
+
+	return result
+}
+
+// ElementIDs returns the element ids for all the relations.
+func (rs Relations) ElementIDs() ElementIDs {
+	result := make(ElementIDs, len(rs))
+	for i, r := range rs {
+		result[i] = r.ElementID()
+	}
+
+	return result
+}
+
 // Marshal encodes the relations using protocol buffers.
 func (rs Relations) Marshal() ([]byte, error) {
 	o := OSM{

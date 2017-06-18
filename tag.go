@@ -33,7 +33,6 @@ func (ts Tags) Map() map[string]string {
 	result := make(map[string]string, len(ts))
 	for _, t := range ts {
 		result[t.Key] = t.Value
-
 	}
 
 	return result

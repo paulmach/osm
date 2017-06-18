@@ -90,6 +90,24 @@ func (es Elements) FeatureIDs() FeatureIDs {
 	return ids
 }
 
+// Counts returns the number of each type of feature in the set of ids.
+func (ids FeatureIDs) Counts() (nodes, ways, relations, changesets int) {
+	for _, id := range ids {
+		switch id.Type {
+		case TypeNode:
+			nodes++
+		case TypeWay:
+			ways++
+		case TypeRelation:
+			relations++
+		case TypeChangeset:
+			changesets++
+		}
+	}
+
+	return
+}
+
 type featureIDsSort FeatureIDs
 
 // Sort will order the ids by type, node, way, relation, changeset,
