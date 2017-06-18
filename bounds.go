@@ -40,9 +40,7 @@ func NewBoundsFromTile(x, y, z uint64) (*Bounds, error) {
 }
 
 func scalarInverse(x, y, level uint64) (lng, lat float64) {
-	var factor uint64
-
-	factor = 1 << level
+	factor := uint64(1 << level)
 	maxtiles := float64(factor)
 
 	lng = 360.0 * (float64(x)/maxtiles - 0.5)

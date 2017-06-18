@@ -190,6 +190,10 @@ func (r *parentRelation) SetChildren(list core.ChildList) {
 		case *childWay:
 			r.Relation.Members[i].Version = t.Way.Version
 			r.Relation.Members[i].ChangesetID = t.Way.ChangesetID
+
+			sp := wayPointOnSurface(t.Way)
+			r.Relation.Members[i].Lat = sp.Lat()
+			r.Relation.Members[i].Lon = sp.Lon()
 		case *childRelation:
 			r.Relation.Members[i].Version = t.Relation.Version
 			r.Relation.Members[i].ChangesetID = t.Relation.ChangesetID
