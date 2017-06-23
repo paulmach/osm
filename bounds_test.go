@@ -12,7 +12,7 @@ func TestNewBoundFromTile(t *testing.T) {
 	for i := -1; i <= 1; i++ {
 		for j := -1; j <= 1; j++ {
 			t.Run(fmt.Sprintf("i %d j %d", i, j), func(t *testing.T) {
-				n := centroid(mustBounds(t, uint64(7+i), uint64(8+j), 9))
+				n := centroid(mustBounds(t, uint32(7+i), uint32(8+j), 9))
 				if i == 0 && j == 0 {
 					if !bounds.ContainsNode(n) {
 						t.Errorf("should contain point")
@@ -49,7 +49,7 @@ func TestBoundsContainsNode(t *testing.T) {
 	}
 }
 
-func mustBounds(t *testing.T, x, y, z uint64) *Bounds {
+func mustBounds(t *testing.T, x, y, z uint32) *Bounds {
 	bounds, err := NewBoundsFromTile(x, y, z)
 	if err != nil {
 		t.Fatalf("invalid bounds: %v", err)
