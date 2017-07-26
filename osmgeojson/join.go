@@ -6,6 +6,7 @@ import "github.com/paulmach/orb/geo"
 // It will reverse lines if necessary.
 func joinLineStrings(lines []geo.LineString) []geo.LineString {
 	groups := []geo.MultiLineString{}
+	lines = compact(lines)
 
 	// matches are removed from `lines` and put into the current
 	// group, so when `lines` is empty we're done.
@@ -107,4 +108,19 @@ func first(ml geo.MultiLineString) geo.Point {
 func last(ml geo.MultiLineString) geo.Point {
 	l := ml[len(ml)-1]
 	return l[len(l)-1]
+}
+
+func compact(lines []geo.LineString) []geo.LineString {
+	at := 0
+
+	for _, l := range lines {
+		if len(l) <= 1 {
+			continue
+		}
+
+		lines[at] = l
+		at++
+	}
+
+	return lines[:at]
 }

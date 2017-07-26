@@ -330,10 +330,6 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		way := ctx.wayMap[osm.WayID(m.Ref)]
 		if way == nil {
 			tainted = true
-			if m.Role == "outer" && m.Lon != 0 && m.Lat != 0 {
-				// if we have an annotated member try to maintain the "shape".
-				outer = append(outer, geo.LineString{m.Point()})
-			}
 			continue
 		}
 

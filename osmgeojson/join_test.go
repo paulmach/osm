@@ -78,8 +78,96 @@ func TestJoinLineString(t *testing.T) {
 				},
 			},
 		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := joinLineStrings(tc.input)
+			if len(result) != len(tc.output) {
+				t.Fatalf("not matching lines: %v != %v", len(result), len(tc.output))
+			}
+
+			for i, l := range result {
+				if !l.Equal(tc.output[i]) {
+					t.Errorf("line %d did not match", i)
+					t.Logf("%v", l)
+					t.Logf("%v", tc.output[i])
+				}
+			}
+		})
+	}
+}
+
+func TestJoinLineString_SinglePointLine(t *testing.T) {
+	cases := []struct {
+		name   string
+		input  []geo.LineString
+		output []geo.LineString
+	}{
 		{
-			name: "dangling line",
+			name: "single point line, first",
+			input: []geo.LineString{
+				{
+					geo.NewPoint(1, 1),
+				},
+				{
+					geo.NewPoint(0, 0),
+					geo.NewPoint(1, 1),
+				},
+			},
+			output: []geo.LineString{
+				{
+					geo.NewPoint(0, 0),
+					geo.NewPoint(1, 1),
+				},
+			},
+		},
+		{
+			name: "single point line, last",
+			input: []geo.LineString{
+				{
+					geo.NewPoint(1, 1),
+					geo.NewPoint(0, 0),
+				},
+				{
+					geo.NewPoint(1, 1),
+				},
+			},
+			output: []geo.LineString{
+				{
+					geo.NewPoint(1, 1),
+					geo.NewPoint(0, 0),
+				},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := joinLineStrings(tc.input)
+			if len(result) != len(tc.output) {
+				t.Fatalf("not matching lines: %v != %v", len(result), len(tc.output))
+			}
+
+			for i, l := range result {
+				if !l.Equal(tc.output[i]) {
+					t.Errorf("line %d did not match", i)
+					t.Logf("%v", l)
+					t.Logf("%v", tc.output[i])
+				}
+			}
+		})
+	}
+}
+
+func TestJoinLineString_DanglingLine(t *testing.T) {
+	cases := []struct {
+		name   string
+		input  []geo.LineString
+		output []geo.LineString
+	}{
+		{
+			name: "dangling line, last",
 			input: []geo.LineString{
 				{
 					geo.NewPoint(0, 0),
@@ -106,6 +194,62 @@ func TestJoinLineString(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "dangling line, middle",
+			input: []geo.LineString{
+				{
+					geo.NewPoint(0, 0),
+					geo.NewPoint(1, 1),
+				},
+				{
+					geo.NewPoint(3, 3),
+					geo.NewPoint(4, 4),
+				},
+				{
+					geo.NewPoint(2, 2),
+					geo.NewPoint(1, 1),
+				},
+			},
+			output: []geo.LineString{
+				{
+					geo.NewPoint(2, 2),
+					geo.NewPoint(1, 1),
+					geo.NewPoint(0, 0),
+				},
+				{
+					geo.NewPoint(3, 3),
+					geo.NewPoint(4, 4),
+				},
+			},
+		},
+		{
+			name: "dangling line, first",
+			input: []geo.LineString{
+				{
+					geo.NewPoint(3, 3),
+					geo.NewPoint(4, 4),
+				},
+				{
+					geo.NewPoint(0, 0),
+					geo.NewPoint(1, 1),
+				},
+				{
+					geo.NewPoint(2, 2),
+					geo.NewPoint(1, 1),
+				},
+			},
+			output: []geo.LineString{
+				{
+					geo.NewPoint(2, 2),
+					geo.NewPoint(1, 1),
+					geo.NewPoint(0, 0),
+				},
+				{
+					geo.NewPoint(3, 3),
+					geo.NewPoint(4, 4),
+				},
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -124,7 +268,6 @@ func TestJoinLineString(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func TestMerge(t *testing.T) {
@@ -202,5 +345,4 @@ func TestMerge(t *testing.T) {
 			}
 		})
 	}
-
 }
