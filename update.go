@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/paulmach/go.osm/internal/osmpb"
+	"github.com/paulmach/osm/internal/osmpb"
 )
 
 // CommitInfoStart is the start time when we know committed at information.

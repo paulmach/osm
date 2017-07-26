@@ -1,6 +1,6 @@
 package osmtest
 
-import osm "github.com/paulmach/go.osm"
+import "github.com/paulmach/osm"
 
 // Scanner implements the osm.Scanner interface with
 // just a list of elements.

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 // Way returns the latest version of the way from the osm rest api.

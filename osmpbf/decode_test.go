@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 const (

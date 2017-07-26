@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/go.osm/internal/osmpb"
+	"github.com/paulmach/osm/internal/osmpb"
 )
 
 // These values should be returned if the osm data is actual

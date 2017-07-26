@@ -1,8 +1,6 @@
 package osmpbf
 
-import (
-	osm "github.com/paulmach/go.osm"
-)
+import "github.com/paulmach/osm"
 
 func extractTags(stringTable []string, keyIDs, valueIDs []uint32) osm.Tags {
 	if len(keyIDs) == 0 {

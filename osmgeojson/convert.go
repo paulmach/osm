@@ -3,10 +3,10 @@ package osmgeojson
 import (
 	"fmt"
 
-	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
 	"github.com/paulmach/orb/geo/geojson"
+	"github.com/paulmach/osm"
 )
 
 var uninterestingTags = map[string]bool{

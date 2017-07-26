@@ -53,7 +53,7 @@ func TestOSMMarshal(t *testing.T) {
 func TestOSMMarshalJSON(t *testing.T) {
 	o := &OSM{
 		Version:   0.6,
-		Generator: "go.osm",
+		Generator: "osm-go",
 		Nodes: Nodes{
 			&Node{ID: 123},
 		},
@@ -73,7 +73,7 @@ func TestOSMMarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"version":0.6,"generator":"go.osm","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false}]}`)) {
+	if !bytes.Equal(data, []byte(`{"version":0.6,"generator":"osm-go","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false}]}`)) {
 		t.Errorf("incorrect json: %v", string(data))
 	}
 }
@@ -81,7 +81,7 @@ func TestOSMMarshalJSON(t *testing.T) {
 func TestOSMMarshalXML(t *testing.T) {
 	o := &OSM{
 		Version:     0.7,
-		Generator:   "go.osm-test",
+		Generator:   "osm-go-test",
 		Copyright:   "copyright1",
 		Attribution: "attribution1",
 		License:     "license1",
@@ -95,7 +95,7 @@ func TestOSMMarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<osm version="0.7" generator="go.osm-test" copyright="copyright1" attribution="attribution1" license="license1"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
+	expected := `<osm version="0.7" generator="osm-go-test" copyright="copyright1" attribution="attribution1" license="license1"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
 
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))

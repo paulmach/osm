@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"io"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 var _ osm.Scanner = &Scanner{}

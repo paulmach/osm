@@ -3,7 +3,7 @@ package annotate
 import (
 	"context"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 // A NodeDatasource defines where node child history data comes from.

@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
-	"golang.org/x/time/rate"
+	"github.com/paulmach/osm"
 
-	osm "github.com/paulmach/go.osm"
+	"golang.org/x/time/rate"
 )
 
 var _ RateLimiter = &rate.Limiter{}

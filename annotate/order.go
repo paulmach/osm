@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 // A ChildFirstOrdering is a struct that allows for a set of relations to be

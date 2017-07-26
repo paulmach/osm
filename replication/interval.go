@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 // MinuteSeqStart is the beginning of valid minutely sequence data.

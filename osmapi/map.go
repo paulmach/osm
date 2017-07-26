@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 // Map returns the latest elements in the given bounding box.

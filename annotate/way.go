@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	osm "github.com/paulmach/go.osm"
-	"github.com/paulmach/go.osm/annotate/internal/core"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/internal/core"
 )
 
 // Ways computes the updates for the given ways

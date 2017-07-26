@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/go.osm/internal/osmpb"
 	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/osm/internal/osmpb"
 )
 
 // NodeID corresponds the primary key of a node.

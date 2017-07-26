@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	osm "github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 type parentChild struct {

@@ -1,6 +1,6 @@
 package core
 
-import osm "github.com/paulmach/go.osm"
+import "github.com/paulmach/osm"
 
 // Histories is a container for element history data.
 // It simplifies access by abstracting the clearing of

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/go.osm/internal/osmpb"
+	"github.com/paulmach/osm/internal/osmpb"
 )
 
 // Change is the structure of a changeset to be

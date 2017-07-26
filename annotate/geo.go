@@ -3,8 +3,8 @@ package annotate
 import (
 	"math"
 
-	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/osm"
 )
 
 func wayPointOnSurface(w *osm.Way) geo.Point {

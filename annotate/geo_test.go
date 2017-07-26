@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 	"testing"
 
-	osm "github.com/paulmach/go.osm"
 	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/osm"
 )
 
 func TestWayPointOnSurface(t *testing.T) {

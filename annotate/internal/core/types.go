@@ -3,7 +3,7 @@ package core
 import (
 	"time"
 
-	"github.com/paulmach/go.osm"
+	"github.com/paulmach/osm"
 )
 
 // A Parent is something that holds children. ie. ways have nodes as children

@@ -1,4 +1,4 @@
-go.osm/osmgeojson [![Godoc Reference](https://godoc.org/github.com/paulmach/go.osm/osmgeojson?status.png)](https://godoc.org/github.com/paulmach/go.osm/osmgeojson)
+osm/osmgeojson [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/osmgeojson?status.png)](https://godoc.org/github.com/paulmach/osm/osmgeojson)
 =================
 
 Package `osmgeojson` converts OSM data to GeoJSON. It is a **full** port of the

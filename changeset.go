@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/go.osm/internal/osmpb"
+	"github.com/paulmach/osm/internal/osmpb"
 )
 
 // ChangesetID is the primary key for a osm changeset.
