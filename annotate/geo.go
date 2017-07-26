@@ -18,6 +18,7 @@ func wayPointOnSurface(w *osm.Way) geo.Point {
 		d := centroid.DistanceFrom(n.Point())
 		if d < min {
 			index = i
+			min = d
 		}
 	}
 
