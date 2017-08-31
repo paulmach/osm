@@ -4,7 +4,7 @@ package osmgeojson
 type Option func(*context) error
 
 // NoID will omit setting the geojson feature.ID
-var NoID = func(yes bool) Option {
+func NoID(yes bool) Option {
 	return func(ctx *context) error {
 		ctx.noID = yes
 		return nil
@@ -13,7 +13,7 @@ var NoID = func(yes bool) Option {
 
 // NoMeta will omit the meta (timestamp, user, changeset, etc) info
 // from the output geojson feature properties.
-var NoMeta = func(yes bool) Option {
+func NoMeta(yes bool) Option {
 	return func(ctx *context) error {
 		ctx.noMeta = yes
 		return nil
@@ -22,7 +22,7 @@ var NoMeta = func(yes bool) Option {
 
 // NoRelationMembership will omit the the list of relations
 // an element is a member of from the output geojson features.
-var NoRelationMembership = func(yes bool) Option {
+func NoRelationMembership(yes bool) Option {
 	return func(ctx *context) error {
 		ctx.noRelationMembership = yes
 		return nil
