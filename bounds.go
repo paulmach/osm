@@ -24,7 +24,7 @@ func NewBoundsFromTile(x, y, z uint32) (*Bounds, error) {
 		return nil, errors.New("osm: y index out of range for this zoom")
 	}
 
-	b := tile.Tile{X: x, Y: y, Z: z}.GeoBound()
+	b := tile.Tile{X: x, Y: y, Z: z}.Bound()
 
 	return &Bounds{
 		MinLat: b[0].Lat(),
