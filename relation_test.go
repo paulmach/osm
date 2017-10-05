@@ -26,7 +26,7 @@ func TestRelationMarshalJSON(t *testing.T) {
 	// with members
 	r = Relation{
 		ID:      123,
-		Members: []Member{{Type: "node", Ref: 123, Role: "outer", Version: 1}},
+		Members: Members{{Type: "node", Ref: 123, Role: "outer", Version: 1}},
 	}
 
 	data, err = json.Marshal(r)
@@ -42,7 +42,7 @@ func TestRelationMarshalJSON(t *testing.T) {
 func TestRelationApplyUpdatesUpTo(t *testing.T) {
 	r := Relation{
 		ID:      123,
-		Members: []Member{{Version: 1}, {Version: 2}, {Version: 3}},
+		Members: Members{{Version: 1}, {Version: 2}, {Version: 3}},
 		Updates: Updates{
 			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Version: 11},
 			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Version: 12},
@@ -72,7 +72,7 @@ func TestRelationApplyUpdatesUpTo(t *testing.T) {
 func TestRelationApplyUpdate(t *testing.T) {
 	r := Relation{
 		ID:      123,
-		Members: []Member{{Ref: 1, Type: TypeNode}},
+		Members: Members{{Ref: 1, Type: TypeNode}},
 	}
 
 	err := r.applyUpdate(Update{
@@ -91,7 +91,7 @@ func TestRelationApplyUpdate(t *testing.T) {
 		ChangesetID: 2,
 	}
 
-	if expected != r.Members[0] {
+	if !reflect.DeepEqual(r.Members[0], expected) {
 		t.Errorf("incorrect update, got %v", r.Members[0])
 	}
 }
@@ -99,7 +99,7 @@ func TestRelationApplyUpdate(t *testing.T) {
 func TestRelationApplyUpdateError(t *testing.T) {
 	r := Relation{
 		ID:      123,
-		Members: []Member{{Ref: 1, Type: TypeNode}},
+		Members: Members{{Ref: 1, Type: TypeNode}},
 	}
 
 	err := r.applyUpdate(Update{
@@ -131,7 +131,7 @@ func TestRelationMarshalXML(t *testing.T) {
 	}
 
 	// members
-	r.Members = []Member{{Type: "node", Ref: 123, Role: "child"}}
+	r.Members = Members{{Type: "node", Ref: 123, Role: "child"}}
 	data, err = xml.Marshal(r)
 	if err != nil {
 		t.Fatalf("xml marshal error: %v", err)

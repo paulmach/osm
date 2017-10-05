@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gogo/protobuf/proto"
+	"github.com/paulmach/orb"
 	"github.com/paulmach/osm/internal/osmpb"
 )
 
@@ -475,12 +476,12 @@ func decodeMembers(
 	roles []uint32,
 	refs []int64,
 	types []osmpb.Relation_MemberType,
-) []Member {
+) Members {
 	if len(roles) == 0 {
 		return nil
 	}
 
-	result := make([]Member, len(roles))
+	result := make(Members, len(roles))
 	decodeInt64(refs)
 	for i := range roles {
 		result[i].Role = ss[roles[i]]
@@ -491,17 +492,19 @@ func decodeMembers(
 	return result
 }
 
-func encodeDenseMembers(members []Member) *osmpb.DenseMembers {
+func encodeDenseMembers(members Members) *osmpb.DenseMembers {
 	l := len(members)
 	versions := make([]int32, l)
 	changesetIDs := make([]int64, l)
+	orientations := make([]int32, l)
 	lats := make([]int64, l)
 	lons := make([]int64, l)
 
-	nodes := 0
+	locCount := 0
+	orientCount := 0
 	for i, m := range members {
-		if m.Type == TypeNode {
-			nodes++
+		if m.Lat != 0 || m.Lon != 0 {
+			locCount++
 		}
 
 		lats[i] = geoToInt64(m.Lat)
@@ -509,6 +512,11 @@ func encodeDenseMembers(members []Member) *osmpb.DenseMembers {
 
 		versions[i] = int32(m.Version)
 		changesetIDs[i] = int64(m.ChangesetID)
+
+		if m.Orientation != 0 {
+			orientations[i] = int32(m.Orientation)
+			orientCount++
+		}
 	}
 
 	result := &osmpb.DenseMembers{
@@ -516,15 +524,19 @@ func encodeDenseMembers(members []Member) *osmpb.DenseMembers {
 		ChangesetIds: encodeInt64(changesetIDs),
 	}
 
-	if nodes > 0 {
+	if locCount > 0 {
 		result.Lats = encodeInt64(lats)
 		result.Lons = encodeInt64(lons)
+	}
+
+	if orientCount > 0 {
+		result.Orientation = orientations
 	}
 
 	return result
 }
 
-func decodeDenseMembers(members []Member, encoded *osmpb.DenseMembers) {
+func decodeDenseMembers(members Members, encoded *osmpb.DenseMembers) {
 	if encoded == nil || len(encoded.Versions) == 0 {
 		return
 	}
@@ -536,6 +548,10 @@ func decodeDenseMembers(members []Member, encoded *osmpb.DenseMembers) {
 	for i := range encoded.Versions {
 		members[i].Version = int(encoded.Versions[i])
 		members[i].ChangesetID = ChangesetID(encoded.ChangesetIds[i])
+
+		if encoded.Orientation != nil {
+			members[i].Orientation = orb.Orientation(encoded.Orientation[i])
+		}
 
 		if encoded.Lats != nil {
 			members[i].Lat = float64(encoded.Lats[i]) / locMultiple

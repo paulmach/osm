@@ -183,10 +183,6 @@ message Relation {
 
   optional Info info = 4;
 
-  // Only one of the next two sets must be included.
-  // roles+refs+types are simple values. If there is more info,
-  // versions and changeset ids will be encoded as DenseMembers.
-
   // Parallel arrays
   // Roles has been changed int32 -> uint32 form the osm proto,
   // this is for consistency and backwards compatible.
@@ -194,6 +190,7 @@ message Relation {
   repeated sint64 refs = 9 [packed = true]; // DELTA encoded
   repeated MemberType types = 10 [packed = true];
 
+  // DenseMembers includes annotated information about the members
   optional DenseMembers dense_members = 11;
 
   // updates are changes to members that did not happen
@@ -206,6 +203,7 @@ message DenseMembers {
   repeated int32 versions = 2 [packed = true];
   repeated sint64 timestamps = 3 [packed = true]; // DELTA coded
   repeated sint64 changeset_ids = 4 [packed = true]; // DELTA coded
+  repeated sint32 orientation = 5 [packed=true];
 
   // included if some of the members are nodes
   repeated sint64 lats = 8 [packed = true]; // DELTA coded

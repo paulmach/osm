@@ -5,6 +5,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
 )
 
@@ -68,10 +69,15 @@ type Member struct {
 
 	Version     int         `xml:"version,attr,omitempty" json:"version,omitempty"`
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
-
-	// invalid unless the Type == NodeType
+	// Node location if Type == Node
+	// Closest vertex to centroid if Type == Way
+	// Empty/invalid if Type == Relation
 	Lat float64 `xml:"lat,attr,omitempty" json:"lat,omitempty"`
 	Lon float64 `xml:"lon,attr,omitempty" json:"lon,omitempty"`
+
+	// Orientation is the direction of the way around a ring of a multipolygon.
+	// Only valid for multipolygon or boundary relations.
+	Orientation orb.Orientation `xml:"orienation,omitempty" json:"orienation,omitempty"`
 }
 
 // FeatureID returns the feature id of the relation.

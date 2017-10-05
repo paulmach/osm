@@ -11,241 +11,130 @@ import (
 	"time"
 )
 
-func TestProtobufNode(t *testing.T) {
+func TestMarshal_Node(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	n1 := c.Create.Nodes[12]
+	n := c.Create.Nodes[12]
 
 	// verify it's a good test
-	if len(n1.Tags) == 0 {
+	if len(n.Tags) == 0 {
 		t.Fatalf("test should have some tags")
 	}
 
-	ss := &stringSet{}
-	pbnode := marshalNode(n1, ss, true)
+	o := &OSM{}
+	o.Append(n)
 
-	n2, err := unmarshalNode(pbnode, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(n1, n2) {
-		t.Errorf("nodes are not equal")
-		t.Logf("%+v", n1)
-		t.Logf("%+v", n2)
-	}
+	checkMarshal(t, o)
 
 	// with committed at
 	tp := time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC)
-	n1.Committed = &tp
+	o.Nodes[0].Committed = &tp
 
-	ss = &stringSet{}
-	pbnode = marshalNode(n1, ss, true)
-
-	n2, err = unmarshalNode(pbnode, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(n1, n2) {
-		t.Errorf("nodes are not equal")
-		t.Logf("%+v", n1)
-		t.Logf("%+v", n2)
-	}
+	checkMarshal(t, o)
 }
 
-func TestProtobufNodeRoundoff(t *testing.T) {
+func TestMarshal_NodeRoundoff(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	n1 := c.Create.Nodes[194]
+	n := c.Create.Nodes[194]
 
-	ss := &stringSet{}
-	pbnode := marshalNode(n1, ss, true)
+	o := &OSM{}
+	o.Append(n)
 
-	n2, err := unmarshalNode(pbnode, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(n1, n2) {
-		t.Errorf("nodes are not equal")
-		t.Logf("%+v", n1)
-		t.Logf("%+v", n2)
-	}
+	checkMarshal(t, o)
 }
 
-func TestProtobufNodes(t *testing.T) {
+func TestMarshal_Nodes(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
 	ns1 := c.Create.Nodes
 
-	ss := &stringSet{}
-	pbnodes := marshalNodes(ns1, ss, true)
-
-	ns2, err := unmarshalNodes(pbnodes, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if len(ns1) != len(ns2) {
-		t.Fatalf("different number of nodes: %d != %d", len(ns1), len(ns2))
-	}
-
-	for i := range ns1 {
-		ns1[i].XMLName = xmlNameJSONTypeNode{}
-		ns2[i].XMLName = xmlNameJSONTypeNode{}
-		if !reflect.DeepEqual(ns1[i], ns2[i]) {
-			t.Errorf("nodes %d are not equal", i)
-			t.Logf("%+v", ns1[i])
-			t.Logf("%+v", ns2[i])
-		}
-	}
+	o := &OSM{Nodes: ns1}
+	checkMarshal(t, o)
 
 	// nodes with no tags
-	for _, n := range ns1 {
+	for _, n := range o.Nodes {
 		n.Tags = nil
 	}
 
-	ss = &stringSet{}
-	pbnodes = marshalNodes(ns1, ss, true)
-
-	ns2, err = unmarshalNodes(pbnodes, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if len(ns1) != len(ns2) {
-		t.Fatalf("different number of nodes: %d != %d", len(ns1), len(ns2))
-	}
-
-	for i := range ns1 {
-		ns1[i].XMLName = xmlNameJSONTypeNode{}
-		ns2[i].XMLName = xmlNameJSONTypeNode{}
-		if !reflect.DeepEqual(ns1[i], ns2[i]) {
-			t.Errorf("nodes %d are not equal", i)
-			t.Logf("%+v", ns1[i])
-			t.Logf("%+v", ns2[i])
-		}
-	}
+	checkMarshal(t, o)
 }
 
-func TestProtobufWay(t *testing.T) {
+func TestMarshal_Way(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
-	w1 := c.Create.Ways[5]
+	w := c.Create.Ways[5]
 
 	// verify it's a good test
-	if len(w1.Tags) == 0 {
+	if len(w.Tags) == 0 {
 		t.Fatalf("test should have some tags")
 	}
 
-	ss := &stringSet{}
-	pbway := marshalWay(w1, ss, true)
+	o := &OSM{}
+	o.Append(w)
 
-	w2, err := unmarshalWay(pbway, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(w1, w2) {
-		t.Errorf("ways are not equal")
-		t.Logf("%+v", w1)
-		t.Logf("%+v", w2)
-	}
+	checkMarshal(t, o)
 }
 
-func TestProtobufWayUpdates(t *testing.T) {
+func TestMarshal_WayUpdates(t *testing.T) {
 	o := loadOSM(t, "testdata/way-updates.osm")
-	w1 := o.Ways[0]
+	checkMarshal(t, o)
 
-	ss := &stringSet{}
-	pbway := marshalWay(w1, ss, true)
-
-	w2, err := unmarshalWay(pbway, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(w1, w2) {
-		t.Errorf("ways are not equal")
-		t.Logf("%+v", w1)
-		t.Logf("%+v", w2)
-	}
-
-	// with no minor nodes
-	w1.Updates = nil
-	w1.Updates = nil
-
-	ss = &stringSet{}
-	pbway = marshalWay(w1, ss, true)
-
-	w2, err = unmarshalWay(pbway, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(w1, w2) {
-		t.Errorf("ways are not equal")
-		t.Logf("%+v", w1)
-		t.Logf("%+v", w2)
-	}
+	// with no updates
+	o.Ways[0].Updates = nil
+	checkMarshal(t, o)
 }
 
-func TestProtobufRelation(t *testing.T) {
+func TestMarshal_Relation(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
-	r1 := c.Create.Relations[0]
+	r := c.Create.Relations[0]
 
 	// verify it's a good test
-	if len(r1.Tags) == 0 {
+	if len(r.Tags) == 0 {
 		t.Fatalf("test should have some tags")
 	}
 
-	ss := &stringSet{}
-	pbrelation := marshalRelation(r1, ss, true)
+	o := &OSM{}
+	o.Append(r)
 
-	r2, err := unmarshalRelation(pbrelation, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(r1, r2) {
-		t.Errorf("relations are not equal")
-		t.Logf("%+v", r1)
-		t.Logf("%+v", r2)
-	}
+	checkMarshal(t, o)
 }
 
-func TestProtobufRelationUpdates(t *testing.T) {
+func TestMarshal_RelationUpdates(t *testing.T) {
 	o := loadOSM(t, "testdata/relation-updates.osm")
-	r1 := o.Relations[0]
+	checkMarshal(t, o)
 
-	ss := &stringSet{}
-	pbrelation := marshalRelation(r1, ss, true)
+	// with no updates
+	o.Relations[0].Updates = nil
+	checkMarshal(t, o)
+}
 
-	r2, err := unmarshalRelation(pbrelation, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
+func TestMarshal_RelationMemberLocation(t *testing.T) {
+	o := &OSM{
+		Relations: Relations{
+			{
+				ID: 123,
+				Members: Members{
+					{Type: TypeNode, Ref: 1, Version: 2, Lat: 3, Lon: 4},
+					{Type: TypeWay, Ref: 2, Version: 3, Lat: 4, Lon: 5},
+				},
+			},
+		},
 	}
 
-	if !reflect.DeepEqual(r1, r2) {
-		t.Errorf("relations are not equal")
-		t.Logf("%+v", r1)
-		t.Logf("%+v", r2)
+	checkMarshal(t, o)
+}
+
+func TestProtobufRelation_Orientation(t *testing.T) {
+	o := &OSM{
+		Relations: Relations{
+			{
+				ID: 123,
+				Members: Members{
+					{Type: TypeNode, Ref: 1, Version: 2, Orientation: 1},
+					{Type: TypeWay, Ref: 2, Version: 3, Orientation: 2},
+				},
+			},
+		},
 	}
 
-	// with no minor members
-	r1.Updates = nil
-	r1.Updates = nil
-
-	ss = &stringSet{}
-	pbrelation = marshalRelation(r1, ss, true)
-
-	r2, err = unmarshalRelation(pbrelation, ss.Strings(), nil)
-	if err != nil {
-		t.Fatalf("unable to unmarshal: %v", err)
-	}
-
-	if !reflect.DeepEqual(r1, r2) {
-		t.Errorf("relations are not equal")
-		t.Logf("%+v", r1)
-		t.Logf("%+v", r2)
-	}
+	checkMarshal(t, o)
 }
 
 func BenchmarkMarshalXML(b *testing.B) {
@@ -455,4 +344,69 @@ func readFile(t testing.TB, filename string) []byte {
 	}
 
 	return data
+}
+
+func checkMarshal(t testing.TB, o1 *OSM) *OSM {
+	t.Helper()
+
+	data, err := o1.Marshal()
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	o2, err := UnmarshalOSM(data)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
+
+	if !reflect.DeepEqual(o1, o2) {
+		t.Errorf("results not equal")
+
+		// verify nodes
+		ns1 := o1.Nodes
+		ns2 := o2.Nodes
+		if len(ns1) != len(ns2) {
+			t.Fatalf("different number of nodes: %d != %d", len(ns1), len(ns2))
+		}
+
+		for i := range ns1 {
+			if !reflect.DeepEqual(ns1[i], ns2[i]) {
+				t.Errorf("nodes %d are not equal", i)
+				t.Logf("%+v", ns1[i])
+				t.Logf("%+v", ns2[i])
+			}
+		}
+
+		// verify ways
+		ws1 := o1.Ways
+		ws2 := o2.Ways
+		if len(ws1) != len(ws2) {
+			t.Fatalf("different number of ways: %d != %d", len(ws1), len(ws2))
+		}
+
+		for i := range ws1 {
+			if !reflect.DeepEqual(ws1[i], ws2[i]) {
+				t.Errorf("ways %d are not equal", i)
+				t.Logf("%+v", ws1[i])
+				t.Logf("%+v", ws2[i])
+			}
+		}
+
+		// verify relations
+		rs1 := o1.Relations
+		rs2 := o2.Relations
+		if len(rs1) != len(rs2) {
+			t.Fatalf("different number of ways: %d != %d", len(rs1), len(rs2))
+		}
+
+		for i := range ws1 {
+			if !reflect.DeepEqual(rs1[i], rs2[i]) {
+				t.Errorf("relations %d are not equal", i)
+				t.Logf("%+v", rs1[i])
+				t.Logf("%+v", rs2[i])
+			}
+		}
+	}
+
+	return o2
 }
