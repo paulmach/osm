@@ -130,6 +130,9 @@ func TestProtobufRelation_Orientation(t *testing.T) {
 					{Type: TypeNode, Ref: 1, Version: 2, Orientation: 1},
 					{Type: TypeWay, Ref: 2, Version: 3, Orientation: 2},
 				},
+				Updates: Updates{
+					{Index: 0, Reverse: true},
+				},
 			},
 		},
 	}

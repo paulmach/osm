@@ -171,6 +171,10 @@ func (r *Relation) applyUpdate(u Update) error {
 	r.Members[u.Index].Lat = u.Lat
 	r.Members[u.Index].Lon = u.Lon
 
+	if u.Reverse {
+		r.Members[u.Index].Orientation *= -1
+	}
+
 	return nil
 }
 

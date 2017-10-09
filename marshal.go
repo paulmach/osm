@@ -186,6 +186,7 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 			Timestamp: timeToUnix(way.Timestamp),
 			Visible:   proto.Bool(way.Visible),
 		},
+		Updates: marshalUpdates(way.Updates),
 	}
 
 	if way.Committed != nil {
@@ -199,8 +200,6 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 			encoded.DenseMembers = encodeDenseWayNodes(way.Nodes)
 		}
 	}
-
-	encoded.Updates = marshalUpdates(way.Updates, true)
 
 	if includeChangeset {
 		encoded.Info.ChangesetId = int64(way.ChangesetID)
@@ -266,9 +265,10 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 			Timestamp: timeToUnix(relation.Timestamp),
 			Visible:   proto.Bool(relation.Visible),
 		},
-		Roles: roles,
-		Refs:  encodeInt64(refs),
-		Types: types,
+		Roles:   roles,
+		Refs:    encodeInt64(refs),
+		Types:   types,
+		Updates: marshalUpdates(relation.Updates),
 	}
 
 	if relation.Committed != nil {
@@ -278,8 +278,6 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 	if len(relation.Members) > 0 && relation.Members[0].Version != 0 {
 		encoded.DenseMembers = encodeDenseMembers(relation.Members)
 	}
-
-	encoded.Updates = marshalUpdates(relation.Updates, false)
 
 	if includeChangeset {
 		encoded.Info.ChangesetId = int64(relation.ChangesetID)

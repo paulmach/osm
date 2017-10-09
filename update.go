@@ -27,6 +27,7 @@ type Update struct {
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
 	Lat         float64     `xml:"lat,attr,omitempty" json:"lat,omitempty"`
 	Lon         float64     `xml:"lon,attr,omitempty" json:"lon,omitempty"`
+	Reverse     bool        `xml:"reverse,attr,omitempty" json:"reverse,omitempty"`
 }
 
 // Updates are collections of updates.
@@ -81,7 +82,7 @@ func (us updatesSortIndex) Less(i, j int) bool {
 	return us[i].Index < us[j].Index
 }
 
-func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
+func marshalUpdates(updates Updates) *osmpb.DenseMembers {
 	if len(updates) == 0 {
 		return nil
 	}
@@ -91,21 +92,26 @@ func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
 	versions := make([]int32, l)
 	timestamps := make([]int64, l)
 	changesetIDs := make([]int64, l)
+	lats := make([]int64, l)
+	lons := make([]int64, l)
+	revs := make([]int32, l)
 
-	var lats, lons []int64
-	if includeLoc {
-		lats = make([]int64, l)
-		lons = make([]int64, l)
-	}
-
+	hasLoc := false
+	hasRev := false
 	for i, u := range updates {
 		indexes[i] = int32(u.Index)
 		versions[i] = int32(u.Version)
 		timestamps[i] = timeToUnix(u.Timestamp)
 		changesetIDs[i] = int64(u.ChangesetID)
-		if includeLoc {
+		if u.Lat != 0 || u.Lon != 0 {
+			hasLoc = true
 			lats[i] = geoToInt64(u.Lat)
 			lons[i] = geoToInt64(u.Lon)
+		}
+
+		if u.Reverse {
+			hasRev = true
+			revs[i] = 1
 		}
 	}
 
@@ -116,9 +122,13 @@ func marshalUpdates(updates Updates, includeLoc bool) *osmpb.DenseMembers {
 		Timestamps:   encodeInt64(timestamps),
 	}
 
-	if includeLoc {
+	if hasLoc {
 		result.Lats = encodeInt64(lats)
 		result.Lons = encodeInt64(lons)
+	}
+
+	if hasRev {
+		result.Orientation = revs
 	}
 
 	return result
@@ -149,6 +159,10 @@ func unmarshalUpdates(encoded *osmpb.DenseMembers) Updates {
 		if len(encoded.Lats) > i {
 			result[i].Lat = float64(encoded.Lats[i]) / locMultiple
 			result[i].Lon = float64(encoded.Lons[i]) / locMultiple
+		}
+
+		if len(encoded.Orientation) > i && encoded.Orientation[i] > 0 {
+			result[i].Reverse = true
 		}
 	}
 

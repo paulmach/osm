@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/paulmach/orb"
 )
 
 func TestRelationMarshalJSON(t *testing.T) {
@@ -72,13 +74,14 @@ func TestRelationApplyUpdatesUpTo(t *testing.T) {
 func TestRelationApplyUpdate(t *testing.T) {
 	r := Relation{
 		ID:      123,
-		Members: Members{{Ref: 1, Type: TypeNode}},
+		Members: Members{{Ref: 1, Type: TypeWay, Orientation: orb.CW}},
 	}
 
 	err := r.applyUpdate(Update{
 		Index:       0,
 		Version:     1,
 		ChangesetID: 2,
+		Reverse:     true,
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -86,9 +89,10 @@ func TestRelationApplyUpdate(t *testing.T) {
 
 	expected := Member{
 		Ref:         1,
-		Type:        TypeNode,
+		Type:        TypeWay,
 		Version:     1,
 		ChangesetID: 2,
+		Orientation: orb.CCW,
 	}
 
 	if !reflect.DeepEqual(r.Members[0], expected) {
