@@ -7,6 +7,7 @@ import (
 	"github.com/paulmach/orb/geo"
 	"github.com/paulmach/orb/geo/geojson"
 	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/internal/mputil"
 )
 
 var uninterestingTags = map[string]bool{
@@ -242,7 +243,7 @@ func (ctx *context) wayToFeature(w *osm.Way) *geojson.Feature {
 }
 
 func (ctx *context) buildRouteLineString(relation *osm.Relation) *geojson.Feature {
-	lines := make([]geo.LineString, 0, 10)
+	lines := make([]mputil.Segment, 0, 10)
 	tainted := false
 	for _, m := range relation.Members {
 		if m.Type != osm.TypeWay {
@@ -268,7 +269,10 @@ func (ctx *context) buildRouteLineString(relation *osm.Relation) *geojson.Featur
 			continue
 		}
 
-		lines = append(lines, ls)
+		lines = append(lines, mputil.Segment{
+			Orientation: m.Orientation,
+			Line:        ls,
+		})
 	}
 
 	if len(lines) == 0 {
@@ -277,13 +281,17 @@ func (ctx *context) buildRouteLineString(relation *osm.Relation) *geojson.Featur
 		return nil
 	}
 
-	lines = joinLineStrings(lines)
+	lineSections := mputil.Join(lines)
 
 	var geometry geo.Geometry
-	if len(lines) == 1 {
-		geometry = lines[0]
+	if len(lineSections) == 1 {
+		geometry = lineSections[0].ToLineString()
 	} else {
-		geometry = geo.MultiLineString(lines)
+		mls := make(geo.MultiLineString, 0, len(lines))
+		for _, ls := range lineSections {
+			mls = append(mls, ls.ToLineString())
+		}
+		geometry = mls
 	}
 
 	f := geojson.NewFeature(geometry)
@@ -307,8 +315,8 @@ func (ctx *context) buildRouteLineString(relation *osm.Relation) *geojson.Featur
 func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 	tags := relation.Tags.Map()
 
-	var outer []geo.LineString
-	var inner []geo.LineString
+	var outer []mputil.Segment
+	var inner []mputil.Segment
 
 	tainted := false
 	outerCount := 0
@@ -353,11 +361,25 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 			continue
 		}
 
+		segment := mputil.Segment{
+			Orientation: m.Orientation,
+			Line:        ls,
+		}
+
 		if m.Role == "outer" {
 			outerWay = way
-			outer = append(outer, ls)
+
+			if segment.Orientation == orb.CW {
+				segment.Reverse()
+			}
+
+			outer = append(outer, segment)
 		} else {
-			inner = append(inner, ls)
+			if segment.Orientation == orb.CCW {
+				segment.Reverse()
+			}
+
+			inner = append(inner, segment)
 		}
 	}
 
@@ -374,21 +396,20 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		// This section handles "old style" multipolygons that don't/shouldn't
 		// exist anymore. In the past tags were set on the outer ring way and
 		// the relation was used to add holes to the way.
-		outerRing := toRing(outer[0])
+		outerRing := mputil.MultiSegment(outer).ToRing(orb.CCW)
 		if !outerRing.Valid() {
 			// at least 4 points and first and last are the same.
 			return nil
 		}
 
-		inner = joinLineStrings(inner)
+		innerSections := mputil.Join(inner)
 		polygon := make(geo.Polygon, 0, len(inner)+1)
 
 		polygon = append(polygon, outerRing)
-		for _, ip := range inner {
-			polygon = append(polygon, toRing(ip))
+		for _, is := range innerSections {
+			polygon = append(polygon, is.ToRing(orb.CW))
 		}
 
-		reorient(polygon) // so it follows the right hand rule.
 		geometry = polygon
 
 		if !hasInterestingTags(relation.Tags, map[string]string{"type": "true"}) {
@@ -400,11 +421,11 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 	} else {
 		// more than one outer, need to map inner polygons to
 		// the outer that contians them.
-		outer = joinLineStrings(outer)
+		outerSections := mputil.Join(outer)
 
 		mp := make(geo.MultiPolygon, 0, len(outer))
-		for _, ls := range outer {
-			ring := toRing(ls)
+		for _, os := range outerSections {
+			ring := os.ToRing(orb.CCW)
 			if !ring.Valid() {
 				// needs at least 4 points.
 				continue
@@ -418,14 +439,10 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 			return nil
 		}
 
-		inner = joinLineStrings(inner)
-		for _, ls := range inner {
-			addToMultiPolygon(mp, ls)
-		}
-
-		// reorient to follow the right hand rule.
-		for _, p := range mp {
-			reorient(p)
+		innerSections := mputil.Join(inner)
+		for _, is := range innerSections {
+			ring := is.ToRing(orb.CW)
+			addToMultiPolygon(mp, ring)
 		}
 
 		geometry = mp
@@ -555,10 +572,10 @@ func hasInterestingTags(tags osm.Tags, ignore map[string]string) bool {
 	return false
 }
 
-func addToMultiPolygon(mp geo.MultiPolygon, ls geo.LineString) {
+func addToMultiPolygon(mp geo.MultiPolygon, ring geo.Ring) {
 	for i := range mp {
-		if polygonContains(mp[i][0], ls) {
-			mp[i] = append(mp[i], toRing(ls))
+		if polygonContains(mp[i][0], ring) {
+			mp[i] = append(mp[i], ring)
 			return
 		}
 	}
@@ -566,8 +583,8 @@ func addToMultiPolygon(mp geo.MultiPolygon, ls geo.LineString) {
 	// TODO: inner without an outer??
 }
 
-func polygonContains(outer geo.Ring, ls geo.LineString) bool {
-	for _, p := range ls {
+func polygonContains(outer geo.Ring, r geo.Ring) bool {
+	for _, p := range r {
 		inside := false
 
 		x, y := p[0], p[1]
