@@ -3,8 +3,10 @@ package annotate
 import (
 	"math"
 
+	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
 	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/internal/mputil"
 )
 
 func wayPointOnSurface(w *osm.Way) geo.Point {
@@ -47,4 +49,39 @@ func wayCentroid(w *osm.Way) geo.Point {
 	point[1] /= dist
 
 	return point
+}
+
+// orientation will annotate the the orientation of multipolygon relation members.
+// This makes it possible to reconstruct relations with partial data in the right direction.
+// Return value indicates if the result is 'tainted', e.g. not all way members were present.
+func orientation(members osm.Members, ways map[osm.WayID]*osm.Way) bool {
+	outer, inner, tainted := mputil.Group(members, ways)
+
+	outers := mputil.Join(outer)
+	inners := mputil.Join(inner)
+
+	for _, outer := range outers {
+		annotateOrientation(members, outer, orb.CCW)
+	}
+
+	for _, inner := range inners {
+		annotateOrientation(members, inner, orb.CW)
+	}
+
+	return tainted
+}
+
+func annotateOrientation(members osm.Members, ms mputil.MultiSegment, o orb.Orientation) {
+	factor := orb.Orientation(1)
+	if ms.Orientation() != o {
+		factor = -1
+	}
+
+	for _, segment := range ms {
+		if segment.Reversed {
+			members[segment.Index].Orientation = -1 * factor * o
+		} else {
+			members[segment.Index].Orientation = factor * o
+		}
+	}
 }

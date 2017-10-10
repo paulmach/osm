@@ -236,3 +236,9 @@ var polygonJSON = []byte(`
         "polygon": "all"
     }
 ]`)
+
+// Polygon returns true if the relation is of type multipolygon or boundary.
+func (r *Relation) Polygon() bool {
+	t := r.Tags.Find("type")
+	return t == "multipolygon" || t == "boundary"
+}

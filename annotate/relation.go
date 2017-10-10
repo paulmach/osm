@@ -19,17 +19,17 @@ func Relations(
 	threshold time.Duration,
 	opts ...Option,
 ) error {
-	parents, children, err := convertRelationData(ctx, relations, datasource)
-	if err != nil {
-		return mapErrors(err)
-	}
-
 	computeOpts := &core.Options{}
 	for _, o := range opts {
 		err := o(computeOpts)
 		if err != nil {
 			return err
 		}
+	}
+
+	parents, children, err := convertRelationData(ctx, relations, datasource)
+	if err != nil {
+		return mapErrors(err)
 	}
 
 	updatesForParents, err := core.Compute(parents, children, threshold, computeOpts)
@@ -107,13 +107,28 @@ func waysToChildList(ways osm.Ways) core.ChildList {
 
 	ways.SortByIDVersion()
 	for i, w := range ways {
-		list[i] = &childWay{
+		c := &childWay{
 			Index: i,
 			Way:   w,
 		}
+
+		if i != 0 {
+			c.ReverseOfPrevious = isReverse(w, ways[i-1])
+		}
+
+		list[i] = c
 	}
 
 	return list
+}
+
+func isReverse(w1, w2 *osm.Way) bool {
+	if len(w1.Nodes) < 2 || len(w2.Nodes) < 2 {
+		return false
+	}
+
+	return w1.Nodes[0].ID == w2.Nodes[len(w2.Nodes)-1].ID &&
+		w2.Nodes[0].ID == w1.Nodes[len(w1.Nodes)-1].ID
 }
 
 func relationsToChildList(relations osm.Relations) core.ChildList {
@@ -176,6 +191,11 @@ func (r parentRelation) Children() core.ChildList {
 func (r *parentRelation) SetChildren(list core.ChildList) {
 	r.children = list
 
+	var ways map[osm.WayID]*osm.Way
+	if r.Relation.Polygon() {
+		ways = make(map[osm.WayID]*osm.Way, len(r.Relation.Members))
+	}
+
 	for i, child := range list {
 		if child == nil {
 			continue
@@ -190,11 +210,19 @@ func (r *parentRelation) SetChildren(list core.ChildList) {
 		case *childWay:
 			r.Relation.Members[i].Version = t.Way.Version
 			r.Relation.Members[i].ChangesetID = t.Way.ChangesetID
+
+			if ways != nil {
+				ways[t.Way.ID] = t.Way
+			}
 		case *childRelation:
 			r.Relation.Members[i].Version = t.Relation.Version
 			r.Relation.Members[i].ChangesetID = t.Relation.ChangesetID
 		default:
 			panic(fmt.Sprintf("unsupported type %T", child))
 		}
+	}
+
+	if r.Relation.Polygon() {
+		orientation(r.Relation.Members, ways)
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/paulmach/orb"
 	"github.com/paulmach/osm"
 )
 
@@ -43,6 +44,120 @@ func TestRelation(t *testing.T) {
 			data, _ := xml.MarshalIndent(&osm.OSM{Relations: relations}, "", " ")
 			ioutil.WriteFile(filename, data, 0644)
 		}
+	}
+}
+
+func TestRelation_Polygon(t *testing.T) {
+	ways := map[osm.WayID]osm.Ways{
+		1: osm.Ways{
+			{
+				ID:      1,
+				Version: 1,
+				Visible: true,
+				Nodes: osm.WayNodes{
+					{ID: 3, Lon: 3, Lat: 3},
+					{ID: 2, Lon: 0, Lat: 3},
+					{ID: 1, Lon: 0, Lat: 0},
+				},
+			},
+			{
+				ID:        2,
+				Version:   1,
+				Visible:   true,
+				Timestamp: time.Now().Add(-time.Hour),
+				Nodes: osm.WayNodes{
+					{ID: 1, Lon: 0, Lat: 0},
+					{ID: 2, Lon: 0, Lat: 3},
+					{ID: 3, Lon: 3, Lat: 3},
+				},
+			},
+		},
+		2: osm.Ways{
+			{
+				ID:      2,
+				Version: 1,
+				Visible: true,
+				Nodes: osm.WayNodes{
+					{ID: 3, Lon: 3, Lat: 3},
+					{ID: 4, Lon: 3, Lat: 0},
+					{ID: 1, Lon: 0, Lat: 0},
+				},
+			},
+			{
+				ID:        2,
+				Version:   2,
+				Visible:   true,
+				Timestamp: time.Now().Add(-time.Minute),
+				Nodes: osm.WayNodes{
+					{ID: 3, Lon: 3, Lat: 3},
+					{ID: 4, Lon: 3, Lat: 0.1},
+					{ID: 1, Lon: 0, Lat: 0},
+				},
+			},
+		},
+		3: osm.Ways{
+			{
+				ID:      3,
+				Visible: true,
+				Nodes: osm.WayNodes{
+					{ID: 5, Lon: 1, Lat: 1},
+					{ID: 6, Lon: 2, Lat: 1},
+					{ID: 7, Lon: 2, Lat: 2},
+				},
+			},
+		},
+		4: osm.Ways{
+			{
+				ID:      4,
+				Visible: true,
+				Nodes: osm.WayNodes{
+					{ID: 5, Lon: 1, Lat: 1},
+					{ID: 8, Lon: 1, Lat: 2},
+					{ID: 7, Lon: 2, Lat: 2},
+				},
+			},
+		},
+	}
+	r := &osm.Relation{
+		ID:      1,
+		Visible: true,
+		Tags:    osm.Tags{{Key: "type", Value: "multipolygon"}},
+		Members: osm.Members{
+			{Type: osm.TypeWay, Ref: 1, Role: "outer"},
+			{Type: osm.TypeWay, Ref: 2, Role: "outer"},
+			{Type: osm.TypeWay, Ref: 3, Role: "inner"},
+			{Type: osm.TypeWay, Ref: 4, Role: "inner"},
+		},
+	}
+
+	if !r.Polygon() {
+		t.Fatalf("test relation must be a polygon")
+	}
+
+	err := Relations(
+		context.Background(),
+		osm.Relations{r},
+		MapDatasource{Ways: ways},
+		time.Hour,
+	)
+
+	if err != nil {
+		t.Fatalf("annotation error: %v", err)
+	}
+
+	expected := []orb.Orientation{orb.CCW, orb.CW, orb.CCW, orb.CW}
+	for i, m := range r.Members {
+		if m.Orientation != expected[i] {
+			t.Errorf("member %d: %v != %v", i, m.Orientation, expected[i])
+		}
+	}
+
+	if r.Updates[0].Reverse != true {
+		t.Errorf("incorrect reverse")
+	}
+
+	if r.Updates[1].Reverse != false {
+		t.Errorf("incorrect reverse")
 	}
 }
 

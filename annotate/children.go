@@ -56,8 +56,9 @@ func (c childNode) Update() osm.Update {
 // A childWay wraps a way into a core.Child interface
 // so that it can be used to compute updates for ways and relations.
 type childWay struct {
-	Index int
-	Way   *osm.Way
+	Index             int
+	ReverseOfPrevious bool
+	Way               *osm.Way
 }
 
 var _ core.Child = childWay{}
@@ -94,6 +95,7 @@ func (c childWay) Update() osm.Update {
 		Version:     c.Way.Version,
 		Timestamp:   updateTimestamp(c.Way.Timestamp, c.Way.Committed),
 		ChangesetID: c.Way.ChangesetID,
+		Reverse:     c.ReverseOfPrevious,
 	}
 }
 
