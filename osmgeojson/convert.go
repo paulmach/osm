@@ -26,6 +26,7 @@ type context struct {
 	noID                 bool
 	noMeta               bool
 	noRelationMembership bool
+	includeInnerRings    bool
 
 	osm       *osm.OSM
 	skippable map[osm.WayID]struct{}
@@ -389,7 +390,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 	// use the way to define this polygon. ie. use the way's type, id and tags.
 	tagObject := osm.Element(relation)
 
-	if len(outer) == 0 {
+	if len(outer) == 0 && !ctx.includeInnerRings {
 		// no outer polygon, skip this relation
 		return nil
 	} else if len(outer) == 1 && outerCount == 1 {
@@ -434,7 +435,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 			mp = append(mp, geo.Polygon{ring})
 		}
 
-		if len(mp) == 0 {
+		if len(mp) == 0 && !ctx.includeInnerRings {
 			// no valid outer ways.
 			return nil
 		}
@@ -442,7 +443,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		innerSections := mputil.Join(inner)
 		for _, is := range innerSections {
 			ring := is.ToRing(orb.CW)
-			addToMultiPolygon(mp, ring)
+			mp = addToMultiPolygon(mp, ring, ctx.includeInnerRings)
 		}
 
 		geometry = mp
@@ -572,15 +573,30 @@ func hasInterestingTags(tags osm.Tags, ignore map[string]string) bool {
 	return false
 }
 
-func addToMultiPolygon(mp geo.MultiPolygon, ring geo.Ring) {
+func addToMultiPolygon(mp geo.MultiPolygon, ring geo.Ring, includeInnerRings bool) geo.MultiPolygon {
 	for i := range mp {
 		if polygonContains(mp[i][0], ring) {
 			mp[i] = append(mp[i], ring)
-			return
+			return mp
 		}
 	}
 
-	// TODO: inner without an outer??
+	if !includeInnerRings {
+		// inner without its outer
+		return mp
+	}
+
+	// trying to find an existing "without outer" polygon to add this to.
+	for i := range mp {
+		if len(mp[i][0]) == 0 {
+			mp[i] = append(mp[i], ring)
+			return mp
+		}
+	}
+
+	// no polygons with empty outer, so create one.
+	// create another polygon with empty outer.
+	return append(mp, geo.Polygon{nil, ring})
 }
 
 func polygonContains(outer geo.Ring, r geo.Ring) bool {

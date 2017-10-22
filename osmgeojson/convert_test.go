@@ -229,7 +229,7 @@ func TestConvert(t *testing.T) {
 	})
 }
 
-func TestCovertInterestingNodes(t *testing.T) {
+func TestConvert_InterestingNodes(t *testing.T) {
 	xml := `
 	<osm>
 		<way id="1">
@@ -276,7 +276,7 @@ func TestCovertInterestingNodes(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvertPolygonDetection(t *testing.T) {
+func TestConvert_PolygonDetection(t *testing.T) {
 	xml := `
 	<osm>
 		<way id="1">
@@ -310,7 +310,7 @@ func TestConvertPolygonDetection(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvertRouteRelation(t *testing.T) {
+func TestConvert_RouteRelation(t *testing.T) {
 	t.Run("single section", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -380,7 +380,7 @@ func TestConvertRouteRelation(t *testing.T) {
 	})
 }
 
-func TestConvertMultiPolygon(t *testing.T) {
+func TestConvert_MultiPolygon(t *testing.T) {
 	t.Run("invalid simple multipolygon, no outer way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -611,7 +611,7 @@ func TestConvertMultiPolygon(t *testing.T) {
 	})
 }
 
-func TestConvertRelationMembers(t *testing.T) {
+func TestConvert_RelationMembers(t *testing.T) {
 	// complex example containing a generic relation, several ways as well as
 	// tagged, uninteresting and untagged nodes
 	// see https://github.com/openstreetmap/openstreetmap-website/pull/283
@@ -682,7 +682,7 @@ func TestConvertRelationMembers(t *testing.T) {
 	}
 }
 
-func TestConvertInnerWays(t *testing.T) {
+func TestConvert_InnerWays(t *testing.T) {
 	t.Run("missing inner way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -907,7 +907,7 @@ func TestConvertInnerWays(t *testing.T) {
 	})
 }
 
-func TestConvertMultiPolygonMultiOuter(t *testing.T) {
+func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 	raw := `
 	<osm>
 		<relation id="1">
@@ -1089,7 +1089,7 @@ func TestConvertMultiPolygonMultiOuter(t *testing.T) {
 	})
 }
 
-func TestConvertNonInterestingNodes(t *testing.T) {
+func TestConvert_NonInterestingNodes(t *testing.T) {
 	t.Run("include node not part of ways, even if boring", func(t *testing.T) {
 		xml := `<osm>
 			<node id="1" lat="3" lon="4"></node>
@@ -1187,7 +1187,7 @@ func TestConvertNonInterestingNodes(t *testing.T) {
 	})
 }
 
-func TestConvertEmptyElements(t *testing.T) {
+func TestConvert_EmptyElements(t *testing.T) {
 	t.Run("node", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -1219,7 +1219,7 @@ func TestConvertEmptyElements(t *testing.T) {
 	})
 }
 
-func TestConvertTainted(t *testing.T) {
+func TestConvert_Tainted(t *testing.T) {
 	t.Run("way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -1287,7 +1287,7 @@ func TestConvertTainted(t *testing.T) {
 	})
 }
 
-func TestConvertTaintedEmptyElements(t *testing.T) {
+func TestConvert_TaintedEmptyElements(t *testing.T) {
 	t.Run("one node way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -1315,7 +1315,7 @@ func TestConvertTaintedEmptyElements(t *testing.T) {
 	})
 }
 
-func TestConvertMeta(t *testing.T) {
+func TestConvert_Meta(t *testing.T) {
 	xml := `
 	<osm>
 		<node
@@ -1344,7 +1344,7 @@ func TestConvertMeta(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvertUseAugmentedNodeValues(t *testing.T) {
+func TestConvert_UseAugmentedNodeValues(t *testing.T) {
 	xml := `
 	<osm>
 		<way id="1">
@@ -1371,7 +1371,42 @@ func TestConvertUseAugmentedNodeValues(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func testConvert(t *testing.T, rawXML string, expected *geojson.FeatureCollection) {
+func TestConvert_IncludeInnerRings(t *testing.T) {
+	xml := `
+	<osm>
+		<relation id="1">
+			<tag k="type" v="multipolygon" />
+			<member type="way" ref="2" role="inner" />
+		</relation>
+		<way id="2">
+			<nd ref="4" />
+			<nd ref="5" />
+			<nd ref="6" />
+			<nd ref="4" />
+		</way>
+		<node id="4" lon="0.0" lat="0.0" />
+		<node id="5" lon="1.0" lat="1.0" />
+		<node id="6" lon="1.0" lat="0.0" />
+	</osm>`
+
+	ls := append(geo.Polygon{}, nil, geo.Ring{
+		geo.NewPoint(0.0, 0.0),
+		geo.NewPoint(1.0, 1.0),
+		geo.NewPoint(1.0, 0.0),
+		geo.NewPoint(0.0, 0.0),
+	})
+
+	feature := geojson.NewFeature(ls)
+	feature.ID = "relation/1"
+	feature.Properties["type"] = "relation"
+	feature.Properties["id"] = 1
+	feature.Properties["tags"] = map[string]string{"type": "multipolygon"}
+
+	fc := geojson.NewFeatureCollection().Append(feature)
+	testConvert(t, xml, fc, IncludeInnerRings(true))
+}
+
+func testConvert(t *testing.T, rawXML string, expected *geojson.FeatureCollection, opts ...Option) {
 	o := &osm.OSM{}
 	err := xml.Unmarshal([]byte(rawXML), &o)
 	if err != nil {
@@ -1399,7 +1434,7 @@ func testConvert(t *testing.T, rawXML string, expected *geojson.FeatureCollectio
 		}
 	}
 
-	fc, err := Convert(o)
+	fc, err := Convert(o, opts...)
 	if err != nil {
 		t.Fatalf("convert error: %v", err)
 	}
