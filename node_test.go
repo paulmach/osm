@@ -34,7 +34,7 @@ func TestNode(t *testing.T) {
 		t.Errorf("incorrect version, got %v", v)
 	}
 
-	if v := n.Visible; v != true {
+	if v := n.Visible; !v {
 		t.Errorf("incorrect visible, got %v", v)
 	}
 

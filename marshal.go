@@ -22,34 +22,6 @@ var memberTypeMapRev = map[osmpb.Relation_MemberType]Type{
 	osmpb.Relation_RELATION: TypeRelation,
 }
 
-func marshalNode(node *Node, ss *stringSet, includeChangeset bool) *osmpb.Node {
-	keys, vals := node.Tags.keyValues(ss)
-	encoded := &osmpb.Node{
-		Id:   int64(node.ID),
-		Keys: keys,
-		Vals: vals,
-		Info: &osmpb.Info{
-			Version:   int32(node.Version),
-			Timestamp: timeToUnix(node.Timestamp),
-			Visible:   proto.Bool(node.Visible),
-		},
-		Lat: geoToInt64(node.Lat),
-		Lon: geoToInt64(node.Lon),
-	}
-
-	if node.Committed != nil {
-		encoded.Info.Committed = timeToUnixPointer(*node.Committed)
-	}
-
-	if includeChangeset {
-		encoded.Info.ChangesetId = int64(node.ChangesetID)
-		encoded.Info.UserId = int32(node.UserID)
-		encoded.Info.UserSid = ss.Add(node.User)
-	}
-
-	return encoded
-}
-
 func unmarshalNode(encoded *osmpb.Node, ss []string, cs *Changeset) (*Node, error) {
 	tags, err := tagsFromStrings(ss, encoded.GetKeys(), encoded.GetVals())
 	if err != nil {

@@ -152,11 +152,11 @@ func TestRelation_Polygon(t *testing.T) {
 		}
 	}
 
-	if r.Updates[0].Reverse != true {
+	if !r.Updates[0].Reverse {
 		t.Errorf("incorrect reverse")
 	}
 
-	if r.Updates[1].Reverse != false {
+	if r.Updates[1].Reverse {
 		t.Errorf("incorrect reverse")
 	}
 }

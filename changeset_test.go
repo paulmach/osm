@@ -191,7 +191,7 @@ func TestChangesetTags(t *testing.T) {
 		t.Errorf("incorrect source, got %v", v)
 	}
 
-	if v := c.Bot(); v != true {
+	if v := c.Bot(); !v {
 		t.Errorf("incorrect bot, got %v", v)
 	}
 }

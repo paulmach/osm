@@ -42,25 +42,6 @@ type OSM struct {
 	Changesets Changesets `xml:"changeset"`
 }
 
-func (o *OSM) changesetInfo() (ChangesetID, UserID, string) {
-	if len(o.Nodes) != 0 {
-		n := o.Nodes[0]
-		return n.ChangesetID, n.UserID, n.User
-	}
-
-	if len(o.Ways) != 0 {
-		w := o.Ways[0]
-		return w.ChangesetID, w.UserID, w.User
-	}
-
-	if len(o.Relations) != 0 {
-		r := o.Relations[0]
-		return r.ChangesetID, r.UserID, r.User
-	}
-
-	return 0, 0, ""
-}
-
 // Marshal encodes the osm data using protocol buffers.
 func (o *OSM) Marshal() ([]byte, error) {
 	ss := &stringSet{}

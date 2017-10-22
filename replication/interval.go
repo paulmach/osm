@@ -46,6 +46,8 @@ func (n HourSeqNum) private()      {}
 func (n DaySeqNum) private()       {}
 func (n ChangesetSeqNum) private() {}
 
+var _ = SeqNum(MinuteSeqNum(0)).private // for the linters
+
 // MinuteSeqNum indicates the sequence of the minutely diff replication found here:
 // http://planet.osm.org/replication/minute
 type MinuteSeqNum uint64

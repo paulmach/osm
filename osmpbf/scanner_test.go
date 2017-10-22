@@ -22,7 +22,7 @@ func TestScanner(t *testing.T) {
 	scanner := New(context.Background(), f, 1)
 	defer scanner.Close()
 
-	if v := scanner.Scan(); v == false {
+	if v := scanner.Scan(); !v {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
@@ -30,7 +30,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("did not scan correctly, got %v", n)
 	}
 
-	if v := scanner.Scan(); v == false {
+	if v := scanner.Scan(); !v {
 		t.Fatalf("should read second scan: %v", scanner.Err())
 	}
 
@@ -86,7 +86,7 @@ func TestChangesetScannerContext(t *testing.T) {
 	scanner := New(ctx, f, 1)
 	defer scanner.Close()
 
-	if v := scanner.Scan(); v == false {
+	if v := scanner.Scan(); !v {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
@@ -96,7 +96,7 @@ func TestChangesetScannerContext(t *testing.T) {
 
 	cancel()
 
-	if v := scanner.Scan(); v == true {
+	if v := scanner.Scan(); v {
 		t.Fatalf("should be closed for second scan: %v", scanner.Err())
 	}
 
@@ -114,7 +114,7 @@ func TestChangesetScannerClose(t *testing.T) {
 
 	scanner := New(context.Background(), f, 1)
 
-	if v := scanner.Scan(); v == false {
+	if v := scanner.Scan(); !v {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
@@ -124,7 +124,7 @@ func TestChangesetScannerClose(t *testing.T) {
 
 	scanner.Close()
 
-	if v := scanner.Scan(); v == true {
+	if v := scanner.Scan(); v {
 		t.Fatalf("should be closed for second scan: %v", scanner.Err())
 	}
 
