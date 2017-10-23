@@ -3,10 +3,12 @@ package osm
 import (
 	"fmt"
 	"testing"
+
+	"github.com/paulmach/orb/tile"
 )
 
 func TestNewBoundFromTile(t *testing.T) {
-	bounds, _ := NewBoundsFromTile(7, 8, 9)
+	bounds, _ := NewBoundsFromTile(tile.New(7, 8, 9))
 
 	// check 9 tiles around bounds
 	for i := -1; i <= 1; i++ {
@@ -49,8 +51,8 @@ func TestBoundsContainsNode(t *testing.T) {
 	}
 }
 
-func mustBounds(t *testing.T, x, y, z uint32) *Bounds {
-	bounds, err := NewBoundsFromTile(x, y, z)
+func mustBounds(t *testing.T, x, y uint32, z tile.Zoom) *Bounds {
+	bounds, err := NewBoundsFromTile(tile.New(x, y, z))
 	if err != nil {
 		t.Fatalf("invalid bounds: %v", err)
 	}

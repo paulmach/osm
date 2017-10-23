@@ -15,17 +15,16 @@ type Bounds struct {
 }
 
 // NewBoundsFromTile creates a bound given an online map tile index.
-func NewBoundsFromTile(x, y, z uint32) (*Bounds, error) {
-	maxIndex := uint32(1) << z
-	if x >= maxIndex {
+func NewBoundsFromTile(t tile.Tile) (*Bounds, error) {
+	maxIndex := uint32(1 << t.Z)
+	if t.X >= maxIndex {
 		return nil, errors.New("osm: x index out of range for this zoom")
 	}
-	if y >= maxIndex {
+	if t.Y >= maxIndex {
 		return nil, errors.New("osm: y index out of range for this zoom")
 	}
 
-	b := tile.Tile{X: x, Y: y, Z: z}.Bound()
-
+	b := t.Bound()
 	return &Bounds{
 		MinLat: b[0].Lat(),
 		MaxLat: b[1].Lat(),
