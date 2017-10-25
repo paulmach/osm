@@ -29,9 +29,9 @@ func NoRelationMembership(yes bool) Option {
 	}
 }
 
-// IncludeInnerRings will always include an inner ring even if
-// information about the outer ring is missing.
-func IncludeInnerRings(yes bool) Option {
+// IncludePolygonIfMissingOuterRing will return a polygon with nil outer/first ring
+// if the outer ringer is not found in the data.
+func IncludePolygonIfMissingOuterRing(yes bool) Option {
 	return func(ctx *context) error {
 		ctx.includeInnerRings = yes
 		return nil

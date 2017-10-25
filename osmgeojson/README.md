@@ -53,7 +53,7 @@ All of the options **default to false**, i.e. everything will be included.
 	This info is set as the "relation" property which is an array of objects with the
 	following values from the relation: "id", "role", "tags".
 
-* `IncludeInnerRings(yes bool)`
+* `IncludePolygonIfMissingOuterRing(yes bool)`
 
 	By default, inner rings of 'multipolygon' without a matching outer ring will be ignored.
 	However, in some use cases the outer ring can be implied as the viewport bound and the inner rings

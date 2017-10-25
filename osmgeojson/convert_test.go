@@ -1371,7 +1371,7 @@ func TestConvert_UseAugmentedNodeValues(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvert_IncludeInnerRings(t *testing.T) {
+func TestConvert_IncludePolygonIfMissingOuterRing(t *testing.T) {
 	xml := `
 	<osm>
 		<relation id="1">
@@ -1403,7 +1403,7 @@ func TestConvert_IncludeInnerRings(t *testing.T) {
 	feature.Properties["tags"] = map[string]string{"type": "multipolygon"}
 
 	fc := geojson.NewFeatureCollection().Append(feature)
-	testConvert(t, xml, fc, IncludeInnerRings(true))
+	testConvert(t, xml, fc, IncludePolygonIfMissingOuterRing(true))
 }
 
 func testConvert(t *testing.T, rawXML string, expected *geojson.FeatureCollection, opts ...Option) {
