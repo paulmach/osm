@@ -3,7 +3,7 @@ package osm
 import (
 	"errors"
 
-	"github.com/paulmach/orb/tile"
+	"github.com/paulmach/orb/maptile"
 )
 
 // Bounds are the bounds of osm data as defined in the xml file.
@@ -15,7 +15,7 @@ type Bounds struct {
 }
 
 // NewBoundsFromTile creates a bound given an online map tile index.
-func NewBoundsFromTile(t tile.Tile) (*Bounds, error) {
+func NewBoundsFromTile(t maptile.Tile) (*Bounds, error) {
 	maxIndex := uint32(1 << t.Z)
 	if t.X >= maxIndex {
 		return nil, errors.New("osm: x index out of range for this zoom")

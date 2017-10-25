@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/paulmach/orb/tile"
+	"github.com/paulmach/orb/maptile"
 )
 
 func TestNewBoundFromTile(t *testing.T) {
-	bounds, _ := NewBoundsFromTile(tile.New(7, 8, 9))
+	bounds, _ := NewBoundsFromTile(maptile.New(7, 8, 9))
 
 	// check 9 tiles around bounds
 	for i := -1; i <= 1; i++ {
@@ -51,8 +51,8 @@ func TestBoundsContainsNode(t *testing.T) {
 	}
 }
 
-func mustBounds(t *testing.T, x, y uint32, z tile.Zoom) *Bounds {
-	bounds, err := NewBoundsFromTile(tile.New(x, y, z))
+func mustBounds(t *testing.T, x, y uint32, z maptile.Zoom) *Bounds {
+	bounds, err := NewBoundsFromTile(maptile.New(x, y, z))
 	if err != nil {
 		t.Fatalf("invalid bounds: %v", err)
 	}
