@@ -221,10 +221,15 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 	refs := make([]int64, l)
 	types := make([]osmpb.Relation_MemberType, l)
 
+	interestingMember := false
 	for i, m := range relation.Members {
 		roles[i] = ss.Add(m.Role)
 		refs[i] = m.Ref
 		types[i] = memberTypeMap[m.Type]
+
+		if m.Version != 0 {
+			interestingMember = true
+		}
 	}
 
 	keys, vals := relation.Tags.keyValues(ss)
@@ -247,7 +252,9 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 		encoded.Info.Committed = timeToUnixPointer(*relation.Committed)
 	}
 
-	if len(relation.Members) > 0 && relation.Members[0].Version != 0 {
+	if interestingMember {
+		// relations can be partial annotated, in that case we still
+		// want to save the annotation data.
 		encoded.DenseMembers = encodeDenseMembers(relation.Members)
 	}
 
