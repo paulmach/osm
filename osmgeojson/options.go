@@ -29,11 +29,12 @@ func NoRelationMembership(yes bool) Option {
 	}
 }
 
-// IncludePolygonIfMissingOuterRing will return a polygon with nil outer/first ring
-// if the outer ringer is not found in the data.
-func IncludePolygonIfMissingOuterRing(yes bool) Option {
+// IncludeInvalidPolygons will return a polygon with nil outer/first ring
+// if the outer ringer is not found in the data. It may also return
+// rings whose endpoints do not match and are probably missing sections.
+func IncludeInvalidPolygons(yes bool) Option {
 	return func(ctx *context) error {
-		ctx.includeInnerRings = yes
+		ctx.includeInvalidPolygons = yes
 		return nil
 	}
 }

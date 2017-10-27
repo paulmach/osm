@@ -53,12 +53,13 @@ All of the options **default to false**, i.e. everything will be included.
 	This info is set as the "relation" property which is an array of objects with the
 	following values from the relation: "id", "role", "tags".
 
-* `IncludePolygonIfMissingOuterRing(yes bool)`
+* `IncludeInvalidPolygons(yes bool)`
 
 	By default, inner rings of 'multipolygon' without a matching outer ring will be ignored.
 	However, in some use cases the outer ring can be implied as the viewport bound and the inner rings
 	can then be rendered correctly. Polygons with a nil first ring will be need to be updated such
-	that the first ring is the viewport bound.
+	that the first ring is the viewport bound. This options will also include rings that do not
+	have matching endpoints. Usually this means one or more of the outer ways are missing.
 
 
 ### Benchmarks
