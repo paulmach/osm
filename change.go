@@ -52,6 +52,19 @@ func (c *Change) AppendDelete(e Element) {
 	c.Delete.Append(e)
 }
 
+// ToHistoryDatasource converts the change object a datasource accessible
+// by the feature id. All the creates, modifies and deletes will be added
+// in that order.
+func (c *Change) ToHistoryDatasource() *HistoryDatasource {
+	ds := &HistoryDatasource{}
+
+	ds.add(c.Create)
+	ds.add(c.Modify)
+	ds.add(c.Delete)
+
+	return ds
+}
+
 // Marshal encodes the osm change data using protocol buffers.
 func (c *Change) Marshal() ([]byte, error) {
 	ss := &stringSet{}

@@ -21,7 +21,7 @@ func TestWays(t *testing.T) {
 	for _, id := range ids {
 		o := loadTestdata(t, fmt.Sprintf("testdata/way_%d.osm", id))
 
-		ds := NewDatasource(o.Nodes, nil, nil)
+		ds := (&osm.OSM{Nodes: o.Nodes}).ToHistoryDatasource()
 		err := Ways(context.Background(), o.Ways, ds, 30*time.Minute)
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -44,7 +44,7 @@ func TestWays(t *testing.T) {
 
 func BenchmarkWay(b *testing.B) {
 	o := loadTestdata(b, "testdata/way_6394949.osm")
-	ds := NewDatasource(o.Nodes, nil, nil)
+	ds := (&osm.OSM{Nodes: o.Nodes}).ToHistoryDatasource()
 
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -58,7 +58,7 @@ func BenchmarkWay(b *testing.B) {
 
 func BenchmarkWays(b *testing.B) {
 	o := loadTestdata(b, "testdata/relation_2714790.osm")
-	ds := NewDatasource(o.Nodes, o.Ways, o.Relations)
+	ds := o.ToHistoryDatasource()
 
 	b.ReportAllocs()
 	b.ResetTimer()

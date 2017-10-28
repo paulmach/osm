@@ -90,6 +90,16 @@ func (n *Node) Point() geo.Point {
 // Nodes is a list of nodes with helper functions on top.
 type Nodes []*Node
 
+// IDs returns the ids for all the ways.
+func (ns Nodes) IDs() []NodeID {
+	result := make([]NodeID, len(ns))
+	for i, n := range ns {
+		result[i] = n.ID
+	}
+
+	return result
+}
+
 // FeatureIDs returns the feature ids for all the nodes.
 func (ns Nodes) FeatureIDs() FeatureIDs {
 	r := make(FeatureIDs, len(ns))

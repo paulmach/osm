@@ -15,7 +15,7 @@ import (
 func Relations(
 	ctx context.Context,
 	relations osm.Relations,
-	datasource Datasource,
+	datasource osm.HistoryDatasourcer,
 	threshold time.Duration,
 	opts ...Option,
 ) error {
@@ -27,7 +27,7 @@ func Relations(
 		}
 	}
 
-	parents, children, err := convertRelationData(ctx, relations, datasource)
+	parents, children, err := convertRelationData(ctx, relations, datasource, computeOpts.IgnoreMissingChildren)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -47,7 +47,8 @@ func Relations(
 func convertRelationData(
 	ctx context.Context,
 	relations osm.Relations,
-	datasource Datasource,
+	datasource osm.HistoryDatasourcer,
+	ignoreNotFound bool,
 ) ([]core.Parent, *core.Histories, error) {
 	relations.SortByIDVersion()
 
@@ -67,7 +68,7 @@ func convertRelationData(
 			switch childID.Type {
 			case osm.TypeNode:
 				nodes, err := datasource.NodeHistory(ctx, childID.NodeID())
-				if err != nil {
+				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
 					return nil, nil, err
 				}
 
@@ -75,7 +76,7 @@ func convertRelationData(
 				histories.Set(childID, list)
 			case osm.TypeWay:
 				ways, err := datasource.WayHistory(ctx, childID.WayID())
-				if err != nil {
+				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
 					return nil, nil, err
 				}
 
@@ -83,7 +84,7 @@ func convertRelationData(
 				histories.Set(childID, list)
 			case osm.TypeRelation:
 				relations, err := datasource.RelationHistory(ctx, childID.RelationID())
-				if err != nil {
+				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
 					return nil, nil, err
 				}
 
@@ -103,8 +104,11 @@ func convertRelationData(
 }
 
 func waysToChildList(ways osm.Ways) core.ChildList {
-	list := make(core.ChildList, len(ways))
+	if len(ways) == 0 {
+		return nil
+	}
 
+	list := make(core.ChildList, len(ways))
 	ways.SortByIDVersion()
 	for i, w := range ways {
 		c := &childWay{
@@ -132,8 +136,11 @@ func isReverse(w1, w2 *osm.Way) bool {
 }
 
 func relationsToChildList(relations osm.Relations) core.ChildList {
-	list := make(core.ChildList, len(relations))
+	if len(relations) == 0 {
+		return nil
+	}
 
+	list := make(core.ChildList, len(relations))
 	relations.SortByIDVersion()
 	for i, r := range relations {
 		list[i] = &childRelation{

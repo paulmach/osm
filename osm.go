@@ -148,6 +148,15 @@ func (o *OSM) ElementIDs() ElementIDs {
 	return result
 }
 
+// ToHistoryDatasource converts the osm object a datasource accessible
+// by the feature id.
+func (o *OSM) ToHistoryDatasource() *HistoryDatasource {
+	ds := &HistoryDatasource{}
+
+	ds.add(o)
+	return ds
+}
+
 // UnmarshalOSM will unmarshal the data into a OSM object.
 func UnmarshalOSM(data []byte) (*OSM, error) {
 

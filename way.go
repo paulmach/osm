@@ -248,6 +248,16 @@ func (wn *WayNodes) UnmarshalJSON(data []byte) error {
 // Ways is a list of osm ways with some helper functions attached.
 type Ways []*Way
 
+// IDs returns the ids for all the ways.
+func (ws Ways) IDs() []WayID {
+	result := make([]WayID, len(ws))
+	for i, w := range ws {
+		result[i] = w.ID
+	}
+
+	return result
+}
+
 // FeatureIDs returns the feature ids for all the ways.
 func (ws Ways) FeatureIDs() FeatureIDs {
 	r := make(FeatureIDs, len(ws))

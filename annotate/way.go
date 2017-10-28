@@ -8,13 +8,21 @@ import (
 	"github.com/paulmach/osm/annotate/internal/core"
 )
 
+// NodeHistoryDatasourcer is an more strict interface for when we only need node history.
+type NodeHistoryDatasourcer interface {
+	NodeHistory(context.Context, osm.NodeID) (osm.Nodes, error)
+	NotFound(error) bool
+}
+
+var _ NodeHistoryDatasourcer = &osm.HistoryDatasource{}
+
 // Ways computes the updates for the given ways
 // and annotate the way nodes with changeset and lon/lat data.
 // The input ways are modified to include this information.
 func Ways(
 	ctx context.Context,
 	ways osm.Ways,
-	datasource NodeDatasource,
+	datasource NodeHistoryDatasourcer,
 	threshold time.Duration,
 	opts ...Option,
 ) error {
@@ -47,7 +55,7 @@ func Ways(
 func convertWayData(
 	ctx context.Context,
 	ways osm.Ways,
-	datasource NodeDatasource,
+	datasource NodeHistoryDatasourcer,
 ) ([]core.Parent, *core.Histories, error) {
 
 	ways.SortByIDVersion()
@@ -77,8 +85,11 @@ func convertWayData(
 }
 
 func nodesToChildList(nodes osm.Nodes) core.ChildList {
-	list := make(core.ChildList, len(nodes))
+	if len(nodes) == 0 {
+		return nil
+	}
 
+	list := make(core.ChildList, len(nodes))
 	nodes.SortByIDVersion()
 	for i, n := range nodes {
 		list[i] = &childNode{

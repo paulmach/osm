@@ -22,7 +22,7 @@ func TestRelation(t *testing.T) {
 	for _, id := range ids {
 		o := loadTestdata(t, fmt.Sprintf("testdata/relation_%d.osm", id))
 
-		ds := NewDatasource(o.Nodes, o.Ways, o.Relations)
+		ds := o.ToHistoryDatasource()
 		for id, ways := range ds.Ways {
 			err := Ways(context.Background(), ways, ds, 30*time.Minute)
 			if err != nil {
@@ -48,73 +48,65 @@ func TestRelation(t *testing.T) {
 }
 
 func TestRelation_Polygon(t *testing.T) {
-	ways := map[osm.WayID]osm.Ways{
-		1: osm.Ways{
-			{
-				ID:      1,
-				Version: 1,
-				Visible: true,
-				Nodes: osm.WayNodes{
-					{ID: 3, Lon: 3, Lat: 3},
-					{ID: 2, Lon: 0, Lat: 3},
-					{ID: 1, Lon: 0, Lat: 0},
-				},
-			},
-			{
-				ID:        2,
-				Version:   1,
-				Visible:   true,
-				Timestamp: time.Now().Add(-time.Hour),
-				Nodes: osm.WayNodes{
-					{ID: 1, Lon: 0, Lat: 0},
-					{ID: 2, Lon: 0, Lat: 3},
-					{ID: 3, Lon: 3, Lat: 3},
-				},
+	ways := osm.Ways{
+		{
+			ID:      1,
+			Version: 1,
+			Visible: true,
+			Nodes: osm.WayNodes{
+				{ID: 3, Lon: 3, Lat: 3},
+				{ID: 2, Lon: 0, Lat: 3},
+				{ID: 1, Lon: 0, Lat: 0},
 			},
 		},
-		2: osm.Ways{
-			{
-				ID:      2,
-				Version: 1,
-				Visible: true,
-				Nodes: osm.WayNodes{
-					{ID: 3, Lon: 3, Lat: 3},
-					{ID: 4, Lon: 3, Lat: 0},
-					{ID: 1, Lon: 0, Lat: 0},
-				},
-			},
-			{
-				ID:        2,
-				Version:   2,
-				Visible:   true,
-				Timestamp: time.Now().Add(-time.Minute),
-				Nodes: osm.WayNodes{
-					{ID: 3, Lon: 3, Lat: 3},
-					{ID: 4, Lon: 3, Lat: 0.1},
-					{ID: 1, Lon: 0, Lat: 0},
-				},
+		{
+			ID:        1,
+			Version:   2,
+			Visible:   true,
+			Timestamp: time.Now().Add(-time.Hour),
+			Nodes: osm.WayNodes{
+				{ID: 1, Lon: 0, Lat: 0},
+				{ID: 2, Lon: 0, Lat: 3},
+				{ID: 3, Lon: 3, Lat: 3},
 			},
 		},
-		3: osm.Ways{
-			{
-				ID:      3,
-				Visible: true,
-				Nodes: osm.WayNodes{
-					{ID: 5, Lon: 1, Lat: 1},
-					{ID: 6, Lon: 2, Lat: 1},
-					{ID: 7, Lon: 2, Lat: 2},
-				},
+		{
+			ID:      2,
+			Version: 1,
+			Visible: true,
+			Nodes: osm.WayNodes{
+				{ID: 3, Lon: 3, Lat: 3},
+				{ID: 4, Lon: 3, Lat: 0},
+				{ID: 1, Lon: 0, Lat: 0},
 			},
 		},
-		4: osm.Ways{
-			{
-				ID:      4,
-				Visible: true,
-				Nodes: osm.WayNodes{
-					{ID: 5, Lon: 1, Lat: 1},
-					{ID: 8, Lon: 1, Lat: 2},
-					{ID: 7, Lon: 2, Lat: 2},
-				},
+		{
+			ID:        2,
+			Version:   2,
+			Visible:   true,
+			Timestamp: time.Now().Add(-time.Minute),
+			Nodes: osm.WayNodes{
+				{ID: 3, Lon: 3, Lat: 3},
+				{ID: 4, Lon: 3, Lat: 0.1},
+				{ID: 1, Lon: 0, Lat: 0},
+			},
+		},
+		{
+			ID:      3,
+			Visible: true,
+			Nodes: osm.WayNodes{
+				{ID: 5, Lon: 1, Lat: 1},
+				{ID: 6, Lon: 2, Lat: 1},
+				{ID: 7, Lon: 2, Lat: 2},
+			},
+		},
+		{
+			ID:      4,
+			Visible: true,
+			Nodes: osm.WayNodes{
+				{ID: 5, Lon: 1, Lat: 1},
+				{ID: 8, Lon: 1, Lat: 2},
+				{ID: 7, Lon: 2, Lat: 2},
 			},
 		},
 	}
@@ -137,7 +129,7 @@ func TestRelation_Polygon(t *testing.T) {
 	err := Relations(
 		context.Background(),
 		osm.Relations{r},
-		MapDatasource{Ways: ways},
+		(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
 		time.Hour,
 	)
 
@@ -196,7 +188,7 @@ func TestRelationCircular(t *testing.T) {
 			}},
 	}
 
-	ds := NewDatasource(nil, nil, relations)
+	ds := (&osm.OSM{Relations: relations}).ToHistoryDatasource()
 	rs := ds.Relations[1]
 	err := Relations(context.Background(), rs, ds, 30*time.Minute)
 	if err != nil {
@@ -246,21 +238,21 @@ func TestRelationCircular(t *testing.T) {
 
 func TestRelationSelfCircular(t *testing.T) {
 	rs := osm.Relations{
-		&osm.Relation{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
+		{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
 				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
-		&osm.Relation{ID: 1, Version: 2, Visible: true, Timestamp: time.Date(2012, 1, 2, 0, 0, 0, 0, time.UTC),
+		{ID: 1, Version: 2, Visible: true, Timestamp: time.Date(2012, 1, 2, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
 				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
-		&osm.Relation{ID: 1, Version: 3, Visible: true, Timestamp: time.Date(2012, 1, 3, 0, 0, 0, 0, time.UTC),
+		{ID: 1, Version: 3, Visible: true, Timestamp: time.Date(2012, 1, 3, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
 				osm.Member{Type: osm.TypeRelation, Ref: 1},
 			}},
 	}
 
-	ds := NewDatasource(nil, nil, rs)
+	ds := (&osm.OSM{Relations: rs}).ToHistoryDatasource()
 	err := Relations(context.Background(), rs, ds, 30*time.Minute)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
@@ -297,7 +289,7 @@ func BenchmarkRelation(b *testing.B) {
 	filename := fmt.Sprintf("testdata/relation_%d.osm", id)
 
 	o := loadTestdata(b, filename)
-	ds := NewDatasource(o.Nodes, o.Ways, o.Relations)
+	ds := o.ToHistoryDatasource()
 
 	b.ReportAllocs()
 	b.ResetTimer()

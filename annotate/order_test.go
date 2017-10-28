@@ -8,32 +8,22 @@ import (
 )
 
 func TestChildFirstOrdering(t *testing.T) {
-	relations := map[osm.RelationID]osm.Relations{
-		8: {
-			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
-		},
-		10: {
-			{Members: osm.Members{
-				{Type: osm.TypeWay, Ref: 8},
-				{Type: osm.TypeRelation, Ref: 8},
-			}},
-		},
-		12: {
-			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
-		},
-		14: {
-			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
-		},
+	relations := osm.Relations{
+		{ID: 8, Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
+		{ID: 10, Members: osm.Members{
+			{Type: osm.TypeWay, Ref: 8},
+			{Type: osm.TypeRelation, Ref: 8},
+		}},
+		{ID: 12, Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
+		{ID: 14, Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 	}
+
+	ordering := NewChildFirstOrdering(
+		context.Background(),
+		relations.IDs(),
+		(&osm.OSM{Relations: relations}).ToHistoryDatasource())
+
 	ids := make([]osm.RelationID, 0, len(relations))
-	for k := range relations {
-		ids = append(ids, k)
-	}
-
-	ordering := NewChildFirstOrdering(context.Background(),
-		ids, &MapDatasource{Relations: relations})
-
-	ids = make([]osm.RelationID, 0, len(relations))
 	for ordering.Next() {
 		ids = append(ids, ordering.RelationID())
 	}
@@ -60,49 +50,41 @@ func TestChildFirstOrdering(t *testing.T) {
 }
 
 func TestChildFirstOrderingCycle(t *testing.T) {
-	relations := map[osm.RelationID]osm.Relations{
-		1: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 2},
-				{Type: osm.TypeRelation, Ref: 3},
-			}},
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 2},
-				{Type: osm.TypeRelation, Ref: 3},
-				{Type: osm.TypeRelation, Ref: 5},
-			}},
-		},
-		2: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 4},
-				{Type: osm.TypeRelation, Ref: 1},
-			}},
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 6},
-			}},
-		},
-		3: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
-		4: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
-		5: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
-		6: {{Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}}},
+	relations := osm.Relations{
+		{ID: 1, Version: 1, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 2},
+			{Type: osm.TypeRelation, Ref: 3},
+		}},
+		{ID: 1, Version: 2, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 2},
+			{Type: osm.TypeRelation, Ref: 3},
+			{Type: osm.TypeRelation, Ref: 5},
+		}},
+		{ID: 2, Version: 1, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 4},
+			{Type: osm.TypeRelation, Ref: 1},
+		}},
+		{ID: 2, Version: 2, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 6},
+		}},
+		{ID: 3, Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}},
+		{ID: 4, Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}},
+		{ID: 5, Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}},
+		{ID: 6, Members: osm.Members{{Type: osm.TypeWay, Ref: 8}}},
 
 		// self cycle
-		9: {{Members: osm.Members{{Type: osm.TypeRelation, Ref: 9}}}},
+		{ID: 9, Members: osm.Members{{Type: osm.TypeRelation, Ref: 9}}},
 	}
+
+	ds := (&osm.OSM{Relations: relations}).ToHistoryDatasource()
+	ordering := NewChildFirstOrdering(context.Background(), relations.IDs(), ds)
+
 	ids := make([]osm.RelationID, 0, len(relations))
-	for k := range relations {
-		ids = append(ids, k)
-	}
-
-	ordering := NewChildFirstOrdering(context.Background(),
-		ids, &MapDatasource{Relations: relations})
-
-	ids = make([]osm.RelationID, 0, len(relations))
 	for ordering.Next() {
 		ids = append(ids, ordering.RelationID())
 	}
 
-	if len(ids) != len(relations) {
+	if len(ids) != len(ds.Relations) {
 		t.Errorf("wrong number of ids, %v != %v", len(ids), len(relations))
 	}
 
@@ -126,25 +108,17 @@ func TestChildFirstOrderingCycle(t *testing.T) {
 }
 
 func TestChildFirstOrderingCancel(t *testing.T) {
-	relations := map[osm.RelationID]osm.Relations{
-		8: {
-			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
-		},
-		10: {
-			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
-		},
-		12: {
-			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
-		},
-	}
-	ids := make([]osm.RelationID, 0, len(relations))
-	for k := range relations {
-		ids = append(ids, k)
+	relations := osm.Relations{
+		{ID: 8, Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
+		{ID: 10, Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
+		{ID: 12, Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
 	}
 
 	ctx, done := context.WithCancel(context.Background())
-	ordering := NewChildFirstOrdering(ctx,
-		ids, &MapDatasource{Relations: relations})
+	ordering := NewChildFirstOrdering(
+		ctx,
+		relations.IDs(),
+		(&osm.OSM{Relations: relations}).ToHistoryDatasource())
 
 	ordering.Next()
 	ordering.Next()
@@ -160,24 +134,16 @@ func TestChildFirstOrderingCancel(t *testing.T) {
 }
 
 func TestChildFirstOrderingClose(t *testing.T) {
-	relations := map[osm.RelationID]osm.Relations{
-		8: {
-			{Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
-		},
-		10: {
-			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
-		},
-		12: {
-			{Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
-		},
-	}
-	ids := make([]osm.RelationID, 0, len(relations))
-	for k := range relations {
-		ids = append(ids, k)
+	relations := osm.Relations{
+		{ID: 8, Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
+		{ID: 10, Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
+		{ID: 12, Members: osm.Members{{Type: osm.TypeRelation, Ref: 10}}},
 	}
 
-	ordering := NewChildFirstOrdering(context.Background(),
-		ids, &MapDatasource{Relations: relations})
+	ordering := NewChildFirstOrdering(
+		context.Background(),
+		relations.IDs(),
+		(&osm.OSM{Relations: relations}).ToHistoryDatasource())
 
 	ordering.Next()
 	ordering.Next()
@@ -192,44 +158,32 @@ func TestChildFirstOrderingClose(t *testing.T) {
 	}
 }
 func TestChildFirstOrderingWalk(t *testing.T) {
-	relations := map[osm.RelationID]osm.Relations{
-		2: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 4},
-			}},
-		},
-		4: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 6},
-			}},
-		},
-		6: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 10},
-			}},
-		},
-		8: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 6},
-			}},
-		},
-		10: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 8},
-			}},
-		},
+	relations := osm.Relations{
+		{ID: 2, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 4},
+		}},
+		{ID: 4, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 6},
+		}},
+		{ID: 6, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 10},
+		}},
+		{ID: 8, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 6},
+		}},
+		{ID: 10, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 8},
+		}},
 
 		// circular relation of self.
-		16: {
-			{Members: osm.Members{
-				{Type: osm.TypeRelation, Ref: 16},
-			}},
-		},
+		{ID: 16, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 16},
+		}},
 	}
 
 	ordering := &ChildFirstOrdering{
 		ctx:     context.Background(),
-		ds:      &MapDatasource{Relations: relations},
+		ds:      (&osm.OSM{Relations: relations}).ToHistoryDatasource(),
 		visited: make(map[osm.RelationID]struct{}, len(relations)),
 		out:     make(chan osm.RelationID, 10+len(relations)),
 	}
@@ -237,8 +191,8 @@ func TestChildFirstOrderingWalk(t *testing.T) {
 	// start at all parts of cycle
 	// basically should not infinite loop
 	path := make([]osm.RelationID, 0, 100)
-	for k := range relations {
-		err := ordering.walk(k, path)
+	for _, r := range relations {
+		err := ordering.walk(r.ID, path)
 		if err != nil {
 			t.Errorf("should process cycle without problem: %v", err)
 		}

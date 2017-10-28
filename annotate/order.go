@@ -7,6 +7,14 @@ import (
 	"github.com/paulmach/osm"
 )
 
+// RelationHistoryDatasourcer is an more strict interface for when we only need the relation history.
+type RelationHistoryDatasourcer interface {
+	RelationHistory(context.Context, osm.RelationID) (osm.Relations, error)
+	NotFound(error) bool
+}
+
+var _ RelationHistoryDatasourcer = &osm.HistoryDatasource{}
+
 // A ChildFirstOrdering is a struct that allows for a set of relations to be
 // processed in a dept first order. Since relations can reference other
 // relations we need to make sure children are added before parents.
@@ -17,7 +25,7 @@ type ChildFirstOrdering struct {
 
 	ctx     context.Context
 	done    func()
-	ds      RelationDatasource
+	ds      RelationHistoryDatasourcer
 	visited map[osm.RelationID]struct{}
 	out     chan osm.RelationID
 	wg      sync.WaitGroup
@@ -32,13 +40,13 @@ type ChildFirstOrdering struct {
 func NewChildFirstOrdering(
 	ctx context.Context,
 	ids []osm.RelationID,
-	relations RelationDatasource,
+	ds RelationHistoryDatasourcer,
 ) *ChildFirstOrdering {
 	ctx, done := context.WithCancel(ctx)
 	o := &ChildFirstOrdering{
 		ctx:     ctx,
 		done:    done,
-		ds:      relations,
+		ds:      ds,
 		visited: make(map[osm.RelationID]struct{}, len(ids)),
 		out:     make(chan osm.RelationID),
 	}

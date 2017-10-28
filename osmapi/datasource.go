@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/paulmach/osm"
 )
 
 // BaseURL defines the api host. This can be change to hit
@@ -40,6 +42,8 @@ var DefaultDatasource = &Datasource{
 		Timeout: 6 * time.Minute, // looks like the api server has a 5 min timeout.
 	},
 }
+
+var _ osm.HistoryDatasourcer = &Datasource{}
 
 // NewDatasource creates a Datasource using the given client.
 func NewDatasource(client *http.Client) *Datasource {
@@ -108,6 +112,16 @@ func (ds *Datasource) baseURL() string {
 	}
 
 	return BaseURL
+}
+
+// NotFound error will return true if the result is not found.
+func (ds *Datasource) NotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	_, ok := err.(*NotFoundError)
+	return ok
 }
 
 // NotFoundError means 404 from the api.
