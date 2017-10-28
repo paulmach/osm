@@ -160,6 +160,39 @@ func (w *Way) applyUpdate(u Update) error {
 	return nil
 }
 
+// LineString will convert the annotated nodes into a LineString datatype.
+func (w *Way) LineString() geo.LineString {
+	ls := make(geo.LineString, 0, len(w.Nodes))
+	for _, n := range w.Nodes {
+		if n.Lat != 0 || n.Lon != 0 {
+			ls = append(ls, n.Point())
+		}
+	}
+
+	return ls
+}
+
+// LineStringAt will return the LineString from the annotated points at
+// the given time. It will apply to the updates upto and including the give time.
+func (w *Way) LineStringAt(t time.Time) geo.LineString {
+	ls := w.LineString()
+
+	for _, u := range w.Updates {
+		if u.Timestamp.After(t) {
+			break
+		}
+
+		if u.Index >= len(ls) {
+			continue
+		}
+
+		ls[u.Index][0] = u.Lon
+		ls[u.Index][1] = u.Lat
+	}
+
+	return ls
+}
+
 // Bounds computes the bounds for the given way nodes.
 func (wn WayNodes) Bounds() *Bounds {
 	b := &Bounds{

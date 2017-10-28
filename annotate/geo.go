@@ -2,6 +2,7 @@ package annotate
 
 import (
 	"math"
+	"time"
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
@@ -54,8 +55,8 @@ func wayCentroid(w *osm.Way) geo.Point {
 // orientation will annotate the the orientation of multipolygon relation members.
 // This makes it possible to reconstruct relations with partial data in the right direction.
 // Return value indicates if the result is 'tainted', e.g. not all way members were present.
-func orientation(members osm.Members, ways map[osm.WayID]*osm.Way) bool {
-	outer, inner, tainted := mputil.Group(members, ways)
+func orientation(members osm.Members, ways map[osm.WayID]*osm.Way, at time.Time) bool {
+	outer, inner, tainted := mputil.Group(members, ways, at)
 
 	outers := mputil.Join(outer)
 	inners := mputil.Join(inner)

@@ -230,6 +230,6 @@ func (r *parentRelation) SetChildren(list core.ChildList) {
 	}
 
 	if r.Relation.Polygon() {
-		orientation(r.Relation.Members, ways)
+		orientation(r.Relation.Members, ways, r.Relation.CommittedAt())
 	}
 }

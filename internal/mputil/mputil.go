@@ -1,6 +1,8 @@
 package mputil
 
 import (
+	"time"
+
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
 	"github.com/paulmach/osm"
@@ -127,6 +129,7 @@ func (ms MultiSegment) Orientation() orb.Orientation {
 func Group(
 	members osm.Members,
 	ways map[osm.WayID]*osm.Way,
+	at time.Time,
 ) (outer, inner []Segment, tainted bool) {
 	for i, m := range members {
 		if m.Type != osm.TypeWay {
@@ -139,8 +142,8 @@ func Group(
 			continue // could be not found error, or something else.
 		}
 
-		line, t := wayToLineString(w)
-		if t {
+		line := w.LineStringAt(at)
+		if len(line) != len(w.Nodes) {
 			tainted = true
 		}
 
@@ -165,19 +168,4 @@ func Group(
 	}
 
 	return outer, inner, tainted
-}
-
-func wayToLineString(w *osm.Way) (geo.LineString, bool) {
-	ls := make(geo.LineString, 0, len(w.Nodes))
-	tainted := false
-
-	for _, wn := range w.Nodes {
-		if wn.Lon != 0 || wn.Lat != 0 {
-			ls = append(ls, geo.NewPoint(wn.Lon, wn.Lat))
-		} else {
-			tainted = true
-		}
-	}
-
-	return ls, tainted
 }
