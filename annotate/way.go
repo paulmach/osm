@@ -34,7 +34,7 @@ func Ways(
 		}
 	}
 
-	parents, histories, err := convertWayData(ctx, ways, datasource)
+	parents, histories, err := convertWayData(ctx, ways, datasource, computeOpts.IgnoreMissingChildren)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -56,6 +56,7 @@ func convertWayData(
 	ctx context.Context,
 	ways osm.Ways,
 	datasource NodeHistoryDatasourcer,
+	ignoreNotFound bool,
 ) ([]core.Parent, *core.Histories, error) {
 
 	ways.SortByIDVersion()
@@ -67,13 +68,13 @@ func convertWayData(
 		parents[i] = &parentWay{Way: w}
 
 		for _, n := range w.Nodes {
-			childID := osm.FeatureID{Type: osm.TypeNode, Ref: int64(n.ID)}
+			childID := n.FeatureID()
 			if histories.Get(childID) != nil {
 				continue
 			}
 
 			nodes, err := datasource.NodeHistory(ctx, n.ID)
-			if err != nil {
+			if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
 				return nil, nil, err
 			}
 

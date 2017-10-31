@@ -64,7 +64,6 @@ func convertRelationData(
 				continue
 			}
 
-			var list core.ChildList
 			switch childID.Type {
 			case osm.TypeNode:
 				nodes, err := datasource.NodeHistory(ctx, childID.NodeID())
@@ -72,7 +71,7 @@ func convertRelationData(
 					return nil, nil, err
 				}
 
-				list = nodesToChildList(nodes)
+				list := nodesToChildList(nodes)
 				histories.Set(childID, list)
 			case osm.TypeWay:
 				ways, err := datasource.WayHistory(ctx, childID.WayID())
@@ -80,7 +79,7 @@ func convertRelationData(
 					return nil, nil, err
 				}
 
-				list = waysToChildList(ways)
+				list := waysToChildList(ways)
 				histories.Set(childID, list)
 			case osm.TypeRelation:
 				relations, err := datasource.RelationHistory(ctx, childID.RelationID())
@@ -88,7 +87,7 @@ func convertRelationData(
 					return nil, nil, err
 				}
 
-				list = relationsToChildList(relations)
+				list := relationsToChildList(relations)
 				histories.Set(childID, list)
 			default:
 				return nil, nil, &UnsupportedMemberTypeError{
