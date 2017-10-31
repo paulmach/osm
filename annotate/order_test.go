@@ -49,7 +49,7 @@ func TestChildFirstOrdering(t *testing.T) {
 	}
 }
 
-func TestChildFirstOrderingCycle(t *testing.T) {
+func TestChildFirstOrdering_Cycle(t *testing.T) {
 	relations := osm.Relations{
 		{ID: 1, Version: 1, Members: osm.Members{
 			{Type: osm.TypeRelation, Ref: 2},
@@ -107,7 +107,7 @@ func TestChildFirstOrderingCycle(t *testing.T) {
 	}
 }
 
-func TestChildFirstOrderingCancel(t *testing.T) {
+func TestChildFirstOrdering_Cancel(t *testing.T) {
 	relations := osm.Relations{
 		{ID: 8, Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 		{ID: 10, Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
@@ -133,7 +133,7 @@ func TestChildFirstOrderingCancel(t *testing.T) {
 	}
 }
 
-func TestChildFirstOrderingClose(t *testing.T) {
+func TestChildFirstOrdering_Close(t *testing.T) {
 	relations := osm.Relations{
 		{ID: 8, Members: osm.Members{{Type: osm.TypeNode, Ref: 12}}},
 		{ID: 10, Members: osm.Members{{Type: osm.TypeRelation, Ref: 8}}},
@@ -157,7 +157,8 @@ func TestChildFirstOrderingClose(t *testing.T) {
 		t.Errorf("incorrect error, got %v", err)
 	}
 }
-func TestChildFirstOrderingWalk(t *testing.T) {
+
+func TestChildFirstOrdering_Walk(t *testing.T) {
 	relations := osm.Relations{
 		{ID: 2, Members: osm.Members{
 			{Type: osm.TypeRelation, Ref: 4},
@@ -178,6 +179,34 @@ func TestChildFirstOrderingWalk(t *testing.T) {
 		// circular relation of self.
 		{ID: 16, Members: osm.Members{
 			{Type: osm.TypeRelation, Ref: 16},
+		}},
+	}
+
+	ordering := &ChildFirstOrdering{
+		ctx:     context.Background(),
+		ds:      (&osm.OSM{Relations: relations}).ToHistoryDatasource(),
+		visited: make(map[osm.RelationID]struct{}, len(relations)),
+		out:     make(chan osm.RelationID, 10+len(relations)),
+	}
+
+	// start at all parts of cycle
+	// basically should not infinite loop
+	path := make([]osm.RelationID, 0, 100)
+	for _, r := range relations {
+		err := ordering.walk(r.ID, path)
+		if err != nil {
+			t.Errorf("should process cycle without problem: %v", err)
+		}
+	}
+}
+
+func TestChildFirstOrdering_MissingRelation(t *testing.T) {
+	relations := osm.Relations{
+		{ID: 2, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 3},
+		}},
+		{ID: 4, Members: osm.Members{
+			{Type: osm.TypeRelation, Ref: 2},
 		}},
 	}
 

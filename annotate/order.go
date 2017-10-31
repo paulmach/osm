@@ -116,6 +116,10 @@ func (o *ChildFirstOrdering) walk(id osm.RelationID, path []osm.RelationID) erro
 	}
 
 	relations, err := o.ds.RelationHistory(o.ctx, id)
+	if o.ds.NotFound(err) {
+		return nil
+	}
+
 	if err != nil {
 		return err
 	}
