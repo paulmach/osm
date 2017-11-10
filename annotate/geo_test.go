@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"testing"
 
-	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/orb"
 	"github.com/paulmach/osm"
 )
 
@@ -26,7 +26,7 @@ func TestWayPointOnSurface(t *testing.T) {
 
 	sp := wayPointOnSurface(w)
 
-	expected := geo.Point{w.Nodes[3].Lon, w.Nodes[3].Lat}
+	expected := orb.Point{w.Nodes[3].Lon, w.Nodes[3].Lat}
 	if !sp.Equal(expected) {
 		t.Errorf("incorrect centroid: %v", sp)
 	}

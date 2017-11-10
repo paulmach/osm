@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/orb"
 )
 
 // WayID is the primary key of a way.
@@ -101,10 +101,10 @@ func (wn WayNode) ElementID() ElementID {
 	}
 }
 
-// Point returns the geo.Point location for the way node.
+// Point returns the orb.Point location for the way node.
 // Will be (0, 0) if the way is not annotated.
-func (wn WayNode) Point() geo.Point {
-	return geo.Point{wn.Lon, wn.Lat}
+func (wn WayNode) Point() orb.Point {
+	return orb.Point{wn.Lon, wn.Lat}
 }
 
 // CommittedAt returns the best estimate on when this element
@@ -161,8 +161,8 @@ func (w *Way) applyUpdate(u Update) error {
 }
 
 // LineString will convert the annotated nodes into a LineString datatype.
-func (w *Way) LineString() geo.LineString {
-	ls := make(geo.LineString, 0, len(w.Nodes))
+func (w *Way) LineString() orb.LineString {
+	ls := make(orb.LineString, 0, len(w.Nodes))
 	for _, n := range w.Nodes {
 		if n.Lat != 0 || n.Lon != 0 {
 			ls = append(ls, n.Point())
@@ -174,7 +174,7 @@ func (w *Way) LineString() geo.LineString {
 
 // LineStringAt will return the LineString from the annotated points at
 // the given time. It will apply to the updates upto and including the give time.
-func (w *Way) LineStringAt(t time.Time) geo.LineString {
+func (w *Way) LineStringAt(t time.Time) orb.LineString {
 	ls := w.LineString()
 
 	for _, u := range w.Updates {

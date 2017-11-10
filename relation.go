@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/geo"
 )
 
 // RelationID is the primary key of a relation.
@@ -114,11 +113,11 @@ func (m Member) ElementID() ElementID {
 	}
 }
 
-// Point returns the geo.Point location for the member.
+// Point returns the orb.Point location for the member.
 // Will be (0, 0) if the relation is not annotated.
 // For way members this location is annotated as the "surface point".
-func (m Member) Point() geo.Point {
-	return geo.Point{m.Lon, m.Lat}
+func (m Member) Point() orb.Point {
+	return orb.Point{m.Lon, m.Lat}
 }
 
 // CommittedAt returns the best estimate on when this element

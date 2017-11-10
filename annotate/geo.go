@@ -10,7 +10,7 @@ import (
 	"github.com/paulmach/osm/internal/mputil"
 )
 
-func wayPointOnSurface(w *osm.Way) geo.Point {
+func wayPointOnSurface(w *osm.Way) orb.Point {
 	centroid := wayCentroid(w)
 
 	// find closest node to centroid.
@@ -18,7 +18,7 @@ func wayPointOnSurface(w *osm.Way) geo.Point {
 	min := math.MaxFloat64
 	index := 0
 	for i, n := range w.Nodes {
-		d := centroid.DistanceFrom(n.Point())
+		d := geo.Distance(centroid, n.Point())
 		if d < min {
 			index = i
 			min = d
@@ -28,17 +28,17 @@ func wayPointOnSurface(w *osm.Way) geo.Point {
 	return w.Nodes[index].Point()
 }
 
-func wayCentroid(w *osm.Way) geo.Point {
+func wayCentroid(w *osm.Way) orb.Point {
 	dist := 0.0
-	point := geo.Point{}
+	point := orb.Point{}
 
-	seg := [2]geo.Point{}
+	seg := [2]orb.Point{}
 
 	for i := 0; i < len(w.Nodes)-1; i++ {
 		seg[0] = w.Nodes[i].Point()
 		seg[1] = w.Nodes[i+1].Point()
 
-		d := seg[0].DistanceFrom(seg[1])
+		d := geo.Distance(seg[0], seg[1])
 
 		point[0] += (seg[0][0] + seg[1][0]) / 2.0 * d
 		point[1] += (seg[0][1] + seg[1][1]) / 2.0 * d

@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 	"testing"
 
-	"github.com/paulmach/orb/geo"
-	"github.com/paulmach/orb/geo/geojson"
+	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/geojson"
 	"github.com/paulmach/osm"
 )
 
@@ -43,22 +43,10 @@ func TestConvert_Polygon(t *testing.T) {
 			<node id="4691260535" lat="37.8262598" lon="-122.2551983"/>
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(-122.2551366, 37.8264051),
-				geo.NewPoint(-122.2552916, 37.8262489),
-				geo.NewPoint(-122.2549185, 37.8259401),
-				geo.NewPoint(-122.2547068, 37.8260931),
-				geo.NewPoint(-122.2551366, 37.8264051),
-			),
-			append(geo.NewRing(),
-				geo.NewPoint(-122.2551983, 37.8262598),
-				geo.NewPoint(-122.2551641, 37.8262958),
-				geo.NewPoint(-122.2548698, 37.8260840),
-				geo.NewPoint(-122.2549281, 37.8260406),
-				geo.NewPoint(-122.2551983, 37.8262598),
-			),
-		)
+		polygon := orb.Polygon{
+			{{-122.2551366, 37.8264051}, {-122.2552916, 37.8262489}, {-122.2549185, 37.8259401}, {-122.2547068, 37.8260931}, {-122.2551366, 37.8264051}},
+			{{-122.2551983, 37.8262598}, {-122.2551641, 37.8262958}, {-122.2548698, 37.8260840}, {-122.2549281, 37.8260406}, {-122.2551983, 37.8262598}},
+		}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/6989507"
@@ -117,20 +105,10 @@ func TestConvert_MultiPolygon(t *testing.T) {
 			<node id="9" lat="1.5" lon="-1.5" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(-2.0, -2.0),
-				geo.NewPoint(2.0, -2.0),
-				geo.NewPoint(-2.0, 2.0),
-				geo.NewPoint(-2.0, -2.0),
-			),
-			append(geo.NewRing(),
-				geo.NewPoint(-1.5, -1.5),
-				geo.NewPoint(-1.5, 1.5),
-				geo.NewPoint(1.5, -1.5),
-				geo.NewPoint(-1.5, -1.5),
-			),
-		)
+		polygon := orb.Polygon{
+			{{-2.0, -2.0}, {2.0, -2.0}, {-2.0, 2.0}, {-2.0, -2.0}},
+			{{-1.5, -1.5}, {-1.5, 1.5}, {1.5, -1.5}, {-1.5, -1.5}},
+		}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "way/2"
@@ -174,14 +152,7 @@ func TestConvert_MultiPolygon(t *testing.T) {
 			<node id="3" lat="-1.0" lon="1.0" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(-1.0, 1.0),
-				geo.NewPoint(1.0, -1.0),
-				geo.NewPoint(1.0, 1.0),
-			),
-		)
+		polygon := orb.Polygon{{{1.0, 1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}}}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/1"
@@ -216,14 +187,7 @@ func TestConvert_MultiPolygon(t *testing.T) {
 			<node id="3" lat="-1.0" lon="1.0" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(-1.0, 1.0),
-				geo.NewPoint(1.0, -1.0),
-				geo.NewPoint(1.0, 1.0),
-			),
-		)
+		polygon := orb.Polygon{{{1.0, 1.0}, {-1.0, 1.0}, {1.0, -1.0}, {1.0, 1.0}}}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/1"
@@ -266,20 +230,10 @@ func TestConvert_MultiPolygon(t *testing.T) {
 			<node id="9" lat="1.5" lon="-1.5" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(-2.0, -2.0),
-				geo.NewPoint(2.0, -2.0),
-				geo.NewPoint(-2.0, 2.0),
-				geo.NewPoint(-2.0, -2.0),
-			),
-			append(geo.NewRing(),
-				geo.NewPoint(-1.5, -1.5),
-				geo.NewPoint(-1.5, 1.5),
-				geo.NewPoint(1.5, -1.5),
-				geo.NewPoint(-1.5, -1.5),
-			),
-		)
+		polygon := orb.Polygon{
+			{{-2.0, -2.0}, {2.0, -2.0}, {-2.0, 2.0}, {-2.0, -2.0}},
+			{{-1.5, -1.5}, {-1.5, 1.5}, {1.5, -1.5}, {-1.5, -1.5}},
+		}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/1"
@@ -287,7 +241,7 @@ func TestConvert_MultiPolygon(t *testing.T) {
 		feature.Properties["id"] = 1
 		feature.Properties["tags"] = map[string]string{"type": "multipolygon", "amenity": "xxx"}
 
-		way := geojson.NewFeature(geo.Polygon{polygon[0]})
+		way := geojson.NewFeature(orb.Polygon{polygon[0]})
 		way.ID = "way/2"
 		way.Properties["type"] = "way"
 		way.Properties["id"] = 2
@@ -396,14 +350,7 @@ func TestConvert_InnerWays(t *testing.T) {
 			<node id="5" lon="1.0" lat="0.0" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(0.0, 0.0),
-				geo.NewPoint(1.0, 0.0),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(0.0, 0.0),
-			),
-		)
+		polygon := orb.Polygon{{{0, 0}, {1, 0}, {1, 1}, {0, 0}}}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "way/2"
@@ -441,14 +388,7 @@ func TestConvert_InnerWays(t *testing.T) {
 			<node id="6" lon="1.0" lat="0.0" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(0.0, 0.0),
-				geo.NewPoint(1.0, 0.0),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(0.0, 0.0),
-			),
-		)
+		polygon := orb.Polygon{{{0, 0}, {1, 0}, {1, 1}, {0, 0}}}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/1"
@@ -487,24 +427,14 @@ func TestConvert_InnerWays(t *testing.T) {
 			<node id="6" lon="1.0" lat="0.0" />
 		</osm>`
 
-		multiPolygon := append(geo.NewMultiPolygon(),
-			append(geo.NewPolygon(),
-				append(geo.NewRing(),
-					geo.NewPoint(0.0, 0.0),
-					geo.NewPoint(1.0, 0.0),
-					geo.NewPoint(1.0, 1.0),
-					geo.NewPoint(0.0, 0.0),
-				),
-			),
-			append(geo.NewPolygon(),
-				append(geo.NewRing(),
-					geo.NewPoint(0.0, 0.0),
-					geo.NewPoint(1.0, 0.0),
-					geo.NewPoint(1.0, 1.0),
-					geo.NewPoint(0.0, 0.0),
-				),
-			),
-		)
+		multiPolygon := orb.MultiPolygon{
+			{
+				{{0, 0}, {1, 0}, {1, 1}, {0, 0}},
+			},
+			{
+				{{0, 0}, {1, 0}, {1, 1}, {0, 0}},
+			},
+		}
 
 		feature := geojson.NewFeature(multiPolygon)
 		feature.ID = "relation/1"
@@ -584,11 +514,7 @@ func TestConvert_InnerWays(t *testing.T) {
 		</osm>`
 
 		// should return one of the ways as a line string
-		ls := append(geo.NewLineString(),
-			geo.NewPoint(0.0, 0.0),
-			geo.NewPoint(1.0, 1.0),
-			geo.NewPoint(0.0, 0.0),
-		)
+		ls := orb.LineString{{0, 0}, {1, 1}, {0, 0}}
 
 		feature := geojson.NewFeature(ls)
 		feature.ID = "way/1"
@@ -658,37 +584,14 @@ func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 	</osm>`
 
 	t.Run("multi polygon", func(t *testing.T) {
-		mp := append(geo.NewMultiPolygon(),
-			append(geo.NewPolygon(),
-				append(geo.NewRing(),
-					geo.NewPoint(-1.1, 0.1),
-					geo.NewPoint(-1.2, 0.0),
-					geo.NewPoint(-1.1, -0.1),
-					geo.NewPoint(-1.1, 0.1),
-				),
-			),
-			append(geo.NewPolygon(),
-				append(geo.NewRing(),
-					geo.NewPoint(-1.0, -1.0),
-					geo.NewPoint(1.0, -1.0),
-					geo.NewPoint(1.0, 1.0),
-					geo.NewPoint(-1.0, 1.0),
-					geo.NewPoint(-1.0, -1.0),
-				),
-				append(geo.NewRing(),
-					geo.NewPoint(-0.1, 0.1),
-					geo.NewPoint(-0.1, -0.1),
-					geo.NewPoint(-0.2, 0.0),
-					geo.NewPoint(-0.1, 0.1),
-				),
-				append(geo.NewRing(),
-					geo.NewPoint(0.0, -0.5),
-					geo.NewPoint(0.0, 0.5),
-					geo.NewPoint(0.5, 0.5),
-					geo.NewPoint(0.0, -0.5),
-				),
-			),
-		)
+		mp := orb.MultiPolygon{
+			{{{-1.1, 0.1}, {-1.2, 0.0}, {-1.1, -0.1}, {-1.1, 0.1}}},
+			{
+				{{-1.0, -1.0}, {1.0, -1.0}, {1.0, 1.0}, {-1.0, 1.0}, {-1.0, -1.0}},
+				{{-0.1, 0.1}, {-0.1, -0.1}, {-0.2, 0.0}, {-0.1, 0.1}},
+				{{0.0, -0.5}, {0.0, 0.5}, {0.5, 0.5}, {0.0, -0.5}},
+			},
+		}
 
 		feature := geojson.NewFeature(mp)
 		feature.ID = "relation/1"
@@ -696,14 +599,7 @@ func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 		feature.Properties["id"] = 1
 		feature.Properties["tags"] = map[string]string{"type": "multipolygon", "building": "yes"}
 
-		way3 := geojson.NewFeature(
-			append(geo.NewRing(),
-				geo.NewPoint(0.0, -0.5),
-				geo.NewPoint(0.5, 0.5),
-				geo.NewPoint(0.0, 0.5),
-				geo.NewPoint(0.0, -0.5),
-			),
-		)
+		way3 := geojson.NewFeature(orb.Ring{{0, -0.5}, {0.5, 0.5}, {0, 0.5}, {0, -0.5}})
 		way3.ID = "way/3"
 		way3.Properties["type"] = "way"
 		way3.Properties["id"] = 3
@@ -716,14 +612,7 @@ func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 			},
 		}
 
-		way4 := geojson.NewFeature(
-			append(geo.NewLineString(),
-				geo.NewPoint(-0.1, 0.1),
-				geo.NewPoint(-0.1, -0.1),
-				geo.NewPoint(-0.2, 0.0),
-				geo.NewPoint(-0.1, 0.1),
-			),
-		)
+		way4 := geojson.NewFeature(orb.LineString{{-0.1, 0.1}, {-0.1, -0.1}, {-0.2, 0.0}, {-0.1, 0.1}})
 		way4.ID = "way/4"
 		way4.Properties["type"] = "way"
 		way4.Properties["id"] = 4
@@ -736,14 +625,7 @@ func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 			},
 		}
 
-		way5 := geojson.NewFeature(
-			append(geo.NewRing(),
-				geo.NewPoint(-1.1, 0.1),
-				geo.NewPoint(-1.2, 0.0),
-				geo.NewPoint(-1.1, -0.1),
-				geo.NewPoint(-1.1, 0.1),
-			),
-		)
+		way5 := geojson.NewFeature(orb.Ring{{-1.1, 0.1}, {-1.2, 0.0}, {-1.1, -0.1}, {-1.1, 0.1}})
 		way5.ID = "way/5"
 		way5.Properties["type"] = "way"
 		way5.Properties["id"] = 5
@@ -776,7 +658,7 @@ func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 			t.Fatalf("convert error: %v", err)
 		}
 
-		mp := fc.Features[0].Geometry.(geo.Polygon)
+		mp := fc.Features[0].Geometry.(orb.Polygon)
 		if l := len(mp); l != 3 {
 			t.Errorf("wrong number of outer rings: %d != 3", l)
 		}
@@ -803,12 +685,10 @@ func TestConvert_IncludeInvalidPolygons(t *testing.T) {
 			<node id="6" lon="1.0" lat="0.0" />
 		</osm>`
 
-		ls := append(geo.Polygon{}, nil, geo.Ring{
-			geo.NewPoint(0.0, 0.0),
-			geo.NewPoint(1.0, 1.0),
-			geo.NewPoint(1.0, 0.0),
-			geo.NewPoint(0.0, 0.0),
-		})
+		ls := orb.Polygon{
+			nil,
+			orb.Ring{{0.0, 0.0}, {1.0, 1.0}, {1.0, 0.0}, {0.0, 0.0}},
+		}
 
 		feature := geojson.NewFeature(ls)
 		feature.ID = "relation/1"
@@ -874,15 +754,10 @@ func TestConvert_IncludeInvalidPolygons(t *testing.T) {
 			<node id="6" lon="1.0" lat="0.0" />
 		</osm>`
 
-		ls := append(geo.Polygon{}, geo.Ring{
-			geo.NewPoint(1.0, 1.0),
-			geo.NewPoint(0.0, 0.0),
-		}, geo.Ring{
-			geo.NewPoint(0.0, 0.0),
-			geo.NewPoint(1.0, 1.0),
-			geo.NewPoint(1.0, 0.0),
-			geo.NewPoint(0.0, 0.0),
-		})
+		ls := orb.Polygon{
+			{{1.0, 1.0}, {0.0, 0.0}},
+			{{0.0, 0.0}, {1.0, 1.0}, {1.0, 0.0}, {0.0, 0.0}},
+		}
 
 		feature := geojson.NewFeature(ls)
 		feature.ID = "relation/1"

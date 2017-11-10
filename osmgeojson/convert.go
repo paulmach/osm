@@ -3,8 +3,8 @@ package osmgeojson
 import (
 	"fmt"
 
-	"github.com/paulmach/orb/geo"
-	"github.com/paulmach/orb/geo/geojson"
+	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/geojson"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/internal/mputil"
 )
@@ -180,7 +180,7 @@ func (ctx *context) nodeToFeature(n *osm.Node) *geojson.Feature {
 		return nil
 	}
 
-	f := geojson.NewFeature(geo.NewPoint(n.Lon, n.Lat))
+	f := geojson.NewFeature(orb.Point{n.Lon, n.Lat})
 
 	if !ctx.noID {
 		f.ID = fmt.Sprintf("node/%d", n.ID)
@@ -194,14 +194,14 @@ func (ctx *context) nodeToFeature(n *osm.Node) *geojson.Feature {
 	return f
 }
 
-func (ctx *context) wayToLineString(w *osm.Way) (geo.LineString, bool) {
-	ls := make(geo.LineString, 0, len(w.Nodes))
+func (ctx *context) wayToLineString(w *osm.Way) (orb.LineString, bool) {
+	ls := make(orb.LineString, 0, len(w.Nodes))
 	tainted := false
 	for _, wn := range w.Nodes {
 		if wn.Lon != 0 || wn.Lat != 0 {
-			ls = append(ls, geo.NewPoint(wn.Lon, wn.Lat))
+			ls = append(ls, orb.Point{wn.Lon, wn.Lat})
 		} else if n := ctx.getNode(wn.ID); n != nil {
-			ls = append(ls, geo.NewPoint(n.Lon, n.Lat))
+			ls = append(ls, orb.Point{n.Lon, n.Lat})
 		} else {
 			tainted = true
 		}
@@ -219,7 +219,7 @@ func (ctx *context) wayToFeature(w *osm.Way) *geojson.Feature {
 
 	var f *geojson.Feature
 	if w.Polygon() {
-		p := geo.Polygon{toRing(ls)}
+		p := orb.Polygon{toRing(ls)}
 		reorient(p)
 		f = geojson.NewFeature(p)
 	} else {
@@ -283,11 +283,11 @@ func (ctx *context) buildRouteLineString(relation *osm.Relation) *geojson.Featur
 
 	lineSections := mputil.Join(lines)
 
-	var geometry geo.Geometry
+	var geometry orb.Geometry
 	if len(lineSections) == 1 {
 		geometry = lineSections[0].ToLineString()
 	} else {
-		mls := make(geo.MultiLineString, 0, len(lines))
+		mls := make(orb.MultiLineString, 0, len(lines))
 		for _, ls := range lineSections {
 			mls = append(mls, ls.ToLineString())
 		}
@@ -414,15 +414,15 @@ func hasInterestingTags(tags osm.Tags, ignore map[string]string) bool {
 	return false
 }
 
-func toRing(ls geo.LineString) geo.Ring {
+func toRing(ls orb.LineString) orb.Ring {
 	if len(ls) < 2 {
-		return geo.Ring(ls)
+		return orb.Ring(ls)
 	}
 
 	// duplicate last point
 	if ls[0] != ls[len(ls)-1] {
-		return geo.Ring(append(ls, ls[0]))
+		return orb.Ring(append(ls, ls[0]))
 	}
 
-	return geo.Ring(ls)
+	return orb.Ring(ls)
 }

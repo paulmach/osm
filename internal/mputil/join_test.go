@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/orb"
 )
 
 func TestJoin(t *testing.T) {
@@ -17,13 +17,13 @@ func TestJoin(t *testing.T) {
 			name: "single line",
 			input: []Segment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{0, 0}, {1, 1}},
+						Line: orb.LineString{{0, 0}, {1, 1}},
 					},
 				},
 			},
@@ -32,21 +32,21 @@ func TestJoin(t *testing.T) {
 			name: "two loops",
 			input: []Segment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}, {1, 2}, {0, 0}},
+					Line: orb.LineString{{0, 0}, {1, 1}, {1, 2}, {0, 0}},
 				},
 				{
-					Line: geo.LineString{{1, 0}, {2, 1}, {2, 2}, {1, 0}},
+					Line: orb.LineString{{1, 0}, {2, 1}, {2, 2}, {1, 0}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{1, 0}, {2, 1}, {2, 2}, {1, 0}},
+						Line: orb.LineString{{1, 0}, {2, 1}, {2, 2}, {1, 0}},
 					},
 				},
 				{
 					{
-						Line: geo.LineString{{0, 0}, {1, 1}, {1, 2}, {0, 0}},
+						Line: orb.LineString{{0, 0}, {1, 1}, {1, 2}, {0, 0}},
 					},
 				},
 			},
@@ -55,20 +55,20 @@ func TestJoin(t *testing.T) {
 			name: "joins two lines",
 			input: []Segment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{2, 2}, {1, 1}},
+					Line: orb.LineString{{2, 2}, {1, 1}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{2, 2}, {1, 1}},
+						Line: orb.LineString{{2, 2}, {1, 1}},
 					},
 					{
 						Reversed: true,
-						Line:     geo.LineString{{0, 0}},
+						Line:     orb.LineString{{0, 0}},
 					},
 				},
 			},
@@ -93,16 +93,16 @@ func TestJoinLineString_SinglePointLine(t *testing.T) {
 			name: "single point line, first",
 			input: []Segment{
 				{
-					Line: geo.LineString{{1, 1}},
+					Line: orb.LineString{{1, 1}},
 				},
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{0, 0}, {1, 1}},
+						Line: orb.LineString{{0, 0}, {1, 1}},
 					},
 				},
 			},
@@ -111,16 +111,16 @@ func TestJoinLineString_SinglePointLine(t *testing.T) {
 			name: "single point line, last",
 			input: []Segment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{1, 1}},
+					Line: orb.LineString{{1, 1}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{0, 0}, {1, 1}},
+						Line: orb.LineString{{0, 0}, {1, 1}},
 					},
 				},
 			},
@@ -145,28 +145,28 @@ func TestJoinLineString_DanglingLine(t *testing.T) {
 			name: "dangling line, last",
 			input: []Segment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{2, 2}, {1, 1}},
+					Line: orb.LineString{{2, 2}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{3, 3}, {4, 4}},
+					Line: orb.LineString{{3, 3}, {4, 4}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{3, 3}, {4, 4}},
+						Line: orb.LineString{{3, 3}, {4, 4}},
 					},
 				},
 				{
 					{
-						Line: geo.LineString{{2, 2}, {1, 1}},
+						Line: orb.LineString{{2, 2}, {1, 1}},
 					},
 					{
 						Reversed: true,
-						Line:     geo.LineString{{0, 0}},
+						Line:     orb.LineString{{0, 0}},
 					},
 				},
 			},
@@ -175,28 +175,28 @@ func TestJoinLineString_DanglingLine(t *testing.T) {
 			name: "dangling line, middle",
 			input: []Segment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{3, 3}, {4, 4}},
+					Line: orb.LineString{{3, 3}, {4, 4}},
 				},
 				{
-					Line: geo.LineString{{2, 2}, {1, 1}},
+					Line: orb.LineString{{2, 2}, {1, 1}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{2, 2}, {1, 1}},
+						Line: orb.LineString{{2, 2}, {1, 1}},
 					},
 					{
 						Reversed: true,
-						Line:     geo.LineString{{0, 0}},
+						Line:     orb.LineString{{0, 0}},
 					},
 				},
 				{
 					{
-						Line: geo.LineString{{3, 3}, {4, 4}},
+						Line: orb.LineString{{3, 3}, {4, 4}},
 					},
 				},
 			},
@@ -205,28 +205,28 @@ func TestJoinLineString_DanglingLine(t *testing.T) {
 			name: "dangling line, first",
 			input: []Segment{
 				{
-					Line: geo.LineString{{3, 3}, {4, 4}},
+					Line: orb.LineString{{3, 3}, {4, 4}},
 				},
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{2, 2}, {1, 1}},
+					Line: orb.LineString{{2, 2}, {1, 1}},
 				},
 			},
 			output: []MultiSegment{
 				{
 					{
-						Line: geo.LineString{{2, 2}, {1, 1}},
+						Line: orb.LineString{{2, 2}, {1, 1}},
 					},
 					{
 						Reversed: true,
-						Line:     geo.LineString{{0, 0}},
+						Line:     orb.LineString{{0, 0}},
 					},
 				},
 				{
 					{
-						Line: geo.LineString{{3, 3}, {4, 4}},
+						Line: orb.LineString{{3, 3}, {4, 4}},
 					},
 				},
 			},

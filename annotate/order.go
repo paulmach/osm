@@ -24,7 +24,7 @@ type ChildFirstOrdering struct {
 	CompletedIndex int
 
 	ctx     context.Context
-	done    func()
+	done    context.CancelFunc
 	ds      RelationHistoryDatasourcer
 	visited map[osm.RelationID]struct{}
 	out     chan osm.RelationID

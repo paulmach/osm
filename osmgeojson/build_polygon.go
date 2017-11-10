@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/geo"
-	"github.com/paulmach/orb/geo/geojson"
+	"github.com/paulmach/orb/geojson"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/internal/mputil"
 )
@@ -81,7 +80,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		}
 	}
 
-	var geometry geo.Geometry
+	var geometry orb.Geometry
 
 	// If there is only one outer way, and the relation doesn't have any interesting tags
 	// use the way to define this polygon. ie. use the way's type, id and tags.
@@ -95,13 +94,13 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		// exist anymore. In the past tags were set on the outer ring way and
 		// the relation was used to add holes to the way.
 		outerRing := mputil.MultiSegment(outer).ToRing(orb.CCW)
-		if !outerRing.Valid() {
-			// at least 4 points and first and last are the same.
+		if len(outerRing) < 4 || !outerRing.Closed() {
+			// not a valid outer ring
 			return nil
 		}
 
 		innerSections := mputil.Join(inner)
-		polygon := make(geo.Polygon, 0, len(inner)+1)
+		polygon := make(orb.Polygon, 0, len(inner)+1)
 
 		polygon = append(polygon, outerRing)
 		for _, is := range innerSections {
@@ -121,15 +120,15 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		// the outer that contians them.
 		outerSections := mputil.Join(outer)
 
-		mp := make(geo.MultiPolygon, 0, len(outer))
+		mp := make(orb.MultiPolygon, 0, len(outer))
 		for _, os := range outerSections {
 			ring := os.ToRing(orb.CCW)
-			if !ctx.includeInvalidPolygons && !ring.Valid() {
+			if !ctx.includeInvalidPolygons && (len(ring) < 4 || !ring.Closed()) {
 				// needs at least 4 points and matching endpoints
 				continue
 			}
 
-			mp = append(mp, geo.Polygon{ring})
+			mp = append(mp, orb.Polygon{ring})
 		}
 
 		if len(mp) == 0 && !ctx.includeInvalidPolygons {
@@ -172,7 +171,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 	return f
 }
 
-func addToMultiPolygon(mp geo.MultiPolygon, ring geo.Ring, includeInvalidPolygons bool) geo.MultiPolygon {
+func addToMultiPolygon(mp orb.MultiPolygon, ring orb.Ring, includeInvalidPolygons bool) orb.MultiPolygon {
 	for i := range mp {
 		if polygonContains(mp[i][0], ring) {
 			mp[i] = append(mp[i], ring)
@@ -206,10 +205,10 @@ func addToMultiPolygon(mp geo.MultiPolygon, ring geo.Ring, includeInvalidPolygon
 
 	// no polygons with empty outer, so create one.
 	// create another polygon with empty outer.
-	return append(mp, geo.Polygon{nil, ring})
+	return append(mp, orb.Polygon{nil, ring})
 }
 
-func polygonContains(outer geo.Ring, r geo.Ring) bool {
+func polygonContains(outer orb.Ring, r orb.Ring) bool {
 	for _, p := range r {
 		inside := false
 
@@ -236,7 +235,7 @@ func polygonContains(outer geo.Ring, r geo.Ring) bool {
 	return false
 }
 
-func reorient(p geo.Polygon) {
+func reorient(p orb.Polygon) {
 	if p[0].Orientation() != orb.CCW {
 		p[0].Reverse()
 	}

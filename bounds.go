@@ -26,10 +26,10 @@ func NewBoundsFromTile(t maptile.Tile) (*Bounds, error) {
 
 	b := t.Bound()
 	return &Bounds{
-		MinLat: b[0].Lat(),
-		MaxLat: b[1].Lat(),
-		MinLon: b[0].Lon(),
-		MaxLon: b[1].Lon(),
+		MinLat: b.Min.Lat(),
+		MaxLat: b.Max.Lat(),
+		MinLon: b.Min.Lon(),
+		MaxLon: b.Max.Lon(),
 	}, nil
 }
 

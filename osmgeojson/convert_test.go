@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/paulmach/orb/geo"
-	"github.com/paulmach/orb/geo/geojson"
+	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/geojson"
 	"github.com/paulmach/osm"
 )
 
@@ -22,7 +22,7 @@ func TestConvert(t *testing.T) {
 	t.Run("node", func(t *testing.T) {
 		xml := `<osm><node id='1' lat='1.234' lon='4.321' /></osm>`
 
-		feature := geojson.NewFeature(geo.NewPoint(4.321, 1.234))
+		feature := geojson.NewFeature(orb.Point{4.321, 1.234})
 		feature.ID = "node/1"
 		feature.Properties["type"] = "node"
 		feature.Properties["id"] = 1
@@ -40,13 +40,7 @@ func TestConvert(t *testing.T) {
 			<node id='4' lat='0.1' lon='1.2' />
 		</osm>`
 
-		ls := append(geo.NewLineString(),
-			geo.NewPoint(1.0, 0.0),
-			geo.NewPoint(1.1, 0.0),
-			geo.NewPoint(1.2, 0.1),
-		)
-
-		feature := geojson.NewFeature(ls)
+		feature := geojson.NewFeature(orb.LineString{{1, 0}, {1.1, 0}, {1.2, 0.1}})
 		feature.ID = "way/1"
 		feature.Properties["type"] = "way"
 		feature.Properties["id"] = 1
@@ -79,21 +73,10 @@ func TestConvert(t *testing.T) {
 			<node id='10' lat='0.0' lon='0.5' />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(-1.0, -1.0),
-				geo.NewPoint(1.0, -1.0),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(-1.0, 1.0),
-				geo.NewPoint(-1.0, -1.0),
-			),
-			append(geo.NewRing(),
-				geo.NewPoint(0.0, -0.5),
-				geo.NewPoint(0.0, 0.5),
-				geo.NewPoint(0.5, 0.0),
-				geo.NewPoint(0.0, -0.5),
-			),
-		)
+		polygon := orb.Polygon{
+			{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}, {-1, -1}},
+			{{0, -0.5}, {0, 0.5}, {0.5, 0}, {0, -0.5}},
+		}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "way/2"
@@ -136,21 +119,10 @@ func TestConvert(t *testing.T) {
 			<node id='10' lat='0.0' lon='0.5' />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(-1.0, -1.0),
-				geo.NewPoint(1.0, -1.0),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(-1.0, 1.0),
-				geo.NewPoint(-1.0, -1.0),
-			),
-			append(geo.NewRing(),
-				geo.NewPoint(0.0, -0.5),
-				geo.NewPoint(0.0, 0.5),
-				geo.NewPoint(0.5, 0.0),
-				geo.NewPoint(0.0, -0.5),
-			),
-		)
+		polygon := orb.Polygon{
+			{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}, {-1, -1}},
+			{{0, -0.5}, {0, 0.5}, {0.5, 0}, {0, -0.5}},
+		}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/1"
@@ -185,25 +157,19 @@ func TestConvert_InterestingNodes(t *testing.T) {
 		<node id="5" lat="0.0" lon="0.0" version="3" />
 	</osm>`
 
-	ls := append(geo.NewLineString(),
-		geo.NewPoint(1.0, 0.0),
-		geo.NewPoint(1.1, 0.0),
-		geo.NewPoint(1.2, 0.1),
-	)
-
-	way := geojson.NewFeature(ls)
+	way := geojson.NewFeature(orb.LineString{{1, 0}, {1.1, 0}, {1.2, 0.1}})
 	way.ID = "way/1"
 	way.Properties["type"] = "way"
 	way.Properties["id"] = 1
 	way.Properties["tags"] = map[string]string{"foo": "bar"}
 
-	node1 := geojson.NewFeature(geo.NewPoint(1.1, 0))
+	node1 := geojson.NewFeature(orb.Point{1.1, 0})
 	node1.ID = "node/3"
 	node1.Properties["type"] = "node"
 	node1.Properties["id"] = 3
 	node1.Properties["tags"] = map[string]string{"asd": "fasd"}
 
-	node2 := geojson.NewFeature(geo.NewPoint(0, 0))
+	node2 := geojson.NewFeature(orb.Point{0, 0})
 	node2.ID = "node/5"
 	node2.Properties["type"] = "node"
 	node2.Properties["id"] = 5
@@ -228,15 +194,7 @@ func TestConvert_PolygonDetection(t *testing.T) {
 		<node id="3" lat="3" lon="2" />
 	</osm>`
 
-	polygon := append(geo.NewPolygon(),
-		append(geo.NewRing(),
-			geo.NewPoint(2, 2),
-			geo.NewPoint(3, 2),
-			geo.NewPoint(2, 3),
-			geo.NewPoint(2, 2),
-		),
-	)
-
+	polygon := orb.Polygon{{{2, 2}, {3, 2}, {2, 3}, {2, 2}}}
 	feature := geojson.NewFeature(polygon)
 	feature.ID = "way/1"
 	feature.Properties["type"] = "way"
@@ -260,12 +218,7 @@ func TestConvert_RouteRelation(t *testing.T) {
 			<node id="5" lon="0.0" lat="0.0" />
 		</osm>`
 
-		ls := append(geo.NewLineString(),
-			geo.NewPoint(-1.0, -1.0),
-			geo.NewPoint(0.0, 0.0),
-		)
-
-		feature := geojson.NewFeature(ls)
+		feature := geojson.NewFeature(orb.LineString{{-1, -1}, {0, 0}})
 		feature.ID = "relation/1"
 		feature.Properties["type"] = "relation"
 		feature.Properties["id"] = 1
@@ -294,17 +247,10 @@ func TestConvert_RouteRelation(t *testing.T) {
 			<node id="8" lon="20.0" lat="20.0" />
 		</osm>`
 
-		mls := append(geo.NewMultiLineString(),
-			append(geo.NewLineString(),
-				geo.NewPoint(10.0, 10.0),
-				geo.NewPoint(20.0, 20.0),
-			),
-			append(geo.NewLineString(),
-				geo.NewPoint(-1.0, -1.0),
-				geo.NewPoint(0.0, 0.0),
-				geo.NewPoint(1.0, 1.0),
-			),
-		)
+		mls := orb.MultiLineString{
+			{{10, 10}, {20, 20}},
+			{{-1, -1}, {0, 0}, {1, 1}},
+		}
 
 		feature := geojson.NewFeature(mls)
 		feature.ID = "relation/1"
@@ -323,7 +269,7 @@ func TestConvert_NonInterestingNodes(t *testing.T) {
 			<node id="1" lat="3" lon="4"></node>
 		</osm>`
 
-		node := geojson.NewFeature(geo.NewPoint(4, 3))
+		node := geojson.NewFeature(orb.Point{4, 3})
 		node.ID = "node/1"
 		node.Properties["type"] = "node"
 		node.Properties["id"] = 1
@@ -340,7 +286,7 @@ func TestConvert_NonInterestingNodes(t *testing.T) {
 			<node id="1" lat="3" lon="4"></node>
 		</osm>`
 
-		node := geojson.NewFeature(geo.NewPoint(4, 3))
+		node := geojson.NewFeature(orb.Point{4, 3})
 		node.ID = "node/1"
 		node.Properties["type"] = "node"
 		node.Properties["id"] = 1
@@ -367,18 +313,13 @@ func TestConvert_NonInterestingNodes(t *testing.T) {
 			</node>
 		</osm>`
 
-		ls := append(geo.NewLineString(),
-			geo.NewPoint(4.0, 3.0),
-			geo.NewPoint(2.0, 1.0),
-		)
-
-		way := geojson.NewFeature(ls)
+		way := geojson.NewFeature(orb.LineString{{4, 3}, {2, 1}})
 		way.ID = "way/1"
 		way.Properties["type"] = "way"
 		way.Properties["id"] = 1
 		way.Properties["tainted"] = true
 
-		node := geojson.NewFeature(geo.NewPoint(4, 3))
+		node := geojson.NewFeature(orb.Point{4, 3})
 		node.ID = "node/1"
 		node.Properties["type"] = "node"
 		node.Properties["id"] = 1
@@ -399,12 +340,7 @@ func TestConvert_NonInterestingNodes(t *testing.T) {
 			<node id="1" lat="3" lon="4" />
 		</osm>`
 
-		ls := append(geo.NewLineString(),
-			geo.NewPoint(4.0, 3.0),
-			geo.NewPoint(2.0, 1.0),
-		)
-
-		feature := geojson.NewFeature(ls)
+		feature := geojson.NewFeature(orb.LineString{{4, 3}, {2, 1}})
 		feature.ID = "way/1"
 		feature.Properties["type"] = "way"
 		feature.Properties["id"] = 1
@@ -460,12 +396,7 @@ func TestConvert_Tainted(t *testing.T) {
 			<node id="4" lon="1.0" lat="1.0" />
 		</osm>`
 
-		ls := append(geo.NewLineString(),
-			geo.NewPoint(1.0, 1.0),
-			geo.NewPoint(1.0, 1.0),
-		)
-
-		feature := geojson.NewFeature(ls)
+		feature := geojson.NewFeature(orb.LineString{{1, 1}, {1, 1}})
 		feature.ID = "way/2"
 		feature.Properties["type"] = "way"
 		feature.Properties["id"] = 2
@@ -494,14 +425,7 @@ func TestConvert_Tainted(t *testing.T) {
 			<node id="5" lon="1.0" lat="0.0" />
 		</osm>`
 
-		polygon := append(geo.NewPolygon(),
-			append(geo.NewRing(),
-				geo.NewPoint(1.0, 1.0),
-				geo.NewPoint(0.0, 1.0),
-				geo.NewPoint(1.0, 0.0),
-				geo.NewPoint(1.0, 1.0),
-			),
-		)
+		polygon := orb.Polygon{{{1, 1}, {0, 1}, {1, 0}, {1, 1}}}
 
 		feature := geojson.NewFeature(polygon)
 		feature.ID = "relation/1"
@@ -556,7 +480,7 @@ func TestConvert_Meta(t *testing.T) {
 			uid="123" />
 	</osm>`
 
-	feature := geojson.NewFeature(geo.NewPoint(4.321, 1.234))
+	feature := geojson.NewFeature(orb.Point{4.321, 1.234})
 	feature.ID = "node/1"
 	feature.Properties["type"] = "node"
 	feature.Properties["id"] = 1
@@ -583,13 +507,7 @@ func TestConvert_UseAugmentedNodeValues(t *testing.T) {
 		</way>
 	</osm>`
 
-	ls := append(geo.NewLineString(),
-		geo.NewPoint(2.0, 1.0),
-		geo.NewPoint(2.0, 1.0),
-		geo.NewPoint(2.0, 1.0),
-	)
-
-	feature := geojson.NewFeature(ls)
+	feature := geojson.NewFeature(orb.LineString{{2, 1}, {2, 1}, {2, 1}})
 	feature.ID = "way/1"
 	feature.Properties["type"] = "way"
 	feature.Properties["id"] = 1

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/orb"
 	"github.com/paulmach/osm/internal/osmpb"
 )
 
@@ -81,10 +81,10 @@ func (n *Node) TagMap() map[string]string {
 	return n.Tags.Map()
 }
 
-// Point returns the geo.Point location for the node.
+// Point returns the orb.Point location for the node.
 // Will be (0, 0) for "deleted" nodes.
-func (n *Node) Point() geo.Point {
-	return geo.Point{n.Lon, n.Lat}
+func (n *Node) Point() orb.Point {
+	return orb.Point{n.Lon, n.Lat}
 }
 
 // Nodes is a list of nodes with helper functions on top.

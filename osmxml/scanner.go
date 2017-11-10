@@ -21,7 +21,7 @@ var _ osm.Scanner = &Scanner{}
 // https://golang.org/pkg/bufio/#Scanner
 type Scanner struct {
 	ctx    context.Context
-	cancel func()
+	done   context.CancelFunc
 	closed bool
 
 	decoder *xml.Decoder
@@ -39,7 +39,7 @@ func New(ctx context.Context, r io.Reader) *Scanner {
 		decoder: xml.NewDecoder(r),
 	}
 
-	s.ctx, s.cancel = context.WithCancel(ctx)
+	s.ctx, s.done = context.WithCancel(ctx)
 	return s
 }
 
@@ -47,7 +47,7 @@ func New(ctx context.Context, r io.Reader) *Scanner {
 // Does not close the underlying reader.
 func (s *Scanner) Close() error {
 	s.closed = true
-	s.cancel()
+	s.done()
 
 	return nil
 }

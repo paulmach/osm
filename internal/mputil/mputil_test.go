@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/geo"
 )
 
 func TestMultiSegmentToRing_NoAnnotation(t *testing.T) {
@@ -12,53 +11,53 @@ func TestMultiSegmentToRing_NoAnnotation(t *testing.T) {
 		name        string
 		orientation orb.Orientation
 		input       MultiSegment
-		output      geo.Ring
+		output      orb.Ring
 	}{
 		{
 			name:        "ring is direction requested",
 			orientation: orb.CW,
 			input: MultiSegment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+					Line: orb.LineString{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "ring opposite direction of requested",
 			orientation: orb.CW,
 			input: MultiSegment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 0}, {1, 1}, {0, 0}},
+					Line: orb.LineString{{0, 0}, {1, 0}, {1, 1}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "multi segments in direction of requested",
 			orientation: orb.CW,
 			input: MultiSegment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 1}},
+					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
-					Line: geo.LineString{{1, 0}, {0, 0}},
+					Line: orb.LineString{{1, 0}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "multi segments in opposite direction of requested",
 			orientation: orb.CW,
 			input: MultiSegment{
 				{
-					Line: geo.LineString{{0, 0}, {1, 0}},
+					Line: orb.LineString{{0, 0}, {1, 0}},
 				},
 				{
-					Line: geo.LineString{{1, 1}, {0, 0}},
+					Line: orb.LineString{{1, 1}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 	}
 
@@ -74,7 +73,7 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 		name        string
 		orientation orb.Orientation
 		input       MultiSegment
-		output      geo.Ring
+		output      orb.Ring
 	}{
 		{
 			name:        "ring is direction requested",
@@ -82,10 +81,10 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 			input: MultiSegment{
 				{
 					Orientation: orb.CW,
-					Line:        geo.LineString{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+					Line:        orb.LineString{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "ring opposite direction of requested",
@@ -93,10 +92,10 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 			input: MultiSegment{
 				{
 					Orientation: orb.CCW,
-					Line:        geo.LineString{{0, 0}, {1, 0}, {1, 1}, {0, 0}},
+					Line:        orb.LineString{{0, 0}, {1, 0}, {1, 1}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "multi segments in direction of requested",
@@ -104,14 +103,14 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 			input: MultiSegment{
 				{
 					Orientation: orb.CW,
-					Line:        geo.LineString{{0, 0}, {1, 1}},
+					Line:        orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
 					Orientation: orb.CW,
-					Line:        geo.LineString{{1, 0}, {0, 0}},
+					Line:        orb.LineString{{1, 0}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "multi segments in opposite direction of requested",
@@ -119,14 +118,14 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 			input: MultiSegment{
 				{
 					Orientation: orb.CCW,
-					Line:        geo.LineString{{0, 0}, {1, 0}},
+					Line:        orb.LineString{{0, 0}, {1, 0}},
 				},
 				{
 					Orientation: orb.CCW,
-					Line:        geo.LineString{{1, 1}, {0, 0}},
+					Line:        orb.LineString{{1, 1}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "reversed to correct",
@@ -134,15 +133,15 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 			input: MultiSegment{
 				{
 					Orientation: orb.CW,
-					Line:        geo.LineString{{0, 0}, {1, 1}},
+					Line:        orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
 					Orientation: orb.CCW,
 					Reversed:    true,
-					Line:        geo.LineString{{1, 0}, {0, 0}},
+					Line:        orb.LineString{{1, 0}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 		{
 			name:        "reversed to wrong direction",
@@ -150,15 +149,15 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 			input: MultiSegment{
 				{
 					Orientation: orb.CCW,
-					Line:        geo.LineString{{0, 0}, {1, 0}},
+					Line:        orb.LineString{{0, 0}, {1, 0}},
 				},
 				{
 					Orientation: orb.CW,
 					Reversed:    true,
-					Line:        geo.LineString{{1, 1}, {0, 0}},
+					Line:        orb.LineString{{1, 1}, {0, 0}},
 				},
 			},
-			output: geo.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
+			output: orb.Ring{{0, 0}, {1, 1}, {1, 0}, {0, 0}},
 		},
 	}
 
@@ -169,7 +168,7 @@ func TestMultiSegmentToRing_Annotation(t *testing.T) {
 	}
 }
 
-func testToRing(t testing.TB, input MultiSegment, expected geo.Ring, orient orb.Orientation) {
+func testToRing(t testing.TB, input MultiSegment, expected orb.Ring, orient orb.Orientation) {
 	t.Helper()
 
 	ring := input.ToRing(orient)

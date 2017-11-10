@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/geo"
 	"github.com/paulmach/osm"
 )
 
@@ -14,7 +13,7 @@ type Segment struct {
 	Index       uint32
 	Orientation orb.Orientation
 	Reversed    bool
-	Line        geo.LineString
+	Line        orb.LineString
 }
 
 // Reverse will reverse the line string of the segment.
@@ -24,12 +23,12 @@ func (s *Segment) Reverse() {
 }
 
 // First returns the first point in the segment linestring.
-func (s Segment) First() geo.Point {
+func (s Segment) First() orb.Point {
 	return s.Line[0]
 }
 
 // Last returns the last point in the segment linestring.
-func (s Segment) Last() geo.Point {
+func (s Segment) Last() orb.Point {
 	return s.Line[len(s.Line)-1]
 }
 
@@ -38,24 +37,24 @@ func (s Segment) Last() geo.Point {
 type MultiSegment []Segment
 
 // First returns the first point in the list of linestrings.
-func (ms MultiSegment) First() geo.Point {
+func (ms MultiSegment) First() orb.Point {
 	return ms[0].Line[0]
 }
 
 // Last returns the last point in the list of linestrings.
-func (ms MultiSegment) Last() geo.Point {
+func (ms MultiSegment) Last() orb.Point {
 	line := ms[len(ms)-1].Line
 	return line[len(line)-1]
 }
 
 // ToLineString converts a multisegment into a geo linestring object.
-func (ms MultiSegment) ToLineString() geo.LineString {
+func (ms MultiSegment) ToLineString() orb.LineString {
 	length := 0
 	for _, s := range ms {
 		length += len(s.Line)
 	}
 
-	line := make(geo.LineString, 0, length)
+	line := make(orb.LineString, 0, length)
 	for _, s := range ms {
 		line = append(line, s.Line...)
 	}
@@ -65,13 +64,13 @@ func (ms MultiSegment) ToLineString() geo.LineString {
 
 // ToRing converts the multisegment to a ring of the given orientation.
 // It uses the orientation on the members if possible.
-func (ms MultiSegment) ToRing(o orb.Orientation) geo.Ring {
+func (ms MultiSegment) ToRing(o orb.Orientation) orb.Ring {
 	length := 0
 	for _, s := range ms {
 		length += len(s.Line)
 	}
 
-	ring := make(geo.Ring, 0, length)
+	ring := make(orb.Ring, 0, length)
 
 	haveOrient := false
 	reversed := false
