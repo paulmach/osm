@@ -224,7 +224,7 @@
   <member type="way" ref="93653326" role="house" version="5" changeset="26207380"></member>
   <member type="way" ref="102718524" role="house" version="3" changeset="30320304"></member>
   <update index="39" version="3" timestamp="2015-04-23T21:07:36Z" changeset="30440757"></update>
-  <update index="50" version="4" timestamp="2015-04-19T20:41:57Z" changeset="30341187"></update>
+  <update index="50" version="4" timestamp="2015-04-19T20:41:57Z" changeset="30341187" reverse="true"></update>
  </relation>
  <relation id="4017808" user="nereocystis" uid="1835512" visible="true" version="5" changeset="35658906" timestamp="2015-11-30T04:23:56Z">
   <tag k="name" v="Broadway"></tag>
@@ -1225,7 +1225,7 @@
   <update index="49" version="2" timestamp="2016-07-28T01:29:22Z" changeset="41075439"></update>
   <update index="50" version="2" timestamp="2016-07-28T01:29:21Z" changeset="41075439"></update>
   <update index="84" version="2" timestamp="2016-06-10T15:46:43Z" changeset="39933072"></update>
-  <update index="106" version="3" timestamp="2016-06-16T05:24:45Z" changeset="40052692"></update>
-  <update index="107" version="6" timestamp="2016-06-16T05:24:46Z" changeset="40052692"></update>
+  <update index="106" version="3" timestamp="2016-06-16T05:24:45Z" changeset="40052692" reverse="true"></update>
+  <update index="107" version="6" timestamp="2016-06-16T05:24:46Z" changeset="40052692" reverse="true"></update>
  </relation>
 </osm>

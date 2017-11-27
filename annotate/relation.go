@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/planar"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/annotate/internal/core"
 )
@@ -125,11 +127,25 @@ func waysToChildList(ways osm.Ways) core.ChildList {
 	return list
 }
 
+// isReverse checks to see if this way update was a "reversal". It is very tricky
+// to generally answer this question but easier for a relation minor update.
+// Since the relation wasn't updated we assume things are still connected and
+// can just check the endpoints.
 func isReverse(w1, w2 *osm.Way) bool {
 	if len(w1.Nodes) < 2 || len(w2.Nodes) < 2 {
 		return false
 	}
 
+	// check if either is a ring
+	if w1.Nodes[0].ID == w1.Nodes[len(w1.Nodes)-1].ID ||
+		w2.Nodes[0].ID == w2.Nodes[len(w2.Nodes)-1].ID {
+
+		r1 := orb.Ring(w1.LineString())
+		r2 := orb.Ring(w2.LineString())
+		return planar.Area(r1)*planar.Area(r2) < 0
+	}
+
+	// not a ring so see if endpoint were flipped
 	return w1.Nodes[0].ID == w2.Nodes[len(w2.Nodes)-1].ID &&
 		w2.Nodes[0].ID == w1.Nodes[len(w1.Nodes)-1].ID
 }

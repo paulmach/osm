@@ -47,6 +47,95 @@ func TestRelation(t *testing.T) {
 	}
 }
 
+func TestRelation_Reverse(t *testing.T) {
+	ways := osm.Ways{
+		{
+			ID: 1, Version: 1, Visible: true, Nodes: osm.WayNodes{
+				{ID: 3, Lon: 3, Lat: 3},
+				{ID: 2, Lon: 0, Lat: 3},
+				{ID: 1, Lon: 0, Lat: 0},
+			},
+		},
+		{
+			ID: 1, Version: 2, Visible: true,
+			Timestamp: time.Now().Add(-time.Hour),
+			Nodes: osm.WayNodes{
+				{ID: 1, Lon: 0, Lat: 0},
+				{ID: 2, Lon: 0, Lat: 3},
+				{ID: 3, Lon: 3, Lat: 3},
+			},
+		},
+		{
+			ID: 2, Version: 1, Visible: true, Nodes: osm.WayNodes{
+				{ID: 3, Lon: 3, Lat: 3},
+				{ID: 2, Lon: 0, Lat: 3},
+				{ID: 1, Lon: 0, Lat: 0},
+				{ID: 3, Lon: 3, Lat: 3},
+			},
+		},
+		{
+			ID: 2, Version: 2, Visible: true,
+			Timestamp: time.Now().Add(-time.Hour),
+			Nodes: osm.WayNodes{
+				{ID: 3, Lon: 3, Lat: 3},
+				{ID: 1, Lon: 0, Lat: 0},
+				{ID: 2, Lon: 0, Lat: 3},
+				{ID: 3, Lon: 3, Lat: 3},
+			},
+		},
+	}
+
+	t.Run("segment reverse", func(t *testing.T) {
+		r := &osm.Relation{
+			ID:      1,
+			Visible: true,
+			Tags:    osm.Tags{{Key: "type", Value: "multipolygon"}},
+			Members: osm.Members{
+				{Type: osm.TypeWay, Ref: 1, Role: "outer"},
+			},
+		}
+
+		err := Relations(
+			context.Background(),
+			osm.Relations{r},
+			(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
+			time.Hour,
+		)
+		if err != nil {
+			t.Fatalf("annotation error: %v", err)
+		}
+
+		if !r.Updates[0].Reverse {
+			t.Errorf("incorrect reverse")
+		}
+	})
+
+	t.Run("closed ring not a reverse", func(t *testing.T) {
+		r := &osm.Relation{
+			ID:      1,
+			Visible: true,
+			Tags:    osm.Tags{{Key: "type", Value: "multipolygon"}},
+			Members: osm.Members{
+				{Type: osm.TypeWay, Ref: 2, Role: "outer"},
+			},
+		}
+
+		err := Relations(
+			context.Background(),
+			osm.Relations{r},
+			(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
+			time.Hour,
+		)
+		if err != nil {
+			t.Fatalf("annotation error: %v", err)
+		}
+
+		if r.Updates[0].Reverse {
+			t.Errorf("incorrect reverse")
+		}
+	})
+}
+
 func TestRelation_Polygon(t *testing.T) {
 	ways := osm.Ways{
 		{
@@ -153,7 +242,7 @@ func TestRelation_Polygon(t *testing.T) {
 	}
 }
 
-func TestRelationCircular(t *testing.T) {
+func TestRelation_Circular(t *testing.T) {
 	relations := osm.Relations{
 		&osm.Relation{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
@@ -236,7 +325,7 @@ func TestRelationCircular(t *testing.T) {
 	}
 }
 
-func TestRelationSelfCircular(t *testing.T) {
+func TestRelation_SelfCircular(t *testing.T) {
 	rs := osm.Relations{
 		{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
