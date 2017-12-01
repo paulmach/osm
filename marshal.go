@@ -381,7 +381,7 @@ func nodesChangesetInfo(ns Nodes, ss *stringSet) changesetInfoResult {
 	return cs
 }
 
-func encodeWayNodeIDs(waynodes []WayNode) []int64 {
+func encodeWayNodeIDs(waynodes WayNodes) []int64 {
 	result := make([]int64, len(waynodes))
 	var prev int64
 
@@ -393,12 +393,12 @@ func encodeWayNodeIDs(waynodes []WayNode) []int64 {
 	return result
 }
 
-func decodeWayNodeIDs(diff []int64) []WayNode {
+func decodeWayNodeIDs(diff []int64) WayNodes {
 	if len(diff) == 0 {
 		return nil
 	}
 
-	result := make([]WayNode, len(diff))
+	result := make(WayNodes, len(diff))
 	decodeInt64(diff)
 
 	for i, d := range diff {
@@ -408,7 +408,7 @@ func decodeWayNodeIDs(diff []int64) []WayNode {
 	return result
 }
 
-func encodeDenseWayNodes(waynodes []WayNode) *osmpb.DenseMembers {
+func encodeDenseWayNodes(waynodes WayNodes) *osmpb.DenseMembers {
 	l := len(waynodes)
 
 	versions := make([]int32, l)
@@ -431,7 +431,7 @@ func encodeDenseWayNodes(waynodes []WayNode) *osmpb.DenseMembers {
 	}
 }
 
-func decodeDenseWayNodes(waynodes []WayNode, encoded *osmpb.DenseMembers) {
+func decodeDenseWayNodes(waynodes WayNodes, encoded *osmpb.DenseMembers) {
 	if encoded == nil {
 		return
 	}
@@ -461,9 +461,11 @@ func decodeMembers(
 	result := make(Members, len(roles))
 	decodeInt64(refs)
 	for i := range roles {
-		result[i].Role = ss[roles[i]]
-		result[i].Ref = refs[i]
-		result[i].Type = memberTypeMapRev[types[i]]
+		result[i] = Member{
+			Role: ss[roles[i]],
+			Ref:  refs[i],
+			Type: memberTypeMapRev[types[i]],
+		}
 	}
 
 	return result

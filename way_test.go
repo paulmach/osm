@@ -12,7 +12,7 @@ import (
 func TestWayApplyUpdatesUpTo(t *testing.T) {
 	w := Way{
 		ID:    123,
-		Nodes: []WayNode{{Lat: 1}, {Lat: 2}, {Lat: 3}},
+		Nodes: WayNodes{{Lat: 1}, {Lat: 2}, {Lat: 3}},
 		Updates: Updates{
 			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 11},
 			{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 13},
@@ -34,7 +34,7 @@ func TestWayApplyUpdatesUpTo(t *testing.T) {
 func TestWayApplyUpdate(t *testing.T) {
 	w := Way{
 		ID:    123,
-		Nodes: []WayNode{{Lat: 1, Lon: 2}},
+		Nodes: WayNodes{{Lat: 1, Lon: 2}},
 	}
 
 	err := w.applyUpdate(Update{
@@ -56,15 +56,15 @@ func TestWayApplyUpdate(t *testing.T) {
 		Lon:         4,
 	}
 
-	if expected != w.Nodes[0] {
-		t.Errorf("incorrect update, got %v", w.Nodes[0])
+	if !reflect.DeepEqual(expected, w.Nodes[0]) {
+		t.Errorf("incorrect update, got %+v", w.Nodes[0])
 	}
 }
 
 func TestWayApplyUpdateError(t *testing.T) {
 	w := Way{
 		ID:    123,
-		Nodes: []WayNode{{Lat: 1, Lon: 2}},
+		Nodes: WayNodes{{Lat: 1, Lon: 2}},
 	}
 
 	err := w.applyUpdate(Update{
@@ -82,9 +82,9 @@ func TestWayApplyUpdateError(t *testing.T) {
 
 func TestWayNodesBounds(t *testing.T) {
 	wn := WayNodes{
-		WayNode{Lat: 1, Lon: 2},
-		WayNode{Lat: 3, Lon: 4},
-		WayNode{Lat: 2, Lon: 3},
+		{Lat: 1, Lon: 2},
+		{Lat: 3, Lon: 4},
+		{Lat: 2, Lon: 3},
 	}
 
 	b := wn.Bounds()
@@ -125,7 +125,7 @@ func TestWayMarshalXML(t *testing.T) {
 	}
 
 	// node refs
-	w.Nodes = []WayNode{{ID: 123}}
+	w.Nodes = WayNodes{{ID: 123}}
 	data, err = xml.Marshal(w)
 	if err != nil {
 		t.Fatalf("xml marshal error: %v", err)

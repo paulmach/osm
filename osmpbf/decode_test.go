@@ -77,7 +77,7 @@ var (
 
 	ew = &osm.Way{
 		ID: 4257116,
-		Nodes: []osm.WayNode{
+		Nodes: osm.WayNodes{
 			{ID: 21544864},
 			{ID: 333731851},
 			{ID: 333731852},
@@ -104,7 +104,7 @@ var (
 
 	er = &osm.Relation{
 		ID: 7677,
-		Members: []osm.Member{
+		Members: osm.Members{
 			{Ref: 4875932, Type: osm.TypeWay, Role: "outer"},
 			{Ref: 4894305, Type: osm.TypeWay, Role: "inner"},
 		},

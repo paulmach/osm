@@ -130,15 +130,15 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 	for _, way := range ways {
 		var (
 			prev    int64
-			nodeIDs []osm.WayNode
+			nodeIDs osm.WayNodes
 		)
 
 		info := extractInfo(st, way.Info, dateGranularity)
 		if refs := way.GetRefs(); len(refs) > 0 {
-			nodeIDs = make([]osm.WayNode, len(refs))
+			nodeIDs = make(osm.WayNodes, len(refs))
 			for i, r := range refs {
 				prev = r + prev // delta encoding
-				nodeIDs[i].ID = osm.NodeID(prev)
+				nodeIDs[i] = osm.WayNode{ID: osm.NodeID(prev)}
 			}
 		}
 
@@ -157,7 +157,7 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 }
 
 // Make relation members from stringtable and three parallel arrays of IDs.
-func extractMembers(stringTable []string, rel *osmpbf.Relation) []osm.Member {
+func extractMembers(stringTable []string, rel *osmpbf.Relation) osm.Members {
 	memIDs := rel.GetMemids()
 	types := rel.GetTypes()
 	roleIDs := rel.GetRolesSid()
@@ -167,7 +167,7 @@ func extractMembers(stringTable []string, rel *osmpbf.Relation) []osm.Member {
 		return nil
 	}
 
-	members := make([]osm.Member, len(memIDs))
+	members := make(osm.Members, len(memIDs))
 	for index := range memIDs {
 		memID = memIDs[index] + memID // delta encoding
 

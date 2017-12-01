@@ -7,7 +7,7 @@ import (
 
 func TestWayPolygon(t *testing.T) {
 	w := &Way{}
-	w.Nodes = []WayNode{
+	w.Nodes = WayNodes{
 		{ID: 1}, {ID: 2},
 		{ID: 3}, {ID: 1},
 	}
@@ -96,7 +96,7 @@ func TestWayPolygon(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			w := &Way{
-				Nodes: []WayNode{
+				Nodes: WayNodes{
 					{ID: 1}, {ID: 2},
 					{ID: 3}, {ID: 1},
 				},
