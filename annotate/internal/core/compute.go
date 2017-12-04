@@ -1,11 +1,18 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"github.com/paulmach/osm"
 )
+
+// Datasourcer TODO
+type Datasourcer interface {
+	Get(ctx context.Context, id osm.FeatureID) (ChildList, error)
+	NotFound(err error) bool
+}
 
 type parentChild struct {
 	ChildID       osm.FeatureID
@@ -14,6 +21,7 @@ type parentChild struct {
 
 // Options allow for passing som parameters to the matching process.
 type Options struct {
+	Threshold             time.Duration
 	IgnoreInconsistency   bool
 	IgnoreMissingChildren bool
 }
@@ -22,9 +30,9 @@ type Options struct {
 // the children in each parent. Then it returns a set of updates
 // for each version of the parent.
 func Compute(
+	ctx context.Context,
 	parents []Parent,
-	histories *Histories,
-	threshold time.Duration,
+	histories Datasourcer,
 	opts *Options,
 ) ([]osm.Updates, error) {
 	if opts == nil {
@@ -36,7 +44,7 @@ func Compute(
 	// determine the version of the member that is part of the base of
 	// the next parent version. If there is gap, we know something changed
 	// and need to insert a update there.
-	elementMap, err := setupMajorChildren(parents, histories, threshold, opts)
+	elementMap, err := setupMajorChildren(ctx, parents, histories, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -67,15 +75,19 @@ func Compute(
 				ChildID:       fid,
 				ParentVersion: parent.Version()}]
 
-			if opts.IgnoreMissingChildren && histories.Get(fid) == nil {
-				continue
+			child, err := histories.Get(ctx, fid)
+			if err != nil {
+				if histories.NotFound(err) && opts.IgnoreMissingChildren {
+					continue
+				}
+
+				return nil, err
 			}
 
 			if nextParent == nil {
 				// No next parent version, so we need to include all
 				// future versions of this child.
-				ns := histories.Get(fid)
-				nextVersion = ns[len(ns)-1].VersionIndex() + 1
+				nextVersion = child[len(child)-1].VersionIndex() + 1
 			} else {
 				next := elementMap[parentChild{
 					ChildID:       fid,
@@ -91,7 +103,7 @@ func Compute(
 					// we want to make sure it is:
 					// - 1 threshold before the next parent
 					// - not before the current child timestamp
-					ts := timeThreshold(nextParent, -threshold)
+					ts := timeThreshold(nextParent, -opts.Threshold)
 
 					if c != nil && !ts.After(timeThreshold(c, 0)) { // before and equal still matches
 						// visible in current but child and next parent are
@@ -100,7 +112,7 @@ func Compute(
 						nextVersion = 0 // no updates.
 					} else {
 						// current child and next parent are far apart.
-						next = histories.Get(fid).VersionBefore(ts)
+						next = child.VersionBefore(ts)
 						if next == nil {
 							// missing at current and next parent.
 							nextVersion = 0 // no updates.
@@ -113,7 +125,7 @@ func Compute(
 				} else {
 					// if the child was updated enough before the next parent
 					// include it in the minor versions.
-					if timeThreshold(next, 0).Before(timeThreshold(nextParent, -threshold)) {
+					if timeThreshold(next, 0).Before(timeThreshold(nextParent, -opts.Threshold)) {
 						nextVersion = next.VersionIndex() + 1
 					} else {
 						nextVersion = next.VersionIndex()
@@ -126,7 +138,7 @@ func Compute(
 				start = c.VersionIndex() + 1
 			} else {
 				// current child is not defined, is next child
-				next := histories.Get(fid).VersionBefore(timeThreshold(parent, 0))
+				next := child.VersionBefore(timeThreshold(parent, 0))
 				if next == nil {
 					start = 0
 				} else {
@@ -135,8 +147,8 @@ func Compute(
 			}
 
 			for k := start; k < nextVersion; k++ {
-				if histories.Get(fid)[k].Visible() {
-					u := histories.Get(fid)[k].Update()
+				if child[k].Visible() {
+					u := child[k].Update()
 					u.Index = j
 					updates = append(updates, u)
 				} else {
@@ -164,9 +176,9 @@ func Compute(
 // setMajorChildren figures out the child versions that are active
 // for each visible parent version.
 func setupMajorChildren(
+	ctx context.Context,
 	parents []Parent,
-	histories *Histories,
-	threshold time.Duration,
+	histories Datasourcer,
 	opts *Options,
 ) (map[parentChild]Child, error) {
 	elementMap := make(map[parentChild]Child)
@@ -179,8 +191,12 @@ func setupMajorChildren(
 		refs := p.Refs()
 		cl := make(ChildList, len(refs))
 		for j, ref := range refs {
-			versions := histories.Get(ref)
-			if versions == nil {
+			versions, err := histories.Get(ctx, ref)
+			if err != nil {
+				if !histories.NotFound(err) {
+					return nil, err
+				}
+
 				if opts.IgnoreMissingChildren {
 					continue
 				}
@@ -188,7 +204,11 @@ func setupMajorChildren(
 				return nil, &NoHistoryError{ChildID: ref}
 			}
 
-			c := versions.FindVisible(p.ChangesetID(), timeThreshold(p, 0), threshold)
+			c := versions.FindVisible(
+				p.ChangesetID(),
+				timeThreshold(p, 0),
+				opts.Threshold,
+			)
 			if c == nil && !opts.IgnoreInconsistency {
 				return nil, &NoVisibleChildError{
 					ChildID:   ref,

@@ -33,13 +33,15 @@ func Ways(
 			return err
 		}
 	}
+	computeOpts.Threshold = threshold
 
-	parents, histories, err := convertWayData(ctx, ways, datasource, computeOpts.IgnoreMissingChildren)
-	if err != nil {
-		return mapErrors(err)
+	parents := make([]core.Parent, len(ways))
+	for i, w := range ways {
+		parents[i] = &parentWay{Way: w}
 	}
 
-	updatesForParents, err := core.Compute(parents, histories, threshold, computeOpts)
+	wds := &wayDatasource{datasource}
+	updatesForParents, err := core.Compute(ctx, parents, wds, computeOpts)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -52,61 +54,12 @@ func Ways(
 	return nil
 }
 
-func convertWayData(
-	ctx context.Context,
-	ways osm.Ways,
-	datasource NodeHistoryDatasourcer,
-	ignoreNotFound bool,
-) ([]core.Parent, *core.Histories, error) {
-
-	ways.SortByIDVersion()
-
-	parents := make([]core.Parent, len(ways))
-	histories := &core.Histories{}
-
-	for i, w := range ways {
-		parents[i] = &parentWay{Way: w}
-
-		for _, n := range w.Nodes {
-			childID := n.FeatureID()
-			if histories.Get(childID) != nil {
-				continue
-			}
-
-			nodes, err := datasource.NodeHistory(ctx, n.ID)
-			if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
-				return nil, nil, err
-			}
-
-			histories.Set(childID, nodesToChildList(nodes))
-		}
-	}
-
-	return parents, histories, nil
-}
-
-func nodesToChildList(nodes osm.Nodes) core.ChildList {
-	if len(nodes) == 0 {
-		return nil
-	}
-
-	list := make(core.ChildList, len(nodes))
-	nodes.SortByIDVersion()
-	for i, n := range nodes {
-		list[i] = &childNode{
-			Index: i,
-			Node:  n,
-		}
-	}
-
-	return list
-}
-
 // A parentWay wraps a osm.Way into the core.Parent interface
 // so that updates can be computed.
 type parentWay struct {
 	Way      *osm.Way
 	children core.ChildList
+	refs     osm.FeatureIDs
 }
 
 func (w parentWay) ID() osm.FeatureID {
@@ -138,7 +91,11 @@ func (w parentWay) Committed() time.Time {
 }
 
 func (w parentWay) Refs() osm.FeatureIDs {
-	return w.Way.Nodes.FeatureIDs()
+	if w.refs == nil {
+		w.refs = w.Way.Nodes.FeatureIDs()
+	}
+
+	return w.refs
 }
 
 func (w parentWay) Children() core.ChildList {

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"testing"
@@ -16,10 +17,12 @@ var (
 )
 
 func TestCompute(t *testing.T) {
+	ctx := context.Background()
+
 	// this is the basic test case where the first parent version
 	// gets an update because there is a node update before the parents next version.
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
@@ -49,16 +52,16 @@ func TestCompute(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute, nil)
+	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0]}, // index skip requires an update
-		{histories.Get(child1)[2]},
-		{histories.Get(child1)[3]},
-		{histories.Get(child1)[3]},
+		{ds.MustGet(child1)[0]}, // index skip requires an update
+		{ds.MustGet(child1)[2]},
+		{ds.MustGet(child1)[3]},
+		{ds.MustGet(child1)[3]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -72,9 +75,11 @@ func TestCompute(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
-func TestComputeMissingChildren(t *testing.T) {
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+func TestCompute_MissingChildren(t *testing.T) {
+	ctx := context.Background()
+
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 	})
 
@@ -86,25 +91,28 @@ func TestComputeMissingChildren(t *testing.T) {
 		},
 	}
 
-	_, err := Compute(parents, histories, time.Minute, &Options{IgnoreMissingChildren: true})
+	opts := &Options{Threshold: time.Minute, IgnoreMissingChildren: true}
+	_, err := Compute(ctx, parents, ds, opts)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0]},
+		{ds.MustGet(child1)[0]},
 		nil,
 	}
 
 	compareParents(t, parents, expected)
 }
 
-func TestComputeDeletedParent(t *testing.T) {
+func TestCompute_DeletedParent(t *testing.T) {
+	ctx := context.Background()
+
 	// Verifies behavior when a parent is deleted and then recreated.
 	// The last living parent needs to have updates up to the deleted time.
 	// When the parent comes back it needs to start from where its at.
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
@@ -136,16 +144,16 @@ func TestComputeDeletedParent(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute, nil)
+	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0]},
+		{ds.MustGet(child1)[0]},
 		nil,
-		{histories.Get(child1)[4]}, // index 5 is created before the 4th parent
-		{histories.Get(child1)[5]},
+		{ds.MustGet(child1)[4]}, // index 5 is created before the 4th parent
+		{ds.MustGet(child1)[5]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -163,11 +171,13 @@ func TestComputeDeletedParent(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
-func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
+func TestCompute_ChildUpdateAfterLastParentVersion(t *testing.T) {
+	ctx := context.Background()
+
 	// If a child is updated after the only version of a parent,
 	// an update should be created.
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
@@ -181,13 +191,13 @@ func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute, nil)
+	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0]},
+		{ds.MustGet(child1)[0]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -201,32 +211,34 @@ func TestComputeChildUpdateAfterLastParentVersion(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
-func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
+func TestCompute_ChildUpdateRightBeforeParentDelete(t *testing.T) {
+	ctx := context.Background()
+
 	// If a child is updated right before (based on threshold) a parent is DELETED,
 	// this should create an update. This also tests a child is missing in
 	// the next version. All of these histories should returned the same results.
-	histories := []*Histories{}
-	h := &Histories{}
-	h.Set(child1, ChildList{
+	dss := []*TestDS{}
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
 		// child is updated within threshold
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
 	})
-	histories = append(histories, h)
-	h = &Histories{}
-	h.Set(child1, ChildList{
+	dss = append(dss, ds)
+	ds = &TestDS{}
+	ds.Set(child1, ChildList{
 		// initial child is created BEFORE parent
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(-time.Second), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
 	})
-	histories = append(histories, h)
-	h = &Histories{}
-	h.Set(child1, ChildList{
+	dss = append(dss, ds)
+	ds = &TestDS{}
+	ds.Set(child1, ChildList{
 		// initial child is created AFTER parent
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(time.Second), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
 	})
-	histories = append(histories, h)
+	dss = append(dss, ds)
 
 	parents := []Parent{
 		&testParent{
@@ -242,14 +254,14 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 
 	expUpdates := []osm.Updates{nil, nil}
 
-	for i, h := range histories {
+	for i, ds := range dss {
 		t.Run(fmt.Sprintf("history %d", i), func(t *testing.T) {
 			expected := []ChildList{
-				{h.Get(child1)[0]},
+				{ds.MustGet(child1)[0]},
 				nil,
 			}
 
-			updates, err := Compute(parents, h, time.Minute, nil)
+			updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 			if err != nil {
 				t.Fatalf("compute error: %v", err)
 			}
@@ -260,11 +272,13 @@ func TestComputeChildUpdateRightBeforeParentDelete(t *testing.T) {
 	}
 }
 
-func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
+func TestCompute_ChildUpdateRightBeforeParentUpdated(t *testing.T) {
+	ctx := context.Background()
+
 	// If a child is updated right before (based on threshold) a parent is UPDATED,
 	// this should not trigger an updates.
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		// updated exactly 1 threshold before next parent does not create an update.
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1*time.Hour - time.Minute), visible: true},
@@ -283,14 +297,14 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute, nil)
+	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0]},
-		{histories.Get(child1)[1]},
+		{ds.MustGet(child1)[0]},
+		{ds.MustGet(child1)[1]},
 	}
 
 	expUpdates := []osm.Updates{nil, nil}
@@ -299,15 +313,17 @@ func TestComputeChildUpdateRightBeforeParentUpdated(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
-func TestComputeMultipleChildren(t *testing.T) {
+func TestCompute_MultipleChildren(t *testing.T) {
+	ctx := context.Background()
+
 	// A parent with multiple children should handle each child independently.
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(5 * time.Hour), visible: true},
 	})
-	histories.Set(child2, ChildList{
+	ds.Set(child2, ChildList{
 		&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
 		&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
@@ -326,14 +342,14 @@ func TestComputeMultipleChildren(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute, nil)
+	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0], histories.Get(child2)[0]},
-		{histories.Get(child1)[1], histories.Get(child2)[1]},
+		{ds.MustGet(child1)[0], ds.MustGet(child2)[0]},
+		{ds.MustGet(child1)[1], ds.MustGet(child2)[1]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -351,15 +367,17 @@ func TestComputeMultipleChildren(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
-func TestComputeChangedChildList(t *testing.T) {
+func TestCompute_ChangedChildList(t *testing.T) {
+	ctx := context.Background()
+
 	// A change in the child list should be supported.
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
 	})
-	histories.Set(child2, ChildList{
+	ds.Set(child2, ChildList{
 		&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
 		&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
 		&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: true},
@@ -383,15 +401,15 @@ func TestComputeChangedChildList(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(parents, histories, time.Minute, nil)
+	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0], histories.Get(child2)[0]},
-		{histories.Get(child2)[1]},
-		{histories.Get(child1)[2]},
+		{ds.MustGet(child1)[0], ds.MustGet(child2)[0]},
+		{ds.MustGet(child2)[1]},
+		{ds.MustGet(child1)[2]},
 	}
 
 	expUpdates := []osm.Updates{
@@ -409,8 +427,10 @@ func TestComputeChangedChildList(t *testing.T) {
 }
 
 func TestSetupMajorChildren(t *testing.T) {
-	histories := &Histories{}
-	histories.Set(child1, ChildList{
+	ctx := context.Background()
+
+	ds := &TestDS{}
+	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
 		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: false},
@@ -435,15 +455,15 @@ func TestSetupMajorChildren(t *testing.T) {
 		},
 	}
 
-	_, err := setupMajorChildren(parents, histories, time.Minute, nil)
+	_, err := setupMajorChildren(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("setup error: %v", err)
 	}
 
 	expected := []ChildList{
-		{histories.Get(child1)[0]},
+		{ds.MustGet(child1)[0]},
 		nil,
-		{histories.Get(child1)[3]},
+		{ds.MustGet(child1)[3]},
 	}
 
 	compareParents(t, parents, expected)
@@ -451,7 +471,7 @@ func TestSetupMajorChildren(t *testing.T) {
 	// child is not visible for this parent's timestamp
 	parents[0].(*testParent).timestamp = start.Add(-time.Hour)
 
-	_, err = setupMajorChildren(parents, histories, time.Minute, &Options{})
+	_, err = setupMajorChildren(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if _, ok := err.(*NoVisibleChildError); !ok {
 		t.Errorf("did not return correct error, got %v", err)
 	}
@@ -459,16 +479,18 @@ func TestSetupMajorChildren(t *testing.T) {
 	// one of the child's histories was not provided
 	parents[0].(*testParent).timestamp = start
 
-	histories.Set(osm.NodeID(2).FeatureID(), histories.Get(child1))
-	histories.Set(child1, nil)
+	ds.Set(osm.NodeID(2).FeatureID(), ds.MustGet(child1))
+	ds.Set(child1, nil)
 
-	_, err = setupMajorChildren(parents, histories, time.Minute, &Options{})
+	_, err = setupMajorChildren(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if _, ok := err.(*NoHistoryError); !ok {
 		t.Errorf("Did not return correct error, got %v", err)
 	}
 }
 
 func compareParents(t *testing.T, parents []Parent, expected []ChildList) {
+	t.Helper()
+
 	for i, p := range parents {
 		parent := p.(*testParent)
 

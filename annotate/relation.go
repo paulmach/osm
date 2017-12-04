@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/planar"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/annotate/internal/core"
 )
@@ -28,13 +26,15 @@ func Relations(
 			return err
 		}
 	}
+	computeOpts.Threshold = threshold
 
-	parents, children, err := convertRelationData(ctx, relations, datasource, computeOpts.IgnoreMissingChildren)
-	if err != nil {
-		return mapErrors(err)
+	parents := make([]core.Parent, len(relations))
+	for i, r := range relations {
+		parents[i] = &parentRelation{Relation: r}
 	}
 
-	updatesForParents, err := core.Compute(parents, children, threshold, computeOpts)
+	rds := &relationDatasource{datasource}
+	updatesForParents, err := core.Compute(ctx, parents, rds, computeOpts)
 	if err != nil {
 		return mapErrors(err)
 	}
@@ -46,132 +46,12 @@ func Relations(
 	return nil
 }
 
-func convertRelationData(
-	ctx context.Context,
-	relations osm.Relations,
-	datasource osm.HistoryDatasourcer,
-	ignoreNotFound bool,
-) ([]core.Parent, *core.Histories, error) {
-	relations.SortByIDVersion()
-
-	parents := make([]core.Parent, len(relations))
-	histories := &core.Histories{}
-
-	for i, r := range relations {
-		parents[i] = &parentRelation{Relation: r}
-
-		for j, m := range r.Members {
-			childID := m.FeatureID()
-			if histories.Get(childID) != nil {
-				continue
-			}
-
-			switch childID.Type() {
-			case osm.TypeNode:
-				nodes, err := datasource.NodeHistory(ctx, childID.NodeID())
-				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
-					return nil, nil, err
-				}
-
-				list := nodesToChildList(nodes)
-				histories.Set(childID, list)
-			case osm.TypeWay:
-				ways, err := datasource.WayHistory(ctx, childID.WayID())
-				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
-					return nil, nil, err
-				}
-
-				list := waysToChildList(ways)
-				histories.Set(childID, list)
-			case osm.TypeRelation:
-				relations, err := datasource.RelationHistory(ctx, childID.RelationID())
-				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {
-					return nil, nil, err
-				}
-
-				list := relationsToChildList(relations)
-				histories.Set(childID, list)
-			default:
-				return nil, nil, &UnsupportedMemberTypeError{
-					RelationID: r.ID,
-					Index:      j,
-					MemberType: m.Type,
-				}
-			}
-		}
-	}
-
-	return parents, histories, nil
-}
-
-func waysToChildList(ways osm.Ways) core.ChildList {
-	if len(ways) == 0 {
-		return nil
-	}
-
-	list := make(core.ChildList, len(ways))
-	ways.SortByIDVersion()
-	for i, w := range ways {
-		c := &childWay{
-			Index: i,
-			Way:   w,
-		}
-
-		if i != 0 {
-			c.ReverseOfPrevious = isReverse(w, ways[i-1])
-		}
-
-		list[i] = c
-	}
-
-	return list
-}
-
-// isReverse checks to see if this way update was a "reversal". It is very tricky
-// to generally answer this question but easier for a relation minor update.
-// Since the relation wasn't updated we assume things are still connected and
-// can just check the endpoints.
-func isReverse(w1, w2 *osm.Way) bool {
-	if len(w1.Nodes) < 2 || len(w2.Nodes) < 2 {
-		return false
-	}
-
-	// check if either is a ring
-	if w1.Nodes[0].ID == w1.Nodes[len(w1.Nodes)-1].ID ||
-		w2.Nodes[0].ID == w2.Nodes[len(w2.Nodes)-1].ID {
-
-		r1 := orb.Ring(w1.LineString())
-		r2 := orb.Ring(w2.LineString())
-		return planar.Area(r1)*planar.Area(r2) < 0
-	}
-
-	// not a ring so see if endpoint were flipped
-	return w1.Nodes[0].ID == w2.Nodes[len(w2.Nodes)-1].ID &&
-		w2.Nodes[0].ID == w1.Nodes[len(w1.Nodes)-1].ID
-}
-
-func relationsToChildList(relations osm.Relations) core.ChildList {
-	if len(relations) == 0 {
-		return nil
-	}
-
-	list := make(core.ChildList, len(relations))
-	relations.SortByIDVersion()
-	for i, r := range relations {
-		list[i] = &childRelation{
-			Index:    i,
-			Relation: r,
-		}
-	}
-
-	return list
-}
-
 // A parentRelation wraps a osm.Relation into the core.Parent interface
 // so that updates can be computed.
 type parentRelation struct {
 	Relation *osm.Relation
 	children core.ChildList
+	refs     osm.FeatureIDs
 }
 
 func (r parentRelation) ID() osm.FeatureID {
@@ -203,7 +83,11 @@ func (r parentRelation) Committed() time.Time {
 }
 
 func (r parentRelation) Refs() osm.FeatureIDs {
-	return r.Relation.Members.FeatureIDs()
+	if r.refs == nil {
+		r.refs = r.Relation.Members.FeatureIDs()
+	}
+
+	return r.refs
 }
 
 func (r parentRelation) Children() core.ChildList {
