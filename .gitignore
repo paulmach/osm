@@ -1,2 +1,5 @@
 *.osm.bz2
 *.pbf
+
+# ignore dlv debugger file
+**/debug.test
