@@ -24,7 +24,7 @@ type HistoryDatasource struct {
 
 var _ HistoryDatasourcer = &HistoryDatasource{}
 
-func (ds *HistoryDatasource) add(o *OSM) {
+func (ds *HistoryDatasource) add(o *OSM, visible ...bool) {
 	if o == nil {
 		return
 	}
@@ -35,6 +35,9 @@ func (ds *HistoryDatasource) add(o *OSM) {
 		}
 
 		for _, n := range o.Nodes {
+			if len(visible) == 1 {
+				n.Visible = visible[0]
+			}
 			ds.Nodes[n.ID] = append(ds.Nodes[n.ID], n)
 		}
 	}
@@ -45,6 +48,9 @@ func (ds *HistoryDatasource) add(o *OSM) {
 		}
 
 		for _, w := range o.Ways {
+			if len(visible) == 1 {
+				w.Visible = visible[0]
+			}
 			ds.Ways[w.ID] = append(ds.Ways[w.ID], w)
 		}
 	}
@@ -55,6 +61,9 @@ func (ds *HistoryDatasource) add(o *OSM) {
 		}
 
 		for _, r := range o.Relations {
+			if len(visible) == 1 {
+				r.Visible = visible[0]
+			}
 			ds.Relations[r.ID] = append(ds.Relations[r.ID], r)
 		}
 	}

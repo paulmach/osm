@@ -58,9 +58,9 @@ func (c *Change) AppendDelete(e Element) {
 func (c *Change) ToHistoryDatasource() *HistoryDatasource {
 	ds := &HistoryDatasource{}
 
-	ds.add(c.Create)
-	ds.add(c.Modify)
-	ds.add(c.Delete)
+	ds.add(c.Create, true)
+	ds.add(c.Modify, true)
+	ds.add(c.Delete, false)
 
 	return ds
 }
