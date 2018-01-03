@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestUpdatesUpTo(t *testing.T) {
+func TestUpdates_UpTo(t *testing.T) {
 	us := Updates{
 		{Index: 1, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC)},
 		{Index: 2, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC)},
@@ -44,5 +44,21 @@ func TestUpdatesUpTo(t *testing.T) {
 
 	if v := len(us.UpTo(time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC))); v != 3 {
 		t.Errorf("incorrect number of updates, got %v", v)
+	}
+}
+
+func TestUpdates_SortByIndex(t *testing.T) {
+	us := Updates{
+		{Index: 1, Version: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC)},
+		{Index: 1, Version: 2, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC)},
+		{Index: 1, Version: 1, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC)},
+	}
+
+	us.SortByIndex()
+
+	for i, u := range us {
+		if u.Version != i {
+			t.Fatalf("incorrect sort: %v", us)
+		}
 	}
 }

@@ -18,8 +18,7 @@ type Parent interface {
 	Committed() time.Time
 
 	Refs() osm.FeatureIDs
-	Children() ChildList
-	SetChildren(ChildList)
+	SetChild(idx int, c Child)
 }
 
 // A Child a thing contained by parents such as nodes for ways or nodes, ways

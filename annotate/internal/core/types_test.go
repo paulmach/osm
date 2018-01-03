@@ -471,12 +471,13 @@ func (t testParent) Refs() osm.FeatureIDs {
 	return t.refs
 }
 
-func (t testParent) Children() ChildList {
-	return t.children
-}
-
-func (t *testParent) SetChildren(cl ChildList) {
-	t.children = cl
+func (t *testParent) SetChild(idx int, c Child) {
+	if idx >= len(t.children) {
+		nc := make(ChildList, idx+1)
+		copy(nc, t.children)
+		t.children = nc
+	}
+	t.children[idx] = c
 }
 
 var _ Child = &testChild{}

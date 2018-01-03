@@ -426,15 +426,15 @@ func TestCompute_ChangedChildList(t *testing.T) {
 	compareUpdates(t, updates, expUpdates)
 }
 
-func TestSetupMajorChildren(t *testing.T) {
+func TestCompute_MajorChildren(t *testing.T) {
 	ctx := context.Background()
 
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
 		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
 		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: false},
-		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
+		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: false},
+		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(5 * time.Hour), visible: true},
 	})
 
 	parents := []Parent{
@@ -450,12 +450,12 @@ func TestSetupMajorChildren(t *testing.T) {
 		},
 		&testParent{
 			version: 3, visible: true,
-			timestamp: start.Add(4 * time.Hour),
+			timestamp: start.Add(6 * time.Hour),
 			refs:      osm.FeatureIDs{child1},
 		},
 	}
 
-	_, err := setupMajorChildren(ctx, parents, ds, &Options{Threshold: time.Minute})
+	_, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if err != nil {
 		t.Fatalf("setup error: %v", err)
 	}
@@ -471,7 +471,7 @@ func TestSetupMajorChildren(t *testing.T) {
 	// child is not visible for this parent's timestamp
 	parents[0].(*testParent).timestamp = start.Add(-time.Hour)
 
-	_, err = setupMajorChildren(ctx, parents, ds, &Options{Threshold: time.Minute})
+	_, err = Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if _, ok := err.(*NoVisibleChildError); !ok {
 		t.Errorf("did not return correct error, got %v", err)
 	}
@@ -482,9 +482,36 @@ func TestSetupMajorChildren(t *testing.T) {
 	ds.Set(osm.NodeID(2).FeatureID(), ds.MustGet(child1))
 	ds.Set(child1, nil)
 
-	_, err = setupMajorChildren(ctx, parents, ds, &Options{Threshold: time.Minute})
+	_, err = Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
 	if _, ok := err.(*NoHistoryError); !ok {
 		t.Errorf("Did not return correct error, got %v", err)
+	}
+}
+
+func TestChildLocs_GroupByParent(t *testing.T) {
+	in := childLocs{
+		{Parent: 1, Index: 1},
+		{Parent: 2, Index: 2},
+		{Parent: 4, Index: 3},
+		{Parent: 4, Index: 3},
+		{Parent: 4, Index: 4},
+		{Parent: 3, Index: 6},
+		{Parent: 3, Index: 6},
+		{Parent: 7, Index: 8},
+	}
+
+	expected := []childLocs{
+		in[0:1],
+		in[1:2],
+		in[2:5],
+		in[5:7],
+		in[7:8],
+	}
+
+	out := in.GroupByParent()
+	if !reflect.DeepEqual(out, expected) {
+		t.Errorf("incorrect sets: %v", out)
+		t.Errorf("expected:       %v", expected)
 	}
 }
 
@@ -519,6 +546,8 @@ func compareParents(t *testing.T, parents []Parent, expected []ChildList) {
 }
 
 func compareUpdates(t *testing.T, updates, expected []osm.Updates) {
+	t.Helper()
+
 	if !reflect.DeepEqual(updates, expected) {
 		t.Errorf("updates not equal")
 

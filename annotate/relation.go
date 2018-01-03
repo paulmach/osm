@@ -39,6 +39,13 @@ func Relations(
 		return mapErrors(err)
 	}
 
+	for _, p := range parents {
+		r := p.(*parentRelation)
+		if r.Relation.Polygon() {
+			orientation(r.Relation.Members, r.ways, r.Relation.CommittedAt())
+		}
+	}
+
 	for i, updates := range updatesForParents {
 		relations[i].Updates = updates
 	}
@@ -50,8 +57,8 @@ func Relations(
 // so that updates can be computed.
 type parentRelation struct {
 	Relation *osm.Relation
-	children core.ChildList
 	refs     osm.FeatureIDs
+	ways     map[osm.WayID]*osm.Way
 }
 
 func (r parentRelation) ID() osm.FeatureID {
@@ -90,45 +97,32 @@ func (r parentRelation) Refs() osm.FeatureIDs {
 	return r.refs
 }
 
-func (r parentRelation) Children() core.ChildList {
-	return r.children
-}
-
-func (r *parentRelation) SetChildren(list core.ChildList) {
-	r.children = list
-
-	var ways map[osm.WayID]*osm.Way
-	if r.Relation.Polygon() {
-		ways = make(map[osm.WayID]*osm.Way, len(r.Relation.Members))
+func (r *parentRelation) SetChild(idx int, child core.Child) {
+	if r.Relation.Polygon() && r.ways == nil {
+		r.ways = make(map[osm.WayID]*osm.Way, len(r.Relation.Members))
 	}
 
-	for i, child := range list {
-		if child == nil {
-			continue
-		}
-
-		switch t := child.(type) {
-		case *childNode:
-			r.Relation.Members[i].Version = t.Node.Version
-			r.Relation.Members[i].ChangesetID = t.Node.ChangesetID
-			r.Relation.Members[i].Lat = t.Node.Lat
-			r.Relation.Members[i].Lon = t.Node.Lon
-		case *childWay:
-			r.Relation.Members[i].Version = t.Way.Version
-			r.Relation.Members[i].ChangesetID = t.Way.ChangesetID
-
-			if ways != nil {
-				ways[t.Way.ID] = t.Way
-			}
-		case *childRelation:
-			r.Relation.Members[i].Version = t.Relation.Version
-			r.Relation.Members[i].ChangesetID = t.Relation.ChangesetID
-		default:
-			panic(fmt.Sprintf("unsupported type %T", child))
-		}
+	if child == nil {
+		return
 	}
 
-	if r.Relation.Polygon() {
-		orientation(r.Relation.Members, ways, r.Relation.CommittedAt())
+	switch t := child.(type) {
+	case *childNode:
+		r.Relation.Members[idx].Version = t.Node.Version
+		r.Relation.Members[idx].ChangesetID = t.Node.ChangesetID
+		r.Relation.Members[idx].Lat = t.Node.Lat
+		r.Relation.Members[idx].Lon = t.Node.Lon
+	case *childWay:
+		r.Relation.Members[idx].Version = t.Way.Version
+		r.Relation.Members[idx].ChangesetID = t.Way.ChangesetID
+
+		if r.ways != nil {
+			r.ways[t.Way.ID] = t.Way
+		}
+	case *childRelation:
+		r.Relation.Members[idx].Version = t.Relation.Version
+		r.Relation.Members[idx].ChangesetID = t.Relation.ChangesetID
+	default:
+		panic(fmt.Sprintf("unsupported type %T", child))
 	}
 }

@@ -79,7 +79,11 @@ func (us Updates) SortByIndex()           { sort.Sort(updatesSortIndex(us)) }
 func (us updatesSortIndex) Len() int      { return len(us) }
 func (us updatesSortIndex) Swap(i, j int) { us[i], us[j] = us[j], us[i] }
 func (us updatesSortIndex) Less(i, j int) bool {
-	return us[i].Index < us[j].Index
+	if us[i].Index != us[j].Index {
+		return us[i].Index < us[j].Index
+	}
+
+	return us[i].Timestamp.Before(us[j].Timestamp)
 }
 
 func marshalUpdates(updates Updates) *osmpb.DenseMembers {
