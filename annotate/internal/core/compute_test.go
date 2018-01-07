@@ -11,8 +11,8 @@ import (
 
 var (
 	start  = time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)
-	child1 = osm.FeatureID{Type: osm.TypeNode, Ref: 1}
-	child2 = osm.FeatureID{Type: osm.TypeNode, Ref: 2}
+	child1 = osm.NodeID(1).FeatureID()
+	child2 = osm.NodeID(2).FeatureID()
 )
 
 func TestCompute(t *testing.T) {
@@ -82,7 +82,7 @@ func TestComputeMissingChildren(t *testing.T) {
 		&testParent{
 			version: 0, visible: true,
 			timestamp: start.Add(0 * time.Hour),
-			refs:      osm.FeatureIDs{child1, osm.FeatureID{}},
+			refs:      osm.FeatureIDs{child1, osm.FeatureID(0)},
 		},
 	}
 
@@ -459,7 +459,7 @@ func TestSetupMajorChildren(t *testing.T) {
 	// one of the child's histories was not provided
 	parents[0].(*testParent).timestamp = start
 
-	histories.Set(osm.FeatureID{Type: osm.TypeNode, Ref: 2}, histories.Get(child1))
+	histories.Set(osm.NodeID(2).FeatureID(), histories.Get(child1))
 	histories.Set(child1, nil)
 
 	_, err = setupMajorChildren(parents, histories, time.Minute, &Options{})

@@ -15,19 +15,12 @@ type NodeID int64
 
 // FeatureID is a helper returning the feature id for this node id.
 func (id NodeID) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeNode,
-		Ref:  int64(id),
-	}
+	return FeatureID(nodeMask | (id << versionBits))
 }
 
 // ElementID is a helper to convert the id to an element id.
 func (id NodeID) ElementID(v int) ElementID {
-	return ElementID{
-		Type:    TypeNode,
-		Ref:     int64(id),
-		Version: v,
-	}
+	return id.FeatureID().ElementID(v)
 }
 
 // Node is an osm point and allows for marshalling to/from osm xml.
@@ -51,19 +44,12 @@ type Node struct {
 
 // FeatureID returns the feature id of the node.
 func (n *Node) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeNode,
-		Ref:  int64(n.ID),
-	}
+	return n.ID.FeatureID()
 }
 
 // ElementID returns the element id of the node.
 func (n *Node) ElementID() ElementID {
-	return ElementID{
-		Type:    TypeNode,
-		Ref:     int64(n.ID),
-		Version: n.Version,
-	}
+	return n.ID.ElementID(n.Version)
 }
 
 // CommittedAt returns the best estimate on when this element

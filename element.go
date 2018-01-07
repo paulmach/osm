@@ -13,59 +13,87 @@ var (
 )
 
 // ElementID is a unique key for an osm element. It contains the
-// type, id and version.
-type ElementID struct {
-	Type    Type
-	Ref     int64
-	Version int
+// type, id and version information.
+type ElementID int64
+
+// Type returns the Type for the element.
+func (e ElementID) Type() Type {
+	switch e & typeMask {
+	case nodeMask:
+		return TypeNode
+	case wayMask:
+		return TypeWay
+	case relationMask:
+		return TypeRelation
+	case changesetMask:
+		return TypeChangeset
+	}
+
+	panic("unknown type")
+}
+
+// Ref return the ID reference for the element. Not unique without the type.
+func (e ElementID) Ref() int64 {
+	return int64((e & refMask) >> versionBits)
+}
+
+// Version returns the version of the element.
+func (e ElementID) Version() int {
+	return int(e & (versionMask))
 }
 
 // FeatureID returns the feature id for the element id. i.e removing the version.
 func (e ElementID) FeatureID() FeatureID {
-	return FeatureID{
-		Type: e.Type,
-		Ref:  e.Ref,
-	}
+	return FeatureID(e & featureMask)
 }
 
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
 func (e ElementID) NodeID() NodeID {
-	if e.Type != TypeNode {
+	if e&nodeMask == 0 {
 		panic(fmt.Sprintf("not a node: %v", e))
 	}
 
-	return NodeID(e.Ref)
+	return NodeID(e.Ref())
 }
 
 // WayID returns the id of this feature as a way id.
 // The function will panic if this feature is not of WayType.
 func (e ElementID) WayID() WayID {
-	if e.Type != TypeWay {
+	if e&wayMask == 0 {
 		panic(fmt.Sprintf("not a way: %v", e))
 	}
 
-	return WayID(e.Ref)
+	return WayID(e.Ref())
 }
 
 // RelationID returns the id of this feature as a relation id.
 // The function will panic if this feature is not of RelationType.
 func (e ElementID) RelationID() RelationID {
-	if e.Type != TypeRelation {
+	if e&relationMask == 0 {
 		panic(fmt.Sprintf("not a relation: %v", e))
 	}
 
-	return RelationID(e.Ref)
+	return RelationID(e.Ref())
 }
 
 // ChangesetID returns the id of this feature as a changeset id.
 // The function will panic if this feature is not of ChangesetType.
 func (e ElementID) ChangesetID() ChangesetID {
-	if e.Type != TypeChangeset {
+	if e&changesetMask == 0 {
 		panic(fmt.Sprintf("not a changeset: %v", e))
 	}
 
-	return ChangesetID(e.Ref)
+	return ChangesetID(e.Ref())
+}
+
+// String returns "type/ref:version" for the element.
+func (e ElementID) String() string {
+	if e.Version() == 0 {
+		return fmt.Sprintf("%s/%d:-", e.Type(), e.Ref())
+	}
+
+	return fmt.Sprintf("%s/%d:%d", e.Type(), e.Ref(), e.Version())
 }
 
 // Scanner allows osm data from dump files to be read.
@@ -129,17 +157,7 @@ type elementsSort Elements
 func (es elementsSort) Len() int      { return len(es) }
 func (es elementsSort) Swap(i, j int) { es[i], es[j] = es[j], es[i] }
 func (es elementsSort) Less(i, j int) bool {
-	a := es[i].ElementID()
-	b := es[j].ElementID()
-	if a.Type != b.Type {
-		return typeToNumber[a.Type] < typeToNumber[b.Type]
-	}
-
-	if a.Ref != b.Ref {
-		return a.Ref < b.Ref
-	}
-
-	return a.Version < b.Version
+	return es[i].ElementID() < es[j].ElementID()
 }
 
 // ElementIDs is a list of element ids with helper functions on top.
@@ -148,14 +166,14 @@ type ElementIDs []ElementID
 // Counts returns the number of each type of element in the set of ids.
 func (ids ElementIDs) Counts() (nodes, ways, relations, changesets int) {
 	for _, id := range ids {
-		switch id.Type {
-		case TypeNode:
+		switch id & typeMask {
+		case nodeMask:
 			nodes++
-		case TypeWay:
+		case wayMask:
 			ways++
-		case TypeRelation:
+		case relationMask:
 			relations++
-		case TypeChangeset:
+		case changesetMask:
 			changesets++
 		}
 	}
@@ -174,16 +192,5 @@ func (ids ElementIDs) Sort() {
 func (ids elementIDsSort) Len() int      { return len(ids) }
 func (ids elementIDsSort) Swap(i, j int) { ids[i], ids[j] = ids[j], ids[i] }
 func (ids elementIDsSort) Less(i, j int) bool {
-	a := ids[i]
-	b := ids[j]
-
-	if a.Type != b.Type {
-		return typeToNumber[a.Type] < typeToNumber[b.Type]
-	}
-
-	if a.Ref != b.Ref {
-		return a.Ref < b.Ref
-	}
-
-	return a.Version < b.Version
+	return ids[i] < ids[j]
 }

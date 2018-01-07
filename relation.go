@@ -14,19 +14,12 @@ type RelationID int64
 
 // FeatureID is a helper returning the feature id for this relation id.
 func (id RelationID) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeRelation,
-		Ref:  int64(id),
-	}
+	return FeatureID((relationMask | id<<versionBits))
 }
 
 // ElementID is a helper to convert the id to an element id.
 func (id RelationID) ElementID(v int) ElementID {
-	return ElementID{
-		Type:    TypeRelation,
-		Ref:     int64(id),
-		Version: v,
-	}
+	return id.FeatureID().ElementID(v)
 }
 
 // Relation is an collection of nodes, ways and other relations
@@ -81,36 +74,31 @@ type Member struct {
 
 // FeatureID returns the feature id of the relation.
 func (r *Relation) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeRelation,
-		Ref:  int64(r.ID),
-	}
+	return r.ID.FeatureID()
 }
 
 // ElementID returns the element id of the relation.
 func (r *Relation) ElementID() ElementID {
-	return ElementID{
-		Type:    TypeRelation,
-		Ref:     int64(r.ID),
-		Version: r.Version,
-	}
+	return r.ID.ElementID(r.Version)
 }
 
 // FeatureID returns the feature id of the member.
 func (m Member) FeatureID() FeatureID {
-	return FeatureID{
-		Type: m.Type,
-		Ref:  m.Ref,
+	switch m.Type {
+	case TypeNode:
+		return NodeID(m.Ref).FeatureID()
+	case TypeWay:
+		return WayID(m.Ref).FeatureID()
+	case TypeRelation:
+		return RelationID(m.Ref).FeatureID()
 	}
+
+	panic("unknown type")
 }
 
 // ElementID returns the element id of the member.
 func (m Member) ElementID() ElementID {
-	return ElementID{
-		Type:    m.Type,
-		Ref:     m.Ref,
-		Version: m.Version,
-	}
+	return m.FeatureID().ElementID(m.Version)
 }
 
 // Point returns the orb.Point location for the member.

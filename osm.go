@@ -53,7 +53,7 @@ func (o *OSM) Marshal() ([]byte, error) {
 
 // Append will add the given element to the OSM object.
 func (o *OSM) Append(e Element) {
-	switch e.FeatureID().Type {
+	switch e.FeatureID().Type() {
 	case TypeNode:
 		o.Nodes = append(o.Nodes, e.(*Node))
 	case TypeWay:

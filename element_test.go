@@ -14,8 +14,8 @@ func TestElementImplementations(t *testing.T) {
 
 	// These should not implement the Element interface
 	noImplement := []interface{}{
-		FeatureID{},
-		ElementID{},
+		FeatureID(0),
+		ElementID(0),
 		WayNode{},
 		Member{},
 		NodeID(0),
@@ -33,23 +33,23 @@ func TestElementImplementations(t *testing.T) {
 
 func TestElementIDsSort(t *testing.T) {
 	ids := ElementIDs{
-		{TypeRelation, 1, 1},
-		{TypeChangeset, 1, 2},
-		{TypeNode, 1, 2},
-		{TypeWay, 2, 3},
-		{TypeWay, 1, 2},
-		{TypeChangeset, 3, 2},
-		{TypeChangeset, 1, 3},
+		RelationID(1).ElementID(1),
+		ChangesetID(1).ElementID(),
+		NodeID(1).ElementID(2),
+		WayID(2).ElementID(3),
+		WayID(1).ElementID(2),
+		WayID(1).ElementID(1),
+		ChangesetID(3).ElementID(),
 	}
 
 	expected := ElementIDs{
-		{TypeNode, 1, 2},
-		{TypeWay, 1, 2},
-		{TypeWay, 2, 3},
-		{TypeRelation, 1, 1},
-		{TypeChangeset, 1, 2},
-		{TypeChangeset, 1, 3},
-		{TypeChangeset, 3, 2},
+		NodeID(1).ElementID(2),
+		WayID(1).ElementID(1),
+		WayID(1).ElementID(2),
+		WayID(2).ElementID(3),
+		RelationID(1).ElementID(1),
+		ChangesetID(1).ElementID(),
+		ChangesetID(3).ElementID(),
 	}
 
 	ids.Sort()
@@ -64,22 +64,21 @@ func TestElementIDsSort(t *testing.T) {
 func BenchmarkElementIDSort(b *testing.B) {
 	rand.Seed(1024)
 
-	n2t := map[int]Type{
-		0: TypeNode,
-		1: TypeWay,
-		2: TypeRelation,
-		3: TypeChangeset,
-	}
-
 	tests := make([]ElementIDs, b.N)
 	for i := range tests {
 		ids := make(ElementIDs, 10000)
 
 		for j := range ids {
-			ids[j] = ElementID{
-				Type:    n2t[rand.Intn(len(n2t))],
-				Ref:     rand.Int63n(int64(len(ids) / 10)),
-				Version: rand.Intn(20),
+			v := rand.Intn(20)
+			switch rand.Intn(4) {
+			case 0:
+				ids[j] = NodeID(rand.Int63n(int64(len(ids) / 10))).ElementID(v)
+			case 1:
+				ids[j] = WayID(rand.Int63n(int64(len(ids) / 10))).ElementID(v)
+			case 2:
+				ids[j] = RelationID(rand.Int63n(int64(len(ids) / 10))).ElementID(v)
+			case 3:
+				ids[j] = ChangesetID(rand.Int63n(int64(len(ids) / 10))).ElementID()
 			}
 		}
 		tests[i] = ids

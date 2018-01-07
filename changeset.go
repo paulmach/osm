@@ -9,22 +9,16 @@ import (
 )
 
 // ChangesetID is the primary key for a osm changeset.
-type ChangesetID int
+type ChangesetID int64
 
 // FeatureID is a helper returning the feature id for this changeset id.
 func (id ChangesetID) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeChangeset,
-		Ref:  int64(id),
-	}
+	return FeatureID(changesetMask | (id << versionBits))
 }
 
 // ElementID is a helper to convert the id to an element id.
 func (id ChangesetID) ElementID() ElementID {
-	return ElementID{
-		Type: TypeChangeset,
-		Ref:  int64(id),
-	}
+	return ElementID(id.FeatureID())
 }
 
 // Changesets is a collection with some helper functions attached.
@@ -53,18 +47,12 @@ type Changeset struct {
 
 // FeatureID returns the feature id of the changeset.
 func (c *Changeset) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeChangeset,
-		Ref:  int64(c.ID),
-	}
+	return c.ID.FeatureID()
 }
 
 // ElementID returns the element id of the changeset.
 func (c *Changeset) ElementID() ElementID {
-	return ElementID{
-		Type: TypeChangeset,
-		Ref:  int64(c.ID),
-	}
+	return c.ID.ElementID()
 }
 
 // TagMap returns the element tags as a key/value map.

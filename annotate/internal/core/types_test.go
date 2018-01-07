@@ -444,7 +444,7 @@ type testParent struct {
 }
 
 func (t testParent) ID() osm.FeatureID {
-	return osm.FeatureID{} // this is only used for logging.
+	return osm.FeatureID(0) // this is only used for logging.
 }
 
 func (t testParent) ChangesetID() osm.ChangesetID {

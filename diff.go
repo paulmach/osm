@@ -25,6 +25,6 @@ type ActionType string
 // The different types of diff actions.
 const (
 	CreateAction ActionType = "create"
-	ModifyAction            = "modify"
-	DeleteAction            = "delete"
+	ModifyAction ActionType = "modify"
+	DeleteAction ActionType = "delete"
 )

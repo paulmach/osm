@@ -15,19 +15,12 @@ type WayID int64
 
 // FeatureID is a helper returning the feature id for this way id.
 func (id WayID) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeWay,
-		Ref:  int64(id),
-	}
+	return FeatureID(wayMask | (id << versionBits))
 }
 
 // ElementID is a helper to convert the id to an element id.
 func (id WayID) ElementID(v int) ElementID {
-	return ElementID{
-		Type:    TypeWay,
-		Ref:     int64(id),
-		Version: v,
-	}
+	return id.FeatureID().ElementID(v)
 }
 
 // Way is an osm way, ie collection of nodes.
@@ -72,19 +65,12 @@ type WayNode struct {
 
 // FeatureID returns the feature id of the way.
 func (w *Way) FeatureID() FeatureID {
-	return FeatureID{
-		Type: TypeWay,
-		Ref:  int64(w.ID),
-	}
+	return w.ID.FeatureID()
 }
 
 // ElementID returns the element id of the way.
 func (w *Way) ElementID() ElementID {
-	return ElementID{
-		Type:    TypeWay,
-		Ref:     int64(w.ID),
-		Version: w.Version,
-	}
+	return w.ID.ElementID(w.Version)
 }
 
 // FeatureID returns the feature id of the way node.
@@ -94,11 +80,7 @@ func (wn WayNode) FeatureID() FeatureID {
 
 // ElementID returns the element id of the way node.
 func (wn WayNode) ElementID() ElementID {
-	return ElementID{
-		Type:    TypeNode,
-		Ref:     int64(wn.ID),
-		Version: wn.Version,
-	}
+	return wn.ID.ElementID(wn.Version)
 }
 
 // Point returns the orb.Point location for the way node.

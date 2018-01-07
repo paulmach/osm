@@ -66,7 +66,7 @@ func convertRelationData(
 				continue
 			}
 
-			switch childID.Type {
+			switch childID.Type() {
 			case osm.TypeNode:
 				nodes, err := datasource.NodeHistory(ctx, childID.NodeID())
 				if err != nil && (!datasource.NotFound(err) || !ignoreNotFound) {

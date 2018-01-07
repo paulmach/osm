@@ -156,10 +156,10 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 	f := geojson.NewFeature(geometry)
 
 	if !ctx.noID {
-		f.ID = fmt.Sprintf("%s/%d", featureID.Type, featureID.Ref)
+		f.ID = fmt.Sprintf("%s/%d", featureID.Type(), featureID.Ref())
 	}
-	f.Properties["id"] = int(featureID.Ref)
-	f.Properties["type"] = string(featureID.Type)
+	f.Properties["id"] = int(featureID.Ref())
+	f.Properties["type"] = string(featureID.Type())
 
 	if tainted {
 		f.Properties["tainted"] = true
