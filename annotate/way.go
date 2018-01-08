@@ -23,17 +23,17 @@ func Ways(
 	ctx context.Context,
 	ways osm.Ways,
 	datasource NodeHistoryDatasourcer,
-	threshold time.Duration,
 	opts ...Option,
 ) error {
-	computeOpts := &core.Options{}
+	computeOpts := &core.Options{
+		Threshold: defaultThreshold,
+	}
 	for _, o := range opts {
 		err := o(computeOpts)
 		if err != nil {
 			return err
 		}
 	}
-	computeOpts.Threshold = threshold
 
 	parents := make([]core.Parent, len(ways))
 	for i, w := range ways {

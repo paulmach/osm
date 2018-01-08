@@ -28,6 +28,7 @@ type Options struct {
 	Threshold             time.Duration
 	IgnoreInconsistency   bool
 	IgnoreMissingChildren bool
+	ChildFilter           func(osm.FeatureID) bool
 }
 
 // Compute does two things: first it computes the exact version of
@@ -44,7 +45,7 @@ func Compute(
 	}
 
 	results := make([]osm.Updates, len(parents))
-	for fid, locations := range mapChildLocs(parents) {
+	for fid, locations := range mapChildLocs(parents, opts.ChildFilter) {
 		child, err := histories.Get(ctx, fid)
 		if err != nil {
 			if !histories.NotFound(err) {
@@ -195,10 +196,14 @@ func nextVersionIndex(current Child, child ChildList, nextParent Parent, opts *O
 }
 
 // mapChildLocs builds a cache of a where a child is in a set of parents.
-func mapChildLocs(parents []Parent) map[osm.FeatureID]childLocs {
+func mapChildLocs(parents []Parent, filter func(osm.FeatureID) bool) map[osm.FeatureID]childLocs {
 	result := make(map[osm.FeatureID]childLocs)
 	for i, p := range parents {
 		for j, fid := range p.Refs() {
+			if filter != nil && !filter(fid) {
+				continue
+			}
+
 			if result[fid] == nil {
 				v := make([]childLoc, 1, len(parents))
 				v[0].Parent = i

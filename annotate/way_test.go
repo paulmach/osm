@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"reflect"
 	"testing"
-	"time"
 
 	"github.com/paulmach/osm"
 )
@@ -22,7 +21,7 @@ func TestWays(t *testing.T) {
 		o := loadTestdata(t, fmt.Sprintf("testdata/way_%d.osm", id))
 
 		ds := (&osm.OSM{Nodes: o.Nodes}).ToHistoryDatasource()
-		err := Ways(context.Background(), o.Ways, ds, 30*time.Minute)
+		err := Ways(context.Background(), o.Ways, ds)
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
 		}
@@ -42,6 +41,48 @@ func TestWays(t *testing.T) {
 	}
 }
 
+func TestWays_ChildFilter(t *testing.T) {
+	nodes := osm.Nodes{
+		{ID: 1, Version: 1, Lat: 1, Lon: 1, Visible: true},
+		{ID: 1, Version: 2, Lat: 2, Lon: 2, Visible: true},
+		{ID: 1, Version: 3, Lat: 3, Lon: 3, Visible: true},
+		{ID: 2, Version: 1, Lat: 1, Lon: 1, Visible: true},
+		{ID: 2, Version: 2, Lat: 2, Lon: 2, Visible: true},
+		{ID: 2, Version: 3, Lat: 3, Lon: 3, Visible: true},
+	}
+
+	ways := osm.Ways{
+		{
+			ID:      1,
+			Version: 1,
+			Visible: true,
+			Nodes:   osm.WayNodes{{ID: 1}, {ID: 2}},
+		},
+	}
+
+	ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+	err := Ways(
+		context.Background(),
+		ways,
+		ds,
+		Threshold(0),
+		ChildFilter(func(fid osm.FeatureID) bool {
+			return fid == osm.NodeID(1).FeatureID()
+		}),
+	)
+	if err != nil {
+		t.Fatalf("compute error: %v", err)
+	}
+
+	if ways[0].Nodes[0].Version == 0 {
+		t.Errorf("should annotate first node")
+	}
+
+	if ways[0].Nodes[1].Version != 0 {
+		t.Errorf("should not annotate second node")
+	}
+}
+
 func BenchmarkWay(b *testing.B) {
 	o := loadTestdata(b, "testdata/way_6394949.osm")
 	ds := (&osm.OSM{Nodes: o.Nodes}).ToHistoryDatasource()
@@ -49,7 +90,7 @@ func BenchmarkWay(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		err := Ways(context.Background(), o.Ways, ds, 30*time.Minute)
+		err := Ways(context.Background(), o.Ways, ds)
 		if err != nil {
 			b.Fatalf("compute error: %v", err)
 		}
@@ -64,7 +105,7 @@ func BenchmarkWays(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; {
 		for id, ways := range ds.Ways {
-			err := Ways(context.Background(), ways, ds, 30*time.Minute)
+			err := Ways(context.Background(), ways, ds)
 			if err != nil {
 				b.Fatalf("compute error for way %d: %v", id, err)
 			}

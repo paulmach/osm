@@ -16,17 +16,17 @@ func Relations(
 	ctx context.Context,
 	relations osm.Relations,
 	datasource osm.HistoryDatasourcer,
-	threshold time.Duration,
 	opts ...Option,
 ) error {
-	computeOpts := &core.Options{}
+	computeOpts := &core.Options{
+		Threshold: defaultThreshold,
+	}
 	for _, o := range opts {
 		err := o(computeOpts)
 		if err != nil {
 			return err
 		}
 	}
-	computeOpts.Threshold = threshold
 
 	parents := make([]core.Parent, len(relations))
 	for i, r := range relations {

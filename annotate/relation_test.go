@@ -24,14 +24,14 @@ func TestRelation(t *testing.T) {
 
 		ds := o.ToHistoryDatasource()
 		for id, ways := range ds.Ways {
-			err := Ways(context.Background(), ways, ds, 30*time.Minute)
+			err := Ways(context.Background(), ways, ds)
 			if err != nil {
 				t.Fatalf("compute error for way %d: %v", id, err)
 			}
 		}
 
 		relations := ds.Relations[id]
-		err := Relations(context.Background(), relations, ds, 30*time.Minute)
+		err := Relations(context.Background(), relations, ds, Threshold(30*time.Minute))
 		if err != nil {
 			t.Fatalf("compute error for %d: %v", id, err)
 		}
@@ -99,7 +99,7 @@ func TestRelation_Reverse(t *testing.T) {
 			context.Background(),
 			osm.Relations{r},
 			(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
-			time.Hour,
+			Threshold(time.Hour),
 		)
 		if err != nil {
 			t.Fatalf("annotation error: %v", err)
@@ -124,7 +124,7 @@ func TestRelation_Reverse(t *testing.T) {
 			context.Background(),
 			osm.Relations{r},
 			(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
-			time.Hour,
+			Threshold(time.Hour),
 		)
 		if err != nil {
 			t.Fatalf("annotation error: %v", err)
@@ -219,7 +219,7 @@ func TestRelation_Polygon(t *testing.T) {
 		context.Background(),
 		osm.Relations{r},
 		(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
-		time.Hour,
+		Threshold(time.Hour),
 	)
 
 	if err != nil {
@@ -279,7 +279,7 @@ func TestRelation_Circular(t *testing.T) {
 
 	ds := (&osm.OSM{Relations: relations}).ToHistoryDatasource()
 	rs := ds.Relations[1]
-	err := Relations(context.Background(), rs, ds, 30*time.Minute)
+	err := Relations(context.Background(), rs, ds, Threshold(30*time.Minute))
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -342,7 +342,7 @@ func TestRelation_SelfCircular(t *testing.T) {
 	}
 
 	ds := (&osm.OSM{Relations: rs}).ToHistoryDatasource()
-	err := Relations(context.Background(), rs, ds, 30*time.Minute)
+	err := Relations(context.Background(), rs, ds)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}
@@ -383,7 +383,7 @@ func BenchmarkRelation(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		err := Relations(context.Background(), ds.Relations[id], ds, 30*time.Minute)
+		err := Relations(context.Background(), ds.Relations[id], ds)
 		if err != nil {
 			b.Fatalf("compute error: %v", err)
 		}
