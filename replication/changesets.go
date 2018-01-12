@@ -18,6 +18,11 @@ import (
 // http://planet.osm.org/replication/changesets/
 type ChangesetSeqNum uint64
 
+// String returns 'changeset/%d'.
+func (n ChangesetSeqNum) String() string {
+	return fmt.Sprintf("changeset/%d", n)
+}
+
 // CurrentChangesetState returns the current state of the changeset replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
 func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error) {

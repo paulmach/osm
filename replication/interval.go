@@ -38,6 +38,7 @@ type State struct {
 // HourSeqNum and DaySeqNum. This is an experiment to implement
 // a sum type, a type that can be one of several things only.
 type SeqNum interface {
+	fmt.Stringer
 	private()
 }
 
@@ -52,13 +53,28 @@ var _ = SeqNum(MinuteSeqNum(0)).private // for the linters
 // http://planet.osm.org/replication/minute
 type MinuteSeqNum uint64
 
+// String returns 'minute/%d'.
+func (n MinuteSeqNum) String() string {
+	return fmt.Sprintf("minute/%d", n)
+}
+
 // HourSeqNum indicates the sequence of the hourly diff replication found here:
 // http://planet.osm.org/replication/hour
 type HourSeqNum uint64
 
+// String returns 'hour/%d'.
+func (n HourSeqNum) String() string {
+	return fmt.Sprintf("hour/%d", n)
+}
+
 // DaySeqNum indicates the sequence of the daily diff replication found here:
 // http://planet.osm.org/replication/day
 type DaySeqNum uint64
+
+// String returns 'day/%d'.
+func (n DaySeqNum) String() string {
+	return fmt.Sprintf("day/%d", n)
+}
 
 // CurrentMinuteState returns the current state of the minutely replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
