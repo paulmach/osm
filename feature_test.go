@@ -27,6 +27,16 @@ func TestFeature_String(t *testing.T) {
 			id:       RelationID(1000).FeatureID(),
 			expected: "relation/1000",
 		},
+		{
+			name:     "changeset",
+			id:       ChangesetID(10000).FeatureID(),
+			expected: "changeset/10000",
+		},
+		{
+			name:     "unknown",
+			id:       0,
+			expected: "unknown/0",
+		},
 	}
 
 	for _, tc := range cases {
@@ -38,7 +48,44 @@ func TestFeature_String(t *testing.T) {
 	}
 }
 
-func TestFeatureIDsSort(t *testing.T) {
+func TestFeatureID_ParseFeatureID(t *testing.T) {
+	cases := []struct {
+		name string
+		id   FeatureID
+	}{
+		{
+			name: "node",
+			id:   NodeID(0).FeatureID(),
+		},
+		{
+			name: "way",
+			id:   WayID(10).FeatureID(),
+		},
+		{
+			name: "relation",
+			id:   RelationID(100).FeatureID(),
+		},
+		{
+			name: "changeset",
+			id:   RelationID(1000).FeatureID(),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			id, err := ParseFeatureID(tc.id.String())
+			if err != nil {
+				t.Errorf("parse error: %v", err)
+			}
+
+			if id != tc.id {
+				t.Errorf("incorrect id: %v != %v", id, tc.id)
+			}
+		})
+	}
+}
+
+func TestFeatureIDs_Sort(t *testing.T) {
 	ids := FeatureIDs{
 		RelationID(1).FeatureID(),
 		ChangesetID(1).FeatureID(),
@@ -68,7 +115,7 @@ func TestFeatureIDsSort(t *testing.T) {
 	}
 }
 
-func BenchmarkFeatureIDsSort(b *testing.B) {
+func BenchmarkFeatureIDs_Sort(b *testing.B) {
 	rand.Seed(1024)
 
 	tests := make([]FeatureIDs, b.N)

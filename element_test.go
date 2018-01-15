@@ -6,6 +6,63 @@ import (
 	"testing"
 )
 
+func TestElementID_ParseElementID(t *testing.T) {
+	cases := []struct {
+		name   string
+		string string
+		id     ElementID
+	}{
+		{
+			name: "node",
+			id:   NodeID(0).ElementID(1),
+		},
+		{
+			name: "way",
+			id:   WayID(10).ElementID(2),
+		},
+		{
+			name: "relation",
+			id:   RelationID(100).ElementID(3),
+		},
+		{
+			name: "changeset",
+			id:   RelationID(1000).ElementID(4),
+		},
+		{
+			name:   "node feature",
+			string: "node/100",
+			id:     NodeID(100).ElementID(0),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var (
+				id  ElementID
+				err error
+			)
+
+			if tc.string == "" {
+				id, err = ParseElementID(tc.id.String())
+				if err != nil {
+					t.Errorf("parse error: %v", err)
+					return
+				}
+			} else {
+				id, err = ParseElementID(tc.string)
+				if err != nil {
+					t.Errorf("parse error: %v", err)
+					return
+				}
+			}
+
+			if id != tc.id {
+				t.Errorf("incorrect id: %v != %v", id, tc.id)
+			}
+		})
+	}
+}
+
 func TestElementImplementations(t *testing.T) {
 	var _ Element = &Node{}
 	var _ Element = &Way{}

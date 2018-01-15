@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 var (
@@ -94,6 +96,41 @@ func (e ElementID) String() string {
 	}
 
 	return fmt.Sprintf("%s/%d:%d", e.Type(), e.Ref(), e.Version())
+}
+
+// ParseElementID takes a string and tries to determine the element id from it.
+// The string must be formatted as "type/id:version", the same as the result of the String method.
+func ParseElementID(s string) (ElementID, error) {
+	parts := strings.Split(s, "/")
+	if len(parts) != 2 {
+		return 0, fmt.Errorf("invalid element id: %v", s)
+	}
+
+	parts2 := strings.Split(parts[1], ":")
+	if l := len(parts); l == 0 || l > 2 {
+		return 0, fmt.Errorf("invalid element id: %v", s)
+	}
+
+	var version int
+	ref, err := strconv.ParseInt(parts2[0], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid element id: %v: %v", s, err)
+	}
+
+	if len(parts2) == 2 {
+		v, err := strconv.ParseInt(parts2[1], 10, 64)
+		if err != nil {
+			return 0, fmt.Errorf("invalid element id: %v: %v", s, err)
+		}
+		version = int(v)
+	}
+
+	fid, err := Type(parts[0]).FeatureID(ref)
+	if err != nil {
+		return 0, fmt.Errorf("invalid element id: %v: %v", s, err)
+	}
+
+	return fid.ElementID(version), nil
 }
 
 // Scanner allows osm data from dump files to be read.

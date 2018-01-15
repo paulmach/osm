@@ -3,6 +3,8 @@ package osm
 import (
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 // Type is the type of different osm elements.
@@ -18,19 +20,19 @@ const (
 )
 
 // FeatureID returns a feature id from the given type.
-func (t Type) FeatureID(ref int64) FeatureID {
+func (t Type) FeatureID(ref int64) (FeatureID, error) {
 	switch t {
 	case TypeNode:
-		return NodeID(ref).FeatureID()
+		return NodeID(ref).FeatureID(), nil
 	case TypeWay:
-		return WayID(ref).FeatureID()
+		return WayID(ref).FeatureID(), nil
 	case TypeRelation:
-		return RelationID(ref).FeatureID()
+		return RelationID(ref).FeatureID(), nil
 	case TypeChangeset:
-		return ChangesetID(ref).FeatureID()
+		return ChangesetID(ref).FeatureID(), nil
 	}
 
-	panic(fmt.Sprintf("unknown type: %v", t))
+	return 0, fmt.Errorf("unknown type: %v", t)
 }
 
 const (
@@ -119,7 +121,39 @@ func (f FeatureID) ChangesetID() ChangesetID {
 
 // String returns "type/ref" for the feature.
 func (f FeatureID) String() string {
-	return fmt.Sprintf("%s/%d", f.Type(), f.Ref())
+	t := Type("unknown")
+	switch f & typeMask {
+	case nodeMask:
+		t = TypeNode
+	case wayMask:
+		t = TypeWay
+	case relationMask:
+		t = TypeRelation
+	case changesetMask:
+		t = TypeChangeset
+	}
+	return fmt.Sprintf("%s/%d", t, f.Ref())
+}
+
+// ParseFeatureID takes a string and tries to determine the feature id from it.
+// The string must be formatted at "type/id", the same as the result of the String method.
+func ParseFeatureID(s string) (FeatureID, error) {
+	parts := strings.Split(s, "/")
+	if len(parts) != 2 {
+		return 0, fmt.Errorf("invalid feature id: %v", s)
+	}
+
+	n, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid feature id: %v: %v", s, err)
+	}
+
+	id, err := Type(parts[0]).FeatureID(n)
+	if err != nil {
+		return 0, fmt.Errorf("invalid feature id: %s: %v", s, err)
+	}
+
+	return id, nil
 }
 
 // FeatureIDs is a slice of FeatureIDs with some helpers on top.
