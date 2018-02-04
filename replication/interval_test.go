@@ -15,7 +15,7 @@ txnMax=836441259
 txnActiveList=836441203
 `)
 
-	state, err := decodeIntervalState(data, "minute")
+	state, err := decodeIntervalState(data)
 	if v := MinuteSeqNum(state.SeqNum); v != 2010594 {
 		t.Errorf("incorrect id, got %v", v)
 	}

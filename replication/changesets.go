@@ -23,6 +23,16 @@ func (n ChangesetSeqNum) String() string {
 	return fmt.Sprintf("changeset/%d", n)
 }
 
+// Dir returns the directory of this data on planet osm.
+func (n ChangesetSeqNum) Dir() string {
+	return "changesets"
+}
+
+// Uint64 returns the seq num as a uint64 type.
+func (n ChangesetSeqNum) Uint64() uint64 {
+	return uint64(n)
+}
+
 // CurrentChangesetState returns the current state of the changeset replication.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
 func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error) {

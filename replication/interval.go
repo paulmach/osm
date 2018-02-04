@@ -14,6 +14,11 @@ import (
 	"github.com/paulmach/osm"
 )
 
+var _ SeqNum = MinuteSeqNum(0)
+var _ SeqNum = HourSeqNum(0)
+var _ SeqNum = DaySeqNum(0)
+var _ SeqNum = ChangesetSeqNum(0)
+
 // MinuteSeqStart is the beginning of valid minutely sequence data.
 // The few before look to be way more than a minute.
 // A quick looks says about 75, 57, 17 for 1, 2, 3 respectively.
@@ -39,6 +44,8 @@ type State struct {
 // a sum type, a type that can be one of several things only.
 type SeqNum interface {
 	fmt.Stringer
+	Dir() string
+	Uint64() uint64
 	private()
 }
 
@@ -58,6 +65,16 @@ func (n MinuteSeqNum) String() string {
 	return fmt.Sprintf("minute/%d", n)
 }
 
+// Dir returns the directory of this data on planet osm.
+func (n MinuteSeqNum) Dir() string {
+	return "minute"
+}
+
+// Uint64 returns the seq num as a uint64 type.
+func (n MinuteSeqNum) Uint64() uint64 {
+	return uint64(n)
+}
+
 // HourSeqNum indicates the sequence of the hourly diff replication found here:
 // http://planet.osm.org/replication/hour
 type HourSeqNum uint64
@@ -67,6 +84,16 @@ func (n HourSeqNum) String() string {
 	return fmt.Sprintf("hour/%d", n)
 }
 
+// Dir returns the directory of this data on planet osm.
+func (n HourSeqNum) Dir() string {
+	return "hour"
+}
+
+// Uint64 returns the seq num as a uint64 type.
+func (n HourSeqNum) Uint64() uint64 {
+	return uint64(n)
+}
+
 // DaySeqNum indicates the sequence of the daily diff replication found here:
 // http://planet.osm.org/replication/day
 type DaySeqNum uint64
@@ -74,6 +101,16 @@ type DaySeqNum uint64
 // String returns 'day/%d'.
 func (n DaySeqNum) String() string {
 	return fmt.Sprintf("day/%d", n)
+}
+
+// Dir returns the directory of this data on planet osm.
+func (n DaySeqNum) Dir() string {
+	return "day"
+}
+
+// Uint64 returns the seq num as a uint64 type.
+func (n DaySeqNum) Uint64() uint64 {
+	return uint64(n)
 }
 
 // CurrentMinuteState returns the current state of the minutely replication.
@@ -100,7 +137,7 @@ func MinuteState(ctx context.Context, n MinuteSeqNum) (*State, error) {
 
 // MinuteState returns the state of the given minutely replication.
 func (ds *Datasource) MinuteState(ctx context.Context, n MinuteSeqNum) (*State, error) {
-	return ds.fetchIntervalState(ctx, "minute", int(n))
+	return ds.fetchState(ctx, n)
 }
 
 // CurrentHourState returns the current state of the hourly replication.
@@ -127,7 +164,7 @@ func HourState(ctx context.Context, n HourSeqNum) (*State, error) {
 
 // HourState returns the state of the given hourly replication.
 func (ds *Datasource) HourState(ctx context.Context, n HourSeqNum) (*State, error) {
-	return ds.fetchIntervalState(ctx, "hour", int(n))
+	return ds.fetchState(ctx, n)
 }
 
 // CurrentDayState returns the current state of the daily replication.
@@ -154,18 +191,18 @@ func DayState(ctx context.Context, n DaySeqNum) (*State, error) {
 
 // DayState returns the state of the given daily replication.
 func (ds *Datasource) DayState(ctx context.Context, n DaySeqNum) (*State, error) {
-	return ds.fetchIntervalState(ctx, "day", int(n))
+	return ds.fetchState(ctx, n)
 }
 
-func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n int) (*State, error) {
+func (ds *Datasource) fetchState(ctx context.Context, n SeqNum) (*State, error) {
 	var url string
-	if n != 0 {
-		url = ds.baseIntervalURL(interval, n) + ".state.txt"
+	if n.Uint64() != 0 {
+		url = ds.baseSeqURL(n) + ".state.txt"
 	} else {
-		url = fmt.Sprintf("%s/replication/%s/state.txt", ds.baseURL(), interval)
+		url = fmt.Sprintf("%s/replication/%s/state.txt", ds.baseURL(), n.Dir())
 	}
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -185,10 +222,10 @@ func (ds *Datasource) fetchIntervalState(ctx context.Context, interval string, n
 		return nil, err
 	}
 
-	return decodeIntervalState(data, interval)
+	return decodeIntervalState(data)
 }
 
-func decodeIntervalState(data []byte, interval string) (*State, error) {
+func decodeIntervalState(data []byte) (*State, error) {
 	// example
 	// ---
 	// #Sat Jul 16 06:14:03 UTC 2016
@@ -245,7 +282,7 @@ func Minute(ctx context.Context, n MinuteSeqNum) (*osm.Change, error) {
 
 // Minute returns the change diff for a given minute.
 func (ds *Datasource) Minute(ctx context.Context, n MinuteSeqNum) (*osm.Change, error) {
-	return ds.fetchIntervalData(ctx, ds.minuteURL(n))
+	return ds.fetchIntervalData(ctx, ds.changeURL(n))
 }
 
 // Hour returns the change diff for a given hour.
@@ -256,7 +293,7 @@ func Hour(ctx context.Context, n HourSeqNum) (*osm.Change, error) {
 
 // Hour returns the change diff for a given hour.
 func (ds *Datasource) Hour(ctx context.Context, n HourSeqNum) (*osm.Change, error) {
-	return ds.fetchIntervalData(ctx, ds.hourURL(n))
+	return ds.fetchIntervalData(ctx, ds.changeURL(n))
 }
 
 // Day returns the change diff for a given day.
@@ -267,7 +304,7 @@ func Day(ctx context.Context, n DaySeqNum) (*osm.Change, error) {
 
 // Day returns the change diff for a given day.
 func (ds *Datasource) Day(ctx context.Context, n DaySeqNum) (*osm.Change, error) {
-	return ds.fetchIntervalData(ctx, ds.dayURL(n))
+	return ds.fetchIntervalData(ctx, ds.changeURL(n))
 }
 
 func (ds *Datasource) fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
@@ -297,26 +334,15 @@ func (ds *Datasource) fetchIntervalData(ctx context.Context, url string) (*osm.C
 	return change, err
 }
 
-func (ds *Datasource) minuteURL(n MinuteSeqNum) string {
-	return ds.dataURL("minute", int(n))
+func (ds *Datasource) changeURL(n SeqNum) string {
+	return ds.baseSeqURL(n) + ".osc.gz"
 }
 
-func (ds *Datasource) hourURL(n HourSeqNum) string {
-	return ds.dataURL("hour", int(n))
-}
-
-func (ds *Datasource) dayURL(n DaySeqNum) string {
-	return ds.dataURL("day", int(n))
-}
-
-func (ds *Datasource) dataURL(interval string, n int) string {
-	return ds.baseIntervalURL(interval, n) + ".osc.gz"
-}
-
-func (ds *Datasource) baseIntervalURL(interval string, n int) string {
+func (ds *Datasource) baseSeqURL(sn SeqNum) string {
+	n := sn.Uint64()
 	return fmt.Sprintf("%s/replication/%s/%03d/%03d/%03d",
 		ds.baseURL(),
-		interval,
+		sn.Dir(),
 		n/1000000,
 		(n%1000000)/1000,
 		(n % 1000))
