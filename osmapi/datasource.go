@@ -1,3 +1,4 @@
+// Package osmapi provides an interface to the OSM v0.6 API.
 package osmapi
 
 import (
