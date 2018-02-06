@@ -10,7 +10,7 @@ Usage:
 This call issues a request to [api.openstreetmap.org/api/0.6/node/1010](https://api.openstreetmap.org/api/0.6/node/1010)
 and returns a parsed `osm.Node` object with all the methods attached.
 
-### List of methods
+## List of functions
 
 ```go
 func Map(context.Context, bounds *osm.Bounds) (*osm.OSM, error)
@@ -47,7 +47,7 @@ func ChangesetDownload(context.Context, osm.ChangesetID) (*osm.Change, error)
 See the [godoc reference](https://godoc.org/github.com/paulmach/osm/osmapi)
 for more details.
 
-### Rate limiting
+## Rate limiting
 
 This package can make sure of [`x/time/rate.Limiter`](https://godoc.org/golang.org/x/time/rate#Limiter)
  to throttle requests to the official api. Example usage:
