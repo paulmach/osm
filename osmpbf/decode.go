@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"time"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm"
@@ -34,6 +35,18 @@ const (
 	osmDataType   = "OSMData"
 )
 
+// Header contains the contents of the header in the pbf file.
+type Header struct {
+	Bounds               *osm.Bounds
+	RequiredFeatures     []string
+	OptionalFeatures     []string
+	WritingProgram       string
+	Source               string
+	ReplicationTimestamp time.Time
+	ReplicationSeqNum    uint64
+	ReplicationBaseURL   string
+}
+
 // iPair is the group sent on the chan into the decoder
 // goroutines that unzip and decode the pbf from the headerblock.
 type iPair struct {
@@ -52,6 +65,7 @@ type oPair struct {
 
 // A Decoder reads and decodes OpenStreetMap PBF data from an input stream.
 type decoder struct {
+	header    *Header
 	r         io.Reader
 	bytesRead int64
 
@@ -103,7 +117,9 @@ func (dec *decoder) Start(n int) error {
 	}
 
 	if blobHeader.GetType() == osmHeaderType {
-		if err := decodeOSMHeader(blob); err != nil {
+		var err error
+		dec.header, err = decodeOSMHeader(blob)
+		if err != nil {
 			return err
 		}
 	}
@@ -336,24 +352,49 @@ func getData(blob *osmpbf.Blob) ([]byte, error) {
 	}
 }
 
-func decodeOSMHeader(blob *osmpbf.Blob) error {
+func decodeOSMHeader(blob *osmpbf.Blob) (*Header, error) {
 	data, err := getData(blob)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	headerBlock := &osmpbf.HeaderBlock{}
 	if err := proto.Unmarshal(data, headerBlock); err != nil {
-		return err
+		return nil, err
 	}
 
 	// Check we have the parse capabilities
 	requiredFeatures := headerBlock.GetRequiredFeatures()
 	for _, feature := range requiredFeatures {
 		if !parseCapabilities[feature] {
-			return fmt.Errorf("parser does not have %s capability", feature)
+			return nil, fmt.Errorf("parser does not have %s capability", feature)
 		}
 	}
 
-	return nil
+	// read the header
+	header := &Header{
+		RequiredFeatures:   headerBlock.GetRequiredFeatures(),
+		OptionalFeatures:   headerBlock.GetOptionalFeatures(),
+		WritingProgram:     headerBlock.GetWritingprogram(),
+		Source:             headerBlock.GetSource(),
+		ReplicationBaseURL: headerBlock.GetOsmosisReplicationBaseUrl(),
+		ReplicationSeqNum:  uint64(headerBlock.GetOsmosisReplicationSequenceNumber()),
+	}
+
+	// convert timestamp epoch seconds to golang time structure if it exists
+	if headerBlock.OsmosisReplicationTimestamp != 0 {
+		header.ReplicationTimestamp = time.Unix(headerBlock.OsmosisReplicationTimestamp, 0).UTC()
+	}
+	// read bounding box if it exists
+	if headerBlock.Bbox != nil {
+		// Units are always in nanodegree and do not obey granularity rules. See osmformat.proto
+		header.Bounds = &osm.Bounds{
+			MinLon: 1e-9 * float64(headerBlock.Bbox.Left),
+			MaxLon: 1e-9 * float64(headerBlock.Bbox.Right),
+			MinLat: 1e-9 * float64(headerBlock.Bbox.Bottom),
+			MaxLat: 1e-9 * float64(headerBlock.Bbox.Top),
+		}
+	}
+
+	return header, nil
 }

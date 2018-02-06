@@ -3,7 +3,9 @@ package osmpbf
 import (
 	"context"
 	"os"
+	"reflect"
 	"testing"
+	"time"
 
 	"github.com/paulmach/osm"
 )
@@ -102,6 +104,43 @@ func TestChangesetScannerContext(t *testing.T) {
 
 	if v := scanner.Err(); v != ctx.Err() {
 		t.Errorf("incorrect error, got %v", v)
+	}
+}
+
+func TestScannerHeader(t *testing.T) {
+	f, err := os.Open(Delaware)
+	if err != nil {
+		t.Fatalf("unable to open file: %v", err)
+	}
+	defer f.Close()
+
+	scanner := New(context.Background(), f, 1)
+
+	header, err := scanner.Header()
+	if err != nil {
+		t.Fatalf("error reading header: %v", err)
+	}
+
+	expected := &osm.Bounds{
+		MinLat: 38.450430000000004,
+		MaxLat: 40.03221,
+		MinLon: -75.78974000000001,
+		MaxLon: -74.96121000000001,
+	}
+	if !reflect.DeepEqual(header.Bounds, expected) {
+		t.Errorf("incorrect bounds: %v", header.Bounds)
+	}
+
+	if !reflect.DeepEqual(header.RequiredFeatures, []string{"OsmSchema-V0.6", "DenseNodes"}) {
+		t.Errorf("incorrect required features: %v", header.RequiredFeatures)
+	}
+
+	if !reflect.DeepEqual(header.WritingProgram, "Osmium (http://wiki.openstreetmap.org/wiki/Osmium)") {
+		t.Errorf("incorrect writing program: %v", header.WritingProgram)
+	}
+
+	if !reflect.DeepEqual(header.ReplicationTimestamp, time.Date(2016, 8, 10, 19, 28, 3, 0, time.UTC)) {
+		t.Errorf("incorrect timestamp: %v", header.ReplicationTimestamp)
 	}
 }
 

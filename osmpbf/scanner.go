@@ -3,6 +3,7 @@ package osmpbf
 import (
 	"context"
 	"io"
+	"sync/atomic"
 
 	"github.com/paulmach/osm"
 )
@@ -42,6 +43,9 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 		procs: procs,
 	}
 	s.decoder = newDecoder(ctx, r)
+
+	s.started = true
+	s.err = s.decoder.Start(s.procs)
 	return s
 }
 
@@ -55,8 +59,7 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 // by Type, ID, Version in OMS protobuf files, versions of given element may
 // span blocks.
 func (s *Scanner) FullyScannedBytes() int64 {
-	// TODO: reading of this needs to be atomic right?
-	return s.decoder.cOffset
+	return atomic.LoadInt64(&s.decoder.cOffset)
 }
 
 // Close cleans up all the reading goroutines, it does not
@@ -66,6 +69,12 @@ func (s *Scanner) Close() error {
 	return s.decoder.Close()
 }
 
+// Header returns the pbf file header with interesting information
+// about how it was created.
+func (s *Scanner) Header() (*Header, error) {
+	return s.decoder.header, s.err
+}
+
 // Scan advances the Scanner to the next element, which will then be available
 // through the Element method. It returns false when the scan stops, either
 // by reaching the end of the input, an io error, an xml error or the context
@@ -73,11 +82,6 @@ func (s *Scanner) Close() error {
 // error that occurred during scanning, except that if it was io.EOF, Err will
 // return nil.
 func (s *Scanner) Scan() bool {
-	if !s.started {
-		s.started = true
-		s.err = s.decoder.Start(s.procs)
-	}
-
 	if s.err != nil || s.closed || s.ctx.Err() != nil {
 		return false
 	}
