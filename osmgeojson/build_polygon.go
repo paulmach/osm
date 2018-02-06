@@ -117,7 +117,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		}
 	} else {
 		// more than one outer, need to map inner polygons to
-		// the outer that contians them.
+		// the outer that contains them.
 		outerSections := mputil.Join(outer)
 
 		mp := make(orb.MultiPolygon, 0, len(outer))

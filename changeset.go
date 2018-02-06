@@ -234,9 +234,5 @@ func (csd ChangesetDiscussion) MarshalXML(e *xml.Encoder, start xml.StartElement
 		return err
 	}
 
-	if err := e.EncodeToken(start.End()); err != nil {
-		return err
-	}
-
-	return nil
+	return e.EncodeToken(start.End())
 }

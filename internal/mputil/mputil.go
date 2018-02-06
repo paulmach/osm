@@ -32,7 +32,7 @@ func (s Segment) Last() orb.Point {
 	return s.Line[len(s.Line)-1]
 }
 
-// MultiSegment is an ordered set of segments that form a continious
+// MultiSegment is an ordered set of segments that form a continuous
 // section of a multipolygon.
 type MultiSegment []Segment
 

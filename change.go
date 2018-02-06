@@ -165,11 +165,7 @@ func (c Change) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		return err
 	}
 
-	if err := e.EncodeToken(start.End()); err != nil {
-		return err
-	}
-
-	return nil
+	return e.EncodeToken(start.End())
 }
 
 func marshalInnerChange(e *xml.Encoder, name string, o *OSM) error {
@@ -186,9 +182,5 @@ func marshalInnerChange(e *xml.Encoder, name string, o *OSM) error {
 		return err
 	}
 
-	if err := e.EncodeToken(t.End()); err != nil {
-		return err
-	}
-
-	return nil
+	return e.EncodeToken(t.End())
 }

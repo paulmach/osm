@@ -134,7 +134,7 @@ func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
 
 		update := ways[1].Updates[0]
 		if update.Version != 2 {
-			t.Errorf("incorect update: %v", update)
+			t.Errorf("incorrect update: %v", update)
 		}
 	})
 }

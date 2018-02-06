@@ -327,11 +327,7 @@ func (o OSM) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 		return err
 	}
 
-	if err := e.EncodeToken(start.End()); err != nil {
-		return err
-	}
-
-	return nil
+	return e.EncodeToken(start.End())
 }
 
 func (o *OSM) marshalInnerXML(e *xml.Encoder) error {
@@ -355,9 +351,5 @@ func (o *OSM) marshalInnerXML(e *xml.Encoder) error {
 		return err
 	}
 
-	if err := e.Encode(o.Changesets); err != nil {
-		return err
-	}
-
-	return nil
+	return e.Encode(o.Changesets)
 }
