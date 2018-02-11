@@ -43,9 +43,6 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 		procs: procs,
 	}
 	s.decoder = newDecoder(ctx, r)
-
-	s.started = true
-	s.err = s.decoder.Start(s.procs)
 	return s
 }
 
@@ -72,6 +69,12 @@ func (s *Scanner) Close() error {
 // Header returns the pbf file header with interesting information
 // about how it was created.
 func (s *Scanner) Header() (*Header, error) {
+	if !s.started {
+		s.started = true
+		// the header gets read before Start returns
+		s.err = s.decoder.Start(s.procs)
+	}
+
 	return s.decoder.header, s.err
 }
 
@@ -82,6 +85,11 @@ func (s *Scanner) Header() (*Header, error) {
 // error that occurred during scanning, except that if it was io.EOF, Err will
 // return nil.
 func (s *Scanner) Scan() bool {
+	if !s.started {
+		s.started = true
+		s.err = s.decoder.Start(s.procs)
+	}
+
 	if s.err != nil || s.closed || s.ctx.Err() != nil {
 		return false
 	}
