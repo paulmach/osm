@@ -120,8 +120,12 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 	var changesets []*osm.Changeset
 	scanner := osmxml.New(ctx, gzReader)
 	for scanner.Scan() {
-		e := scanner.Element()
-		changesets = append(changesets, e.(*osm.Changeset))
+		o := scanner.Object()
+		c, ok := o.(*osm.Changeset)
+		if !ok {
+			return nil, fmt.Errorf("osm replication: object not a changeset: %[1]T: %[1]v", o)
+		}
+		changesets = append(changesets, c)
 	}
 
 	return changesets, scanner.Err()

@@ -21,23 +21,12 @@ func Example_stats() {
 	}
 
 	nodes, ways, relations := 0, 0, 0
+	stats := newElementStats()
 
 	minLat, maxLat := math.MaxFloat64, -math.MaxFloat64
 	minLon, maxLon := math.MaxFloat64, -math.MaxFloat64
 
-	maxVersion := 0
-	minNodeID, maxNodeID := osm.NodeID(math.MaxInt64), osm.NodeID(0)
-	minWayID, maxWayID := osm.WayID(math.MaxInt64), osm.WayID(0)
-
-	minRelationID, maxRelationID := osm.RelationID(math.MaxInt64), osm.RelationID(0)
-
 	minTS, maxTS := time.Date(2100, 1, 1, 0, 0, 0, 0, time.UTC), time.Time{}
-
-	var (
-		maxTags     int
-		maxTagsType osm.Type
-		maxTagsID   int64
-	)
 
 	var (
 		maxNodeRefs   int
@@ -53,10 +42,11 @@ func Example_stats() {
 	for scanner.Scan() {
 		var ts time.Time
 
-		switch e := scanner.Element().(type) {
+		switch e := scanner.Object().(type) {
 		case *osm.Node:
 			nodes++
 			ts = e.Timestamp
+			stats.Add(e.ElementID(), e.Tags)
 
 			if e.Lat > maxLat {
 				maxLat = e.Lat
@@ -73,45 +63,10 @@ func Example_stats() {
 			if e.Lon < minLon {
 				minLon = e.Lon
 			}
-
-			if e.ID > maxNodeID {
-				maxNodeID = e.ID
-			}
-
-			if e.ID < minNodeID {
-				minNodeID = e.ID
-			}
-
-			if e.Version > maxVersion {
-				maxVersion = e.Version
-			}
-
-			if l := len(e.Tags); l > maxTags {
-				maxTags = l
-				maxTagsType = osm.TypeNode
-				maxTagsID = int64(e.ID)
-			}
 		case *osm.Way:
 			ways++
 			ts = e.Timestamp
-
-			if e.ID > maxWayID {
-				maxWayID = e.ID
-			}
-
-			if e.ID < minWayID {
-				minWayID = e.ID
-			}
-
-			if e.Version > maxVersion {
-				maxVersion = e.Version
-			}
-
-			if l := len(e.Tags); l > maxTags {
-				maxTags = l
-				maxTagsType = osm.TypeWay
-				maxTagsID = int64(e.ID)
-			}
+			stats.Add(e.ElementID(), e.Tags)
 
 			if l := len(e.Nodes); l > maxNodeRefs {
 				maxNodeRefs = l
@@ -120,24 +75,7 @@ func Example_stats() {
 		case *osm.Relation:
 			relations++
 			ts = e.Timestamp
-
-			if e.ID > maxRelationID {
-				maxRelationID = e.ID
-			}
-
-			if e.ID < minRelationID {
-				minRelationID = e.ID
-			}
-
-			if e.Version > maxVersion {
-				maxVersion = e.Version
-			}
-
-			if l := len(e.Tags); l > maxTags {
-				maxTags = l
-				maxTagsType = osm.TypeRelation
-				maxTagsID = int64(e.ID)
-			}
+			stats.Add(e.ElementID(), e.Tags)
 
 			if l := len(e.Members); l > maxRelRefs {
 				maxRelRefs = l
@@ -168,15 +106,15 @@ func Example_stats() {
 	fmt.Println("nodes:", nodes)
 	fmt.Println("ways:", ways)
 	fmt.Println("relations:", relations)
-	fmt.Println("version max:", maxVersion)
-	fmt.Println("node id min:", minNodeID)
-	fmt.Println("node id max:", maxNodeID)
-	fmt.Println("way id min:", minWayID)
-	fmt.Println("way id max:", maxWayID)
-	fmt.Println("relation id min:", minRelationID)
-	fmt.Println("relation id max:", maxRelationID)
-	fmt.Println("keyval pairs max:", maxTags)
-	fmt.Println("keyval pairs max object:", maxTagsType, maxTagsID)
+	fmt.Println("version max:", stats.MaxVersion)
+	fmt.Println("node id min:", stats.Ranges[osm.TypeNode].Min)
+	fmt.Println("node id max:", stats.Ranges[osm.TypeNode].Max)
+	fmt.Println("way id min:", stats.Ranges[osm.TypeWay].Min)
+	fmt.Println("way id max:", stats.Ranges[osm.TypeWay].Max)
+	fmt.Println("relation id min:", stats.Ranges[osm.TypeRelation].Min)
+	fmt.Println("relation id max:", stats.Ranges[osm.TypeRelation].Max)
+	fmt.Println("keyval pairs max:", stats.MaxTags)
+	fmt.Println("keyval pairs max object:", stats.MaxTagsID.Type(), stats.MaxTagsID.Ref())
 	fmt.Println("noderefs max:", maxNodeRefs)
 	fmt.Println("noderefs max object: way", maxNodeRefsID)
 	fmt.Println("relrefs max:", maxRelRefs)
@@ -205,4 +143,50 @@ func Example_stats() {
 	// noderefs max object: way 318739264
 	// relrefs max: 7177
 	// relrefs max object: relation 4799100
+}
+
+// Stats is a shared bit of code to accumulate stats from the element ids.
+type elementStats struct {
+	Ranges     map[osm.Type]*idRange
+	MaxVersion int
+
+	MaxTags   int
+	MaxTagsID osm.ElementID
+}
+
+type idRange struct {
+	Min, Max int64
+}
+
+func newElementStats() *elementStats {
+	return &elementStats{
+		Ranges: map[osm.Type]*idRange{
+			osm.TypeNode:     &idRange{Min: math.MaxInt64},
+			osm.TypeWay:      &idRange{Min: math.MaxInt64},
+			osm.TypeRelation: &idRange{Min: math.MaxInt64},
+		},
+	}
+}
+
+func (s *elementStats) Add(id osm.ElementID, tags osm.Tags) {
+	s.Ranges[id.Type()].Add(id.Ref())
+
+	if v := id.Version(); v > s.MaxVersion {
+		s.MaxVersion = v
+	}
+
+	if l := len(tags); l > s.MaxTags {
+		s.MaxTags = l
+		s.MaxTagsID = id
+	}
+}
+
+func (r *idRange) Add(ref int64) {
+	if ref > r.Max {
+		r.Max = ref
+	}
+
+	if ref < r.Min {
+		r.Min = ref
+	}
 }

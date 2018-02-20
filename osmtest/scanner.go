@@ -3,40 +3,40 @@ package osmtest
 import "github.com/paulmach/osm"
 
 // Scanner implements the osm.Scanner interface with
-// just a list of elements.
+// just a list of objects.
 type Scanner struct {
 	// ScanError can be used to trigger an error.
 	// If non-nil, Next() will return false and Err() will
 	// return this error.
 	ScanError error
 
-	offset   int
-	elements osm.Elements
+	offset  int
+	objects osm.Objects
 }
 
 var _ osm.Scanner = &Scanner{}
 
 // NewScanner creates a new test scanner useful for test stubbing.
-func NewScanner(elements osm.Elements) *Scanner {
+func NewScanner(objects osm.Objects) *Scanner {
 	return &Scanner{
-		offset:   -1,
-		elements: elements,
+		offset:  -1,
+		objects: objects,
 	}
 }
 
-// Scan progresses the scanner to the next element.
+// Scan progresses the scanner to the next object.
 func (s *Scanner) Scan() bool {
 	if s.ScanError != nil {
 		return false
 	}
 
 	s.offset++
-	return s.offset < len(s.elements)
+	return s.offset < len(s.objects)
 }
 
-// Element returns the current element.
-func (s *Scanner) Element() osm.Element {
-	return s.elements[s.offset]
+// Object returns the current object.
+func (s *Scanner) Object() osm.Object {
+	return s.objects[s.offset]
 }
 
 // Err returns the scanner.ScanError.

@@ -28,11 +28,6 @@ func TestFeature_String(t *testing.T) {
 			expected: "relation/1000",
 		},
 		{
-			name:     "changeset",
-			id:       ChangesetID(10000).FeatureID(),
-			expected: "changeset/10000",
-		},
-		{
 			name:     "unknown",
 			id:       0,
 			expected: "unknown/0",
@@ -88,12 +83,9 @@ func TestFeatureID_ParseFeatureID(t *testing.T) {
 func TestFeatureIDs_Sort(t *testing.T) {
 	ids := FeatureIDs{
 		RelationID(1).FeatureID(),
-		ChangesetID(1).FeatureID(),
 		NodeID(1).FeatureID(),
 		WayID(2).FeatureID(),
 		WayID(1).FeatureID(),
-		ChangesetID(3).FeatureID(),
-		ChangesetID(1).FeatureID(),
 	}
 
 	expected := FeatureIDs{
@@ -101,9 +93,6 @@ func TestFeatureIDs_Sort(t *testing.T) {
 		WayID(1).FeatureID(),
 		WayID(2).FeatureID(),
 		RelationID(1).FeatureID(),
-		ChangesetID(1).FeatureID(),
-		ChangesetID(1).FeatureID(),
-		ChangesetID(3).FeatureID(),
 	}
 
 	ids.Sort()
@@ -130,8 +119,6 @@ func BenchmarkFeatureIDs_Sort(b *testing.B) {
 				ids[j] = WayID(rand.Int63n(int64(len(ids) / 10))).FeatureID()
 			case 2:
 				ids[j] = RelationID(rand.Int63n(int64(len(ids) / 10))).FeatureID()
-			case 3:
-				ids[j] = ChangesetID(rand.Int63n(int64(len(ids) / 10))).FeatureID()
 			}
 		}
 		tests[i] = ids

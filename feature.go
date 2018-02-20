@@ -7,17 +7,39 @@ import (
 	"strings"
 )
 
-// Type is the type of different osm elements.
-// ie. node, way, relation
+// Type is the type of different osm objects.
+// ie. node, way, relation, changeset, note, user.
 type Type string
 
-// Constants for the different element types.
+// Constants for the different object types.
 const (
 	TypeNode      Type = "node"
 	TypeWay       Type = "way"
 	TypeRelation  Type = "relation"
 	TypeChangeset Type = "changeset"
+	TypeNote      Type = "note"
+	TypeUser      Type = "user"
 )
+
+// ObjectID returns an object id from the given type.
+func (t Type) ObjectID(ref int64) (ObjectID, error) {
+	switch t {
+	case TypeNode:
+		return NodeID(ref).ObjectID(), nil
+	case TypeWay:
+		return WayID(ref).ObjectID(), nil
+	case TypeRelation:
+		return RelationID(ref).ObjectID(), nil
+	case TypeChangeset:
+		return ChangesetID(ref).ObjectID(), nil
+	case TypeNote:
+		return NoteID(ref).ObjectID(), nil
+	case TypeUser:
+		return UserID(ref).ObjectID(), nil
+	}
+
+	return 0, fmt.Errorf("unknown type: %v", t)
+}
 
 // FeatureID returns a feature id from the given type.
 func (t Type) FeatureID(ref int64) (FeatureID, error) {
@@ -28,8 +50,6 @@ func (t Type) FeatureID(ref int64) (FeatureID, error) {
 		return WayID(ref).FeatureID(), nil
 	case TypeRelation:
 		return RelationID(ref).FeatureID(), nil
-	case TypeChangeset:
-		return ChangesetID(ref).FeatureID(), nil
 	}
 
 	return 0, fmt.Errorf("unknown type: %v", t)
@@ -47,6 +67,8 @@ const (
 	wayMask       = 0x2000000000000000
 	relationMask  = 0x3000000000000000
 	changesetMask = 0x4000000000000000
+	noteMask      = 0x5000000000000000
+	userMask      = 0x6000000000000000
 )
 
 // A FeatureID is a identifier for a feature in OSM.
@@ -62,8 +84,6 @@ func (f FeatureID) Type() Type {
 		return TypeWay
 	case relationMask:
 		return TypeRelation
-	case changesetMask:
-		return TypeChangeset
 	}
 
 	panic("unknown type")
@@ -72,6 +92,11 @@ func (f FeatureID) Type() Type {
 // Ref return the ID reference for the feature. Not unique without the type.
 func (f FeatureID) Ref() int64 {
 	return int64((f & refMask) >> versionBits)
+}
+
+// ObjectID is a helper to convert the id to an object id.
+func (f FeatureID) ObjectID() ObjectID {
+	return ObjectID(f)
 }
 
 // ElementID is a helper to convert the id to an element id.
@@ -109,16 +134,6 @@ func (f FeatureID) RelationID() RelationID {
 	return RelationID(f.Ref())
 }
 
-// ChangesetID returns the id of this feature as a changeset id.
-// The function will panic if this feature is not of ChangesetType.
-func (f FeatureID) ChangesetID() ChangesetID {
-	if f&changesetMask == 0 {
-		panic(fmt.Sprintf("not a changeset: %v", f))
-	}
-
-	return ChangesetID(f.Ref())
-}
-
 // String returns "type/ref" for the feature.
 func (f FeatureID) String() string {
 	t := Type("unknown")
@@ -129,8 +144,6 @@ func (f FeatureID) String() string {
 		t = TypeWay
 	case relationMask:
 		t = TypeRelation
-	case changesetMask:
-		t = TypeChangeset
 	}
 	return fmt.Sprintf("%s/%d", t, f.Ref())
 }
@@ -174,7 +187,7 @@ func (es Elements) FeatureIDs() FeatureIDs {
 }
 
 // Counts returns the number of each type of feature in the set of ids.
-func (ids FeatureIDs) Counts() (nodes, ways, relations, changesets int) {
+func (ids FeatureIDs) Counts() (nodes, ways, relations int) {
 	for _, id := range ids {
 		switch id.Type() {
 		case TypeNode:
@@ -183,8 +196,6 @@ func (ids FeatureIDs) Counts() (nodes, ways, relations, changesets int) {
 			ways++
 		case TypeRelation:
 			relations++
-		case TypeChangeset:
-			changesets++
 		}
 	}
 

@@ -12,6 +12,11 @@ import (
 // A relation is uniquely identifiable by the id + version.
 type RelationID int64
 
+// ObjectID is a helper returning the object id for this relation id.
+func (id RelationID) ObjectID() ObjectID {
+	return ObjectID(id.FeatureID())
+}
+
 // FeatureID is a helper returning the feature id for this relation id.
 func (id RelationID) FeatureID() FeatureID {
 	return FeatureID((relationMask | id<<versionBits))
@@ -70,6 +75,11 @@ type Member struct {
 	// Orientation is the direction of the way around a ring of a multipolygon.
 	// Only valid for multipolygon or boundary relations.
 	Orientation orb.Orientation `xml:"orienation,attr,omitempty" json:"orienation,omitempty"`
+}
+
+// ObjectID returns the object id of the relation.
+func (r *Relation) ObjectID() ObjectID {
+	return r.ID.ObjectID()
 }
 
 // FeatureID returns the feature id of the relation.

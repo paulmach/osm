@@ -27,8 +27,6 @@ func (e ElementID) Type() Type {
 		return TypeWay
 	case relationMask:
 		return TypeRelation
-	case changesetMask:
-		return TypeChangeset
 	}
 
 	panic("unknown type")
@@ -42,6 +40,11 @@ func (e ElementID) Ref() int64 {
 // Version returns the version of the element.
 func (e ElementID) Version() int {
 	return int(e & (versionMask))
+}
+
+// ObjectID is a helper to convert the id to an object id.
+func (e ElementID) ObjectID() ObjectID {
+	return ObjectID(e)
 }
 
 // FeatureID returns the feature id for the element id. i.e removing the version.
@@ -79,16 +82,6 @@ func (e ElementID) RelationID() RelationID {
 	return RelationID(e.Ref())
 }
 
-// ChangesetID returns the id of this feature as a changeset id.
-// The function will panic if this feature is not of ChangesetType.
-func (e ElementID) ChangesetID() ChangesetID {
-	if e&changesetMask == 0 {
-		panic(fmt.Sprintf("not a changeset: %v", e))
-	}
-
-	return ChangesetID(e.Ref())
-}
-
 // String returns "type/ref:version" for the element.
 func (e ElementID) String() string {
 	if e.Version() == 0 {
@@ -118,8 +111,8 @@ func ParseElementID(s string) (ElementID, error) {
 	}
 
 	if len(parts2) == 2 {
-		v, err := strconv.ParseInt(parts2[1], 10, 64)
-		if err != nil {
+		v, e := strconv.ParseInt(parts2[1], 10, 64)
+		if e != nil {
 			return 0, fmt.Errorf("invalid element id: %v: %v", s, err)
 		}
 		version = int(v)
@@ -133,31 +126,10 @@ func ParseElementID(s string) (ElementID, error) {
 	return fid.ElementID(version), nil
 }
 
-// Scanner allows osm data from dump files to be read.
-// It is based on the bufio.Scanner, common usage.
-// Scanners are not safe for parallel use. One should feed the
-// elements into their own channel and have workers read from that.
-//
-//	s := scanner.New(r)
-//  defer s.Close()
-//
-//	for s.Next() {
-//		e := s.Element()
-//		// do something
-//	}
-//
-//	if s.Err() != nil {
-//		// scanner did no complete fully
-//	}
-type Scanner interface {
-	Scan() bool
-	Element() Element
-	Err() error
-	Close() error
-}
-
-// An Element represents a Node, Way, Relation or Changeset.
+// An Element represents a Node, Way or Relation.
 type Element interface {
+	Object
+
 	FeatureID() FeatureID
 	ElementID() ElementID
 	TagMap() map[string]string
@@ -201,7 +173,7 @@ func (es elementsSort) Less(i, j int) bool {
 type ElementIDs []ElementID
 
 // Counts returns the number of each type of element in the set of ids.
-func (ids ElementIDs) Counts() (nodes, ways, relations, changesets int) {
+func (ids ElementIDs) Counts() (nodes, ways, relations int) {
 	for _, id := range ids {
 		switch id & typeMask {
 		case nodeMask:
@@ -210,8 +182,6 @@ func (ids ElementIDs) Counts() (nodes, ways, relations, changesets int) {
 			ways++
 		case relationMask:
 			relations++
-		case changesetMask:
-			changesets++
 		}
 	}
 

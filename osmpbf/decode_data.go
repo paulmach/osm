@@ -19,11 +19,11 @@ type elementInfo struct {
 
 // dataDecoder is a decoder for Blob with OSMData (PrimitiveBlock).
 type dataDecoder struct {
-	q []osm.Element
+	q []osm.Object
 }
 
-func (dec *dataDecoder) Decode(blob *osmpbf.Blob) ([]osm.Element, error) {
-	dec.q = make([]osm.Element, 0, 8000) // typical PrimitiveBlock contains 8k OSM entities
+func (dec *dataDecoder) Decode(blob *osmpbf.Blob) ([]osm.Object, error) {
+	dec.q = make([]osm.Object, 0, 8000) // typical PrimitiveBlock contains 8k OSM entities
 
 	data, err := getData(blob)
 	if err != nil {

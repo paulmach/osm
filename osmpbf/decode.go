@@ -56,11 +56,11 @@ type iPair struct {
 }
 
 // oPair is the group sent on the chan out of the decoder
-// goroutines. It'll contain a list of all the elements.
+// goroutines. It'll contain a list of all the objects.
 type oPair struct {
-	Offset   int64
-	Elements []osm.Element
-	Err      error
+	Offset  int64
+	Objects []osm.Object
+	Err     error
 }
 
 // A Decoder reads and decodes OpenStreetMap PBF data from an input stream.
@@ -130,7 +130,7 @@ func (dec *decoder) Start(n int) error {
 	// The decoder supports parallel unzipping and protobuf decoding of all
 	// the header blocks. On goroutine feeds the headerblocks round-robin into
 	// the input channels. n goroutines read from the input channel, decode
-	// the block and put the elements on their output channel. A third type of
+	// the block and put the objects on their output channel. A third type of
 	// goroutines round-robin reads the output channels and feads them into the
 	// serializer channel to maintain the order of the objects in the file.
 
@@ -240,11 +240,11 @@ func (dec *decoder) Start(n int) error {
 	return nil
 }
 
-// Next reads the next element from the input stream and returns either a
+// Next reads the next object from the input stream and returns either a
 // Node, Way or Relation struct representing the underlying OpenStreetMap PBF
 // data, or error encountered. The end of the input stream is reported by an io.EOF error.
-func (dec *decoder) Next() (osm.Element, error) {
-	for dec.cIndex >= len(dec.cData.Elements) {
+func (dec *decoder) Next() (osm.Object, error) {
+	for dec.cIndex >= len(dec.cData.Objects) {
 		cd, ok := <-dec.serializer
 		if !ok {
 			if dec.cData.Err != nil {
@@ -258,7 +258,7 @@ func (dec *decoder) Next() (osm.Element, error) {
 		dec.cIndex = 0
 	}
 
-	v := dec.cData.Elements[dec.cIndex]
+	v := dec.cData.Objects[dec.cIndex]
 	dec.cIndex++
 	return v, dec.cData.Err
 }

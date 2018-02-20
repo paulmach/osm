@@ -12,7 +12,7 @@ import (
 func ExampleScanner() {
 	scanner := osmxml.New(context.Background(), os.Stdin)
 	for scanner.Scan() {
-		fmt.Println(scanner.Element().(*osm.Changeset))
+		fmt.Println(scanner.Object().(*osm.Changeset))
 	}
 
 	if err := scanner.Err(); err != nil {

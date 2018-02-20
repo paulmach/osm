@@ -67,18 +67,30 @@ func TestElementImplementations(t *testing.T) {
 	var _ Element = &Node{}
 	var _ Element = &Way{}
 	var _ Element = &Relation{}
-	var _ Element = &Changeset{}
 
 	// These should not implement the Element interface
 	noImplement := []interface{}{
+		ObjectID(0),
 		FeatureID(0),
 		ElementID(0),
+		&Changeset{},
+		&Note{},
+		&User{},
 		WayNode{},
 		Member{},
 		NodeID(0),
 		WayID(0),
 		RelationID(0),
 		ChangesetID(0),
+		NoteID(0),
+		UserID(0),
+
+		Nodes{},
+		Ways{},
+		Relations{},
+		Changesets{},
+		Notes{},
+		Users{},
 	}
 
 	for _, ni := range noImplement {
@@ -91,12 +103,10 @@ func TestElementImplementations(t *testing.T) {
 func TestElementIDsSort(t *testing.T) {
 	ids := ElementIDs{
 		RelationID(1).ElementID(1),
-		ChangesetID(1).ElementID(),
 		NodeID(1).ElementID(2),
 		WayID(2).ElementID(3),
 		WayID(1).ElementID(2),
 		WayID(1).ElementID(1),
-		ChangesetID(3).ElementID(),
 	}
 
 	expected := ElementIDs{
@@ -105,8 +115,6 @@ func TestElementIDsSort(t *testing.T) {
 		WayID(1).ElementID(2),
 		WayID(2).ElementID(3),
 		RelationID(1).ElementID(1),
-		ChangesetID(1).ElementID(),
-		ChangesetID(3).ElementID(),
 	}
 
 	ids.Sort()
@@ -134,8 +142,6 @@ func BenchmarkElementIDSort(b *testing.B) {
 				ids[j] = WayID(rand.Int63n(int64(len(ids) / 10))).ElementID(v)
 			case 2:
 				ids[j] = RelationID(rand.Int63n(int64(len(ids) / 10))).ElementID(v)
-			case 3:
-				ids[j] = ChangesetID(rand.Int63n(int64(len(ids) / 10))).ElementID()
 			}
 		}
 		tests[i] = ids

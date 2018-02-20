@@ -7,7 +7,7 @@ import (
 
 // Polygon returns true if the way should be considered a closed polygon area.
 // OpenStreetMap doesn't have an intrinsic area data type. The algorithm used
-// here considered a set of heuristics to determine what is most likely an area.
+// here considers a set of heuristics to determine what is most likely an area.
 // The heuristics can be found here,
 // https://wiki.openstreetmap.org/wiki/Overpass_turbo/Polygon_Features
 // and are used by osmtogeojson and overpass turbo.

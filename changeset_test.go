@@ -245,7 +245,7 @@ func TestChangesetComment(t *testing.T) {
 	}
 
 	com := c.Discussion.Comments[0]
-	if v := com.CreatedAt; v != time.Date(2016, 6, 26, 17, 22, 27, 0, time.UTC) {
+	if v := com.Timestamp; v != time.Date(2016, 6, 26, 17, 22, 27, 0, time.UTC) {
 		t.Errorf("incorrect created at, got %v", v)
 	}
 

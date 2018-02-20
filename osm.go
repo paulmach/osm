@@ -19,8 +19,8 @@ const (
 	License     = "http://opendatacommons.org/licenses/odbl/1-0/"
 )
 
-// OSM represents the core osm data.
-// I designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
+// OSM represents the core osm data
+// designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
 	Version   float64 `xml:"version,attr,omitempty"`
 	Generator string  `xml:"generator,attr,omitempty"`
@@ -40,9 +40,12 @@ type OSM struct {
 	// Changesets will typically not be included with actual data,
 	// but all this stuff is technically all under the osm xml
 	Changesets Changesets `xml:"changeset"`
+	Notes      Notes      `xml:"note"`
+	Users      Users      `xml:"user"`
 }
 
 // Marshal encodes the osm data using protocol buffers.
+// Will only save the elements: nodes, ways and relations.
 func (o *OSM) Marshal() ([]byte, error) {
 	ss := &stringSet{}
 	encoded := marshalOSM(o, ss, true)
@@ -51,30 +54,55 @@ func (o *OSM) Marshal() ([]byte, error) {
 	return proto.Marshal(encoded)
 }
 
-// Append will add the given element to the OSM object.
-func (o *OSM) Append(e Element) {
-	switch e.FeatureID().Type() {
+// Append will add the given object to the OSM object.
+func (o *OSM) Append(obj Object) {
+	switch obj.ObjectID().Type() {
 	case TypeNode:
-		o.Nodes = append(o.Nodes, e.(*Node))
+		o.Nodes = append(o.Nodes, obj.(*Node))
 	case TypeWay:
-		o.Ways = append(o.Ways, e.(*Way))
+		o.Ways = append(o.Ways, obj.(*Way))
 	case TypeRelation:
-		o.Relations = append(o.Relations, e.(*Relation))
+		o.Relations = append(o.Relations, obj.(*Relation))
 	case TypeChangeset:
-		o.Changesets = append(o.Changesets, e.(*Changeset))
+		o.Changesets = append(o.Changesets, obj.(*Changeset))
+	case TypeNote:
+		o.Notes = append(o.Notes, obj.(*Note))
+	case TypeUser:
+		o.Users = append(o.Users, obj.(*User))
 	default:
-		panic(fmt.Sprintf("unsupported type: %T: %v", e, e))
+		panic(fmt.Sprintf("unsupported type: %[1]T: %[1]v", obj))
 	}
 }
 
-// Elements returns all the nodes, way, relation and changesets
+// Elements returns all the nodes, ways and relations
 // as a single slice of Elements.
 func (o *OSM) Elements() Elements {
 	if o == nil {
 		return nil
 	}
 
-	result := make(Elements, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
+	result := make(Elements, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations))
+	for _, e := range o.Nodes {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Ways {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Relations {
+		result = append(result, e)
+	}
+
+	return result
+}
+
+func (o *OSM) objects() interface{} {
+	if o == nil {
+		return nil
+	}
+
+	result := make([]interface{}, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets)+len(o.Notes)+len(o.Users))
 	for _, e := range o.Nodes {
 		result = append(result, e)
 	}
@@ -88,6 +116,14 @@ func (o *OSM) Elements() Elements {
 	}
 
 	for _, e := range o.Changesets {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Notes {
+		result = append(result, e)
+	}
+
+	for _, e := range o.Users {
 		result = append(result, e)
 	}
 
@@ -95,13 +131,13 @@ func (o *OSM) Elements() Elements {
 }
 
 // FeatureIDs returns the slice of feature ids for all the
-// nodes, ways, relations and changesets.
+// nodes, ways and relations.
 func (o *OSM) FeatureIDs() FeatureIDs {
 	if o == nil {
 		return nil
 	}
 
-	result := make(FeatureIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
+	result := make(FeatureIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations))
 	for _, e := range o.Nodes {
 		result = append(result, e.FeatureID())
 	}
@@ -111,10 +147,6 @@ func (o *OSM) FeatureIDs() FeatureIDs {
 	}
 
 	for _, e := range o.Relations {
-		result = append(result, e.FeatureID())
-	}
-
-	for _, e := range o.Changesets {
 		result = append(result, e.FeatureID())
 	}
 
@@ -122,13 +154,13 @@ func (o *OSM) FeatureIDs() FeatureIDs {
 }
 
 // ElementIDs returns the slice of element ids for all the
-// nodes, ways, relations and changesets.
+// nodes, ways and relations.
 func (o *OSM) ElementIDs() ElementIDs {
 	if o == nil {
 		return nil
 	}
 
-	result := make(ElementIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets))
+	result := make(ElementIDs, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations))
 	for _, e := range o.Nodes {
 		result = append(result, e.ElementID())
 	}
@@ -138,10 +170,6 @@ func (o *OSM) ElementIDs() ElementIDs {
 	}
 
 	for _, e := range o.Relations {
-		result = append(result, e.ElementID())
-	}
-
-	for _, e := range o.Changesets {
 		result = append(result, e.ElementID())
 	}
 
@@ -278,14 +306,14 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 // http://overpass-api.de/output_formats.html#json
 func (o OSM) MarshalJSON() ([]byte, error) {
 	s := struct {
-		Version     float64  `json:"version,omitempty"`
-		Generator   string   `json:"generator,omitempty"`
-		Copyright   string   `json:"copyright,omitempty"`
-		Attribution string   `json:"attribution,omitempty"`
-		License     string   `json:"license,omitempty"`
-		Elements    Elements `json:"elements"`
+		Version     float64     `json:"version,omitempty"`
+		Generator   string      `json:"generator,omitempty"`
+		Copyright   string      `json:"copyright,omitempty"`
+		Attribution string      `json:"attribution,omitempty"`
+		License     string      `json:"license,omitempty"`
+		Elements    interface{} `json:"elements"`
 	}{o.Version, o.Generator, o.Copyright,
-		o.Attribution, o.License, o.Elements()}
+		o.Attribution, o.License, o.objects()}
 
 	return json.Marshal(s)
 }
@@ -351,5 +379,13 @@ func (o *OSM) marshalInnerXML(e *xml.Encoder) error {
 		return err
 	}
 
-	return e.Encode(o.Changesets)
+	if err := e.Encode(o.Changesets); err != nil {
+		return err
+	}
+
+	if err := e.Encode(o.Notes); err != nil {
+		return err
+	}
+
+	return e.Encode(o.Users)
 }

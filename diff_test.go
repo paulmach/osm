@@ -19,7 +19,7 @@ func TestDiff(t *testing.T) {
 	}
 
 	// create way
-	if at := diff.Actions[1075].Type; at != CreateAction {
+	if at := diff.Actions[1075].Type; at != ActionCreate {
 		t.Errorf("not a create action, %v", at)
 	}
 
@@ -30,7 +30,7 @@ func TestDiff(t *testing.T) {
 	}
 
 	// modify relation
-	if at := diff.Actions[1088].Type; at != ModifyAction {
+	if at := diff.Actions[1088].Type; at != ActionModify {
 		t.Errorf("not a modify action, %v", at)
 	}
 
@@ -44,7 +44,7 @@ func TestDiff(t *testing.T) {
 	}
 
 	// delete node
-	if at := diff.Actions[44].Type; at != DeleteAction {
+	if at := diff.Actions[44].Type; at != ActionDelete {
 		t.Fatalf("not a delete action, %v", at)
 	}
 

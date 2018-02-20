@@ -41,12 +41,7 @@ func (ts Tags) Map() map[string]string {
 // MarshalJSON allows the tags to be marshalled as a key/value object,
 // as defined by the overpass osmjson.
 func (ts Tags) MarshalJSON() ([]byte, error) {
-	o := make(map[string]string, len(ts))
-	for _, t := range ts {
-		o[t.Key] = t.Value
-	}
-
-	return json.Marshal(o)
+	return json.Marshal(ts.Map())
 }
 
 // UnmarshalJSON allows the tags to be unmarshalled from a key/value object,

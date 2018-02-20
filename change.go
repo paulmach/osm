@@ -25,31 +25,31 @@ type Change struct {
 	Delete *OSM `xml:"delete"`
 }
 
-// AppendCreate will append the element to the Create OSM object.
-func (c *Change) AppendCreate(e Element) {
+// AppendCreate will append the object to the Create OSM object.
+func (c *Change) AppendCreate(o Object) {
 	if c.Create == nil {
 		c.Create = &OSM{}
 	}
 
-	c.Create.Append(e)
+	c.Create.Append(o)
 }
 
-// AppendModify will append the element to the Modify OSM object.
-func (c *Change) AppendModify(e Element) {
+// AppendModify will append the object to the Modify OSM object.
+func (c *Change) AppendModify(o Object) {
 	if c.Modify == nil {
 		c.Modify = &OSM{}
 	}
 
-	c.Modify.Append(e)
+	c.Modify.Append(o)
 }
 
-// AppendDelete will append the element to the Delete OSM object.
-func (c *Change) AppendDelete(e Element) {
+// AppendDelete will append the object to the Delete OSM object.
+func (c *Change) AppendDelete(o Object) {
 	if c.Delete == nil {
 		c.Delete = &OSM{}
 	}
 
-	c.Delete.Append(e)
+	c.Delete.Append(o)
 }
 
 // ToHistoryDatasource converts the change object a datasource accessible

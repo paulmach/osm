@@ -11,14 +11,9 @@ import (
 // ChangesetID is the primary key for a osm changeset.
 type ChangesetID int64
 
-// FeatureID is a helper returning the feature id for this changeset id.
-func (id ChangesetID) FeatureID() FeatureID {
-	return FeatureID(changesetMask | (id << versionBits))
-}
-
-// ElementID is a helper to convert the id to an element id.
-func (id ChangesetID) ElementID() ElementID {
-	return ElementID(id.FeatureID())
+// ObjectID is a helper returning the object id for this relation id.
+func (id ChangesetID) ObjectID() ObjectID {
+	return ObjectID(changesetMask | (id << versionBits))
 }
 
 // Changesets is a collection with some helper functions attached.
@@ -45,19 +40,9 @@ type Changeset struct {
 	Change *Change `xml:"-" json:"change,omitempty"`
 }
 
-// FeatureID returns the feature id of the changeset.
-func (c *Changeset) FeatureID() FeatureID {
-	return c.ID.FeatureID()
-}
-
-// ElementID returns the element id of the changeset.
-func (c *Changeset) ElementID() ElementID {
-	return c.ID.ElementID()
-}
-
-// TagMap returns the element tags as a key/value map.
-func (c *Changeset) TagMap() map[string]string {
-	return c.Tags.Map()
+// ObjectID returns the object id of the changeset.
+func (c *Changeset) ObjectID() ObjectID {
+	return c.ID.ObjectID()
 }
 
 // Comment is a helper and returns the changeset comment from the tag.
@@ -214,7 +199,7 @@ type ChangesetDiscussion struct {
 type ChangesetComment struct {
 	User      string    `xml:"user,attr" json:"user"`
 	UserID    UserID    `xml:"uid,attr" json:"uid"`
-	CreatedAt time.Time `xml:"date,attr" json:"date"`
+	Timestamp time.Time `xml:"date,attr" json:"date"`
 	Text      string    `xml:"text" json:"text"`
 }
 

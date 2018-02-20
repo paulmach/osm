@@ -19,7 +19,7 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
+	if cs := scanner.Object().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -27,15 +27,15 @@ func TestScanner(t *testing.T) {
 		t.Fatalf("should read second scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41227987 {
+	if cs := scanner.Object().(*osm.Changeset); cs.ID != 41227987 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
-	if et := scanner.Element().FeatureID().Type(); et != osm.TypeChangeset {
+	if et := scanner.Object().ObjectID().Type(); et != osm.TypeChangeset {
 		t.Fatalf("did not set type correctly, got %v", et)
 	}
 
-	if cs := scanner.Element().FeatureID().Ref(); cs != 41227987 {
+	if cs := scanner.Object().ObjectID().Ref(); cs != 41227987 {
 		t.Fatalf("did not set id correctly, got %v", cs)
 	}
 
@@ -54,7 +54,7 @@ func TestChangesetScannerContext(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
+	if cs := scanner.Object().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -77,7 +77,7 @@ func TestChangesetScannerClose(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
+	if cs := scanner.Object().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -100,7 +100,7 @@ func TestChangesetScannerErr(t *testing.T) {
 		t.Fatalf("should read first scan: %v", scanner.Err())
 	}
 
-	if cs := scanner.Element().(*osm.Changeset); cs.ID != 41226352 {
+	if cs := scanner.Object().(*osm.Changeset); cs.ID != 41226352 {
 		t.Fatalf("did not scan correctly, got %v", cs)
 	}
 
@@ -140,7 +140,7 @@ func BenchmarkDelaware(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for scanner.Scan() {
-		switch scanner.Element().(type) {
+		switch scanner.Object().(type) {
 		case *osm.Node:
 			nodes++
 		case *osm.Way:

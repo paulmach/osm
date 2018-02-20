@@ -13,6 +13,11 @@ import (
 // A way is uniquely identifiable by the id + version.
 type WayID int64
 
+// ObjectID is a helper returning the object id for this way id.
+func (id WayID) ObjectID() ObjectID {
+	return ObjectID(id.FeatureID())
+}
+
 // FeatureID is a helper returning the feature id for this way id.
 func (id WayID) FeatureID() FeatureID {
 	return FeatureID(wayMask | (id << versionBits))
@@ -61,6 +66,11 @@ type WayNode struct {
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty"`
 	Lat         float64     `xml:"lat,attr,omitempty"`
 	Lon         float64     `xml:"lon,attr,omitempty"`
+}
+
+// ObjectID returns the object id of the way.
+func (w *Way) ObjectID() ObjectID {
+	return w.ID.ObjectID()
 }
 
 // FeatureID returns the feature id of the way.

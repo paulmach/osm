@@ -13,6 +13,11 @@ import (
 // The node id + version uniquely identify a node.
 type NodeID int64
 
+// ObjectID is a helper returning the object id for this node id.
+func (id NodeID) ObjectID() ObjectID {
+	return ObjectID(id.FeatureID())
+}
+
 // FeatureID is a helper returning the feature id for this node id.
 func (id NodeID) FeatureID() FeatureID {
 	return FeatureID(nodeMask | (id << versionBits))
@@ -40,6 +45,11 @@ type Node struct {
 	// Committed, is the estimated time this object was committed
 	// and made visible in the central OSM database.
 	Committed *time.Time `xml:"committed,attr,omitempty" json:"committed,omitempty"`
+}
+
+// ObjectID returns the object id of the node.
+func (n *Node) ObjectID() ObjectID {
+	return n.ID.ObjectID()
 }
 
 // FeatureID returns the feature id of the node.
