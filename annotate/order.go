@@ -74,14 +74,18 @@ func NewChildFirstOrdering(
 // Err returns a non-nil error if something went wrong with search,
 // like a cycle, or a datasource error.
 func (o *ChildFirstOrdering) Err() error {
-	return o.err
+	if o.err != nil {
+		return o.err
+	}
+
+	return o.ctx.Err()
 }
 
 // Next locates the next relation id that can be used.
 // Returns false if the context is closed, something went wrong
 // or the full tree has been walked.
 func (o *ChildFirstOrdering) Next() bool {
-	if o.err != nil {
+	if o.err != nil || o.ctx.Err() != nil {
 		return false
 	}
 
@@ -93,7 +97,6 @@ func (o *ChildFirstOrdering) Next() bool {
 		o.id = id
 		return true
 	case <-o.ctx.Done():
-		o.err = o.ctx.Err()
 		return false
 	}
 }
