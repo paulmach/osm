@@ -91,3 +91,52 @@ func TestMap(t *testing.T) {
 		t.Errorf("no relations returned")
 	}
 }
+
+func TestNotes(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
+	ctx := context.Background()
+	bound := &osm.Bounds{MinLon: -0.65094, MinLat: 51.312159, MaxLon: 0.374908, MaxLat: 51.669148}
+	notes, err := Notes(ctx, bound, Limit(3))
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+
+	if l := len(notes); l != 3 {
+		t.Errorf("incorrect number of notes, got %d", l)
+	}
+}
+
+func TestNotesSearch(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
+	ctx := context.Background()
+	notes, err := NotesSearch(ctx, "Spam", Limit(2))
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+
+	if l := len(notes); l != 2 {
+		t.Errorf("incorrect number of notes, got %d", l)
+	}
+}
+
+func TestUser(t *testing.T) {
+	if os.Getenv("LIVE_TEST") != "true" {
+		t.Skipf("skipping live test, set LIVE_TEST=true to enable")
+	}
+
+	ctx := context.Background()
+	user, err := User(ctx, 91499)
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+
+	if user.ID != 91499 {
+		t.Errorf("incorrect user: %v", user)
+	}
+}

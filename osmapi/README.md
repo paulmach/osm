@@ -42,6 +42,12 @@ func RelationRelations(context.Context, osm.RelationID) (osm.Relations, error)
 func Changeset(context.Context, osm.ChangesetID) (*osm.Changeset, error)
 func ChangesetWithDiscussion(context.Context, osm.ChangesetID) (*osm.Changeset, error)
 func ChangesetDownload(context.Context, osm.ChangesetID) (*osm.Change, error)
+
+func Note(ctx context.Context, id osm.NoteID) (*osm.Note, error) {
+func Notes(ctx context.Context, bounds *osm.Bounds, opts ...NotesOption) (osm.Notes, error)
+func NotesSearch(ctx context.Context, query string, opts ...NotesOption) (osm.Notes, error)
+
+func User(ctx context.Context, id osm.UserID) (*osm.User, error)
 ```
 
 See the [godoc reference](https://godoc.org/github.com/paulmach/osm/osmapi)
