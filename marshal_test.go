@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func TestMarshal_Node(t *testing.T) {
+func TestNode_Marshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
 	n := c.Create.Nodes[12]
 
@@ -32,7 +32,7 @@ func TestMarshal_Node(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_NodeRoundoff(t *testing.T) {
+func TestNode_Marshal_roundoff(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
 	n := c.Create.Nodes[194]
 
@@ -42,7 +42,7 @@ func TestMarshal_NodeRoundoff(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_Nodes(t *testing.T) {
+func TestNodes_Marshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
 	ns1 := c.Create.Nodes
 
@@ -57,7 +57,7 @@ func TestMarshal_Nodes(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_Way(t *testing.T) {
+func TestWay_Marshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162210.osc")
 	w := c.Create.Ways[5]
 
@@ -72,7 +72,7 @@ func TestMarshal_Way(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_WayUpdates(t *testing.T) {
+func TestWay_Marshal_updates(t *testing.T) {
 	o := loadOSM(t, "testdata/way-updates.osm")
 	checkMarshal(t, o)
 
@@ -81,7 +81,7 @@ func TestMarshal_WayUpdates(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_Relation(t *testing.T) {
+func TestRelation_Marshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
 	r := c.Create.Relations[0]
 
@@ -96,7 +96,7 @@ func TestMarshal_Relation(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_RelationUpdates(t *testing.T) {
+func TestRelation_Marshal_updates(t *testing.T) {
 	o := loadOSM(t, "testdata/relation-updates.osm")
 	checkMarshal(t, o)
 
@@ -105,7 +105,7 @@ func TestMarshal_RelationUpdates(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestMarshal_RelationMemberLocation(t *testing.T) {
+func TestRelation_Marshal_memberLocation(t *testing.T) {
 	o := &OSM{
 		Relations: Relations{
 			{
@@ -121,7 +121,7 @@ func TestMarshal_RelationMemberLocation(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func TestProtobufRelation_Orientation(t *testing.T) {
+func TestRelation_Marshal_protobufOrientation(t *testing.T) {
 	o := &OSM{
 		Relations: Relations{
 			{
@@ -140,7 +140,7 @@ func TestProtobufRelation_Orientation(t *testing.T) {
 	checkMarshal(t, o)
 }
 
-func BenchmarkMarshalXML(b *testing.B) {
+func BenchmarkChange_MarshalXML(b *testing.B) {
 	filename := "testdata/changeset_38162206.osc"
 	data := readFile(b, filename)
 
@@ -160,7 +160,7 @@ func BenchmarkMarshalXML(b *testing.B) {
 	}
 }
 
-func BenchmarkMarshalProto(b *testing.B) {
+func BenchmarkChangeSet_Marshal(b *testing.B) {
 	cs := &Changeset{
 		ID:     38162206,
 		UserID: 2744209,
@@ -178,7 +178,7 @@ func BenchmarkMarshalProto(b *testing.B) {
 	}
 }
 
-func BenchmarkMarshalWayUpdates(b *testing.B) {
+func BenchmarkUnmarshalWays(b *testing.B) {
 	o := loadOSM(b, "testdata/way-updates.osm")
 	ways := o.Ways
 
@@ -190,7 +190,7 @@ func BenchmarkMarshalWayUpdates(b *testing.B) {
 	}
 }
 
-func BenchmarkMarshalRelationUpdates(b *testing.B) {
+func BenchmarkUnmarshalRelations(b *testing.B) {
 	o := loadOSM(b, "testdata/relation-updates.osm")
 	relations := o.Relations
 
@@ -202,7 +202,7 @@ func BenchmarkMarshalRelationUpdates(b *testing.B) {
 	}
 }
 
-func BenchmarkMarshalProtoGZIP(b *testing.B) {
+func BenchmarkChangeset_Marshal_gzip(b *testing.B) {
 	cs := &Changeset{
 		ID:     38162206,
 		UserID: 2744209,
@@ -231,7 +231,7 @@ func BenchmarkMarshalProtoGZIP(b *testing.B) {
 	}
 }
 
-func BenchmarkUnmarshalXML(b *testing.B) {
+func BenchmarkChangeset_UnmarshalXML(b *testing.B) {
 	filename := "testdata/changeset_38162206.osc"
 	data := readFile(b, filename)
 
@@ -246,7 +246,7 @@ func BenchmarkUnmarshalXML(b *testing.B) {
 	}
 }
 
-func BenchmarkUnmarshalProto(b *testing.B) {
+func BenchmarkUnmarshalChangeset(b *testing.B) {
 	cs := &Changeset{
 		ID:     38162206,
 		UserID: 2744209,
@@ -268,7 +268,7 @@ func BenchmarkUnmarshalProto(b *testing.B) {
 		}
 	}
 }
-func BenchmarkUnmarshalProtoGZIP(b *testing.B) {
+func BenchmarkUnmarshalChangeset_gzip(b *testing.B) {
 	cs := &Changeset{
 		ID:     38162206,
 		UserID: 2744209,

@@ -8,7 +8,7 @@ import (
 	"github.com/paulmach/osm"
 )
 
-func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
+func TestEdgeCase_childCreatedAfterParent(t *testing.T) {
 	// example: way 43680701, node 370250076
 	//          way 4708608, node 29974559
 	// Way's first version is 4 days after node's first version.
@@ -139,7 +139,7 @@ func TestEdgeCase_ChildCreatedAfterParent(t *testing.T) {
 	})
 }
 
-func TestEdgeCase_NodeDeletedBetweenParents(t *testing.T) {
+func TestEdgeCase_nodeDeletedBetweenParents(t *testing.T) {
 	// example: node 321452894, way 28831147
 
 	nodes := osm.Nodes{
@@ -182,7 +182,7 @@ func TestEdgeCase_NodeDeletedBetweenParents(t *testing.T) {
 	}
 }
 
-func TestEdgeCase_NodeRedacted(t *testing.T) {
+func TestEdgeCase_nodeRedacted(t *testing.T) {
 	// example: way 159081205, node 376130526
 	// Oh the license change. Nodes have 1 non-visible version.
 

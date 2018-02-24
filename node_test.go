@@ -86,7 +86,7 @@ func TestNode_MarshalXML(t *testing.T) {
 	}
 }
 
-func TestNodes_Marshal(t *testing.T) {
+func TestUnmarshalNodes(t *testing.T) {
 	ns := Nodes{
 		{ID: 123},
 		{ID: 321},

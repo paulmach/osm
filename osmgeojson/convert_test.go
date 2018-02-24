@@ -138,7 +138,7 @@ func TestConvert(t *testing.T) {
 	})
 }
 
-func TestConvert_InterestingNodes(t *testing.T) {
+func TestConvert_interestingNodes(t *testing.T) {
 	xml := `
 	<osm>
 		<way id="1">
@@ -179,7 +179,7 @@ func TestConvert_InterestingNodes(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvert_PolygonDetection(t *testing.T) {
+func TestConvert_polygonDetection(t *testing.T) {
 	xml := `
 	<osm>
 		<way id="1">
@@ -205,7 +205,7 @@ func TestConvert_PolygonDetection(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvert_RouteRelation(t *testing.T) {
+func TestConvert_routeRelation(t *testing.T) {
 	t.Run("single section", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -263,7 +263,7 @@ func TestConvert_RouteRelation(t *testing.T) {
 	})
 }
 
-func TestConvert_NonInterestingNodes(t *testing.T) {
+func TestConvert_nonInterestingNodes(t *testing.T) {
 	t.Run("include node not part of ways, even if boring", func(t *testing.T) {
 		xml := `<osm>
 			<node id="1" lat="3" lon="4"></node>
@@ -351,7 +351,7 @@ func TestConvert_NonInterestingNodes(t *testing.T) {
 	})
 }
 
-func TestConvert_EmptyElements(t *testing.T) {
+func TestConvert_emptyElements(t *testing.T) {
 	t.Run("node", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -383,7 +383,7 @@ func TestConvert_EmptyElements(t *testing.T) {
 	})
 }
 
-func TestConvert_Tainted(t *testing.T) {
+func TestConvert_tainted(t *testing.T) {
 	t.Run("way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -439,7 +439,7 @@ func TestConvert_Tainted(t *testing.T) {
 	})
 }
 
-func TestConvert_TaintedEmptyElements(t *testing.T) {
+func TestConvert_taintedEmptyElements(t *testing.T) {
 	t.Run("one node way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -467,7 +467,7 @@ func TestConvert_TaintedEmptyElements(t *testing.T) {
 	})
 }
 
-func TestConvert_Meta(t *testing.T) {
+func TestConvert_meta(t *testing.T) {
 	xml := `
 	<osm>
 		<node
@@ -496,7 +496,7 @@ func TestConvert_Meta(t *testing.T) {
 	testConvert(t, xml, fc)
 }
 
-func TestConvert_UseAugmentedNodeValues(t *testing.T) {
+func TestConvert_useAugmentedNodeValues(t *testing.T) {
 	xml := `
 	<osm>
 		<way id="1">

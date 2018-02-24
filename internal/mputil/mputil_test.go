@@ -6,7 +6,7 @@ import (
 	"github.com/paulmach/orb"
 )
 
-func TestMultiSegmentToRing_NoAnnotation(t *testing.T) {
+func TestMultiSegment_ToRing_noAnnotation(t *testing.T) {
 	cases := []struct {
 		name        string
 		orientation orb.Orientation
@@ -68,7 +68,7 @@ func TestMultiSegmentToRing_NoAnnotation(t *testing.T) {
 	}
 }
 
-func TestMultiSegmentToRing_Annotation(t *testing.T) {
+func TestMultiSegment_ToRing_annotation(t *testing.T) {
 	cases := []struct {
 		name        string
 		orientation orb.Orientation

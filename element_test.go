@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestElementID_ParseElementID(t *testing.T) {
+func TestParseElementID(t *testing.T) {
 	cases := []struct {
 		name   string
 		string string
@@ -63,7 +63,7 @@ func TestElementID_ParseElementID(t *testing.T) {
 	}
 }
 
-func TestElementImplementations(t *testing.T) {
+func TestElement_implementations(t *testing.T) {
 	var _ Element = &Node{}
 	var _ Element = &Way{}
 	var _ Element = &Relation{}

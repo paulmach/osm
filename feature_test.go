@@ -43,7 +43,7 @@ func TestFeature_String(t *testing.T) {
 	}
 }
 
-func TestFeatureID_ParseFeatureID(t *testing.T) {
+func TestParseFeatureID(t *testing.T) {
 	cases := []struct {
 		name string
 		id   FeatureID

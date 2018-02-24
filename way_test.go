@@ -61,7 +61,7 @@ func TestWay_ApplyUpdate(t *testing.T) {
 	}
 }
 
-func TestWay_ApplyUpdateError(t *testing.T) {
+func TestWay_ApplyUpdate_error(t *testing.T) {
 	w := Way{
 		ID:    123,
 		Nodes: WayNodes{{Lat: 1, Lon: 2}},
@@ -80,7 +80,7 @@ func TestWay_ApplyUpdateError(t *testing.T) {
 	}
 }
 
-func TestWay_NodesBounds(t *testing.T) {
+func TestWayNodes_Bounds(t *testing.T) {
 	wn := WayNodes{
 		{Lat: 1, Lon: 2},
 		{Lat: 3, Lon: 4},

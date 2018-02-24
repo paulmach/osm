@@ -234,7 +234,7 @@ func TestDecode(t *testing.T) {
 	}
 }
 
-func TestDecodeClose(t *testing.T) {
+func TestDecode_Close(t *testing.T) {
 	f, err := os.Open(Delaware)
 	if err != nil {
 		t.Fatal(err)

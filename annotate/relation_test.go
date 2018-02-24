@@ -47,7 +47,7 @@ func TestRelation(t *testing.T) {
 	}
 }
 
-func TestRelation_Reverse(t *testing.T) {
+func TestRelation_reverse(t *testing.T) {
 	ways := osm.Ways{
 		{
 			ID: 1, Version: 1, Visible: true, Nodes: osm.WayNodes{
@@ -136,7 +136,7 @@ func TestRelation_Reverse(t *testing.T) {
 	})
 }
 
-func TestRelation_Polygon(t *testing.T) {
+func TestRelation_polygon(t *testing.T) {
 	ways := osm.Ways{
 		{
 			ID:      1,
@@ -242,7 +242,7 @@ func TestRelation_Polygon(t *testing.T) {
 	}
 }
 
-func TestRelation_Circular(t *testing.T) {
+func TestRelation_circular(t *testing.T) {
 	relations := osm.Relations{
 		&osm.Relation{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
@@ -325,7 +325,7 @@ func TestRelation_Circular(t *testing.T) {
 	}
 }
 
-func TestRelation_SelfCircular(t *testing.T) {
+func TestRelation_selfCircular(t *testing.T) {
 	rs := osm.Relations{
 		{ID: 1, Version: 1, Visible: true, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC),
 			Members: osm.Members{
@@ -373,7 +373,7 @@ func TestRelation_SelfCircular(t *testing.T) {
 	}
 }
 
-func BenchmarkRelation(b *testing.B) {
+func BenchmarkRelations(b *testing.B) {
 	id := osm.RelationID(2714790)
 	filename := fmt.Sprintf("testdata/relation_%d.osm", id)
 

@@ -2,7 +2,7 @@ package osm
 
 import "testing"
 
-func TestObjectID_ParseObjectID(t *testing.T) {
+func TestParseObjectID(t *testing.T) {
 	cases := []struct {
 		name   string
 		string string
@@ -71,7 +71,7 @@ func TestObjectID_ParseObjectID(t *testing.T) {
 	}
 }
 
-func TestObjectIDImplementations(t *testing.T) {
+func TestObjectID_implementations(t *testing.T) {
 	type oid interface {
 		ObjectID() ObjectID
 	}
@@ -115,7 +115,7 @@ func TestObjectIDImplementations(t *testing.T) {
 	}
 }
 
-func TestObjectImplementations(t *testing.T) {
+func TestObject_implementations(t *testing.T) {
 	var _ Object = &Node{}
 	var _ Object = &Way{}
 	var _ Object = &Relation{}

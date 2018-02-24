@@ -83,7 +83,7 @@ func TestJoin(t *testing.T) {
 	}
 }
 
-func TestJoinLineString_SinglePointLine(t *testing.T) {
+func TestJoin_lineString_singlePointLine(t *testing.T) {
 	cases := []struct {
 		name   string
 		input  []Segment
@@ -135,7 +135,7 @@ func TestJoinLineString_SinglePointLine(t *testing.T) {
 	}
 }
 
-func TestJoinLineString_DanglingLine(t *testing.T) {
+func TestJoin_lineString_danglingLine(t *testing.T) {
 	cases := []struct {
 		name   string
 		input  []Segment

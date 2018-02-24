@@ -49,7 +49,7 @@ func TestChildFirstOrdering(t *testing.T) {
 	}
 }
 
-func TestChildFirstOrdering_Cycle(t *testing.T) {
+func TestChildFirstOrdering_cycle(t *testing.T) {
 	relations := osm.Relations{
 		{ID: 1, Version: 1, Members: osm.Members{
 			{Type: osm.TypeRelation, Ref: 2},
@@ -200,7 +200,7 @@ func TestChildFirstOrdering_Walk(t *testing.T) {
 	}
 }
 
-func TestChildFirstOrdering_MissingRelation(t *testing.T) {
+func TestChildFirstOrdering_missingRelation(t *testing.T) {
 	relations := osm.Relations{
 		{ID: 2, Members: osm.Members{
 			{Type: osm.TypeRelation, Ref: 3},

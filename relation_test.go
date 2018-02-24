@@ -100,7 +100,7 @@ func TestRelation_ApplyUpdate(t *testing.T) {
 	}
 }
 
-func TestRelation_ApplyUpdateError(t *testing.T) {
+func TestRelation_ApplyUpdate_error(t *testing.T) {
 	r := Relation{
 		ID:      123,
 		Members: Members{{Ref: 1, Type: TypeNode}},

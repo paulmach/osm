@@ -131,7 +131,7 @@ func TestChangeset(t *testing.T) {
 	}
 }
 
-func TestChangesetOpen(t *testing.T) {
+func TestChangeset_open(t *testing.T) {
 	data := []byte(`
 <changeset id="40309372" user="Bahntech" uid="3619264" created_at="2016-06-26T21:26:41Z" open="true" min_lat="51.484563" min_lon="12.0995042" max_lat="51.484563" max_lon="12.0995042" comments_count="0">
 	<tag k="comment" v="updated fire hydrant details with OsmHydrant"/>
@@ -149,7 +149,7 @@ func TestChangesetOpen(t *testing.T) {
 	}
 }
 
-func TestChangesetTags(t *testing.T) {
+func TestChangeset_tags(t *testing.T) {
 	data := []byte(`
 <changeset id="123123">
   <tag k="comment" v="changeset comment"/>
@@ -196,7 +196,7 @@ func TestChangesetTags(t *testing.T) {
 	}
 }
 
-func TestChangesetBound(t *testing.T) {
+func TestChangeset_bounds(t *testing.T) {
 	data := []byte(`
 <changeset id="36947173" created_at="2016-02-01T22:00:56Z" closed_at="2016-02-01T23:05:06Z" open="false" num_changes="9" user="florijn11" uid="1319603" min_lat="51.5871887" max_lat="51.6032569" min_lon="5.3214071" max_lon="5.33106" comments_count="0">
     <tag k="version" v="2.4"/>
@@ -210,9 +210,25 @@ func TestChangesetBound(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unmarshal error: %v", err)
 	}
+
+	if v := c.MinLat; v != 51.5871887 {
+		t.Errorf("incorrect value, got %v", v)
+	}
+
+	if v := c.MaxLat; v != 51.6032569 {
+		t.Errorf("incorrect value, got %v", v)
+	}
+
+	if v := c.MinLon; v != 5.3214071 {
+		t.Errorf("incorrect value, got %v", v)
+	}
+
+	if v := c.MaxLon; v != 5.33106 {
+		t.Errorf("incorrect value, got %v", v)
+	}
 }
 
-func TestChangesetComment(t *testing.T) {
+func TestChangeset_comments(t *testing.T) {
 	data := []byte(`
 <changeset id="40303151" user="Glen Bundrick" uid="4173877" created_at="2016-06-26T15:37:47Z" closed_at="2016-06-26T15:37:48Z" open="false" min_lat="34.6591676" min_lon="-81.8789825" max_lat="34.6594167" max_lon="-81.8788142" comments_count="3">
   <tag k="comment" v="Recent Doublewide addition"/>
@@ -262,7 +278,7 @@ func TestChangesetComment(t *testing.T) {
 	}
 }
 
-func TestChangesetMarshalXML(t *testing.T) {
+func TestChangeset_MarshalXML(t *testing.T) {
 	cs := Changeset{
 		ID: 123,
 	}

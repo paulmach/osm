@@ -41,7 +41,7 @@ func TestScanner(t *testing.T) {
 	}
 }
 
-func TestScannerIntermediateStart(t *testing.T) {
+func TestScanner_intermediateStart(t *testing.T) {
 	f, err := os.Open(Delaware)
 	if err != nil {
 		t.Fatalf("unable to open file: %v", err)
@@ -77,7 +77,7 @@ func TestScannerIntermediateStart(t *testing.T) {
 	scanner.Close()
 }
 
-func TestChangesetScannerContext(t *testing.T) {
+func TestScanner_context(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	f, err := os.Open(Delaware)
 	if err != nil {
@@ -107,7 +107,7 @@ func TestChangesetScannerContext(t *testing.T) {
 	}
 }
 
-func TestScannerHeader(t *testing.T) {
+func TestScanner_Header(t *testing.T) {
 	f, err := os.Open(Delaware)
 	if err != nil {
 		t.Fatalf("unable to open file: %v", err)
@@ -144,7 +144,7 @@ func TestScannerHeader(t *testing.T) {
 	}
 }
 
-func TestChangesetScannerClose(t *testing.T) {
+func TestScanner_Close(t *testing.T) {
 	f, err := os.Open(Delaware)
 	if err != nil {
 		t.Fatalf("unable to open file: %v", err)

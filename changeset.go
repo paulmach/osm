@@ -45,6 +45,16 @@ func (c *Changeset) ObjectID() ObjectID {
 	return c.ID.ObjectID()
 }
 
+// Bounds returns the bounds of the changeset as a bounds object.
+func (c *Changeset) Bounds() *Bounds {
+	return &Bounds{
+		MinLat: c.MinLat,
+		MaxLat: c.MaxLat,
+		MinLon: c.MinLon,
+		MaxLon: c.MaxLon,
+	}
+}
+
 // Comment is a helper and returns the changeset comment from the tag.
 func (c *Changeset) Comment() string {
 	return c.Tags.Find("comment")

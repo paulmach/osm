@@ -44,7 +44,7 @@ func TestScanner(t *testing.T) {
 	}
 }
 
-func TestChangesetScannerContext(t *testing.T) {
+func TestScanner_context(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	r := changesetReader()
 
@@ -69,7 +69,7 @@ func TestChangesetScannerContext(t *testing.T) {
 	}
 }
 
-func TestChangesetScannerClose(t *testing.T) {
+func TestScanner_Close(t *testing.T) {
 	r := changesetReader()
 	scanner := New(context.Background(), r)
 
@@ -92,7 +92,7 @@ func TestChangesetScannerClose(t *testing.T) {
 	}
 }
 
-func TestChangesetScannerErr(t *testing.T) {
+func TestScanner_Err(t *testing.T) {
 	r := changesetReaderErr()
 	scanner := New(context.Background(), r)
 

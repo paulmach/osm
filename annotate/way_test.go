@@ -41,7 +41,7 @@ func TestWays(t *testing.T) {
 	}
 }
 
-func TestWays_ChildFilter(t *testing.T) {
+func TestWays_childFilter(t *testing.T) {
 	nodes := osm.Nodes{
 		{ID: 1, Version: 1, Lat: 1, Lon: 1, Visible: true},
 		{ID: 1, Version: 2, Lat: 2, Lon: 2, Visible: true},

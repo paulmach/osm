@@ -9,7 +9,7 @@ import (
 	"github.com/paulmach/osm"
 )
 
-func TestConvert_Polygon(t *testing.T) {
+func TestConvert_polygon(t *testing.T) {
 	t.Run("building with inner ring", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -62,7 +62,7 @@ func TestConvert_Polygon(t *testing.T) {
 	})
 }
 
-func TestConvert_MultiPolygon(t *testing.T) {
+func TestConvert_multiPolygon(t *testing.T) {
 	t.Run("invalid simple multipolygon, no outer way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -259,7 +259,7 @@ func TestConvert_MultiPolygon(t *testing.T) {
 	})
 }
 
-func TestConvert_RelationMembers(t *testing.T) {
+func TestConvert_relationMembers(t *testing.T) {
 	// complex example containing a generic relation, several ways as well as
 	// tagged, uninteresting and untagged nodes
 	// see https://github.com/openstreetmap/openstreetmap-website/pull/283
@@ -330,7 +330,7 @@ func TestConvert_RelationMembers(t *testing.T) {
 	}
 }
 
-func TestConvert_InnerWays(t *testing.T) {
+func TestConvert_innerWays(t *testing.T) {
 	t.Run("missing inner way", func(t *testing.T) {
 		xml := `
 		<osm>
@@ -527,7 +527,7 @@ func TestConvert_InnerWays(t *testing.T) {
 	})
 }
 
-func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
+func TestConvert_multiPolygonMultiOuter(t *testing.T) {
 	raw := `
 	<osm>
 		<relation id="1">
@@ -665,7 +665,7 @@ func TestConvert_MultiPolygonMultiOuter(t *testing.T) {
 	})
 }
 
-func TestConvert_IncludeInvalidPolygons(t *testing.T) {
+func TestConvert_includeInvalidPolygons(t *testing.T) {
 	t.Run("missing outer ring", func(t *testing.T) {
 		xml := `
 		<osm>
