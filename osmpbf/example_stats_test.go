@@ -19,6 +19,7 @@ func Example_stats() {
 		fmt.Printf("could not open file: %v", err)
 		os.Exit(1)
 	}
+	defer f.Close()
 
 	nodes, ways, relations := 0, 0, 0
 	stats := newElementStats()
@@ -39,6 +40,8 @@ func Example_stats() {
 	)
 
 	scanner := osmpbf.New(context.Background(), f, 3)
+	defer scanner.Close()
+
 	for scanner.Scan() {
 		var ts time.Time
 

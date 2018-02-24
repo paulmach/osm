@@ -11,7 +11,7 @@ import (
 var (
 	// ErrScannerClosed is returned by scanner.Err() if the scanner is closed
 	// and there are no other io or xml errors to report.
-	ErrScannerClosed = errors.New("osmxml: scanner closed by user")
+	ErrScannerClosed = errors.New("osm: scanner closed by user")
 )
 
 // ElementID is a unique key for an osm element. It contains the

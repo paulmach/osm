@@ -122,7 +122,7 @@ type ObjectIDs []ObjectID
 // Scanner allows osm data from dump files to be read.
 // It is based on the bufio.Scanner, common usage.
 // Scanners are not safe for parallel use. One should feed the
-// elements into their own channel and have workers read from that.
+// objects into their own channel and have workers read from that.
 //
 //	s := scanner.New(r)
 //	defer s.Close()

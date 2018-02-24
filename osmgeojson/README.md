@@ -1,8 +1,8 @@
 osm/osmgeojson [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/osmgeojson?status.png)](https://godoc.org/github.com/paulmach/osm/osmgeojson)
-=================
+==============
 
 Package `osmgeojson` converts OSM data to GeoJSON. It is a **full** port of the
-node library [osmtogeojson](https://github.com/tyrasd/osmtogeojson) and sports
+nodejs library [osmtogeojson](https://github.com/tyrasd/osmtogeojson) and sports
 the same features and tests (plus more):
 
 * real OSM polygon detection,
@@ -64,7 +64,7 @@ All of the options **default to false**, i.e. everything will be included.
 
 ### Benchmarks
 
-These benchmarks are meant to show the performance impacts of the different options.
+These benchmarks are meant to show the performance impact of the different options.
 They were run on a 2012 MacBook Air with a 2 ghz processor and 8 gigs of ram.
 
 ```
