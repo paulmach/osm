@@ -13,8 +13,8 @@ import (
 type RelationID int64
 
 // ObjectID is a helper returning the object id for this relation id.
-func (id RelationID) ObjectID() ObjectID {
-	return ObjectID(id.FeatureID())
+func (id RelationID) ObjectID(v int) ObjectID {
+	return ObjectID(id.ElementID(v))
 }
 
 // FeatureID is a helper returning the feature id for this relation id.
@@ -79,7 +79,7 @@ type Member struct {
 
 // ObjectID returns the object id of the relation.
 func (r *Relation) ObjectID() ObjectID {
-	return r.ID.ObjectID()
+	return r.ID.ObjectID(r.Version)
 }
 
 // FeatureID returns the feature id of the relation.

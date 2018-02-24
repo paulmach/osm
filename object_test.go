@@ -2,12 +2,80 @@ package osm
 
 import "testing"
 
+func TestObjectID_ParseObjectID(t *testing.T) {
+	cases := []struct {
+		name   string
+		string string
+		id     ObjectID
+	}{
+		{
+			name: "node",
+			id:   NodeID(0).ObjectID(1),
+		},
+		{
+			name: "zero version node",
+			id:   NodeID(3).ObjectID(0),
+		},
+		{
+			name: "way",
+			id:   WayID(10).ObjectID(2),
+		},
+		{
+			name: "relation",
+			id:   RelationID(100).ObjectID(3),
+		},
+		{
+			name: "changeset",
+			id:   ChangesetID(1000).ObjectID(),
+		},
+		{
+			name: "note",
+			id:   NoteID(10000).ObjectID(),
+		},
+		{
+			name: "user",
+			id:   UserID(5000).ObjectID(),
+		},
+		{
+			name:   "node feature",
+			string: "node/100",
+			id:     NodeID(100).ObjectID(0),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			var (
+				id  ObjectID
+				err error
+			)
+
+			if tc.string == "" {
+				id, err = ParseObjectID(tc.id.String())
+				if err != nil {
+					t.Errorf("parse error: %v", err)
+					return
+				}
+			} else {
+				id, err = ParseObjectID(tc.string)
+				if err != nil {
+					t.Errorf("parse error: %v", err)
+					return
+				}
+			}
+
+			if id != tc.id {
+				t.Errorf("incorrect id: %v != %v", id, tc.id)
+			}
+		})
+	}
+}
+
 func TestObjectIDImplementations(t *testing.T) {
 	type oid interface {
 		ObjectID() ObjectID
 	}
 
-	var _ oid = FeatureID(0)
 	var _ oid = ElementID(0)
 
 	var _ oid = &Node{}
@@ -17,12 +85,18 @@ func TestObjectIDImplementations(t *testing.T) {
 	var _ oid = &Note{}
 	var _ oid = &User{}
 
-	var _ oid = NodeID(0)
-	var _ oid = WayID(0)
-	var _ oid = RelationID(0)
 	var _ oid = ChangesetID(0)
 	var _ oid = NoteID(0)
 	var _ oid = UserID(0)
+
+	type oidv interface {
+		ObjectID(v int) ObjectID
+	}
+
+	var _ oidv = FeatureID(0)
+	var _ oidv = NodeID(0)
+	var _ oidv = WayID(0)
+	var _ oidv = RelationID(0)
 
 	// These should not implement the ObjectID methods
 	noImplement := []interface{}{
@@ -33,6 +107,10 @@ func TestObjectIDImplementations(t *testing.T) {
 	for _, ni := range noImplement {
 		if _, ok := ni.(oid); ok {
 			t.Errorf("%T should not have ObjectID() method", ni)
+		}
+
+		if _, ok := ni.(oidv); ok {
+			t.Errorf("%T should not have ObjectID(v int) method", ni)
 		}
 	}
 }

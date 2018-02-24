@@ -19,8 +19,8 @@ var (
 type ElementID int64
 
 // Type returns the Type for the element.
-func (e ElementID) Type() Type {
-	switch e & typeMask {
+func (id ElementID) Type() Type {
+	switch id & typeMask {
 	case nodeMask:
 		return TypeNode
 	case wayMask:
@@ -33,62 +33,62 @@ func (e ElementID) Type() Type {
 }
 
 // Ref return the ID reference for the element. Not unique without the type.
-func (e ElementID) Ref() int64 {
-	return int64((e & refMask) >> versionBits)
+func (id ElementID) Ref() int64 {
+	return int64((id & refMask) >> versionBits)
 }
 
 // Version returns the version of the element.
-func (e ElementID) Version() int {
-	return int(e & (versionMask))
+func (id ElementID) Version() int {
+	return int(id & (versionMask))
 }
 
 // ObjectID is a helper to convert the id to an object id.
-func (e ElementID) ObjectID() ObjectID {
-	return ObjectID(e)
+func (id ElementID) ObjectID() ObjectID {
+	return ObjectID(id)
 }
 
 // FeatureID returns the feature id for the element id. i.e removing the version.
-func (e ElementID) FeatureID() FeatureID {
-	return FeatureID(e & featureMask)
+func (id ElementID) FeatureID() FeatureID {
+	return FeatureID(id & featureMask)
 }
 
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
-func (e ElementID) NodeID() NodeID {
-	if e&nodeMask == 0 {
-		panic(fmt.Sprintf("not a node: %v", e))
+func (id ElementID) NodeID() NodeID {
+	if id&nodeMask == 0 {
+		panic(fmt.Sprintf("not a node: %v", id))
 	}
 
-	return NodeID(e.Ref())
+	return NodeID(id.Ref())
 }
 
 // WayID returns the id of this feature as a way id.
 // The function will panic if this feature is not of WayType.
-func (e ElementID) WayID() WayID {
-	if e&wayMask == 0 {
-		panic(fmt.Sprintf("not a way: %v", e))
+func (id ElementID) WayID() WayID {
+	if id&wayMask == 0 {
+		panic(fmt.Sprintf("not a way: %v", id))
 	}
 
-	return WayID(e.Ref())
+	return WayID(id.Ref())
 }
 
 // RelationID returns the id of this feature as a relation id.
 // The function will panic if this feature is not of RelationType.
-func (e ElementID) RelationID() RelationID {
-	if e&relationMask == 0 {
-		panic(fmt.Sprintf("not a relation: %v", e))
+func (id ElementID) RelationID() RelationID {
+	if id&relationMask == 0 {
+		panic(fmt.Sprintf("not a relation: %v", id))
 	}
 
-	return RelationID(e.Ref())
+	return RelationID(id.Ref())
 }
 
 // String returns "type/ref:version" for the element.
-func (e ElementID) String() string {
-	if e.Version() == 0 {
-		return fmt.Sprintf("%s/%d:-", e.Type(), e.Ref())
+func (id ElementID) String() string {
+	if id.Version() == 0 {
+		return fmt.Sprintf("%s/%d:-", id.Type(), id.Ref())
 	}
 
-	return fmt.Sprintf("%s/%d:%d", e.Type(), e.Ref(), e.Version())
+	return fmt.Sprintf("%s/%d:%d", id.Type(), id.Ref(), id.Version())
 }
 
 // ParseElementID takes a string and tries to determine the element id from it.
@@ -100,7 +100,7 @@ func ParseElementID(s string) (ElementID, error) {
 	}
 
 	parts2 := strings.Split(parts[1], ":")
-	if l := len(parts); l == 0 || l > 2 {
+	if l := len(parts); l != 1 && l != 2 {
 		return 0, fmt.Errorf("invalid element id: %v", s)
 	}
 
@@ -110,7 +110,7 @@ func ParseElementID(s string) (ElementID, error) {
 		return 0, fmt.Errorf("invalid element id: %v: %v", s, err)
 	}
 
-	if len(parts2) == 2 {
+	if len(parts2) == 2 && parts2[1] != "-" {
 		v, e := strconv.ParseInt(parts2[1], 10, 64)
 		if e != nil {
 			return 0, fmt.Errorf("invalid element id: %v: %v", s, err)
@@ -130,8 +130,8 @@ func ParseElementID(s string) (ElementID, error) {
 type Element interface {
 	Object
 
-	FeatureID() FeatureID
 	ElementID() ElementID
+	FeatureID() FeatureID
 	TagMap() map[string]string
 
 	// TagMap keeps waynodes and members from matching the interface.

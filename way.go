@@ -14,8 +14,8 @@ import (
 type WayID int64
 
 // ObjectID is a helper returning the object id for this way id.
-func (id WayID) ObjectID() ObjectID {
-	return ObjectID(id.FeatureID())
+func (id WayID) ObjectID(v int) ObjectID {
+	return ObjectID(id.ElementID(v))
 }
 
 // FeatureID is a helper returning the feature id for this way id.
@@ -70,7 +70,7 @@ type WayNode struct {
 
 // ObjectID returns the object id of the way.
 func (w *Way) ObjectID() ObjectID {
-	return w.ID.ObjectID()
+	return w.ID.ObjectID(w.Version)
 }
 
 // FeatureID returns the feature id of the way.

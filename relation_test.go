@@ -11,7 +11,7 @@ import (
 	"github.com/paulmach/orb"
 )
 
-func TestRelationMarshalJSON(t *testing.T) {
+func TestRelation_MarshalJSON(t *testing.T) {
 	r := Relation{
 		ID: 123,
 	}
@@ -41,7 +41,7 @@ func TestRelationMarshalJSON(t *testing.T) {
 	}
 }
 
-func TestRelationApplyUpdatesUpTo(t *testing.T) {
+func TestRelation_ApplyUpdatesUpTo(t *testing.T) {
 	r := Relation{
 		ID:      123,
 		Members: Members{{Version: 1}, {Version: 2}, {Version: 3}},
@@ -71,7 +71,7 @@ func TestRelationApplyUpdatesUpTo(t *testing.T) {
 	}
 }
 
-func TestRelationApplyUpdate(t *testing.T) {
+func TestRelation_ApplyUpdate(t *testing.T) {
 	r := Relation{
 		ID:      123,
 		Members: Members{{Ref: 1, Type: TypeWay, Orientation: orb.CW}},
@@ -100,7 +100,7 @@ func TestRelationApplyUpdate(t *testing.T) {
 	}
 }
 
-func TestRelationApplyUpdateError(t *testing.T) {
+func TestRelation_ApplyUpdateError(t *testing.T) {
 	r := Relation{
 		ID:      123,
 		Members: Members{{Ref: 1, Type: TypeNode}},
@@ -119,7 +119,7 @@ func TestRelationApplyUpdateError(t *testing.T) {
 	}
 }
 
-func TestRelationMarshalXML(t *testing.T) {
+func TestRelation_MarshalXML(t *testing.T) {
 	r := Relation{
 		ID: 123,
 	}
@@ -199,7 +199,7 @@ func TestRelationMarshalXML(t *testing.T) {
 	}
 }
 
-func TestRelationsMarshal(t *testing.T) {
+func TestRelations_Marshal(t *testing.T) {
 	rs := Relations{
 		{ID: 123},
 		{ID: 321},

@@ -14,8 +14,8 @@ import (
 type NodeID int64
 
 // ObjectID is a helper returning the object id for this node id.
-func (id NodeID) ObjectID() ObjectID {
-	return ObjectID(id.FeatureID())
+func (id NodeID) ObjectID(v int) ObjectID {
+	return ObjectID(id.ElementID(v))
 }
 
 // FeatureID is a helper returning the feature id for this node id.
@@ -49,7 +49,7 @@ type Node struct {
 
 // ObjectID returns the object id of the node.
 func (n *Node) ObjectID() ObjectID {
-	return n.ID.ObjectID()
+	return n.ID.ObjectID(n.Version)
 }
 
 // FeatureID returns the feature id of the node.

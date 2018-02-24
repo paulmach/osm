@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func TestWayApplyUpdatesUpTo(t *testing.T) {
+func TestWay_ApplyUpdatesUpTo(t *testing.T) {
 	w := Way{
 		ID:    123,
 		Nodes: WayNodes{{Lat: 1}, {Lat: 2}, {Lat: 3}},
@@ -31,7 +31,7 @@ func TestWayApplyUpdatesUpTo(t *testing.T) {
 	}
 }
 
-func TestWayApplyUpdate(t *testing.T) {
+func TestWay_ApplyUpdate(t *testing.T) {
 	w := Way{
 		ID:    123,
 		Nodes: WayNodes{{Lat: 1, Lon: 2}},
@@ -61,7 +61,7 @@ func TestWayApplyUpdate(t *testing.T) {
 	}
 }
 
-func TestWayApplyUpdateError(t *testing.T) {
+func TestWay_ApplyUpdateError(t *testing.T) {
 	w := Way{
 		ID:    123,
 		Nodes: WayNodes{{Lat: 1, Lon: 2}},
@@ -80,7 +80,7 @@ func TestWayApplyUpdateError(t *testing.T) {
 	}
 }
 
-func TestWayNodesBounds(t *testing.T) {
+func TestWay_NodesBounds(t *testing.T) {
 	wn := WayNodes{
 		{Lat: 1, Lon: 2},
 		{Lat: 3, Lon: 4},
@@ -93,7 +93,7 @@ func TestWayNodesBounds(t *testing.T) {
 	}
 }
 
-func TestWayMarshalJSON(t *testing.T) {
+func TestWay_MarshalJSON(t *testing.T) {
 	w := Way{
 		ID:    123,
 		Nodes: WayNodes{{ID: 1}, {ID: 2}, {ID: 4}},
@@ -109,7 +109,7 @@ func TestWayMarshalJSON(t *testing.T) {
 	}
 }
 
-func TestWayMarshalXML(t *testing.T) {
+func TestWay_MarshalXML(t *testing.T) {
 	w := Way{
 		ID: 123,
 	}
@@ -200,7 +200,7 @@ func TestWayMarshalXML(t *testing.T) {
 	}
 }
 
-func TestWaysMarshal(t *testing.T) {
+func TestWays_Marshal(t *testing.T) {
 	ws := Ways{
 		{ID: 123},
 		{ID: 321},

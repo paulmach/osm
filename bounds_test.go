@@ -29,7 +29,7 @@ func TestNewBoundFromTile(t *testing.T) {
 	}
 }
 
-func TestBoundsContainsNode(t *testing.T) {
+func TestBounds_ContainsNode(t *testing.T) {
 	b := &Bounds{}
 
 	if v := b.ContainsNode(&Node{}); !v {

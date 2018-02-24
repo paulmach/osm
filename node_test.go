@@ -55,7 +55,7 @@ func TestNode(t *testing.T) {
 	}
 }
 
-func TestNodeMarshalJSON(t *testing.T) {
+func TestNode_MarshalJSON(t *testing.T) {
 	n := Node{
 		ID: 123,
 	}
@@ -70,7 +70,7 @@ func TestNodeMarshalJSON(t *testing.T) {
 	}
 }
 
-func TestNodeMarshalXML(t *testing.T) {
+func TestNode_MarshalXML(t *testing.T) {
 	n := Node{
 		ID: 123,
 	}
@@ -86,7 +86,7 @@ func TestNodeMarshalXML(t *testing.T) {
 	}
 }
 
-func TestNodesMarshal(t *testing.T) {
+func TestNodes_Marshal(t *testing.T) {
 	ns := Nodes{
 		{ID: 123},
 		{ID: 321},

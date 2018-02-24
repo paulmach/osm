@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestTagsMarshalJSON(t *testing.T) {
+func TestTags_MarshalJSON(t *testing.T) {
 	data, err := Tags{}.MarshalJSON()
 	if err != nil {
 		t.Errorf("marshal error: %v", err)
@@ -30,7 +30,7 @@ func TestTagsMarshalJSON(t *testing.T) {
 	}
 }
 
-func TestTagsUnmarshalJSON(t *testing.T) {
+func TestTags_UnmarshalJSON(t *testing.T) {
 	tags := Tags{}
 	data := []byte(`{"highway 🏤 ":"crossing","source":"Bind 🏤 "}`)
 
@@ -50,7 +50,7 @@ func TestTagsUnmarshalJSON(t *testing.T) {
 	}
 }
 
-func TestTagsSortByKeyValue(t *testing.T) {
+func TestTags_SortByKeyValue(t *testing.T) {
 	tags := Tags{
 		Tag{Key: "highway", Value: "crossing"},
 		Tag{Key: "source", Value: "Bind"},

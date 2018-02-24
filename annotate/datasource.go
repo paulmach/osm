@@ -3,10 +3,11 @@ package annotate
 import (
 	"context"
 
-	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/planar"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/annotate/internal/core"
+
+	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/planar"
 )
 
 type wayDatasource struct {

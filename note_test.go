@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNoteUnmarshalXML(t *testing.T) {
+func TestNote_UnmarshalXML(t *testing.T) {
 	rawXML := []byte(`
 <note lon="0.0088488" lat="51.5438971">
   <id>1302953</id>

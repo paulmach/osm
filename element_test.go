@@ -17,16 +17,16 @@ func TestElementID_ParseElementID(t *testing.T) {
 			id:   NodeID(0).ElementID(1),
 		},
 		{
+			name: "zero version node",
+			id:   NodeID(3).ElementID(0),
+		},
+		{
 			name: "way",
 			id:   WayID(10).ElementID(2),
 		},
 		{
 			name: "relation",
 			id:   RelationID(100).ElementID(3),
-		},
-		{
-			name: "changeset",
-			id:   RelationID(1000).ElementID(4),
 		},
 		{
 			name:   "node feature",
@@ -100,7 +100,7 @@ func TestElementImplementations(t *testing.T) {
 	}
 }
 
-func TestElementIDsSort(t *testing.T) {
+func TestElementIDs_Sort(t *testing.T) {
 	ids := ElementIDs{
 		RelationID(1).ElementID(1),
 		NodeID(1).ElementID(2),
@@ -126,7 +126,7 @@ func TestElementIDsSort(t *testing.T) {
 	}
 }
 
-func BenchmarkElementIDSort(b *testing.B) {
+func BenchmarkElementID_Sort(b *testing.B) {
 	rand.Seed(1024)
 
 	tests := make([]ElementIDs, b.N)

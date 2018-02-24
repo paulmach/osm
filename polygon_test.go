@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestWayPolygon(t *testing.T) {
+func TestWay_Polygon(t *testing.T) {
 	w := &Way{}
 	w.Nodes = WayNodes{
 		{ID: 1}, {ID: 2},

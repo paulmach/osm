@@ -21,15 +21,15 @@ const (
 	TypeUser      Type = "user"
 )
 
-// ObjectID returns an object id from the given type.
-func (t Type) ObjectID(ref int64) (ObjectID, error) {
+// objectID returns an object id from the given type.
+func (t Type) objectID(ref int64, v int) (ObjectID, error) {
 	switch t {
 	case TypeNode:
-		return NodeID(ref).ObjectID(), nil
+		return NodeID(ref).ObjectID(v), nil
 	case TypeWay:
-		return WayID(ref).ObjectID(), nil
+		return WayID(ref).ObjectID(v), nil
 	case TypeRelation:
-		return RelationID(ref).ObjectID(), nil
+		return RelationID(ref).ObjectID(v), nil
 	case TypeChangeset:
 		return ChangesetID(ref).ObjectID(), nil
 	case TypeNote:
@@ -76,8 +76,8 @@ const (
 type FeatureID int64
 
 // Type returns the Type of the feature.
-func (f FeatureID) Type() Type {
-	switch f & typeMask {
+func (id FeatureID) Type() Type {
+	switch id & typeMask {
 	case nodeMask:
 		return TypeNode
 	case wayMask:
@@ -90,54 +90,54 @@ func (f FeatureID) Type() Type {
 }
 
 // Ref return the ID reference for the feature. Not unique without the type.
-func (f FeatureID) Ref() int64 {
-	return int64((f & refMask) >> versionBits)
+func (id FeatureID) Ref() int64 {
+	return int64((id & refMask) >> versionBits)
 }
 
 // ObjectID is a helper to convert the id to an object id.
-func (f FeatureID) ObjectID() ObjectID {
-	return ObjectID(f)
+func (id FeatureID) ObjectID(v int) ObjectID {
+	return ObjectID(id.ElementID(v))
 }
 
 // ElementID is a helper to convert the id to an element id.
-func (f FeatureID) ElementID(v int) ElementID {
-	return ElementID(f | (versionMask & FeatureID(v)))
+func (id FeatureID) ElementID(v int) ElementID {
+	return ElementID(id | (versionMask & FeatureID(v)))
 }
 
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
-func (f FeatureID) NodeID() NodeID {
-	if f&nodeMask == 0 {
-		panic(fmt.Sprintf("not a node: %v", f))
+func (id FeatureID) NodeID() NodeID {
+	if id&nodeMask == 0 {
+		panic(fmt.Sprintf("not a node: %v", id))
 	}
 
-	return NodeID(f.Ref())
+	return NodeID(id.Ref())
 }
 
 // WayID returns the id of this feature as a way id.
 // The function will panic if this feature is not of WayType.
-func (f FeatureID) WayID() WayID {
-	if f&wayMask == 0 {
-		panic(fmt.Sprintf("not a way: %v", f))
+func (id FeatureID) WayID() WayID {
+	if id&wayMask == 0 {
+		panic(fmt.Sprintf("not a way: %v", id))
 	}
 
-	return WayID(f.Ref())
+	return WayID(id.Ref())
 }
 
 // RelationID returns the id of this feature as a relation id.
 // The function will panic if this feature is not of RelationType.
-func (f FeatureID) RelationID() RelationID {
-	if f&relationMask == 0 {
-		panic(fmt.Sprintf("not a relation: %v", f))
+func (id FeatureID) RelationID() RelationID {
+	if id&relationMask == 0 {
+		panic(fmt.Sprintf("not a relation: %v", id))
 	}
 
-	return RelationID(f.Ref())
+	return RelationID(id.Ref())
 }
 
 // String returns "type/ref" for the feature.
-func (f FeatureID) String() string {
+func (id FeatureID) String() string {
 	t := Type("unknown")
-	switch f & typeMask {
+	switch id & typeMask {
 	case nodeMask:
 		t = TypeNode
 	case wayMask:
@@ -145,7 +145,7 @@ func (f FeatureID) String() string {
 	case relationMask:
 		t = TypeRelation
 	}
-	return fmt.Sprintf("%s/%d", t, f.Ref())
+	return fmt.Sprintf("%s/%d", t, id.Ref())
 }
 
 // ParseFeatureID takes a string and tries to determine the feature id from it.

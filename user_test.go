@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestUserUnmarshalXML(t *testing.T) {
+func TestUser_UnmarshalXML(t *testing.T) {
 	rawXML := []byte(`
 	<user id="91499" display_name="pm" account_created="2009-01-13T19:49:59Z">
 	  <description>mapper</description>

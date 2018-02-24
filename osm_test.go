@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestOSMMarshal(t *testing.T) {
+func TestOSM_Marshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
 	o1 := flattenOSM(c)
 	o1.Bounds = &Bounds{1.1, 2.2, 3.3, 4.4}
@@ -50,7 +50,7 @@ func TestOSMMarshal(t *testing.T) {
 	}
 }
 
-func TestOSMMarshalJSON(t *testing.T) {
+func TestOSM_MarshalJSON(t *testing.T) {
 	o := &OSM{
 		Version:   0.6,
 		Generator: "osm-go",
@@ -78,7 +78,7 @@ func TestOSMMarshalJSON(t *testing.T) {
 	}
 }
 
-func TestOSMMarshalXML(t *testing.T) {
+func TestOSM_MarshalXML(t *testing.T) {
 	o := &OSM{
 		Version:     0.7,
 		Generator:   "osm-go-test",

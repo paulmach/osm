@@ -97,34 +97,36 @@ func (o *OSM) Elements() Elements {
 	return result
 }
 
-func (o *OSM) objects() interface{} {
+// Objects retuns an array of objects containing any nodes, ways, relations,
+// changesets, notes and users.
+func (o *OSM) Objects() Objects {
 	if o == nil {
 		return nil
 	}
 
-	result := make([]interface{}, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets)+len(o.Notes)+len(o.Users))
-	for _, e := range o.Nodes {
-		result = append(result, e)
+	result := make(Objects, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets)+len(o.Notes)+len(o.Users))
+	for _, o := range o.Nodes {
+		result = append(result, o)
 	}
 
-	for _, e := range o.Ways {
-		result = append(result, e)
+	for _, o := range o.Ways {
+		result = append(result, o)
 	}
 
-	for _, e := range o.Relations {
-		result = append(result, e)
+	for _, o := range o.Relations {
+		result = append(result, o)
 	}
 
-	for _, e := range o.Changesets {
-		result = append(result, e)
+	for _, o := range o.Changesets {
+		result = append(result, o)
 	}
 
-	for _, e := range o.Notes {
-		result = append(result, e)
+	for _, o := range o.Notes {
+		result = append(result, o)
 	}
 
-	for _, e := range o.Users {
-		result = append(result, e)
+	for _, o := range o.Users {
+		result = append(result, o)
 	}
 
 	return result
@@ -306,14 +308,14 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 // http://overpass-api.de/output_formats.html#json
 func (o OSM) MarshalJSON() ([]byte, error) {
 	s := struct {
-		Version     float64     `json:"version,omitempty"`
-		Generator   string      `json:"generator,omitempty"`
-		Copyright   string      `json:"copyright,omitempty"`
-		Attribution string      `json:"attribution,omitempty"`
-		License     string      `json:"license,omitempty"`
-		Elements    interface{} `json:"elements"`
+		Version     float64 `json:"version,omitempty"`
+		Generator   string  `json:"generator,omitempty"`
+		Copyright   string  `json:"copyright,omitempty"`
+		Attribution string  `json:"attribution,omitempty"`
+		License     string  `json:"license,omitempty"`
+		Elements    Objects `json:"elements"`
 	}{o.Version, o.Generator, o.Copyright,
-		o.Attribution, o.License, o.objects()}
+		o.Attribution, o.License, o.Objects()}
 
 	return json.Marshal(s)
 }
