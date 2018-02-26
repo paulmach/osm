@@ -467,8 +467,12 @@ func (t testParent) Committed() time.Time {
 	return t.committed
 }
 
-func (t testParent) Refs() osm.FeatureIDs {
-	return t.refs
+func (t testParent) Refs() (osm.FeatureIDs, []bool) {
+	annotated := make([]bool, len(t.refs))
+	for i := range annotated {
+		annotated[i] = true
+	}
+	return t.refs, annotated
 }
 
 func (t *testParent) SetChild(idx int, c Child) {

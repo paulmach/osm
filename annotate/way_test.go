@@ -49,6 +49,7 @@ func TestWays_childFilter(t *testing.T) {
 		{ID: 2, Version: 1, Lat: 1, Lon: 1, Visible: true},
 		{ID: 2, Version: 2, Lat: 2, Lon: 2, Visible: true},
 		{ID: 2, Version: 3, Lat: 3, Lon: 3, Visible: true},
+		{ID: 3, Version: 1, Lat: 1, Lon: 1, Visible: true},
 	}
 
 	ways := osm.Ways{
@@ -56,7 +57,11 @@ func TestWays_childFilter(t *testing.T) {
 			ID:      1,
 			Version: 1,
 			Visible: true,
-			Nodes:   osm.WayNodes{{ID: 1}, {ID: 2}},
+			Nodes: osm.WayNodes{
+				{ID: 1, Version: 1},
+				{ID: 2, Version: 1}, // filter says no annotate
+				{ID: 3},             // annotate because not
+			},
 		},
 	}
 
@@ -74,12 +79,16 @@ func TestWays_childFilter(t *testing.T) {
 		t.Fatalf("compute error: %v", err)
 	}
 
-	if ways[0].Nodes[0].Version == 0 {
+	if ways[0].Nodes[0].Lat == 0 {
 		t.Errorf("should annotate first node")
 	}
 
-	if ways[0].Nodes[1].Version != 0 {
+	if ways[0].Nodes[1].Lat != 0 {
 		t.Errorf("should not annotate second node")
+	}
+
+	if ways[0].Nodes[2].Lat == 0 {
+		t.Errorf("should annotate third node")
 	}
 }
 

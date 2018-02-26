@@ -199,20 +199,17 @@ func nextVersionIndex(current Child, child ChildList, nextParent Parent, opts *O
 func mapChildLocs(parents []Parent, filter func(osm.FeatureID) bool) map[osm.FeatureID]childLocs {
 	result := make(map[osm.FeatureID]childLocs)
 	for i, p := range parents {
-		for j, fid := range p.Refs() {
-			if filter != nil && !filter(fid) {
+		refs, annotated := p.Refs()
+		for j, fid := range refs {
+			if annotated[j] && filter != nil && !filter(fid) {
 				continue
 			}
 
 			if result[fid] == nil {
-				v := make([]childLoc, 1, len(parents))
-				v[0].Parent = i
-				v[0].Index = j
-
-				result[fid] = v
-			} else {
-				result[fid] = append(result[fid], childLoc{Parent: i, Index: j})
+				result[fid] = make([]childLoc, 0, len(parents))
 			}
+
+			result[fid] = append(result[fid], childLoc{Parent: i, Index: j})
 		}
 	}
 

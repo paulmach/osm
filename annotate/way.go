@@ -57,8 +57,7 @@ func Ways(
 // A parentWay wraps a osm.Way into the core.Parent interface
 // so that updates can be computed.
 type parentWay struct {
-	Way  *osm.Way
-	refs osm.FeatureIDs
+	Way *osm.Way
 }
 
 func (w parentWay) ID() osm.FeatureID {
@@ -89,12 +88,16 @@ func (w parentWay) Committed() time.Time {
 	return *w.Way.Committed
 }
 
-func (w parentWay) Refs() osm.FeatureIDs {
-	if w.refs == nil {
-		w.refs = w.Way.Nodes.FeatureIDs()
+func (w parentWay) Refs() (osm.FeatureIDs, []bool) {
+	ids := make(osm.FeatureIDs, len(w.Way.Nodes))
+	annotated := make([]bool, len(w.Way.Nodes))
+
+	for i := range w.Way.Nodes {
+		ids[i] = w.Way.Nodes[i].FeatureID()
+		annotated[i] = w.Way.Nodes[i].Version != 0
 	}
 
-	return w.refs
+	return ids, annotated
 }
 
 func (w *parentWay) SetChild(idx int, child core.Child) {

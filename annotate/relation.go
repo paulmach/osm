@@ -57,7 +57,6 @@ func Relations(
 // so that updates can be computed.
 type parentRelation struct {
 	Relation *osm.Relation
-	refs     osm.FeatureIDs
 	ways     map[osm.WayID]*osm.Way
 }
 
@@ -89,12 +88,16 @@ func (r parentRelation) Committed() time.Time {
 	return *r.Relation.Committed
 }
 
-func (r parentRelation) Refs() osm.FeatureIDs {
-	if r.refs == nil {
-		r.refs = r.Relation.Members.FeatureIDs()
+func (r parentRelation) Refs() (osm.FeatureIDs, []bool) {
+	ids := make(osm.FeatureIDs, len(r.Relation.Members))
+	annotated := make([]bool, len(r.Relation.Members))
+
+	for i := range r.Relation.Members {
+		ids[i] = r.Relation.Members[i].FeatureID()
+		annotated[i] = r.Relation.Members[i].Version != 0
 	}
 
-	return r.refs
+	return ids, annotated
 }
 
 func (r *parentRelation) SetChild(idx int, child core.Child) {

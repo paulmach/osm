@@ -57,7 +57,8 @@ func IgnoreMissingChildren(yes bool) Option {
 
 // ChildFilter allows for only a subset of children to be annotated on the parent.
 // This can greatly improve update speed by only worrying about the children
-// updated in the same batch.
+// updated in the same batch. All unannotated children will be annotated regardless
+// of the results of the filter function.
 func ChildFilter(filter func(osm.FeatureID) bool) Option {
 	return func(o *core.Options) error {
 		o.ChildFilter = filter

@@ -17,7 +17,11 @@ type Parent interface {
 	Timestamp() time.Time
 	Committed() time.Time
 
-	Refs() osm.FeatureIDs
+	// Refs returns normalized information about the children.
+	// Currently this is the feature ids and if it is already annotated.
+	// Note: we auto-annotate all unannotated children if they would have
+	// been filtered out.
+	Refs() (osm.FeatureIDs, []bool)
 	SetChild(idx int, c Child)
 }
 
