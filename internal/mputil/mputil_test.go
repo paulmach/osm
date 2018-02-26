@@ -2,8 +2,10 @@ package mputil
 
 import (
 	"testing"
+	"time"
 
 	"github.com/paulmach/orb"
+	"github.com/paulmach/osm"
 )
 
 func TestMultiSegment_ToRing_noAnnotation(t *testing.T) {
@@ -166,6 +168,20 @@ func TestMultiSegment_ToRing_annotation(t *testing.T) {
 			testToRing(t, tc.input, tc.output, tc.orientation)
 		})
 	}
+}
+
+func TestGroup_zeroLengthWays(t *testing.T) {
+	// should not panic
+	Group(
+		osm.Members{
+			{Type: osm.TypeWay, Ref: 1, Role: "outer", Orientation: orb.CW},
+			{Type: osm.TypeWay, Ref: 1, Role: "inner", Orientation: orb.CCW},
+		},
+		map[osm.WayID]*osm.Way{
+			1: &osm.Way{ID: 1},
+		},
+		time.Time{},
+	)
 }
 
 func testToRing(t testing.TB, input MultiSegment, expected orb.Ring, orient orb.Orientation) {

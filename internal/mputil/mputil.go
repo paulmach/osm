@@ -146,6 +146,12 @@ func Group(
 			tainted = true
 		}
 
+		// zero length ways exist and don't make any sense when
+		// building the multipolygon rings.
+		if len(line) == 0 {
+			continue
+		}
+
 		l := Segment{
 			Index:       uint32(i),
 			Orientation: m.Orientation,
