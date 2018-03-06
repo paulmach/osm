@@ -1,12 +1,31 @@
 package mputil
 
 import (
+	"reflect"
 	"testing"
 	"time"
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm"
 )
+
+func TestMultiSegment_ToLineString(t *testing.T) {
+	ms := MultiSegment{
+		{
+			Line: orb.LineString{{1, 1}, {2, 2}},
+		},
+		{
+			Line: orb.LineString{{3, 3}, {4, 4}},
+		},
+	}
+
+	ls := ms.ToLineString()
+	expected := orb.LineString{{1, 1}, {2, 2}, {3, 3}, {4, 4}}
+
+	if !ls.Equal(expected) {
+		t.Errorf("incorrect line string: %v", ls)
+	}
+}
 
 func TestMultiSegment_ToRing_noAnnotation(t *testing.T) {
 	cases := []struct {
@@ -167,6 +186,69 @@ func TestMultiSegment_ToRing_annotation(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			testToRing(t, tc.input, tc.output, tc.orientation)
 		})
+	}
+}
+
+func TestMultiSegment_Orientation(t *testing.T) {
+	ms := MultiSegment{
+		{
+			Line: orb.LineString{{0, 0}, {1, 0}},
+		},
+		{
+			Line: orb.LineString{{1, 1}, {0, 1}},
+		},
+	}
+
+	if o := ms.Orientation(); o != orb.CCW {
+		t.Errorf("incorrect orientation: %v != %v", o, orb.CCW)
+	}
+}
+
+func TestGroup(t *testing.T) {
+	members := osm.Members{
+		{Type: osm.TypeNode, Ref: 1},
+		{Type: osm.TypeWay, Ref: 1, Role: "outer", Orientation: orb.CW},
+		{Type: osm.TypeWay, Ref: 2, Role: "inner", Orientation: orb.CCW},
+		{Type: osm.TypeWay, Ref: 3, Role: "inner", Orientation: orb.CCW},
+		{Type: osm.TypeRelation, Ref: 3},
+	}
+
+	ways := map[osm.WayID]*osm.Way{
+		1: &osm.Way{ID: 1, Nodes: osm.WayNodes{
+			{Lat: 1.0, Lon: 2.0},
+			{Lat: 2.0, Lon: 3.0},
+		}},
+		2: &osm.Way{ID: 1, Nodes: osm.WayNodes{
+			{Lat: 3.0, Lon: 4.0},
+			{Lat: 4.0, Lon: 5.0},
+		}},
+	}
+
+	outer, inner, tainted := Group(members, ways, time.Time{})
+	if !tainted {
+		t.Errorf("should be tainted")
+	}
+
+	// outer
+	expected := []Segment{
+		{
+			Index: 1, Orientation: orb.CW, Reversed: true,
+			Line: orb.LineString{{3, 2}, {2, 1}},
+		},
+	}
+	if !reflect.DeepEqual(outer, expected) {
+		t.Errorf("incorrect outer: %+v", inner)
+	}
+
+	// inner
+	expected = []Segment{
+		{
+			Index: 2, Orientation: orb.CCW, Reversed: true,
+			Line: orb.LineString{{5, 4}, {4, 3}},
+		},
+	}
+	if !reflect.DeepEqual(inner, expected) {
+		t.Errorf("incorrect inner: %+v", inner)
 	}
 }
 

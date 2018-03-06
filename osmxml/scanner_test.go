@@ -122,8 +122,73 @@ func TestScanner_Err(t *testing.T) {
 	}
 }
 
-func BenchmarkDelaware(b *testing.B) {
-	f, err := os.Open("../testdata/delaware-latest.osm.bz2")
+func TestScanner_userNote(t *testing.T) {
+	r := userNoteReader()
+	scanner := New(context.Background(), r)
+	defer scanner.Close()
+
+	if v := scanner.Scan(); !v {
+		t.Fatalf("should read first scan: %v", scanner.Err())
+	}
+
+	if u := scanner.Object().(*osm.User); u.ID != 1 {
+		t.Fatalf("did not scan correctly, got %v", u)
+	}
+
+	if v := scanner.Scan(); !v {
+		t.Fatalf("should read first scan: %v", scanner.Err())
+	}
+
+	if n := scanner.Object().(*osm.Note); n.ID != 2 {
+		t.Fatalf("did not scan correctly, got %v", n)
+	}
+}
+
+func TestAndorra(t *testing.T) {
+	f, err := os.Open("../testdata/andorra-latest.osm.bz2")
+	if err != nil {
+		t.Fatalf("could not open file: %v", err)
+	}
+
+	r := bzip2.NewReader(f)
+	scanner := New(nil, r)
+
+	var (
+		nodes     int
+		ways      int
+		relations int
+	)
+
+	for scanner.Scan() {
+		switch scanner.Object().(type) {
+		case *osm.Node:
+			nodes++
+		case *osm.Way:
+			ways++
+		case *osm.Relation:
+			relations++
+		}
+	}
+
+	if scanner.Err() != nil {
+		t.Errorf("scanner returned error: %v", err)
+	}
+
+	if nodes != 203265 {
+		t.Errorf("incorrect number of nodes: %v", nodes)
+	}
+
+	if ways != 9080 {
+		t.Errorf("incorrect number of ways: %v", ways)
+	}
+
+	if relations != 233 {
+		t.Errorf("incorrect number of relations: %v", relations)
+	}
+}
+
+func BenchmarkAndorra(b *testing.B) {
+	f, err := os.Open("../testdata/andorra-latest.osm.bz2")
 	if err != nil {
 		b.Fatalf("could not open file: %v", err)
 	}
@@ -155,6 +220,16 @@ func BenchmarkDelaware(b *testing.B) {
 	}
 
 	b.Logf("nodes %d, ways %d, relations %d", nodes, ways, relations)
+}
+
+func userNoteReader() io.Reader {
+	data := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<osm>
+  <user id="1"></user>
+  <note><id>2</id></note>
+</osm>`)
+
+	return bytes.NewReader(data)
 }
 
 func changesetReader() io.Reader {

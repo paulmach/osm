@@ -58,6 +58,70 @@ func TestJoin(t *testing.T) {
 					Line: orb.LineString{{0, 0}, {1, 1}},
 				},
 				{
+					Line: orb.LineString{{1, 1}, {2, 2}},
+				},
+			},
+			output: []MultiSegment{
+				{
+					{
+						Line: orb.LineString{{0, 0}},
+					},
+					{
+						Line: orb.LineString{{1, 1}, {2, 2}},
+					},
+				},
+			},
+		},
+		{
+			name: "joins two lines reverse order",
+			input: []Segment{
+				{
+					Line: orb.LineString{{1, 1}, {2, 2}},
+				},
+				{
+					Line: orb.LineString{{0, 0}, {1, 1}},
+				},
+			},
+			output: []MultiSegment{
+				{
+					{
+						Line: orb.LineString{{0, 0}, {1, 1}},
+					},
+					{
+						Line: orb.LineString{{2, 2}},
+					},
+				},
+			},
+		},
+		{
+			name: "joins two lines with reverse",
+			input: []Segment{
+				{
+					Line: orb.LineString{{2, 2}, {1, 1}},
+				},
+				{
+					Line: orb.LineString{{2, 2}, {3, 3}},
+				},
+			},
+			output: []MultiSegment{
+				{
+					{
+						Reversed: true,
+						Line:     orb.LineString{{1, 1}},
+					},
+					{
+						Line: orb.LineString{{2, 2}, {3, 3}},
+					},
+				},
+			},
+		},
+		{
+			name: "joins two lines with reverse second",
+			input: []Segment{
+				{
+					Line: orb.LineString{{0, 0}, {1, 1}},
+				},
+				{
 					Line: orb.LineString{{2, 2}, {1, 1}},
 				},
 			},
