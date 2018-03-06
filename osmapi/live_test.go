@@ -301,7 +301,7 @@ func TestRelationFull(t *testing.T) {
 		t.Errorf("incorrect number of ways: %d", l)
 	}
 
-	if l := len(o.Nodes); l != 370 {
+	if l := len(o.Nodes); l != 383 {
 		t.Errorf("incorrect number of nodes: %d", l)
 	}
 }

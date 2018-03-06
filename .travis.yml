@@ -32,4 +32,5 @@ after_success:
   - gover
   - ls -l
   - goveralls -coverprofile=gover.coverprofile -service=travis-ci
-
+  - cp gover.coverprofile coverage.txt
+  - bash <(curl -s https://codecov.io/bash)
