@@ -52,7 +52,7 @@ func TestCompute(t *testing.T) {
 		},
 	}
 
-	updates, err := Compute(ctx, parents, ds, &Options{Threshold: time.Minute})
+	updates, err := Compute(ctx, parents, ds, nil)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
 	}

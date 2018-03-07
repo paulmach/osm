@@ -98,7 +98,8 @@ func TestConvert(t *testing.T) {
 	t.Run("relation", func(t *testing.T) {
 		xml := `
 		<osm>
-			<relation id='1'>
+			<relation id='1' version='1' timestamp='2018-01-01T00:00:00Z'
+				changeset='123' user='user' uid='431'>
 				<tag k='type' v='multipolygon' />
 				<tag k='amenity' v='hospital' />
 				<member type='way' ref='2' role='outer' />
@@ -131,6 +132,13 @@ func TestConvert(t *testing.T) {
 		feature.Properties["tags"] = map[string]string{
 			"amenity": "hospital",
 			"type":    "multipolygon",
+		}
+		feature.Properties["meta"] = map[string]interface{}{
+			"changeset": osm.ChangesetID(123),
+			"timestamp": "2018-01-01T00:00:00Z",
+			"uid":       osm.UserID(431),
+			"user":      "user",
+			"version":   1,
 		}
 
 		fc := geojson.NewFeatureCollection().Append(feature)
@@ -515,6 +523,50 @@ func TestConvert_useAugmentedNodeValues(t *testing.T) {
 
 	fc := geojson.NewFeatureCollection().Append(feature)
 	testConvert(t, xml, fc)
+}
+
+func TestBuildRouteLineString(t *testing.T) {
+	ctx := &context{
+		osm:       &osm.OSM{},
+		skippable: map[osm.WayID]struct{}{},
+		wayMap: map[osm.WayID]*osm.Way{
+			2: &osm.Way{
+				ID: 2,
+				Nodes: osm.WayNodes{
+					{ID: 1, Lat: 1, Lon: 2},
+					{ID: 2},
+					{ID: 3, Lat: 3, Lon: 4},
+				},
+			},
+		},
+	}
+
+	relation := &osm.Relation{
+		ID: 1,
+		Members: osm.Members{
+			{Type: osm.TypeNode, Ref: 1},
+			{Type: osm.TypeWay, Ref: 2},
+			{Type: osm.TypeWay, Ref: 3},
+		},
+	}
+
+	feature := ctx.buildRouteLineString(relation)
+	if !orb.Equal(feature.Geometry, orb.LineString{{2, 1}, {4, 3}}) {
+		t.Errorf("incorrect geometry: %v", feature.Geometry)
+	}
+
+	relation = &osm.Relation{
+		ID: 1,
+		Members: osm.Members{
+			{Type: osm.TypeWay, Ref: 20},
+			{Type: osm.TypeWay, Ref: 30},
+		},
+	}
+
+	feature = ctx.buildRouteLineString(relation)
+	if feature != nil {
+		t.Errorf("should not return feature if no ways present: %v", feature)
+	}
 }
 
 func testConvert(t *testing.T, rawXML string, expected *geojson.FeatureCollection, opts ...Option) {
