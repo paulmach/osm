@@ -11,6 +11,18 @@ import (
 	"github.com/paulmach/orb"
 )
 
+func TestRelation_ids(t *testing.T) {
+	r := Relation{ID: 12, Version: 2}
+
+	if id := r.FeatureID(); id != RelationID(12).FeatureID() {
+		t.Errorf("incorrect feature id: %v", id)
+	}
+
+	if id := r.ElementID(); id != RelationID(12).ElementID(2) {
+		t.Errorf("incorrect element id: %v", id)
+	}
+}
+
 func TestRelation_MarshalJSON(t *testing.T) {
 	r := Relation{
 		ID: 123,
@@ -240,5 +252,122 @@ func TestRelations_Marshal(t *testing.T) {
 
 	if rs2 != nil {
 		t.Errorf("should return nil Relations for empty data, got %v", rs2)
+	}
+}
+
+func TestMember_ids(t *testing.T) {
+	cases := []struct {
+		name string
+		m    Member
+		fid  FeatureID
+		eid  ElementID
+	}{
+		{
+			name: "node",
+			m:    Member{Type: TypeNode, Ref: 12, Version: 2},
+			fid:  NodeID(12).FeatureID(),
+			eid:  NodeID(12).ElementID(2),
+		},
+		{
+			name: "way",
+			m:    Member{Type: TypeWay, Ref: 12, Version: 2},
+			fid:  WayID(12).FeatureID(),
+			eid:  WayID(12).ElementID(2),
+		},
+		{
+			name: "relation",
+			m:    Member{Type: TypeRelation, Ref: 12, Version: 2},
+			fid:  RelationID(12).FeatureID(),
+			eid:  RelationID(12).ElementID(2),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if id := tc.m.FeatureID(); id != tc.fid {
+				t.Errorf("incorrect feature id: %v", id)
+			}
+
+			if id := tc.m.ElementID(); id != tc.eid {
+				t.Errorf("incorrect element id: %v", id)
+			}
+		})
+	}
+}
+func TestMembers_ids(t *testing.T) {
+	ms := Members{
+		{Type: TypeNode, Ref: 1, Version: 3},
+		{Type: TypeWay, Ref: 2, Version: 4},
+		{Type: TypeRelation, Ref: 3, Version: 5},
+	}
+
+	eids := ElementIDs{
+		NodeID(1).ElementID(3),
+		WayID(2).ElementID(4),
+		RelationID(3).ElementID(5),
+	}
+	if ids := ms.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect element ids: %v", ids)
+	}
+
+	fids := FeatureIDs{
+		NodeID(1).FeatureID(),
+		WayID(2).FeatureID(),
+		RelationID(3).FeatureID(),
+	}
+	if ids := ms.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
+		t.Errorf("incorrect feature ids: %v", ids)
+	}
+}
+
+func TestRelations_ids(t *testing.T) {
+	rs := Relations{
+		{ID: 1, Version: 3},
+		{ID: 2, Version: 4},
+	}
+
+	eids := ElementIDs{RelationID(1).ElementID(3), RelationID(2).ElementID(4)}
+	if ids := rs.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect element ids: %v", ids)
+	}
+
+	fids := FeatureIDs{RelationID(1).FeatureID(), RelationID(2).FeatureID()}
+	if ids := rs.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
+		t.Errorf("incorrect feature ids: %v", ids)
+	}
+
+	rids := []RelationID{1, 2}
+	if ids := rs.IDs(); !reflect.DeepEqual(ids, rids) {
+		t.Errorf("incorrect node id: %v", rids)
+	}
+}
+
+func TestRelations_SortByIDVersion(t *testing.T) {
+	rs := Relations{
+		{ID: 7, Version: 3},
+		{ID: 2, Version: 4},
+		{ID: 5, Version: 2},
+		{ID: 5, Version: 3},
+		{ID: 5, Version: 4},
+		{ID: 3, Version: 4},
+		{ID: 4, Version: 4},
+		{ID: 9, Version: 4},
+	}
+
+	rs.SortByIDVersion()
+
+	eids := ElementIDs{
+		RelationID(2).ElementID(4),
+		RelationID(3).ElementID(4),
+		RelationID(4).ElementID(4),
+		RelationID(5).ElementID(2),
+		RelationID(5).ElementID(3),
+		RelationID(5).ElementID(4),
+		RelationID(7).ElementID(3),
+		RelationID(9).ElementID(4),
+	}
+
+	if ids := rs.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect sort: %v", eids)
 	}
 }

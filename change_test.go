@@ -8,6 +8,25 @@ import (
 	"testing"
 )
 
+func TestChange_append(t *testing.T) {
+	c := &Change{}
+
+	c.AppendCreate(&Node{ID: 1})
+	if c.Create.Nodes[0].ID != 1 {
+		t.Errorf("append create not working")
+	}
+
+	c.AppendModify(&Node{ID: 2})
+	if c.Modify.Nodes[0].ID != 2 {
+		t.Errorf("append modify not working")
+	}
+
+	c.AppendDelete(&Node{ID: 3})
+	if c.Delete.Nodes[0].ID != 3 {
+		t.Errorf("append delete not working")
+	}
+}
+
 func TestChange(t *testing.T) {
 	data := []byte(`
 <osmChange version="0.6" generator="OpenStreetMap server" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">

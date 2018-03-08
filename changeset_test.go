@@ -310,3 +310,12 @@ func TestChangeset_MarshalXML(t *testing.T) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
 }
+
+func TestChangesets_IDs(t *testing.T) {
+	cs := Changesets{{ID: 1}, {ID: 2}}
+
+	csids := []ChangesetID{1, 2}
+	if ids := cs.IDs(); !reflect.DeepEqual(ids, csids) {
+		t.Errorf("incorrect changeset id: %v", csids)
+	}
+}

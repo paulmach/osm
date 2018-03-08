@@ -7,7 +7,21 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/paulmach/orb"
 )
+
+func TestWay_ids(t *testing.T) {
+	w := Way{ID: 12, Version: 2}
+
+	if id := w.FeatureID(); id != WayID(12).FeatureID() {
+		t.Errorf("incorrect feature id: %v", id)
+	}
+
+	if id := w.ElementID(); id != WayID(12).ElementID(2) {
+		t.Errorf("incorrect element id: %v", id)
+	}
+}
 
 func TestWay_ApplyUpdatesUpTo(t *testing.T) {
 	w := Way{
@@ -80,6 +94,31 @@ func TestWay_ApplyUpdate_error(t *testing.T) {
 	}
 }
 
+func TestWayNode_ids(t *testing.T) {
+	wn := WayNode{ID: 12, Version: 2}
+
+	if id := wn.FeatureID(); id != NodeID(12).FeatureID() {
+		t.Errorf("incorrect feature id: %v", id)
+	}
+
+	if id := wn.ElementID(); id != NodeID(12).ElementID(2) {
+		t.Errorf("incorrect element id: %v", id)
+	}
+}
+
+func TestWayNode_Point(t *testing.T) {
+	wn := WayNode{ID: 12, Version: 2, Lon: 1, Lat: 2}
+
+	p := wn.Point()
+	if p.Lon() != 1 {
+		t.Errorf("incorrect point lon: %v", p)
+	}
+
+	if p.Lat() != 2 {
+		t.Errorf("incorrect point lat: %v", p)
+	}
+}
+
 func TestWayNodes_Bounds(t *testing.T) {
 	wn := WayNodes{
 		{Lat: 1, Lon: 2},
@@ -91,6 +130,56 @@ func TestWayNodes_Bounds(t *testing.T) {
 	if !reflect.DeepEqual(b, &Bounds{1, 3, 2, 4}) {
 		t.Errorf("incorrect bounds: %v", b)
 	}
+}
+
+func TestWay_LineString(t *testing.T) {
+	w := &Way{
+		ID: 1,
+		Nodes: WayNodes{
+			{ID: 1, Lon: 1, Lat: 2},
+			{ID: 2, Lon: 0, Lat: 3},
+			{ID: 3, Lon: 0, Lat: 0},
+			{ID: 3, Lon: 3, Lat: 0},
+			{ID: 3, Lon: 3, Lat: 4},
+		},
+	}
+
+	ls := w.LineString()
+	expected := orb.LineString{{1, 2}, {0, 3}, {3, 0}, {3, 4}}
+	if !ls.Equal(expected) {
+		t.Errorf("incorrect linestring: %v", ls)
+	}
+
+	w.Updates = Updates{
+		{
+			Index:     1,
+			Timestamp: time.Time{},
+			Lon:       10, Lat: 20,
+		},
+		{
+			Index:     1000, // index out of range should be skipped
+			Timestamp: time.Time{},
+			Lon:       10, Lat: 20,
+		},
+		{
+			Index:     2, // should be skipped
+			Timestamp: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
+			Lon:       10, Lat: 20,
+		},
+		{
+			Index:     0,
+			Timestamp: time.Time{},
+			Lon:       5, Lat: 6,
+		},
+		{
+			Index:     4,
+			Timestamp: time.Time{},
+			Lon:       7, Lat: 8,
+		},
+	}
+
+	ls = w.LineStringAt(time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC))
+	expected = orb.LineString{{5, 6}, {10, 20}, {3, 0}, {7, 8}}
 }
 
 func TestWay_MarshalJSON(t *testing.T) {
@@ -241,5 +330,98 @@ func TestWays_Marshal(t *testing.T) {
 
 	if ws2 != nil {
 		t.Errorf("should return nil Ways for empty data, got %v", ws2)
+	}
+}
+
+func TestWayNodes_ids(t *testing.T) {
+	wns := WayNodes{
+		{ID: 1, Version: 3},
+		{ID: 2, Version: 4},
+	}
+
+	eids := ElementIDs{NodeID(1).ElementID(3), NodeID(2).ElementID(4)}
+	if ids := wns.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect element ids: %v", ids)
+	}
+
+	fids := FeatureIDs{NodeID(1).FeatureID(), NodeID(2).FeatureID()}
+	if ids := wns.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
+		t.Errorf("incorrect feature ids: %v", ids)
+	}
+
+	nids := []NodeID{NodeID(1), NodeID(2)}
+	if ids := wns.NodeIDs(); !reflect.DeepEqual(ids, nids) {
+		t.Errorf("incorrect node ids: %v", nids)
+	}
+}
+
+func TestWayNodes_UnmarshalJSON(t *testing.T) {
+	wn := WayNodes{}
+
+	if err := wn.UnmarshalJSON([]byte("[asdf,]")); err == nil {
+		t.Errorf("should return error whn json is invalid")
+	}
+
+	json := []byte(`[1,2,3,4]`)
+	err := wn.UnmarshalJSON(json)
+	if err != nil {
+		t.Errorf("unmarshal error: %v", err)
+	}
+
+	expected := []NodeID{1, 2, 3, 4}
+	if ids := wn.NodeIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect ids: %v", ids)
+	}
+}
+
+func TestWays_ids(t *testing.T) {
+	ws := Ways{
+		{ID: 1, Version: 3},
+		{ID: 2, Version: 4},
+	}
+
+	eids := ElementIDs{WayID(1).ElementID(3), WayID(2).ElementID(4)}
+	if ids := ws.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect element ids: %v", ids)
+	}
+
+	fids := FeatureIDs{WayID(1).FeatureID(), WayID(2).FeatureID()}
+	if ids := ws.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
+		t.Errorf("incorrect feature ids: %v", ids)
+	}
+
+	wids := []WayID{1, 2}
+	if ids := ws.IDs(); !reflect.DeepEqual(ids, wids) {
+		t.Errorf("incorrect way ids: %v", wids)
+	}
+}
+
+func TestWays_SortByIDVersion(t *testing.T) {
+	ws := Ways{
+		{ID: 7, Version: 3},
+		{ID: 2, Version: 4},
+		{ID: 5, Version: 2},
+		{ID: 5, Version: 3},
+		{ID: 5, Version: 4},
+		{ID: 3, Version: 4},
+		{ID: 4, Version: 4},
+		{ID: 9, Version: 4},
+	}
+
+	ws.SortByIDVersion()
+
+	eids := ElementIDs{
+		WayID(2).ElementID(4),
+		WayID(3).ElementID(4),
+		WayID(4).ElementID(4),
+		WayID(5).ElementID(2),
+		WayID(5).ElementID(3),
+		WayID(5).ElementID(4),
+		WayID(7).ElementID(3),
+		WayID(9).ElementID(4),
+	}
+
+	if ids := ws.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect sort: %v", eids)
 	}
 }

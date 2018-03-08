@@ -156,7 +156,9 @@ func (w *Way) applyUpdate(u Update) error {
 func (w *Way) LineString() orb.LineString {
 	ls := make(orb.LineString, 0, len(w.Nodes))
 	for _, n := range w.Nodes {
-		if n.Lat != 0 || n.Lon != 0 {
+		if n.Version != 0 || n.Lon != 0 || n.Lat != 0 {
+			// If version is there we assume it's annotated.
+			// We use this assumption in a lot of places.
 			ls = append(ls, n.Point())
 		}
 	}
@@ -167,7 +169,11 @@ func (w *Way) LineString() orb.LineString {
 // LineStringAt will return the LineString from the annotated points at
 // the given time. It will apply to the updates upto and including the give time.
 func (w *Way) LineStringAt(t time.Time) orb.LineString {
-	ls := w.LineString()
+	// linestring with all the zeros
+	ls := make(orb.LineString, 0, len(w.Nodes))
+	for _, n := range w.Nodes {
+		ls = append(ls, n.Point())
+	}
 
 	for _, u := range w.Updates {
 		if u.Timestamp.After(t) {
@@ -182,7 +188,18 @@ func (w *Way) LineStringAt(t time.Time) orb.LineString {
 		ls[u.Index][1] = u.Lat
 	}
 
-	return ls
+	// remove all the zeros
+	count := 0
+	for i := range ls {
+		if n := w.Nodes[i]; n.Version == 0 && n.Lon == 0 && n.Lat == 0 {
+			continue
+		}
+
+		ls[count] = ls[i]
+		count++
+	}
+
+	return ls[:count]
 }
 
 // Bounds computes the bounds for the given way nodes.
@@ -207,7 +224,7 @@ func (wn WayNodes) Bounds() *Bounds {
 
 // ElementIDs returns a list of element ids for the way nodes.
 func (wn WayNodes) ElementIDs() ElementIDs {
-	// add 1 to the memory length because a common use cases
+	// add 1 to the memory length because a common use case
 	// is to append the way.
 	ids := make(ElementIDs, len(wn), len(wn)+1)
 	for i, n := range wn {
@@ -219,7 +236,7 @@ func (wn WayNodes) ElementIDs() ElementIDs {
 
 // FeatureIDs returns a list of feature ids for the way nodes.
 func (wn WayNodes) FeatureIDs() FeatureIDs {
-	// add 1 to the memory length because a common use cases
+	// add 1 to the memory length because a common use case
 	// is to append the way.
 	ids := make(FeatureIDs, len(wn), len(wn)+1)
 	for i, n := range wn {
@@ -231,9 +248,7 @@ func (wn WayNodes) FeatureIDs() FeatureIDs {
 
 // NodeIDs returns a list of node ids for the way nodes.
 func (wn WayNodes) NodeIDs() []NodeID {
-	// add 1 to the memory length because a common use cases
-	// is to append the way.
-	ids := make([]NodeID, len(wn), len(wn)+1)
+	ids := make([]NodeID, len(wn), len(wn))
 	for i, n := range wn {
 		ids[i] = n.ID
 	}

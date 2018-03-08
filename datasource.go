@@ -70,7 +70,7 @@ func (ds *HistoryDatasource) add(o *OSM, visible ...bool) {
 }
 
 // NodeHistory returns the history for the given id from the map.
-func (ds HistoryDatasource) NodeHistory(ctx context.Context, id NodeID) (Nodes, error) {
+func (ds *HistoryDatasource) NodeHistory(ctx context.Context, id NodeID) (Nodes, error) {
 	if ds.Nodes == nil {
 		return nil, errNotFound
 	}
@@ -84,7 +84,7 @@ func (ds HistoryDatasource) NodeHistory(ctx context.Context, id NodeID) (Nodes, 
 }
 
 // WayHistory returns the history for the given id from the map.
-func (ds HistoryDatasource) WayHistory(ctx context.Context, id WayID) (Ways, error) {
+func (ds *HistoryDatasource) WayHistory(ctx context.Context, id WayID) (Ways, error) {
 	if ds.Ways == nil {
 		return nil, errNotFound
 	}
@@ -98,7 +98,7 @@ func (ds HistoryDatasource) WayHistory(ctx context.Context, id WayID) (Ways, err
 }
 
 // RelationHistory returns the history for the given id from the map.
-func (ds HistoryDatasource) RelationHistory(ctx context.Context, id RelationID) (Relations, error) {
+func (ds *HistoryDatasource) RelationHistory(ctx context.Context, id RelationID) (Relations, error) {
 	if ds.Relations == nil {
 		return nil, errNotFound
 	}
@@ -112,6 +112,6 @@ func (ds HistoryDatasource) RelationHistory(ctx context.Context, id RelationID) 
 }
 
 // NotFound returns true if the error returned is a not found error.
-func (ds HistoryDatasource) NotFound(err error) bool {
+func (ds *HistoryDatasource) NotFound(err error) bool {
 	return err == errNotFound
 }

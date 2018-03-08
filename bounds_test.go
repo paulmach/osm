@@ -8,6 +8,14 @@ import (
 )
 
 func TestNewBoundFromTile(t *testing.T) {
+	if _, err := NewBoundsFromTile(maptile.New(1000, 1, 3)); err == nil {
+		t.Errorf("should return error for x out of bound")
+	}
+
+	if _, err := NewBoundsFromTile(maptile.New(1, 1000, 3)); err == nil {
+		t.Errorf("should return error for y out of bound")
+	}
+
 	bounds, _ := NewBoundsFromTile(maptile.New(7, 8, 9))
 
 	// check 9 tiles around bounds

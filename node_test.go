@@ -129,3 +129,55 @@ func TestUnmarshalNodes(t *testing.T) {
 		t.Errorf("should return nil Nodes for empty data, got %v", ns2)
 	}
 }
+
+func TestNodes_ids(t *testing.T) {
+	ns := Nodes{
+		{ID: 1, Version: 3},
+		{ID: 2, Version: 4},
+	}
+
+	eids := ElementIDs{NodeID(1).ElementID(3), NodeID(2).ElementID(4)}
+	if ids := ns.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect element ids: %v", ids)
+	}
+
+	fids := FeatureIDs{NodeID(1).FeatureID(), NodeID(2).FeatureID()}
+	if ids := ns.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
+		t.Errorf("incorrect feature ids: %v", ids)
+	}
+
+	nids := []NodeID{1, 2}
+	if ids := ns.IDs(); !reflect.DeepEqual(ids, nids) {
+		t.Errorf("incorrect node ids: %v", nids)
+	}
+}
+
+func TestNodes_SortByIDVersion(t *testing.T) {
+	ns := Nodes{
+		{ID: 7, Version: 3},
+		{ID: 2, Version: 4},
+		{ID: 5, Version: 2},
+		{ID: 5, Version: 3},
+		{ID: 5, Version: 4},
+		{ID: 3, Version: 4},
+		{ID: 4, Version: 4},
+		{ID: 9, Version: 4},
+	}
+
+	ns.SortByIDVersion()
+
+	eids := ElementIDs{
+		NodeID(2).ElementID(4),
+		NodeID(3).ElementID(4),
+		NodeID(4).ElementID(4),
+		NodeID(5).ElementID(2),
+		NodeID(5).ElementID(3),
+		NodeID(5).ElementID(4),
+		NodeID(7).ElementID(3),
+		NodeID(9).ElementID(4),
+	}
+
+	if ids := ns.ElementIDs(); !reflect.DeepEqual(ids, eids) {
+		t.Errorf("incorrect sort: %v", eids)
+	}
+}
