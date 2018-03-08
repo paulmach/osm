@@ -1,6 +1,8 @@
 package osm
 
 import (
+	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -118,5 +120,34 @@ func TestUser_UnmarshalXML(t *testing.T) {
 		t.Errorf("incorrect marshal")
 		t.Log(nu)
 		t.Log(u)
+	}
+}
+
+func TestUser_ObjectID(t *testing.T) {
+	u := User{ID: 123}
+	id := u.ObjectID()
+
+	if v := id.Type(); v != TypeUser {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := id.Ref(); v != 123 {
+		t.Errorf("incorrect ref: %v", 123)
+	}
+}
+
+func TestUser_MarshalJSON(t *testing.T) {
+	u := User{
+		ID:   123,
+		Name: "user",
+	}
+
+	data, err := json.Marshal(u)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"type":"user","id":123,"name":"user","img":{"href":""},"changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,"blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},"created_at":"0001-01-01T00:00:00Z"}`)) {
+		t.Errorf("incorrect json: %v", string(data))
 	}
 }

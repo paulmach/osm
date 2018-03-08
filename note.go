@@ -1,6 +1,7 @@
 package osm
 
 import (
+	"encoding/json"
 	"encoding/xml"
 	"time"
 )
@@ -40,6 +41,14 @@ func (d Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(d.Format(dateLayout), start)
 }
 
+// MarshalJSON will return null if the date is empty.
+func (d Date) MarshalJSON() ([]byte, error) {
+	if d.IsZero() {
+		return []byte(`null`), nil
+	}
+	return json.Marshal(d.Time)
+}
+
 // Notes is a collection of notes with some helpers attached.
 type Notes []*Note
 
@@ -49,13 +58,13 @@ type Note struct {
 	ID          NoteID              `xml:"id" json:"id"`
 	Lat         float64             `xml:"lat,attr" json:"lat"`
 	Lon         float64             `xml:"lon,attr" json:"lon"`
-	URL         string              `xml:"url" json:"url"`
+	URL         string              `xml:"url" json:"url,omitempty"`
 	CommentURL  string              `xml:"comment_url" json:"comment_url,omitempty"`
 	CloseURL    string              `xml:"close_url" json:"close_url,omitempty"`
 	ReopenURL   string              `xml:"reopen_url" json:"reopen_url,omitempty"`
 	DateCreated Date                `xml:"date_created" json:"date_created"`
 	DateClosed  Date                `xml:"date_closed" json:"date_closed,omitempty"`
-	Status      NoteStatus          `xml:"status" json:"status"`
+	Status      NoteStatus          `xml:"status" json:"status,omitempty"`
 	Comments    []*NoteComment      `xml:"comments>comment" json:"comments"`
 }
 

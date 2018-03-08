@@ -1,6 +1,8 @@
 package osm
 
 import (
+	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"reflect"
 	"testing"
@@ -135,5 +137,36 @@ func TestNote_UnmarshalXML(t *testing.T) {
 		t.Errorf("incorrect marshal")
 		t.Log(nn)
 		t.Log(n)
+	}
+}
+
+func TestNote_MarshalJSON(t *testing.T) {
+	n := Note{
+		ID:          123,
+		Lat:         10,
+		Lon:         20,
+		DateCreated: Date{time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC)},
+	}
+
+	data, err := json.Marshal(n)
+	if err != nil {
+		t.Fatalf("marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`{"type":"note","id":123,"lat":10,"lon":20,"date_created":"2018-01-01T00:00:00Z","date_closed":null,"comments":null}`)) {
+		t.Errorf("incorrect json: %v", string(data))
+	}
+}
+
+func TestNote_ObjectID(t *testing.T) {
+	n := Note{ID: 123}
+	id := n.ObjectID()
+
+	if v := id.Type(); v != TypeNote {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := id.Ref(); v != 123 {
+		t.Errorf("incorrect ref: %v", 123)
 	}
 }
