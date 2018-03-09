@@ -363,7 +363,7 @@ func TestWayNodes_UnmarshalJSON(t *testing.T) {
 	wn := WayNodes{}
 
 	if err := wn.UnmarshalJSON([]byte("[asdf,]")); err == nil {
-		t.Errorf("should return error whn json is invalid")
+		t.Errorf("should return error when json is invalid")
 	}
 
 	json := []byte(`[1,2,3,4]`)

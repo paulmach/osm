@@ -164,9 +164,9 @@ type idRange struct {
 func newElementStats() *elementStats {
 	return &elementStats{
 		Ranges: map[osm.Type]*idRange{
-			osm.TypeNode:     &idRange{Min: math.MaxInt64},
-			osm.TypeWay:      &idRange{Min: math.MaxInt64},
-			osm.TypeRelation: &idRange{Min: math.MaxInt64},
+			osm.TypeNode:     {Min: math.MaxInt64},
+			osm.TypeWay:      {Min: math.MaxInt64},
+			osm.TypeRelation: {Min: math.MaxInt64},
 		},
 	}
 }

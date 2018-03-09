@@ -52,7 +52,7 @@ func (d Date) MarshalJSON() ([]byte, error) {
 // Notes is a collection of notes with some helpers attached.
 type Notes []*Note
 
-// Note is infomation for other mappers dropped at a map location.
+// Note is information for other mappers dropped at a map location.
 type Note struct {
 	XMLName     xmlNameJSONTypeNote `xml:"note" json:"type"`
 	ID          NoteID              `xml:"id" json:"id"`

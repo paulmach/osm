@@ -530,7 +530,7 @@ func TestBuildRouteLineString(t *testing.T) {
 		osm:       &osm.OSM{},
 		skippable: map[osm.WayID]struct{}{},
 		wayMap: map[osm.WayID]*osm.Way{
-			2: &osm.Way{
+			2: {
 				ID: 2,
 				Nodes: osm.WayNodes{
 					{ID: 1, Lat: 1, Lon: 2},

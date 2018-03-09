@@ -97,7 +97,7 @@ func (o *OSM) Elements() Elements {
 	return result
 }
 
-// Objects retuns an array of objects containing any nodes, ways, relations,
+// Objects returns an array of objects containing any nodes, ways, relations,
 // changesets, notes and users.
 func (o *OSM) Objects() Objects {
 	if o == nil {

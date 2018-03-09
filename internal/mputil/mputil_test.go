@@ -214,11 +214,11 @@ func TestGroup(t *testing.T) {
 	}
 
 	ways := map[osm.WayID]*osm.Way{
-		1: &osm.Way{ID: 1, Nodes: osm.WayNodes{
+		1: {ID: 1, Nodes: osm.WayNodes{
 			{Lat: 1.0, Lon: 2.0},
 			{Lat: 2.0, Lon: 3.0},
 		}},
-		2: &osm.Way{ID: 1, Nodes: osm.WayNodes{
+		2: {ID: 1, Nodes: osm.WayNodes{
 			{Lat: 3.0, Lon: 4.0},
 			{Lat: 4.0, Lon: 5.0},
 		}},
@@ -260,7 +260,7 @@ func TestGroup_zeroLengthWays(t *testing.T) {
 			{Type: osm.TypeWay, Ref: 1, Role: "inner", Orientation: orb.CCW},
 		},
 		map[osm.WayID]*osm.Way{
-			1: &osm.Way{ID: 1},
+			1: {ID: 1},
 		},
 		time.Time{},
 	)
