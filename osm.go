@@ -121,11 +121,11 @@ func (o *OSM) Objects() Objects {
 		result = append(result, o)
 	}
 
-	for _, o := range o.Notes {
+	for _, o := range o.Users {
 		result = append(result, o)
 	}
 
-	for _, o := range o.Users {
+	for _, o := range o.Notes {
 		result = append(result, o)
 	}
 

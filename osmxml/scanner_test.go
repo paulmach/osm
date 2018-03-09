@@ -151,7 +151,7 @@ func TestAndorra(t *testing.T) {
 	}
 
 	r := bzip2.NewReader(f)
-	scanner := New(nil, r)
+	scanner := New(context.Background(), r)
 
 	var (
 		nodes     int

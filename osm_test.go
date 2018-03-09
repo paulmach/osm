@@ -8,6 +8,137 @@ import (
 	"testing"
 )
 
+func TestOSM_Append(t *testing.T) {
+	o := &OSM{}
+
+	o.Append(&Node{ID: 1})
+	if n := o.Nodes[0]; n.ID != 1 {
+		t.Errorf("incorrect node: %v", n)
+	}
+
+	o.Append(&Way{ID: 2})
+	if w := o.Ways[0]; w.ID != 2 {
+		t.Errorf("incorrect way: %v", w)
+	}
+
+	o.Append(&Relation{ID: 3})
+	if r := o.Relations[0]; r.ID != 3 {
+		t.Errorf("incorrect relation: %v", r)
+	}
+
+	o.Append(&Changeset{ID: 4})
+	if cs := o.Changesets[0]; cs.ID != 4 {
+		t.Errorf("incorrect changeset: %v", cs)
+	}
+
+	o.Append(&User{ID: 5})
+	if u := o.Users[0]; u.ID != 5 {
+		t.Errorf("incorrect user: %v", u)
+	}
+
+	o.Append(&Note{ID: 6})
+	if n := o.Notes[0]; n.ID != 6 {
+		t.Errorf("incorrect note: %v", n)
+	}
+}
+
+func TestOSM_Elements(t *testing.T) {
+	var no *OSM
+	no.Elements() // should not panic if OSM is nil
+
+	es := Elements{
+		&Node{ID: 1},
+		&Way{ID: 2},
+		&Relation{ID: 3},
+	}
+
+	o := &OSM{}
+	o.Append(es[0])
+	o.Append(es[1])
+	o.Append(es[2])
+
+	elements := o.Elements()
+	if !reflect.DeepEqual(elements, es) {
+		t.Errorf("incorrect elements: %v", elements)
+	}
+}
+
+func TestOSM_Objects(t *testing.T) {
+	var no *OSM
+	no.Objects() // should not panic if OSM is nil
+
+	os := Objects{
+		&Node{ID: 1},
+		&Way{ID: 2},
+		&Relation{ID: 3},
+		&Changeset{ID: 4},
+		&User{ID: 5},
+		&Note{ID: 6},
+	}
+
+	o := &OSM{}
+	for _, obj := range os {
+		o.Append(obj)
+	}
+
+	objects := o.Objects()
+	if !reflect.DeepEqual(objects, os) {
+		t.Errorf("incorrect objects: %v", objects)
+	}
+}
+
+func TestOSM_FeatureIDs(t *testing.T) {
+	var no *OSM
+	no.FeatureIDs() // should not panic if OSM is nil
+
+	es := Elements{
+		&Node{ID: 1},
+		&Way{ID: 2},
+		&Relation{ID: 3},
+	}
+
+	o := &OSM{}
+	o.Append(es[0])
+	o.Append(es[1])
+	o.Append(es[2])
+
+	expected := FeatureIDs{
+		NodeID(1).FeatureID(),
+		WayID(2).FeatureID(),
+		RelationID(3).FeatureID(),
+	}
+
+	if ids := o.FeatureIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect ids: %v", ids)
+	}
+}
+
+func TestOSM_ElementIDs(t *testing.T) {
+	var no *OSM
+	no.ElementIDs() // should not panic if OSM is nil
+
+	es := Elements{
+		&Node{ID: 1, Version: 4},
+		&Way{ID: 2, Version: 5},
+		&Relation{ID: 3, Version: 6},
+	}
+
+	o := &OSM{}
+	o.Append(es[0])
+	o.Append(es[1])
+	o.Append(es[2])
+
+	expected := ElementIDs{
+		NodeID(1).ElementID(4),
+		WayID(2).ElementID(5),
+		RelationID(3).ElementID(6),
+	}
+
+	if ids := o.ElementIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect ids: %v", ids)
+	}
+}
+
 func TestOSM_Marshal(t *testing.T) {
 	c := loadChange(t, "testdata/changeset_38162206.osc")
 	o1 := flattenOSM(c)

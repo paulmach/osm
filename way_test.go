@@ -162,11 +162,6 @@ func TestWay_LineString(t *testing.T) {
 			Lon:       10, Lat: 20,
 		},
 		{
-			Index:     2, // should be skipped
-			Timestamp: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
-			Lon:       10, Lat: 20,
-		},
-		{
 			Index:     0,
 			Timestamp: time.Time{},
 			Lon:       5, Lat: 6,
@@ -176,10 +171,19 @@ func TestWay_LineString(t *testing.T) {
 			Timestamp: time.Time{},
 			Lon:       7, Lat: 8,
 		},
+		{
+			Index:     2, // should be skipped
+			Timestamp: time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
+			Lon:       10, Lat: 20,
+		},
 	}
 
 	ls = w.LineStringAt(time.Date(2017, 1, 1, 0, 0, 0, 0, time.UTC))
 	expected = orb.LineString{{5, 6}, {10, 20}, {3, 0}, {7, 8}}
+
+	if !ls.Equal(expected) {
+		t.Errorf("incorrect line: %v", ls)
+	}
 }
 
 func TestWay_MarshalJSON(t *testing.T) {

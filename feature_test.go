@@ -6,6 +6,81 @@ import (
 	"testing"
 )
 
+func TestFeatureID_ids(t *testing.T) {
+	id := NodeID(1).FeatureID()
+
+	oid := id.ObjectID(10)
+	if v := oid.Type(); v != TypeNode {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := oid.Ref(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := oid.Version(); v != 10 {
+		t.Errorf("incorrect version: %v", v)
+	}
+
+	eid := id.ElementID(10)
+	if v := eid.Type(); v != TypeNode {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := eid.Ref(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := eid.Version(); v != 10 {
+		t.Errorf("incorrect version: %v", v)
+	}
+
+	if v := NodeID(1).FeatureID().NodeID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := WayID(1).FeatureID().WayID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := RelationID(1).FeatureID().RelationID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	t.Run("not a node", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("should panic?")
+			}
+		}()
+
+		id := WayID(1).FeatureID()
+		id.NodeID()
+	})
+
+	t.Run("not a way", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("should panic?")
+			}
+		}()
+
+		id := NodeID(1).FeatureID()
+		id.WayID()
+	})
+
+	t.Run("not a relation", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("should panic?")
+			}
+		}()
+
+		id := WayID(1).FeatureID()
+		id.RelationID()
+	})
+}
+
 func TestFeature_String(t *testing.T) {
 	cases := []struct {
 		name     string
@@ -77,6 +152,41 @@ func TestParseFeatureID(t *testing.T) {
 				t.Errorf("incorrect id: %v != %v", id, tc.id)
 			}
 		})
+	}
+
+	// errors
+	if _, err := ParseFeatureID("123"); err == nil {
+		t.Errorf("should return error if only one part")
+	}
+
+	if _, err := ParseFeatureID("node/abc"); err == nil {
+		t.Errorf("should return error if id not a number")
+	}
+
+	if _, err := ParseFeatureID("lake/1"); err == nil {
+		t.Errorf("should return error if not a valid type")
+	}
+}
+
+func TestFeatureIDs_Counts(t *testing.T) {
+	ids := FeatureIDs{
+		RelationID(1).FeatureID(),
+		NodeID(1).FeatureID(),
+		WayID(2).FeatureID(),
+		WayID(1).FeatureID(),
+		RelationID(1).FeatureID(),
+		WayID(1).FeatureID(),
+	}
+
+	n, w, r := ids.Counts()
+	if n != 1 {
+		t.Errorf("incorrect nodes: %v", n)
+	}
+	if w != 3 {
+		t.Errorf("incorrect nodes: %v", w)
+	}
+	if r != 2 {
+		t.Errorf("incorrect nodes: %v", r)
 	}
 }
 

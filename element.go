@@ -55,7 +55,7 @@ func (id ElementID) FeatureID() FeatureID {
 // NodeID returns the id of this feature as a node id.
 // The function will panic if this feature is not of NodeType.
 func (id ElementID) NodeID() NodeID {
-	if id&nodeMask == 0 {
+	if id&nodeMask != nodeMask {
 		panic(fmt.Sprintf("not a node: %v", id))
 	}
 
@@ -65,7 +65,7 @@ func (id ElementID) NodeID() NodeID {
 // WayID returns the id of this feature as a way id.
 // The function will panic if this feature is not of WayType.
 func (id ElementID) WayID() WayID {
-	if id&wayMask == 0 {
+	if id&wayMask != wayMask {
 		panic(fmt.Sprintf("not a way: %v", id))
 	}
 
@@ -75,7 +75,7 @@ func (id ElementID) WayID() WayID {
 // RelationID returns the id of this feature as a relation id.
 // The function will panic if this feature is not of RelationType.
 func (id ElementID) RelationID() RelationID {
-	if id&relationMask == 0 {
+	if int64(id)&relationMask != relationMask {
 		panic(fmt.Sprintf("not a relation: %v", id))
 	}
 
@@ -100,7 +100,7 @@ func ParseElementID(s string) (ElementID, error) {
 	}
 
 	parts2 := strings.Split(parts[1], ":")
-	if l := len(parts); l != 1 && l != 2 {
+	if l := len(parts2); l != 1 && l != 2 {
 		return 0, fmt.Errorf("invalid element id: %v", s)
 	}
 
@@ -150,6 +150,20 @@ func (es Elements) ElementIDs() ElementIDs {
 	ids := make(ElementIDs, 0, len(es))
 	for _, e := range es {
 		ids = append(ids, e.ElementID())
+	}
+
+	return ids
+}
+
+// FeatureIDs returns a slice of the feature ids of the elements.
+func (es Elements) FeatureIDs() FeatureIDs {
+	if len(es) == 0 {
+		return nil
+	}
+
+	ids := make(FeatureIDs, 0, len(es))
+	for _, e := range es {
+		ids = append(ids, e.FeatureID())
 	}
 
 	return ids

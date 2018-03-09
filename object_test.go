@@ -1,6 +1,9 @@
 package osm
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestParseObjectID(t *testing.T) {
 	cases := []struct {
@@ -68,6 +71,51 @@ func TestParseObjectID(t *testing.T) {
 				t.Errorf("incorrect id: %v != %v", id, tc.id)
 			}
 		})
+	}
+
+	// errors
+	if _, err := ParseObjectID("123"); err == nil {
+		t.Errorf("should return error if only one part")
+	}
+
+	if _, err := ParseObjectID("node/1:1:1"); err == nil {
+		t.Errorf("should return error if multiple :")
+	}
+
+	if _, err := ParseObjectID("node/abc:1"); err == nil {
+		t.Errorf("should return error if id not a number")
+	}
+
+	if _, err := ParseObjectID("node/1:abc"); err == nil {
+		t.Errorf("should return error if version not a number")
+	}
+
+	if _, err := ParseObjectID("lake/1:1"); err == nil {
+		t.Errorf("should return error if not a valid type")
+	}
+}
+
+func TestObjects_ObjectIDs(t *testing.T) {
+	es := Objects{
+		&Node{ID: 1, Version: 5},
+		&Way{ID: 2, Version: 6},
+		&Relation{ID: 3, Version: 7},
+		&Node{ID: 4, Version: 8},
+		&User{ID: 5},
+		&Note{ID: 6},
+	}
+
+	expected := ObjectIDs{
+		NodeID(1).ObjectID(5),
+		WayID(2).ObjectID(6),
+		RelationID(3).ObjectID(7),
+		NodeID(4).ObjectID(8),
+		UserID(5).ObjectID(),
+		NoteID(6).ObjectID(),
+	}
+
+	if ids := es.ObjectIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect ids: %v", ids)
 	}
 }
 

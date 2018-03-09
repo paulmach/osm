@@ -58,7 +58,7 @@ func ParseObjectID(s string) (ObjectID, error) {
 	}
 
 	parts2 := strings.Split(parts[1], ":")
-	if l := len(parts); l == 0 || l > 2 {
+	if l := len(parts2); l == 0 || l > 2 {
 		return 0, fmt.Errorf("invalid element id: %v", s)
 	}
 

@@ -248,7 +248,7 @@ func (wn WayNodes) FeatureIDs() FeatureIDs {
 
 // NodeIDs returns a list of node ids for the way nodes.
 func (wn WayNodes) NodeIDs() []NodeID {
-	ids := make([]NodeID, len(wn), len(wn))
+	ids := make([]NodeID, len(wn))
 	for i, n := range wn {
 		ids[i] = n.ID
 	}

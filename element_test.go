@@ -6,6 +6,73 @@ import (
 	"testing"
 )
 
+func TestElementID_ids(t *testing.T) {
+	id := NodeID(1).ElementID(1)
+
+	oid := id.ObjectID()
+	if v := oid.Type(); v != TypeNode {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := oid.Ref(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	fid := id.FeatureID()
+	if v := fid.Type(); v != TypeNode {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := fid.Ref(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := NodeID(1).ElementID(1).NodeID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := WayID(1).ElementID(1).WayID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := RelationID(1).ElementID(1).RelationID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	t.Run("not a node", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("should panic?")
+			}
+		}()
+
+		id := WayID(1).ElementID(1)
+		id.NodeID()
+	})
+
+	t.Run("not a way", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("should panic?")
+			}
+		}()
+
+		id := NodeID(1).ElementID(1)
+		id.WayID()
+	})
+
+	t.Run("not a relation", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("should panic?")
+			}
+		}()
+
+		id := WayID(1).ElementID(1)
+		id.RelationID()
+	})
+}
+
 func TestParseElementID(t *testing.T) {
 	cases := []struct {
 		name   string
@@ -61,6 +128,27 @@ func TestParseElementID(t *testing.T) {
 			}
 		})
 	}
+
+	// errors
+	if _, err := ParseElementID("123"); err == nil {
+		t.Errorf("should return error if only one part")
+	}
+
+	if _, err := ParseElementID("node/1:1:1"); err == nil {
+		t.Errorf("should return error if multiple :")
+	}
+
+	if _, err := ParseElementID("node/abc:1"); err == nil {
+		t.Errorf("should return error if id not a number")
+	}
+
+	if _, err := ParseElementID("node/1:abc"); err == nil {
+		t.Errorf("should return error if version not a number")
+	}
+
+	if _, err := ParseElementID("lake/1:1"); err == nil {
+		t.Errorf("should return error if not a valid type")
+	}
 }
 
 func TestElement_implementations(t *testing.T) {
@@ -97,6 +185,93 @@ func TestElement_implementations(t *testing.T) {
 		if _, ok := ni.(Element); ok {
 			t.Errorf("%T should not be an element", ni)
 		}
+	}
+}
+
+func TestElements_ElementIDs(t *testing.T) {
+	es := Elements{
+		&Node{ID: 1, Version: 5},
+		&Way{ID: 2, Version: 6},
+		&Relation{ID: 3, Version: 7},
+		&Node{ID: 4, Version: 8},
+	}
+
+	expected := ElementIDs{
+		NodeID(1).ElementID(5),
+		WayID(2).ElementID(6),
+		RelationID(3).ElementID(7),
+		NodeID(4).ElementID(8),
+	}
+
+	if ids := es.ElementIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect ids: %v", ids)
+	}
+}
+
+func TestElements_FeatureIDs(t *testing.T) {
+	es := Elements{
+		&Node{ID: 1, Version: 5},
+		&Way{ID: 2, Version: 6},
+		&Relation{ID: 3, Version: 7},
+		&Node{ID: 4, Version: 8},
+	}
+
+	expected := FeatureIDs{
+		NodeID(1).FeatureID(),
+		WayID(2).FeatureID(),
+		RelationID(3).FeatureID(),
+		NodeID(4).FeatureID(),
+	}
+
+	if ids := es.FeatureIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect ids: %v", ids)
+	}
+}
+
+func TestElements_Sort(t *testing.T) {
+	es := Elements{
+		&Node{ID: 1, Version: 4},
+		&Node{ID: 1, Version: 5},
+		&Way{ID: 2, Version: 6},
+		&Relation{ID: 3, Version: 7},
+		&Way{ID: 2, Version: 5},
+		&Node{ID: 4, Version: 8},
+	}
+	es.Sort()
+
+	expected := ElementIDs{
+		NodeID(1).ElementID(4),
+		NodeID(1).ElementID(5),
+		NodeID(4).ElementID(8),
+		WayID(2).ElementID(5),
+		WayID(2).ElementID(6),
+		RelationID(3).ElementID(7),
+	}
+
+	if ids := es.ElementIDs(); !reflect.DeepEqual(ids, expected) {
+		t.Errorf("incorrect sort: %v", ids)
+	}
+}
+
+func TestElementIDs_Counts(t *testing.T) {
+	ids := ElementIDs{
+		RelationID(1).ElementID(1),
+		NodeID(1).ElementID(2),
+		WayID(2).ElementID(3),
+		WayID(1).ElementID(2),
+		RelationID(1).ElementID(1),
+		WayID(1).ElementID(1),
+	}
+
+	n, w, r := ids.Counts()
+	if n != 1 {
+		t.Errorf("incorrect nodes: %v", n)
+	}
+	if w != 3 {
+		t.Errorf("incorrect nodes: %v", w)
+	}
+	if r != 2 {
+		t.Errorf("incorrect nodes: %v", r)
 	}
 }
 
