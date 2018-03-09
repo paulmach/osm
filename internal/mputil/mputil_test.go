@@ -9,7 +9,7 @@ import (
 	"github.com/paulmach/osm"
 )
 
-func TestMultiSegment_ToLineString(t *testing.T) {
+func TestMultiSegment_LineString(t *testing.T) {
 	ms := MultiSegment{
 		{
 			Line: orb.LineString{{1, 1}, {2, 2}},
@@ -19,7 +19,7 @@ func TestMultiSegment_ToLineString(t *testing.T) {
 		},
 	}
 
-	ls := ms.ToLineString()
+	ls := ms.LineString()
 	expected := orb.LineString{{1, 1}, {2, 2}, {3, 3}, {4, 4}}
 
 	if !ls.Equal(expected) {
@@ -27,7 +27,7 @@ func TestMultiSegment_ToLineString(t *testing.T) {
 	}
 }
 
-func TestMultiSegment_ToRing_noAnnotation(t *testing.T) {
+func TestMultiSegment_Ring_noAnnotation(t *testing.T) {
 	cases := []struct {
 		name        string
 		orientation orb.Orientation
@@ -84,12 +84,12 @@ func TestMultiSegment_ToRing_noAnnotation(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			testToRing(t, tc.input, tc.output, tc.orientation)
+			testRing(t, tc.input, tc.output, tc.orientation)
 		})
 	}
 }
 
-func TestMultiSegment_ToRing_annotation(t *testing.T) {
+func TestMultiSegment_Ring_annotation(t *testing.T) {
 	cases := []struct {
 		name        string
 		orientation orb.Orientation
@@ -184,7 +184,7 @@ func TestMultiSegment_ToRing_annotation(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			testToRing(t, tc.input, tc.output, tc.orientation)
+			testRing(t, tc.input, tc.output, tc.orientation)
 		})
 	}
 }
@@ -266,10 +266,10 @@ func TestGroup_zeroLengthWays(t *testing.T) {
 	)
 }
 
-func testToRing(t testing.TB, input MultiSegment, expected orb.Ring, orient orb.Orientation) {
+func testRing(t testing.TB, input MultiSegment, expected orb.Ring, orient orb.Orientation) {
 	t.Helper()
 
-	ring := input.ToRing(orient)
+	ring := input.Ring(orient)
 	if o := ring.Orientation(); o != orient {
 		t.Errorf("different orientation: %v != %v", o, orient)
 	}
@@ -283,7 +283,7 @@ func testToRing(t testing.TB, input MultiSegment, expected orb.Ring, orient orb.
 	// with reverse orientation
 	orient *= -1
 	expected.Reverse()
-	ring = input.ToRing(orient)
+	ring = input.Ring(orient)
 	if o := ring.Orientation(); o != orient {
 		t.Errorf("reversed, different orientation: %v != %v", o, orient)
 	}

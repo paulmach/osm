@@ -43,7 +43,7 @@ func TestHistoryDatasource(t *testing.T) {
 	}
 
 	t.Run("non-empty datasource", func(t *testing.T) {
-		ds := o.ToHistoryDatasource()
+		ds := o.HistoryDatasource()
 
 		ns, err := ds.NodeHistory(ctx, 1)
 		if err != nil {
@@ -74,7 +74,7 @@ func TestHistoryDatasource(t *testing.T) {
 	})
 
 	t.Run("not found non-empty datasource", func(t *testing.T) {
-		ds := o.ToHistoryDatasource()
+		ds := o.HistoryDatasource()
 
 		if _, err := ds.NodeHistory(ctx, 2); !ds.NotFound(err) {
 			t.Errorf("should be not found error: %v", err)

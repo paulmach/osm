@@ -93,7 +93,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		// This section handles "old style" multipolygons that don't/shouldn't
 		// exist anymore. In the past tags were set on the outer ring way and
 		// the relation was used to add holes to the way.
-		outerRing := mputil.MultiSegment(outer).ToRing(orb.CCW)
+		outerRing := mputil.MultiSegment(outer).Ring(orb.CCW)
 		if len(outerRing) < 4 || !outerRing.Closed() {
 			// not a valid outer ring
 			return nil
@@ -104,7 +104,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 
 		polygon = append(polygon, outerRing)
 		for _, is := range innerSections {
-			polygon = append(polygon, is.ToRing(orb.CW))
+			polygon = append(polygon, is.Ring(orb.CW))
 		}
 
 		geometry = polygon
@@ -122,7 +122,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 
 		mp := make(orb.MultiPolygon, 0, len(outer))
 		for _, os := range outerSections {
-			ring := os.ToRing(orb.CCW)
+			ring := os.Ring(orb.CCW)
 			if !ctx.includeInvalidPolygons && (len(ring) < 4 || !ring.Closed()) {
 				// needs at least 4 points and matching endpoints
 				continue
@@ -138,7 +138,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 
 		innerSections := mputil.Join(inner)
 		for _, is := range innerSections {
-			ring := is.ToRing(orb.CW)
+			ring := is.Ring(orb.CW)
 			mp = addToMultiPolygon(mp, ring, ctx.includeInvalidPolygons)
 		}
 

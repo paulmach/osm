@@ -47,8 +47,8 @@ func (ms MultiSegment) Last() orb.Point {
 	return line[len(line)-1]
 }
 
-// ToLineString converts a multisegment into a geo linestring object.
-func (ms MultiSegment) ToLineString() orb.LineString {
+// LineString converts a multisegment into a geo linestring object.
+func (ms MultiSegment) LineString() orb.LineString {
 	length := 0
 	for _, s := range ms {
 		length += len(s.Line)
@@ -62,9 +62,9 @@ func (ms MultiSegment) ToLineString() orb.LineString {
 	return line
 }
 
-// ToRing converts the multisegment to a ring of the given orientation.
+// Ring converts the multisegment to a ring of the given orientation.
 // It uses the orientation on the members if possible.
-func (ms MultiSegment) ToRing(o orb.Orientation) orb.Ring {
+func (ms MultiSegment) Ring(o orb.Orientation) orb.Ring {
 	length := 0
 	for _, s := range ms {
 		length += len(s.Line)

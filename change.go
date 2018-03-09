@@ -52,10 +52,10 @@ func (c *Change) AppendDelete(o Object) {
 	c.Delete.Append(o)
 }
 
-// ToHistoryDatasource converts the change object a datasource accessible
+// HistoryDatasource converts the change object a datasource accessible
 // by the feature id. All the creates, modifies and deletes will be added
 // in that order.
-func (c *Change) ToHistoryDatasource() *HistoryDatasource {
+func (c *Change) HistoryDatasource() *HistoryDatasource {
 	ds := &HistoryDatasource{}
 
 	ds.add(c.Create, true)

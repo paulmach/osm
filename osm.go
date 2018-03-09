@@ -178,9 +178,9 @@ func (o *OSM) ElementIDs() ElementIDs {
 	return result
 }
 
-// ToHistoryDatasource converts the osm object a datasource accessible
+// HistoryDatasource converts the osm object a datasource accessible
 // by the feature id.
-func (o *OSM) ToHistoryDatasource() *HistoryDatasource {
+func (o *OSM) HistoryDatasource() *HistoryDatasource {
 	ds := &HistoryDatasource{}
 
 	ds.add(o)

@@ -22,7 +22,7 @@ func TestRelation(t *testing.T) {
 	for _, id := range ids {
 		o := loadTestdata(t, fmt.Sprintf("testdata/relation_%d.osm", id))
 
-		ds := o.ToHistoryDatasource()
+		ds := o.HistoryDatasource()
 		for id, ways := range ds.Ways {
 			err := Ways(context.Background(), ways, ds)
 			if err != nil {
@@ -98,7 +98,7 @@ func TestRelation_reverse(t *testing.T) {
 		err := Relations(
 			context.Background(),
 			osm.Relations{r},
-			(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
+			(&osm.OSM{Ways: ways}).HistoryDatasource(),
 			Threshold(time.Hour),
 		)
 		if err != nil {
@@ -123,7 +123,7 @@ func TestRelation_reverse(t *testing.T) {
 		err := Relations(
 			context.Background(),
 			osm.Relations{r},
-			(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
+			(&osm.OSM{Ways: ways}).HistoryDatasource(),
 			Threshold(time.Hour),
 		)
 		if err != nil {
@@ -218,7 +218,7 @@ func TestRelation_polygon(t *testing.T) {
 	err := Relations(
 		context.Background(),
 		osm.Relations{r},
-		(&osm.OSM{Ways: ways}).ToHistoryDatasource(),
+		(&osm.OSM{Ways: ways}).HistoryDatasource(),
 		Threshold(time.Hour),
 	)
 
@@ -277,7 +277,7 @@ func TestRelation_circular(t *testing.T) {
 			}},
 	}
 
-	ds := (&osm.OSM{Relations: relations}).ToHistoryDatasource()
+	ds := (&osm.OSM{Relations: relations}).HistoryDatasource()
 	rs := ds.Relations[1]
 	err := Relations(context.Background(), rs, ds, Threshold(30*time.Minute))
 	if err != nil {
@@ -341,7 +341,7 @@ func TestRelation_selfCircular(t *testing.T) {
 			}},
 	}
 
-	ds := (&osm.OSM{Relations: rs}).ToHistoryDatasource()
+	ds := (&osm.OSM{Relations: rs}).HistoryDatasource()
 	err := Relations(context.Background(), rs, ds)
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
@@ -378,7 +378,7 @@ func BenchmarkRelations(b *testing.B) {
 	filename := fmt.Sprintf("testdata/relation_%d.osm", id)
 
 	o := loadTestdata(b, filename)
-	ds := o.ToHistoryDatasource()
+	ds := o.HistoryDatasource()
 
 	b.ReportAllocs()
 	b.ResetTimer()

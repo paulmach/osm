@@ -21,7 +21,7 @@ func TestChildFirstOrdering(t *testing.T) {
 	ordering := NewChildFirstOrdering(
 		context.Background(),
 		relations.IDs(),
-		(&osm.OSM{Relations: relations}).ToHistoryDatasource())
+		(&osm.OSM{Relations: relations}).HistoryDatasource())
 
 	ids := make([]osm.RelationID, 0, len(relations))
 	for ordering.Next() {
@@ -76,7 +76,7 @@ func TestChildFirstOrdering_cycle(t *testing.T) {
 		{ID: 9, Members: osm.Members{{Type: osm.TypeRelation, Ref: 9}}},
 	}
 
-	ds := (&osm.OSM{Relations: relations}).ToHistoryDatasource()
+	ds := (&osm.OSM{Relations: relations}).HistoryDatasource()
 	ordering := NewChildFirstOrdering(context.Background(), relations.IDs(), ds)
 
 	ids := make([]osm.RelationID, 0, len(relations))
@@ -118,7 +118,7 @@ func TestChildFirstOrdering_Cancel(t *testing.T) {
 	ordering := NewChildFirstOrdering(
 		ctx,
 		relations.IDs(),
-		(&osm.OSM{Relations: relations}).ToHistoryDatasource())
+		(&osm.OSM{Relations: relations}).HistoryDatasource())
 
 	ordering.Next()
 	ordering.Next()
@@ -143,7 +143,7 @@ func TestChildFirstOrdering_Close(t *testing.T) {
 	ordering := NewChildFirstOrdering(
 		context.Background(),
 		relations.IDs(),
-		(&osm.OSM{Relations: relations}).ToHistoryDatasource())
+		(&osm.OSM{Relations: relations}).HistoryDatasource())
 
 	ordering.Next()
 	ordering.Next()
@@ -184,7 +184,7 @@ func TestChildFirstOrdering_Walk(t *testing.T) {
 
 	ordering := &ChildFirstOrdering{
 		ctx:     context.Background(),
-		ds:      (&osm.OSM{Relations: relations}).ToHistoryDatasource(),
+		ds:      (&osm.OSM{Relations: relations}).HistoryDatasource(),
 		visited: make(map[osm.RelationID]struct{}, len(relations)),
 		out:     make(chan osm.RelationID, 10+len(relations)),
 	}
@@ -212,7 +212,7 @@ func TestChildFirstOrdering_missingRelation(t *testing.T) {
 
 	ordering := &ChildFirstOrdering{
 		ctx:     context.Background(),
-		ds:      (&osm.OSM{Relations: relations}).ToHistoryDatasource(),
+		ds:      (&osm.OSM{Relations: relations}).HistoryDatasource(),
 		visited: make(map[osm.RelationID]struct{}, len(relations)),
 		out:     make(chan osm.RelationID, 10+len(relations)),
 	}

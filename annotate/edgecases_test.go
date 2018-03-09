@@ -24,7 +24,7 @@ func TestEdgeCase_childCreatedAfterParent(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -59,7 +59,7 @@ func TestEdgeCase_childCreatedAfterParent(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -105,7 +105,7 @@ func TestEdgeCase_childCreatedAfterParent(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -157,7 +157,7 @@ func TestEdgeCase_nodeDeletedBetweenParents(t *testing.T) {
 			Nodes: osm.WayNodes{{ID: 1}}},
 	}
 
-	ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+	ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 	err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 	if err != nil {
 		t.Fatalf("compute error: %v", err)
@@ -198,7 +198,7 @@ func TestEdgeCase_nodeRedacted(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -229,7 +229,7 @@ func TestEdgeCase_nodeRedacted(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -260,7 +260,7 @@ func TestEdgeCase_nodeRedacted(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)
@@ -292,7 +292,7 @@ func TestEdgeCase_nodeRedacted(t *testing.T) {
 				Nodes: osm.WayNodes{{ID: 1}, {ID: 2}}},
 		}
 
-		ds := (&osm.OSM{Nodes: nodes}).ToHistoryDatasource()
+		ds := (&osm.OSM{Nodes: nodes}).HistoryDatasource()
 		err := Ways(context.Background(), ways, ds, IgnoreInconsistency(true))
 		if err != nil {
 			t.Fatalf("compute error: %v", err)

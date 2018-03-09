@@ -261,7 +261,7 @@ func TestChange_Marshal(t *testing.T) {
 	}
 }
 
-func TestChange_ToHistoryDatasource(t *testing.T) {
+func TestChange_HistoryDatasource(t *testing.T) {
 	ctx := context.Background()
 	c := &Change{
 		Create: &OSM{
@@ -274,7 +274,7 @@ func TestChange_ToHistoryDatasource(t *testing.T) {
 			Nodes: Nodes{{ID: 3, Version: 3}},
 		},
 	}
-	ds := c.ToHistoryDatasource()
+	ds := c.HistoryDatasource()
 
 	n1, err := ds.NodeHistory(ctx, 1)
 	if err != nil {

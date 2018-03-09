@@ -285,11 +285,11 @@ func (ctx *context) buildRouteLineString(relation *osm.Relation) *geojson.Featur
 
 	var geometry orb.Geometry
 	if len(lineSections) == 1 {
-		geometry = lineSections[0].ToLineString()
+		geometry = lineSections[0].LineString()
 	} else {
 		mls := make(orb.MultiLineString, 0, len(lines))
 		for _, ls := range lineSections {
-			mls = append(mls, ls.ToLineString())
+			mls = append(mls, ls.LineString())
 		}
 		geometry = mls
 	}
