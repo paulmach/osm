@@ -136,23 +136,19 @@ func (r *Relation) TagMap() map[string]string {
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (r *Relation) ApplyUpdatesUpTo(t time.Time) error {
-	lastApplied := -1
-	for i, u := range r.Updates {
+	var notApplied []Update
+	for _, u := range r.Updates {
 		if u.Timestamp.After(t) {
+			notApplied = append(notApplied, u)
 			continue
 		}
 
 		if err := r.applyUpdate(u); err != nil {
 			return err
 		}
-
-		lastApplied = i
 	}
 
-	r.Updates = r.Updates[lastApplied+1:]
-	if len(r.Updates) == 0 {
-		r.Updates = nil
-	}
+	r.Updates = notApplied
 	return nil
 }
 

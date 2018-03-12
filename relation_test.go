@@ -54,21 +54,23 @@ func TestRelation_MarshalJSON(t *testing.T) {
 }
 
 func TestRelation_ApplyUpdatesUpTo(t *testing.T) {
+	updates := Updates{
+		{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Version: 11},
+		{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Version: 12},
+		{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Version: 13, Lat: 10, Lon: 20},
+	}
 	r := Relation{
 		ID:      123,
 		Members: Members{{Version: 1}, {Version: 2}, {Version: 3}},
-		Updates: Updates{
-			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Version: 11},
-			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Version: 12},
-			{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Version: 13, Lat: 10, Lon: 20},
-		},
 	}
 
+	r.Updates = updates
 	r.ApplyUpdatesUpTo(time.Date(2011, 1, 1, 0, 0, 0, 0, time.UTC))
 	if r.Members[0].Version != 1 || r.Members[1].Version != 2 || r.Members[2].Version != 3 {
 		t.Errorf("incorrect members, got %v", r.Members)
 	}
 
+	r.Updates = updates
 	r.ApplyUpdatesUpTo(time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC))
 	if r.Members[0].Version != 11 || r.Members[1].Version != 2 || r.Members[2].Version != 13 {
 		t.Errorf("incorrect members, got %v", r.Members)
@@ -80,6 +82,14 @@ func TestRelation_ApplyUpdatesUpTo(t *testing.T) {
 
 	if r.Members[2].Lon != 20 {
 		t.Errorf("did not apply lon data")
+	}
+
+	if l := len(r.Updates); l != 1 {
+		t.Errorf("incorrect number of updates: %v", l)
+	}
+
+	if r.Updates[0].Index != 1 {
+		t.Errorf("incorrect updates: %v", r.Updates)
 	}
 }
 

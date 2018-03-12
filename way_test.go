@@ -24,24 +24,35 @@ func TestWay_ids(t *testing.T) {
 }
 
 func TestWay_ApplyUpdatesUpTo(t *testing.T) {
+	updates := Updates{
+		{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 11},
+		{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 12},
+		{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 13},
+	}
+
 	w := Way{
 		ID:    123,
 		Nodes: WayNodes{{Lat: 1}, {Lat: 2}, {Lat: 3}},
-		Updates: Updates{
-			{Index: 0, Timestamp: time.Date(2012, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 11},
-			{Index: 2, Timestamp: time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 13},
-			{Index: 1, Timestamp: time.Date(2014, 1, 1, 0, 0, 0, 0, time.UTC), Lat: 12},
-		},
 	}
 
+	w.Updates = updates
 	w.ApplyUpdatesUpTo(time.Date(2011, 1, 1, 0, 0, 0, 0, time.UTC))
 	if w.Nodes[0].Lat != 1 || w.Nodes[1].Lat != 2 || w.Nodes[2].Lat != 3 {
 		t.Errorf("incorrect way nodes, got %v", w.Nodes)
 	}
 
+	w.Updates = updates
 	w.ApplyUpdatesUpTo(time.Date(2013, 1, 1, 0, 0, 0, 0, time.UTC))
 	if w.Nodes[0].Lat != 11 || w.Nodes[1].Lat != 2 || w.Nodes[2].Lat != 13 {
 		t.Errorf("incorrect way nodes, got %v", w.Nodes)
+	}
+
+	if l := len(w.Updates); l != 1 {
+		t.Errorf("incorrect number of updates: %v", l)
+	}
+
+	if w.Updates[0].Index != 1 {
+		t.Errorf("incorrect updates: %v", w.Updates)
 	}
 }
 

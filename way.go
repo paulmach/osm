@@ -117,23 +117,19 @@ func (w *Way) TagMap() map[string]string {
 // ApplyUpdatesUpTo will apply the updates to this object upto and including
 // the given time.
 func (w *Way) ApplyUpdatesUpTo(t time.Time) error {
-	lastApplied := -1
-	for i, u := range w.Updates {
+	var notApplied []Update
+	for _, u := range w.Updates {
 		if u.Timestamp.After(t) {
-			break
+			notApplied = append(notApplied, u)
+			continue
 		}
 
 		if err := w.applyUpdate(u); err != nil {
 			return err
 		}
-
-		lastApplied = i
 	}
 
-	w.Updates = w.Updates[lastApplied+1:]
-	if len(w.Updates) == 0 {
-		w.Updates = nil
-	}
+	w.Updates = notApplied
 	return nil
 }
 
