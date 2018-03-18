@@ -17,7 +17,6 @@ import (
 var _ SeqNum = MinuteSeqNum(0)
 var _ SeqNum = HourSeqNum(0)
 var _ SeqNum = DaySeqNum(0)
-var _ SeqNum = ChangesetSeqNum(0)
 
 // MinuteSeqStart is the beginning of valid minutely sequence data.
 // The few before look to be way more than a minute.
@@ -49,10 +48,9 @@ type SeqNum interface {
 	private()
 }
 
-func (n MinuteSeqNum) private()    {}
-func (n HourSeqNum) private()      {}
-func (n DaySeqNum) private()       {}
-func (n ChangesetSeqNum) private() {}
+func (n MinuteSeqNum) private() {}
+func (n HourSeqNum) private()   {}
+func (n DaySeqNum) private()    {}
 
 var _ = SeqNum(MinuteSeqNum(0)).private // for the linters
 
