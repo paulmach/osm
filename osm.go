@@ -391,3 +391,15 @@ func (o *OSM) marshalInnerXML(e *xml.Encoder) error {
 
 	return e.Encode(o.Users)
 }
+
+func (o *OSM) marshalInnerElementsXML(e *xml.Encoder) error {
+	if err := e.Encode(o.Nodes); err != nil {
+		return err
+	}
+
+	if err := e.Encode(o.Ways); err != nil {
+		return err
+	}
+
+	return e.Encode(o.Relations)
+}

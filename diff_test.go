@@ -2,8 +2,74 @@ package osm
 
 import (
 	"encoding/xml"
+	"reflect"
 	"testing"
 )
+
+func TestDiff_MarshalXML(t *testing.T) {
+	data := []byte(`<osm>
+ <action type="delete">
+  <old>
+   <node id="1896619025" lat="0" lon="0" user="" uid="0" visible="true" version="2" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>
+  </old>
+  <new>
+   <node id="1896619025" lat="0" lon="0" user="" uid="0" visible="false" version="3" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>
+  </new>
+ </action>
+ <action type="create">
+  <node id="1911156719" lat="0" lon="0" user="" uid="0" visible="false" version="1" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>
+ </action>
+</osm>`)
+
+	diff := &Diff{}
+	err := xml.Unmarshal(data, &diff)
+	if err != nil {
+		t.Errorf("unmarshal error: %v", err)
+	}
+
+	if l := len(diff.Actions); l != 2 {
+		t.Errorf("incorrect num of actions: %v", l)
+	}
+
+	marshalled, err := xml.MarshalIndent(diff, "", " ")
+	if err != nil {
+		t.Errorf("marshal error: %v", err)
+	}
+
+	if !reflect.DeepEqual(marshalled, data) {
+		t.Errorf("incorrect marshal")
+		t.Logf("%v", string(marshalled))
+		t.Logf("%v", string(data))
+	}
+
+	// specifics
+	diff = &Diff{}
+	_, err = xml.Marshal(diff)
+	if err != nil {
+		t.Errorf("unable to marshal: %v", err)
+	}
+
+	// create
+	diff.Actions = append(diff.Actions, Action{
+		Type: ActionCreate,
+		OSM:  &OSM{Nodes: Nodes{{ID: 1}}},
+	})
+	_, err = xml.Marshal(diff)
+	if err != nil {
+		t.Errorf("unable to marshal: %v", err)
+	}
+
+	// modify
+	diff.Actions = append(diff.Actions, Action{
+		Type: ActionModify,
+		Old:  &OSM{Nodes: Nodes{{ID: 1}}},
+		New:  &OSM{Nodes: Nodes{{ID: 1}}},
+	})
+	_, err = xml.Marshal(diff)
+	if err != nil {
+		t.Errorf("unable to marshal: %v", err)
+	}
+}
 
 func TestDiff(t *testing.T) {
 	data := readFile(t, "testdata/annotated_diff.xml")
@@ -61,5 +127,38 @@ func TestDiff(t *testing.T) {
 		t.Errorf("new node must not be visible")
 		t.Logf("old: %v", oldNode)
 		t.Logf("new: %v", newNode)
+	}
+
+	// should marshal the unmarshalled data
+	_, err = xml.Marshal(diff)
+	if err != nil {
+		t.Errorf("unable to marshal: %v", err)
+	}
+}
+
+func BenchmarkDiff_Marshal(b *testing.B) {
+	data := readFile(b, "testdata/annotated_diff.xml")
+
+	diff := &Diff{}
+	err := xml.Unmarshal(data, &diff)
+	if err != nil {
+		b.Fatalf("unmarshal error: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		xml.Marshal(diff)
+	}
+}
+
+func BenchmarkDiff_Unmarshal(b *testing.B) {
+	data := readFile(b, "testdata/annotated_diff.xml")
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		diff := &Diff{}
+		xml.Unmarshal(data, &diff)
 	}
 }
