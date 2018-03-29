@@ -279,7 +279,7 @@ func TestRelationHistory(t *testing.T) {
 		t.Fatalf("request error: %v", err)
 	}
 
-	if l := len(relations); l != 42 {
+	if l := len(relations); l < 42 {
 		t.Errorf("incorrect number of relations: %d", l)
 	}
 }
