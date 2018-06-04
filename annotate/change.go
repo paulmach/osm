@@ -32,6 +32,7 @@ func Change(
 	// creates are all "new" things
 	if o := change.Create; o != nil {
 		for _, n := range o.Nodes {
+			n.Visible = true
 			actions = append(actions, osm.Action{
 				Type: osm.ActionCreate,
 				OSM:  &osm.OSM{Nodes: osm.Nodes{n}},
@@ -39,6 +40,7 @@ func Change(
 		}
 
 		for _, w := range o.Ways {
+			w.Visible = true
 			actions = append(actions, osm.Action{
 				Type: osm.ActionCreate,
 				OSM:  &osm.OSM{Ways: osm.Ways{w}},
@@ -46,6 +48,7 @@ func Change(
 		}
 
 		for _, r := range o.Relations {
+			r.Visible = true
 			actions = append(actions, osm.Action{
 				Type: osm.ActionCreate,
 				OSM:  &osm.OSM{Relations: osm.Relations{r}},
@@ -80,6 +83,11 @@ func addUpdate(
 		return actions, nil
 	}
 
+	currentVisible := true
+	if actionType == osm.ActionDelete {
+		currentVisible = false
+	}
+
 	for _, n := range o.Nodes {
 		old, err := findPreviousNode(ctx, n, ds, ignoreMissing)
 		if e := checkErr(ds, ignoreMissing, err, n.FeatureID()); e != nil {
@@ -87,6 +95,7 @@ func addUpdate(
 		}
 
 		if old == nil {
+			n.Visible = true
 			actions = append(actions, osm.Action{
 				Type: osm.ActionCreate,
 				OSM:  &osm.OSM{Nodes: osm.Nodes{n}},
@@ -94,6 +103,7 @@ func addUpdate(
 			continue
 		}
 
+		n.Visible = currentVisible
 		actions = append(actions, osm.Action{
 			Type: actionType,
 			Old:  &osm.OSM{Nodes: osm.Nodes{old}},
@@ -108,6 +118,7 @@ func addUpdate(
 		}
 
 		if old == nil {
+			w.Visible = true
 			actions = append(actions, osm.Action{
 				Type: osm.ActionCreate,
 				OSM:  &osm.OSM{Ways: osm.Ways{w}},
@@ -115,6 +126,7 @@ func addUpdate(
 			continue
 		}
 
+		w.Visible = currentVisible
 		actions = append(actions, osm.Action{
 			Type: actionType,
 			Old:  &osm.OSM{Ways: osm.Ways{old}},
@@ -129,6 +141,7 @@ func addUpdate(
 		}
 
 		if old == nil {
+			r.Visible = true
 			actions = append(actions, osm.Action{
 				Type: osm.ActionCreate,
 				OSM:  &osm.OSM{Relations: osm.Relations{r}},
@@ -136,6 +149,7 @@ func addUpdate(
 			continue
 		}
 
+		r.Visible = currentVisible
 		actions = append(actions, osm.Action{
 			Type: actionType,
 			Old:  &osm.OSM{Relations: osm.Relations{old}},

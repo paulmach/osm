@@ -30,11 +30,15 @@ func TestChange_create(t *testing.T) {
 		}
 
 		if v := a.Nodes[0].ID; v != 3 {
-			t.Errorf("incorrect node id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Nodes[0].Version; v != 1 {
-			t.Errorf("incorrect node version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Nodes[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 
@@ -56,11 +60,15 @@ func TestChange_create(t *testing.T) {
 		}
 
 		if v := a.Ways[0].ID; v != 3 {
-			t.Errorf("incorrect way id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Ways[0].Version; v != 1 {
-			t.Errorf("incorrect way version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Ways[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 
@@ -82,11 +90,15 @@ func TestChange_create(t *testing.T) {
 		}
 
 		if v := a.Relations[0].ID; v != 3 {
-			t.Errorf("incorrect relation id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Relations[0].Version; v != 1 {
-			t.Errorf("incorrect relation version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Relations[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 }
@@ -96,18 +108,62 @@ func TestChange_modify(t *testing.T) {
 
 	ds := (&osm.OSM{
 		Nodes: osm.Nodes{
-			{ID: 1, Version: 1},
-			{ID: 1, Version: 2},
+			{ID: 1, Version: 1, Visible: true},
+			{ID: 1, Version: 2, Visible: true},
+			{ID: 5, Version: 1, Visible: true},
+			{ID: 5, Version: 2, Visible: false},
 		},
 		Ways: osm.Ways{
-			{ID: 2, Version: 1},
-			{ID: 2, Version: 2},
+			{ID: 2, Version: 1, Visible: true},
+			{ID: 2, Version: 2, Visible: true},
 		},
 		Relations: osm.Relations{
-			{ID: 3, Version: 1},
-			{ID: 3, Version: 2},
+			{ID: 3, Version: 1, Visible: true},
+			{ID: 3, Version: 2, Visible: true},
 		},
 	}).HistoryDatasource()
+
+	t.Run("undelete a node", func(t *testing.T) {
+		change := &osm.Change{
+			Modify: &osm.OSM{
+				Nodes: osm.Nodes{{ID: 5, Version: 3, Visible: true}},
+			},
+		}
+
+		diff, err := Change(ctx, change, ds)
+		if err != nil {
+			t.Fatalf("change error: %v", err)
+		}
+
+		a := diff.Actions[0]
+		if a.Type != osm.ActionModify {
+			t.Errorf("invalid type: %v", a.Type)
+		}
+
+		if v := a.Old.Nodes[0].ID; v != 5 {
+			t.Errorf("incorrect id: %v", v)
+		}
+
+		if v := a.Old.Nodes[0].Version; v != 2 {
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Nodes[0].Visible; v {
+			t.Errorf("incorrect visible: %v", v)
+		}
+
+		if v := a.New.Nodes[0].ID; v != 5 {
+			t.Errorf("incorrect id: %v", v)
+		}
+
+		if v := a.New.Nodes[0].Version; v != 3 {
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Nodes[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
+		}
+	})
 
 	t.Run("new node version", func(t *testing.T) {
 		change := &osm.Change{
@@ -127,19 +183,27 @@ func TestChange_modify(t *testing.T) {
 		}
 
 		if v := a.Old.Nodes[0].ID; v != 1 {
-			t.Errorf("incorrect node id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Old.Nodes[0].Version; v != 2 {
-			t.Errorf("incorrect node version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Nodes[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 
 		if v := a.New.Nodes[0].ID; v != 1 {
-			t.Errorf("incorrect node id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.New.Nodes[0].Version; v != 3 {
-			t.Errorf("incorrect node version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Nodes[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 
@@ -161,19 +225,27 @@ func TestChange_modify(t *testing.T) {
 		}
 
 		if v := a.Old.Ways[0].ID; v != 2 {
-			t.Errorf("incorrect way id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Old.Ways[0].Version; v != 2 {
-			t.Errorf("incorrect way version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Ways[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 
 		if v := a.New.Ways[0].ID; v != 2 {
-			t.Errorf("incorrect way id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.New.Ways[0].Version; v != 3 {
-			t.Errorf("incorrect way version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Ways[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 
@@ -195,19 +267,27 @@ func TestChange_modify(t *testing.T) {
 		}
 
 		if v := a.Old.Relations[0].ID; v != 3 {
-			t.Errorf("incorrect relation id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Old.Relations[0].Version; v != 2 {
-			t.Errorf("incorrect relation version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Relations[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 
 		if v := a.New.Relations[0].ID; v != 3 {
-			t.Errorf("incorrect relation id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.New.Relations[0].Version; v != 3 {
-			t.Errorf("incorrect relation version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Relations[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 }
@@ -217,16 +297,16 @@ func TestChange_delete(t *testing.T) {
 
 	ds := (&osm.OSM{
 		Nodes: osm.Nodes{
-			{ID: 1, Version: 1},
-			{ID: 1, Version: 2},
+			{ID: 1, Version: 1, Visible: true},
+			{ID: 1, Version: 2, Visible: true},
 		},
 		Ways: osm.Ways{
-			{ID: 2, Version: 1},
-			{ID: 2, Version: 2},
+			{ID: 2, Version: 1, Visible: true},
+			{ID: 2, Version: 2, Visible: true},
 		},
 		Relations: osm.Relations{
-			{ID: 3, Version: 1},
-			{ID: 3, Version: 2},
+			{ID: 3, Version: 1, Visible: true},
+			{ID: 3, Version: 2, Visible: true},
 		},
 	}).HistoryDatasource()
 
@@ -248,19 +328,27 @@ func TestChange_delete(t *testing.T) {
 		}
 
 		if v := a.Old.Nodes[0].ID; v != 1 {
-			t.Errorf("incorrect node id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Old.Nodes[0].Version; v != 2 {
-			t.Errorf("incorrect node version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Nodes[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 
 		if v := a.New.Nodes[0].ID; v != 1 {
-			t.Errorf("incorrect node id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.New.Nodes[0].Version; v != 3 {
-			t.Errorf("incorrect node version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Nodes[0].Visible; v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 
@@ -282,19 +370,27 @@ func TestChange_delete(t *testing.T) {
 		}
 
 		if v := a.Old.Ways[0].ID; v != 2 {
-			t.Errorf("incorrect way id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Old.Ways[0].Version; v != 2 {
-			t.Errorf("incorrect way version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Ways[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 
 		if v := a.New.Ways[0].ID; v != 2 {
-			t.Errorf("incorrect way id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.New.Ways[0].Version; v != 3 {
-			t.Errorf("incorrect way version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Ways[0].Visible; v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 
@@ -316,19 +412,27 @@ func TestChange_delete(t *testing.T) {
 		}
 
 		if v := a.Old.Relations[0].ID; v != 3 {
-			t.Errorf("incorrect relation id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.Old.Relations[0].Version; v != 2 {
-			t.Errorf("incorrect relation version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.Old.Relations[0].Visible; !v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 
 		if v := a.New.Relations[0].ID; v != 3 {
-			t.Errorf("incorrect relation id: %v", v)
+			t.Errorf("incorrect id: %v", v)
 		}
 
 		if v := a.New.Relations[0].Version; v != 3 {
-			t.Errorf("incorrect relation version: %v", v)
+			t.Errorf("incorrect version: %v", v)
+		}
+
+		if v := a.New.Relations[0].Visible; v {
+			t.Errorf("incorrect visible: %v", v)
 		}
 	})
 }
