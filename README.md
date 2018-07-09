@@ -80,7 +80,7 @@ Example usage:
 	scanner := osmpbf.New(context.Background(), f, 3)
 	defer scanner.Close()
 
-	for scanner.Next() {
+	for scanner.Scan() {
 		o := scanner.Object()
 		// do something
 	}
