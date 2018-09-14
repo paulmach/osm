@@ -19,6 +19,9 @@ func TestChangeset_urls(t *testing.T) {
 	defer ts.Close()
 
 	DefaultDatasource.BaseURL = ts.URL
+	defer func() {
+		DefaultDatasource.BaseURL = BaseURL
+	}()
 
 	t.Run("changeset", func(t *testing.T) {
 		Changeset(ctx, 1)

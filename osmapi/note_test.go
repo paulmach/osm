@@ -21,6 +21,9 @@ func TestNote_urls(t *testing.T) {
 	defer ts.Close()
 
 	DefaultDatasource.BaseURL = ts.URL
+	defer func() {
+		DefaultDatasource.BaseURL = BaseURL
+	}()
 
 	t.Run("note", func(t *testing.T) {
 		Note(ctx, 1)

@@ -22,6 +22,9 @@ func TestRelation_urls(t *testing.T) {
 	defer ts.Close()
 
 	DefaultDatasource.BaseURL = ts.URL
+	defer func() {
+		DefaultDatasource.BaseURL = BaseURL
+	}()
 
 	t.Run("relation", func(t *testing.T) {
 		Relation(ctx, 1)

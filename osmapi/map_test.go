@@ -22,6 +22,9 @@ func TestMap_urls(t *testing.T) {
 	defer ts.Close()
 
 	DefaultDatasource.BaseURL = ts.URL
+	defer func() {
+		DefaultDatasource.BaseURL = BaseURL
+	}()
 
 	t.Run("map", func(t *testing.T) {
 		bound := &osm.Bounds{

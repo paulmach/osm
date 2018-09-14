@@ -22,6 +22,9 @@ func TestNode_urls(t *testing.T) {
 	defer ts.Close()
 
 	DefaultDatasource.BaseURL = ts.URL
+	defer func() {
+		DefaultDatasource.BaseURL = BaseURL
+	}()
 
 	t.Run("node", func(t *testing.T) {
 		Node(ctx, 1)

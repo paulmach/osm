@@ -22,6 +22,9 @@ func TestWay_urls(t *testing.T) {
 	defer ts.Close()
 
 	DefaultDatasource.BaseURL = ts.URL
+	defer func() {
+		DefaultDatasource.BaseURL = BaseURL
+	}()
 
 	t.Run("way", func(t *testing.T) {
 		Way(ctx, 1)
