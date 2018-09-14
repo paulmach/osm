@@ -51,7 +51,7 @@ func (ds *Datasource) Notes(ctx context.Context, bounds *osm.Bounds, opts ...Not
 
 	var err error
 	for _, o := range opts {
-		params, err = o.apply(params)
+		params, err = o.applyNotes(params)
 		if err != nil {
 			return nil, err
 		}
@@ -75,7 +75,7 @@ func NotesSearch(ctx context.Context, query string, opts ...NotesOption) (osm.No
 	return DefaultDatasource.NotesSearch(ctx, query, opts...)
 }
 
-// NotesSearch returns the notes in a bounding box whose text matches the query.
+// NotesSearch returns the notes whose text matches the query.
 // Can provide options to limit the results or change what it means to be "closed".
 // See the options or osm api v0.6 docs for details.
 func (ds *Datasource) NotesSearch(ctx context.Context, query string, opts ...NotesOption) (osm.Notes, error) {
@@ -84,7 +84,7 @@ func (ds *Datasource) NotesSearch(ctx context.Context, query string, opts ...Not
 
 	var err error
 	for _, o := range opts {
-		params, err = o.apply(params)
+		params, err = o.applyNotes(params)
 		if err != nil {
 			return nil, err
 		}

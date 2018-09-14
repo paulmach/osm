@@ -3,11 +3,32 @@ package osmapi
 import (
 	"errors"
 	"fmt"
+	"strings"
+	"time"
 )
 
-// NotesOption defines a valid option for the osm.Notes by bounding box api.
+// FeatureOption can be used when fetching a feature or a set of different features.
+type FeatureOption interface {
+	applyFeature([]string) ([]string, error)
+}
+
+// At indicates adds an `at=2006-01-02T15:04:05Z` parameter ot the request.
+// The osm.fyi supports requesting features and maps as they were at the given time.
+func At(t time.Time) FeatureOption {
+	return &at{t}
+}
+
+type at struct{ t time.Time }
+
+func (o *at) applyFeature(p []string) ([]string, error) {
+	return append(p, "at="+o.t.UTC().Format("2006-01-02T15:04:05Z")), nil
+}
+
+func (o *at) feature() {}
+
+// NotesOption defines a valid option for the osmapi.Notes by bounding box api.
 type NotesOption interface {
-	apply([]string) ([]string, error)
+	applyNotes([]string) ([]string, error)
 }
 
 // Limit indicates the number of results to return valid values [1,10000].
@@ -25,7 +46,7 @@ func MaxDaysClosed(num int) NotesOption {
 
 type limit struct{ n int }
 
-func (o *limit) apply(p []string) ([]string, error) {
+func (o *limit) applyNotes(p []string) ([]string, error) {
 	if o.n < 1 || 10000 < o.n {
 		return nil, errors.New("osmapi: limit must be between 1 and 10000")
 	}
@@ -34,6 +55,24 @@ func (o *limit) apply(p []string) ([]string, error) {
 
 type maxDaysClosed struct{ n int }
 
-func (o *maxDaysClosed) apply(p []string) ([]string, error) {
+func (o *maxDaysClosed) applyNotes(p []string) ([]string, error) {
 	return append(p, fmt.Sprintf("closed=%d", o.n)), nil
+}
+
+func featureOptions(opts []FeatureOption) (string, error) {
+	if len(opts) == 0 {
+		return "", nil
+	}
+
+	params := make([]string, 0, len(opts))
+
+	var err error
+	for _, o := range opts {
+		params, err = o.applyFeature(params)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return strings.Join(params, "&"), nil
 }
