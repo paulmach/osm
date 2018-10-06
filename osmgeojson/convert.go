@@ -9,18 +9,6 @@ import (
 	"github.com/paulmach/osm/internal/mputil"
 )
 
-var uninterestingTags = map[string]bool{
-	"source":            true,
-	"source_ref":        true,
-	"source:ref":        true,
-	"history":           true,
-	"attribution":       true,
-	"created_by":        true,
-	"tiger:county":      true,
-	"tiger:tlid":        true,
-	"tiger:upload_uuid": true,
-}
-
 type context struct {
 	noID                   bool
 	noMeta                 bool
@@ -405,7 +393,7 @@ func hasInterestingTags(tags osm.Tags, ignore map[string]string) bool {
 
 	for _, tag := range tags {
 		k, v := tag.Key, tag.Value
-		if !uninterestingTags[k] &&
+		if !osm.UninterestingTags[k] &&
 			(ignore == nil || !(ignore[k] == "true" || ignore[k] == v)) {
 			return true
 		}

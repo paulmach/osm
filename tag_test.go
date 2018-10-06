@@ -6,6 +6,44 @@ import (
 	"testing"
 )
 
+func TestTags_AnyInteresting(t *testing.T) {
+	cases := []struct {
+		name        string
+		tags        Tags
+		interesting bool
+	}{
+		{
+			name: "has interesting",
+			tags: Tags{
+				{Key: "building", Value: "yes"},
+			},
+			interesting: true,
+		},
+		{
+			name:        "no tags",
+			tags:        Tags{},
+			interesting: false,
+		},
+		{
+			name: "no interesting tags",
+			tags: Tags{
+				{Key: "source", Value: "whatever"},
+				{Key: "history", Value: "lots"},
+			},
+			interesting: false,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			v := tc.tags.AnyInteresting()
+			if v != tc.interesting {
+				t.Errorf("incorrect interesting: %v != %v", v, tc.interesting)
+			}
+		})
+	}
+}
+
 func TestTags_MarshalJSON(t *testing.T) {
 	data, err := Tags{}.MarshalJSON()
 	if err != nil {
