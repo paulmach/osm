@@ -769,4 +769,55 @@ func TestConvert_includeInvalidPolygons(t *testing.T) {
 		fc := geojson.NewFeatureCollection().Append(feature)
 		testConvert(t, xml, fc, IncludeInvalidPolygons(true))
 	})
+
+	t.Run("missing multiple outers", func(t *testing.T) {
+		xml := `
+			<osm>
+				<relation id="1" visible="true">
+					<member type="way" ref="1" role="outer"/>
+					<member type="way" ref="2" role="inner"/>
+					<member type="way" ref="3" role="outer"/>
+					<member type="way" ref="4" role="inner"/>
+					<member type="way" ref="5" role="inner"/>
+					<tag k="type" v="multipolygon"/>
+				</relation>
+				<way id="2" visible="true">
+					<nd ref="1" lat="5" lon="2" />
+					<nd ref="2" lat="5" lon="2" />
+					<nd ref="3" lat="5" lon="2" />
+					<nd ref="1" lat="5" lon="2" />
+				</way>
+				<way id="4" visible="true">
+					<nd ref="1" lat="6" lon="2" />
+					<nd ref="2" lat="6" lon="2" />
+					<nd ref="3" lat="6" lon="2" />
+					<nd ref="1" lat="6" lon="2" />
+				</way>
+				<way id="5" visible="true">
+					<nd ref="1" lat="7" lon="2" />
+					<nd ref="2" lat="7" lon="2" />
+					<nd ref="3" lat="7" lon="2" />
+					<nd ref="1" lat="7" lon="2" />
+				</way>
+			</osm>`
+
+		polygon := orb.Polygon{
+			nil,
+			{{2, 7}, {2, 7}, {2, 7}, {2, 7}},
+			{{2, 6}, {2, 6}, {2, 6}, {2, 6}},
+			{{2, 5}, {2, 5}, {2, 5}, {2, 5}},
+		}
+
+		feature := geojson.NewFeature(polygon)
+		feature.ID = "relation/1"
+		feature.Properties["type"] = "relation"
+		feature.Properties["id"] = 1
+		feature.Properties["tainted"] = true
+		feature.Properties["tags"] = map[string]string{
+			"type": "multipolygon",
+		}
+
+		fc := geojson.NewFeatureCollection().Append(feature)
+		testConvert(t, xml, fc, IncludeInvalidPolygons(true))
+	})
 }

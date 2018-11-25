@@ -189,7 +189,7 @@ func addToMultiPolygon(mp orb.MultiPolygon, ring orb.Ring, includeInvalidPolygon
 		// we don't really know if this inner should be part of it.
 		// But... we assume yes.
 		fr := mp[0][0]
-		if fr[0] != fr[len(fr)-1] {
+		if len(fr) != 0 && fr[0] != fr[len(fr)-1] {
 			mp[0] = append(mp[0], ring)
 			return mp
 		}
