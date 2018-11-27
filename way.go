@@ -218,6 +218,24 @@ func (wn WayNodes) Bounds() *Bounds {
 	return b
 }
 
+// Bound computes the orb.Bound for the given way nodes.
+func (wn WayNodes) Bound() orb.Bound {
+	b := orb.Bound{
+		Min: orb.Point{math.MaxFloat64, math.MaxFloat64},
+		Max: orb.Point{-math.MaxFloat64, -math.MaxFloat64},
+	}
+
+	for _, n := range wn {
+		b.Min[0] = math.Min(b.Min[0], n.Lon)
+		b.Max[0] = math.Max(b.Max[0], n.Lon)
+
+		b.Min[1] = math.Min(b.Min[1], n.Lat)
+		b.Max[1] = math.Max(b.Max[1], n.Lat)
+	}
+
+	return b
+}
+
 // ElementIDs returns a list of element ids for the way nodes.
 func (wn WayNodes) ElementIDs() ElementIDs {
 	// add 1 to the memory length because a common use case

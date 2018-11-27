@@ -143,6 +143,19 @@ func TestWayNodes_Bounds(t *testing.T) {
 	}
 }
 
+func TestWayNodes_Bound(t *testing.T) {
+	wn := WayNodes{
+		{Lat: 1, Lon: 2},
+		{Lat: 3, Lon: 4},
+		{Lat: 2, Lon: 3},
+	}
+
+	b := wn.Bound()
+	if !reflect.DeepEqual(b, orb.Bound{Min: orb.Point{2, 1}, Max: orb.Point{4, 3}}) {
+		t.Errorf("incorrect bound: %v", b)
+	}
+}
+
 func TestWay_LineString(t *testing.T) {
 	w := &Way{
 		ID: 1,
