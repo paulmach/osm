@@ -246,7 +246,7 @@ func (dec *decoder) Start(n int) error {
 func (dec *decoder) Next() (osm.Object, error) {
 	for dec.cIndex >= len(dec.cData.Objects) {
 		cd, ok := <-dec.serializer
-		if !ok {
+		if !ok || cd.Err == io.EOF {
 			if dec.cData.Err != nil {
 				return nil, dec.cData.Err
 			}

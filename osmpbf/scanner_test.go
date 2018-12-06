@@ -172,6 +172,58 @@ func TestScanner_Close(t *testing.T) {
 	}
 }
 
+func TestScanner_FullyScannedBytes(t *testing.T) {
+	t.Run("should be non-zero after reading whole file", func(t *testing.T) {
+		f, err := os.Open(Delaware)
+		if err != nil {
+			t.Fatalf("unable to open file: %v", err)
+		}
+		defer f.Close()
+
+		scanner := New(context.Background(), f, 1)
+		for i := 0; i < 30000; i++ {
+			scanner.Scan()
+		}
+
+		if v := scanner.FullyScannedBytes(); v != 214162 {
+			t.Errorf("incorrect scanned bytes: %v", v)
+		}
+
+		for scanner.Scan() {
+			// scan the whole thing
+		}
+
+		if v := scanner.FullyScannedBytes(); v != 7488871 {
+			t.Errorf("incorrect scanned bytes: %v", v)
+		}
+	})
+
+	t.Run("should be non-zero if cancel context", func(t *testing.T) {
+		f, err := os.Open(Delaware)
+		if err != nil {
+			t.Fatalf("unable to open file: %v", err)
+		}
+		defer f.Close()
+
+		scanner := New(context.Background(), f, 1)
+		for i := 0; i < 30000; i++ {
+			scanner.Scan()
+		}
+
+		if v := scanner.FullyScannedBytes(); v != 214162 {
+			t.Errorf("incorrect scanned bytes: %v", v)
+		}
+
+		for scanner.Scan() {
+			// scan the whole thing
+		}
+
+		if v := scanner.FullyScannedBytes(); v != 7488871 {
+			t.Errorf("incorrect scanned bytes: %v", v)
+		}
+	})
+}
+
 func BenchmarkLondon(b *testing.B) {
 	f, err := os.Open(London)
 	if err != nil {
