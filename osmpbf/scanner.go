@@ -59,6 +59,15 @@ func (s *Scanner) FullyScannedBytes() int64 {
 	return atomic.LoadInt64(&s.decoder.cOffset)
 }
 
+// PreviousFullyScannedBytes returns the previous value of FullyScannedBytes.
+// This is interesting because it's not totally clear if a feature spans a block.
+// For example, if one quits after finding the first relation, upon restarting there
+// is no way of knowing if the first relation is complete, so skip it. But if this relation
+// is the first relation in the file we'll skip a full relation.
+func (s *Scanner) PreviousFullyScannedBytes() int64 {
+	return atomic.LoadInt64(&s.decoder.pOffset)
+}
+
 // Close cleans up all the reading goroutines, it does not
 // close the underlying reader.
 func (s *Scanner) Close() error {

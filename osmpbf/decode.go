@@ -78,6 +78,7 @@ type decoder struct {
 	outputs    []<-chan oPair
 	serializer chan oPair
 
+	pOffset int64
 	cOffset int64
 	cData   oPair
 	cIndex  int
@@ -253,6 +254,7 @@ func (dec *decoder) Next() (osm.Object, error) {
 			return nil, io.EOF
 		}
 
+		dec.pOffset = dec.cOffset
 		dec.cOffset = cd.Offset
 		dec.cData = cd
 		dec.cIndex = 0
