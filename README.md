@@ -84,9 +84,10 @@ Example usage:
 		o := scanner.Object()
 		// do something
 	}
-
-	if scanner.Err() != nil {
-		panic(err)
+	
+	scanErr := scanner.Err()
+	if scanErr != nil {
+		panic(scanErr)
 	}
 
 **Note:** Scanners are **not** safe for parallel use. One should feed the
