@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 // A Datasourcer is something that acts like a datasource allowing us to
@@ -75,13 +76,13 @@ func Compute(
 			// get the current child
 			c := child.FindVisible(
 				parent.ChangesetID(),
-				timeThreshold(parent, 0),
+				timeThresholdParent(parent, 0),
 				opts.Threshold,
 			)
 			if c == nil && !opts.IgnoreInconsistency {
 				return nil, &NoVisibleChildError{
 					ChildID:   fid,
-					Timestamp: timeThreshold(parent, 0)}
+					Timestamp: timeThresholdParent(parent, 0)}
 			}
 
 			// straight up set this child on major version
@@ -95,20 +96,20 @@ func Compute(
 
 			start := 0
 			if c != nil {
-				start = c.VersionIndex() + 1
+				start = c.VersionIndex + 1
 			} else {
 				// current child is not defined, is next child
-				next := child.VersionBefore(timeThreshold(parent, 0))
+				next := child.VersionBefore(timeThresholdParent(parent, 0))
 				if next == nil {
 					start = 0
 				} else {
-					start = next.VersionIndex() + 1
+					start = next.VersionIndex + 1
 				}
 			}
 
 			var updates osm.Updates
 			for k := start; k < nextVersion; k++ {
-				if child[k].Visible() {
+				if child[k].Visible {
 					// It's possible for this child to be present at multiple locations in the parent
 					for _, cl := range locs {
 						u := child[k].Update()
@@ -141,27 +142,27 @@ func Compute(
 	return results, nil
 }
 
-func nextVersionIndex(current Child, child ChildList, nextParent Parent, opts *Options) int {
+func nextVersionIndex(current *shared.Child, child ChildList, nextParent Parent, opts *Options) int {
 	if nextParent == nil {
 		// No next parent version, so we need to include all
 		// future versions of this child.
-		return child[len(child)-1].VersionIndex() + 1
+		return child[len(child)-1].VersionIndex + 1
 	}
 
 	next := child.FindVisible(
 		nextParent.ChangesetID(),
-		timeThreshold(nextParent, 0),
+		timeThresholdParent(nextParent, 0),
 		opts.Threshold,
 	)
 
 	if next != nil {
 		// if the child was updated enough before the next parent
 		// include it in the minor versions.
-		if timeThreshold(next, 0).Before(timeThreshold(nextParent, -opts.Threshold)) {
-			return next.VersionIndex() + 1
+		if timeThreshold(next, 0).Before(timeThresholdParent(nextParent, -opts.Threshold)) {
+			return next.VersionIndex + 1
 		}
 
-		return next.VersionIndex()
+		return next.VersionIndex
 	}
 
 	// child is one of:
@@ -174,7 +175,7 @@ func nextVersionIndex(current Child, child ChildList, nextParent Parent, opts *O
 	// we want to make sure it is:
 	// - 1 threshold before the next parent
 	// - not before the current child timestamp
-	ts := timeThreshold(nextParent, -opts.Threshold)
+	ts := timeThresholdParent(nextParent, -opts.Threshold)
 
 	if current != nil && !ts.After(timeThreshold(current, 0)) { // before and equal still matches
 		// visible in current but child and next parent are
@@ -192,7 +193,7 @@ func nextVersionIndex(current Child, child ChildList, nextParent Parent, opts *O
 
 	// visble or not, we want to want to include it.
 	// novisible versions of this child will be filtered out below.
-	return next.VersionIndex() + 1
+	return next.VersionIndex + 1
 }
 
 // mapChildLocs builds a cache of a where a child is in a set of parents.

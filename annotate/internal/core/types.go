@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 // A Parent is something that holds children. ie. ways have nodes as children
@@ -22,26 +23,11 @@ type Parent interface {
 	// Note: we auto-annotate all unannotated children if they would have
 	// been filtered out.
 	Refs() (osm.FeatureIDs, []bool)
-	SetChild(idx int, c Child)
-}
-
-// A Child a thing contained by parents such as nodes for ways or nodes, ways
-// and/or relations for relations.
-type Child interface {
-	ID() osm.FeatureID
-	ChangesetID() osm.ChangesetID
-
-	// VersionIndex is the index of the version if sorted from lowest to highest.
-	// This is necessary since version don't have to start at 1 or be sequential.
-	VersionIndex() int
-	Visible() bool
-	Timestamp() time.Time
-	Committed() time.Time
-	Update() osm.Update
+	SetChild(idx int, c *shared.Child)
 }
 
 // A ChildList is a set
-type ChildList []Child
+type ChildList []*shared.Child
 
 // FindVisible locates the child visible at the given time.
 // If 'at' is on or after osm.CommitInfoStart the committed
@@ -50,18 +36,19 @@ type ChildList []Child
 // range, or the previous node if visible. Children after 'at' but within
 // the eps must have the same changeset id as provided (the parent's).
 // If the previous node is not visible, or does not exits will return nil.
-func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Duration) Child {
+func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Duration) *shared.Child {
 	var (
 		diff    time.Duration = -1
-		nearest Child
+		nearest *shared.Child
 	)
 
 	start := at.Add(-eps)
 	for _, c := range cl {
-		if c.Committed().Before(osm.CommitInfoStart) {
+
+		if c.Committed.Before(osm.CommitInfoStart) {
 			// more complicated logic for early data.
-			offset := c.Timestamp().Sub(start)
-			visible := c.Visible()
+			offset := c.Timestamp.Sub(start)
+			visible := c.Visible
 
 			// if this node is after the end then it's over
 			if offset > 2*eps {
@@ -93,7 +80,7 @@ func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Dura
 					if offset <= eps {
 						// if we're before at, pick it
 						nearest = c
-					} else if c.ChangesetID() == cid {
+					} else if c.ChangesetID == cid {
 						// if we're after at, changeset must be same
 						nearest = c
 					} else {
@@ -107,11 +94,11 @@ func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Dura
 		} else {
 			// simpler logic, if committed is on or before 'at'
 			// consider that element.
-			if c.Committed().After(at) {
+			if c.Committed.After(at) {
 				break
 			}
 
-			if c.Visible() {
+			if c.Visible {
 				nearest = c
 			} else {
 				nearest = nil
@@ -123,8 +110,8 @@ func (cl ChildList) FindVisible(cid osm.ChangesetID, at time.Time, eps time.Dura
 }
 
 // VersionBefore finds the last child before a given time.
-func (cl ChildList) VersionBefore(end time.Time) Child {
-	var latest Child
+func (cl ChildList) VersionBefore(end time.Time) *shared.Child {
+	var latest *shared.Child
 
 	for _, c := range cl {
 		if !timeThreshold(c, 0).Before(end) {
@@ -137,17 +124,20 @@ func (cl ChildList) VersionBefore(end time.Time) Child {
 	return latest
 }
 
-type timer interface {
-	Timestamp() time.Time
-	Committed() time.Time
-}
-
-func timeThreshold(c timer, esp time.Duration) time.Time {
-	if c.Committed().Before(osm.CommitInfoStart) {
-		return c.Timestamp().Add(esp)
+func timeThreshold(c *shared.Child, esp time.Duration) time.Time {
+	if c.Committed.Before(osm.CommitInfoStart) {
+		return c.Timestamp.Add(esp)
 	}
 
-	return c.Committed()
+	return c.Committed
+}
+
+func timeThresholdParent(p Parent, esp time.Duration) time.Time {
+	if p.Committed().Before(osm.CommitInfoStart) {
+		return p.Timestamp().Add(esp)
+	}
+
+	return p.Committed()
 }
 
 func absDuration(d time.Duration) time.Duration {

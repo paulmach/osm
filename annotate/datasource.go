@@ -5,6 +5,7 @@ import (
 
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/annotate/internal/core"
+	"github.com/paulmach/osm/annotate/shared"
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/planar"
@@ -70,10 +71,9 @@ func nodesToChildList(nodes osm.Nodes) core.ChildList {
 	list := make(core.ChildList, len(nodes))
 	nodes.SortByIDVersion()
 	for i, n := range nodes {
-		list[i] = &childNode{
-			Index: i,
-			Node:  n,
-		}
+		c := shared.FromNode(n)
+		c.VersionIndex = i
+		list[i] = c
 	}
 
 	return list
@@ -87,10 +87,8 @@ func waysToChildList(ways osm.Ways) core.ChildList {
 	list := make(core.ChildList, len(ways))
 	ways.SortByIDVersion()
 	for i, w := range ways {
-		c := &childWay{
-			Index: i,
-			Way:   w,
-		}
+		c := shared.FromWay(w)
+		c.VersionIndex = i
 
 		if i != 0 {
 			c.ReverseOfPrevious = isReverse(w, ways[i-1])
@@ -133,10 +131,9 @@ func relationsToChildList(relations osm.Relations) core.ChildList {
 	list := make(core.ChildList, len(relations))
 	relations.SortByIDVersion()
 	for i, r := range relations {
-		list[i] = &childRelation{
-			Index:    i,
-			Relation: r,
-		}
+		c := shared.FromRelation(r)
+		c.VersionIndex = i
+		list[i] = c
 	}
 
 	return list

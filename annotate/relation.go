@@ -2,11 +2,11 @@ package annotate
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/annotate/internal/core"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 // Relations computes the updates for the given relations
@@ -100,7 +100,7 @@ func (r parentRelation) Refs() (osm.FeatureIDs, []bool) {
 	return ids, annotated
 }
 
-func (r *parentRelation) SetChild(idx int, child core.Child) {
+func (r *parentRelation) SetChild(idx int, child *shared.Child) {
 	if r.Relation.Polygon() && r.ways == nil {
 		r.ways = make(map[osm.WayID]*osm.Way, len(r.Relation.Members))
 	}
@@ -109,23 +109,12 @@ func (r *parentRelation) SetChild(idx int, child core.Child) {
 		return
 	}
 
-	switch t := child.(type) {
-	case *childNode:
-		r.Relation.Members[idx].Version = t.Node.Version
-		r.Relation.Members[idx].ChangesetID = t.Node.ChangesetID
-		r.Relation.Members[idx].Lat = t.Node.Lat
-		r.Relation.Members[idx].Lon = t.Node.Lon
-	case *childWay:
-		r.Relation.Members[idx].Version = t.Way.Version
-		r.Relation.Members[idx].ChangesetID = t.Way.ChangesetID
+	r.Relation.Members[idx].Version = child.Version
+	r.Relation.Members[idx].ChangesetID = child.ChangesetID
+	r.Relation.Members[idx].Lat = child.Lat
+	r.Relation.Members[idx].Lon = child.Lon
 
-		if r.ways != nil {
-			r.ways[t.Way.ID] = t.Way
-		}
-	case *childRelation:
-		r.Relation.Members[idx].Version = t.Relation.Version
-		r.Relation.Members[idx].ChangesetID = t.Relation.ChangesetID
-	default:
-		panic(fmt.Sprintf("unsupported type %T", child))
+	if r.ways != nil && child.Way != nil {
+		r.ways[child.Way.ID] = child.Way
 	}
 }

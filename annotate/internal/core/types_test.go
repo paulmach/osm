@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 type findVisibleTestCase struct {
@@ -22,12 +23,12 @@ type lastVisibleTestCase struct {
 
 func TestChildListFindVisible(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: true,
-			timestamp: time.Date(2016, 1, 2, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: true,
+			Timestamp: time.Date(2016, 1, 2, 0, 0, 30, 0, time.UTC)},
 	}
 
 	cases := []findVisibleTestCase{
@@ -71,22 +72,22 @@ func TestChildListFindVisible(t *testing.T) {
 
 func TestChildListFindVisibleCommitted(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC),
-			committed: time.Date(2016, 1, 1, 5, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: true,
-			timestamp: time.Date(2016, 1, 2, 0, 0, 30, 0, time.UTC),
-			committed: time.Date(2016, 1, 2, 5, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 2, visible: false,
-			timestamp: time.Date(2016, 1, 3, 0, 0, 30, 0, time.UTC),
-			committed: time.Date(2016, 1, 3, 5, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 3, visible: true,
-			timestamp: time.Date(2016, 1, 4, 0, 0, 30, 0, time.UTC),
-			committed: time.Date(2016, 1, 4, 5, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC),
+			Committed: time.Date(2016, 1, 1, 5, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: true,
+			Timestamp: time.Date(2016, 1, 2, 0, 0, 30, 0, time.UTC),
+			Committed: time.Date(2016, 1, 2, 5, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 2, Visible: false,
+			Timestamp: time.Date(2016, 1, 3, 0, 0, 30, 0, time.UTC),
+			Committed: time.Date(2016, 1, 3, 5, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 3, Visible: true,
+			Timestamp: time.Date(2016, 1, 4, 0, 0, 30, 0, time.UTC),
+			Committed: time.Date(2016, 1, 4, 5, 0, 30, 0, time.UTC)},
 	}
 
 	cases := []findVisibleTestCase{
@@ -133,18 +134,18 @@ func TestChildListFindVisibleCommitted(t *testing.T) {
 
 func TestChildListFindVisibleWithHidden(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: false,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: true,
-			timestamp: time.Date(2016, 1, 2, 0, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 2, visible: false,
-			timestamp: time.Date(2016, 1, 3, 0, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 3, visible: true,
-			timestamp: time.Date(2016, 1, 4, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: false,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: true,
+			Timestamp: time.Date(2016, 1, 2, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 2, Visible: false,
+			Timestamp: time.Date(2016, 1, 3, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 3, Visible: true,
+			Timestamp: time.Date(2016, 1, 4, 0, 0, 30, 0, time.UTC)},
 	}
 
 	cases := []findVisibleTestCase{
@@ -195,15 +196,15 @@ func TestChildListFindVisibleWithHidden(t *testing.T) {
 
 func TestChildListFindVisibleWithinThreshold(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 10, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC)},
-		&testChild{
-			versionIndex: 2, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 10, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 2, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
 	}
 
 	cases := []findVisibleTestCase{
@@ -246,15 +247,15 @@ func TestChildListFindVisibleWithinThreshold(t *testing.T) {
 
 func TestChildListFindVisibleHiddenWithinThreshold(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 10, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: false,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC)},
-		&testChild{
-			versionIndex: 2, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 2, 0, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 10, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: false,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 2, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 2, 0, 0, time.UTC)},
 	}
 
 	cases := []findVisibleTestCase{
@@ -305,15 +306,15 @@ func TestChildListFindVisibleHiddenWithinThreshold(t *testing.T) {
 
 func TestChildListFindVisibleDifferentChangeset(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: true, changesetID: 1,
-			timestamp: time.Date(2010, 1, 1, 0, 0, 10, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: true, changesetID: 2,
-			timestamp: time.Date(2010, 1, 1, 0, 0, 20, 0, time.UTC)},
-		&testChild{
-			versionIndex: 2, visible: true, changesetID: 1,
-			timestamp: time.Date(2010, 1, 1, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: true, ChangesetID: 1,
+			Timestamp: time.Date(2010, 1, 1, 0, 0, 10, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: true, ChangesetID: 2,
+			Timestamp: time.Date(2010, 1, 1, 0, 0, 20, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 2, Visible: true, ChangesetID: 1,
+			Timestamp: time.Date(2010, 1, 1, 0, 0, 30, 0, time.UTC)},
 	}
 
 	cases := []findVisibleTestCase{
@@ -353,9 +354,9 @@ func checkChildListFindVisible(t *testing.T, id osm.ChangesetID, cl ChildList, c
 					t.Logf("%+v", tc)
 				}
 			} else if c != nil && tc.index == -1 {
-				t.Errorf("should be nil, got %v", c.VersionIndex())
+				t.Errorf("should be nil, got %v", c.VersionIndex)
 				t.Logf("%+v", tc)
-			} else if idx := c.VersionIndex(); idx != tc.index {
+			} else if idx := c.VersionIndex; idx != tc.index {
 				t.Errorf("should be %d, got %v", tc.index, idx)
 				t.Logf("%+v", tc)
 			}
@@ -365,22 +366,22 @@ func checkChildListFindVisible(t *testing.T, id osm.ChangesetID, cl ChildList, c
 
 func TestChildListVersionBefore(t *testing.T) {
 	cl := ChildList{
-		&testChild{
-			versionIndex: 0, visible: false,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 10, 0, time.UTC)},
-		&testChild{
-			versionIndex: 1, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC)},
-		&testChild{
-			versionIndex: 2, visible: false,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
-		&testChild{
-			versionIndex: 3, visible: true,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC),
-			committed: time.Date(2016, 1, 1, 0, 0, 40, 0, time.UTC)},
-		&testChild{
-			versionIndex: 4, visible: false,
-			timestamp: time.Date(2016, 1, 1, 0, 0, 50, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 0, Visible: false,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 10, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 1, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 20, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 2, Visible: false,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 3, Visible: true,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 30, 0, time.UTC),
+			Committed: time.Date(2016, 1, 1, 0, 0, 40, 0, time.UTC)},
+		&shared.Child{
+			VersionIndex: 4, Visible: false,
+			Timestamp: time.Date(2016, 1, 1, 0, 0, 50, 0, time.UTC)},
 	}
 
 	cases := []lastVisibleTestCase{
@@ -421,9 +422,9 @@ func TestChildListVersionBefore(t *testing.T) {
 					t.Logf("%+v", tc)
 				}
 			} else if c != nil && tc.index == -1 {
-				t.Errorf("should be nil, got %v", c.VersionIndex())
+				t.Errorf("should be nil, got %v", c.VersionIndex)
 				t.Logf("%+v", tc)
-			} else if idx := c.VersionIndex(); idx != tc.index {
+			} else if idx := c.VersionIndex; idx != tc.index {
 				t.Errorf("should be %d, got %v", tc.index, idx)
 				t.Logf("%+v", tc)
 			}
@@ -475,53 +476,11 @@ func (t testParent) Refs() (osm.FeatureIDs, []bool) {
 	return t.refs, annotated
 }
 
-func (t *testParent) SetChild(idx int, c Child) {
+func (t *testParent) SetChild(idx int, c *shared.Child) {
 	if idx >= len(t.children) {
 		nc := make(ChildList, idx+1)
 		copy(nc, t.children)
 		t.children = nc
 	}
 	t.children[idx] = c
-}
-
-var _ Child = &testChild{}
-
-type testChild struct {
-	childID      osm.FeatureID
-	changesetID  osm.ChangesetID
-	versionIndex int
-	visible      bool
-	timestamp    time.Time
-	committed    time.Time
-}
-
-func (t testChild) ID() osm.FeatureID {
-	return t.childID
-}
-
-func (t testChild) ChangesetID() osm.ChangesetID {
-	return t.changesetID
-}
-
-func (t testChild) VersionIndex() int {
-	return t.versionIndex
-}
-
-func (t testChild) Visible() bool {
-	return t.visible
-}
-
-func (t testChild) Timestamp() time.Time {
-	return t.timestamp
-}
-
-func (t testChild) Committed() time.Time {
-	return t.committed
-}
-
-func (t testChild) Update() osm.Update {
-	return osm.Update{
-		Version:   t.versionIndex,
-		Timestamp: t.timestamp,
-	}
 }

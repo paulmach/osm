@@ -6,6 +6,7 @@ import (
 
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/annotate/internal/core"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 // NodeHistoryDatasourcer is an more strict interface for when we only need node history.
@@ -100,15 +101,13 @@ func (w parentWay) Refs() (osm.FeatureIDs, []bool) {
 	return ids, annotated
 }
 
-func (w *parentWay) SetChild(idx int, child core.Child) {
+func (w *parentWay) SetChild(idx int, child *shared.Child) {
 	if child == nil {
 		return
 	}
 
-	n := child.(*childNode).Node
-
-	w.Way.Nodes[idx].Version = n.Version
-	w.Way.Nodes[idx].ChangesetID = n.ChangesetID
-	w.Way.Nodes[idx].Lat = n.Lat
-	w.Way.Nodes[idx].Lon = n.Lon
+	w.Way.Nodes[idx].Version = child.Version
+	w.Way.Nodes[idx].ChangesetID = child.ChangesetID
+	w.Way.Nodes[idx].Lat = child.Lat
+	w.Way.Nodes[idx].Lon = child.Lon
 }

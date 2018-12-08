@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 var (
@@ -23,10 +24,10 @@ func TestCompute(t *testing.T) {
 	// gets an update because there is a node update before the parents next version.
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 2, VersionIndex: 2, Timestamp: start.Add(2 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 3, VersionIndex: 3, Timestamp: start.Add(3 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
@@ -80,7 +81,7 @@ func TestCompute_MissingChildren(t *testing.T) {
 
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&shared.Child{ID: child1, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
@@ -113,12 +114,12 @@ func TestCompute_DeletedParent(t *testing.T) {
 	// When the parent comes back it needs to start from where its at.
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(3 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 4, timestamp: start.Add(4 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 5, timestamp: start.Add(5 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 2, VersionIndex: 2, Timestamp: start.Add(2 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 3, VersionIndex: 3, Timestamp: start.Add(3 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 4, VersionIndex: 4, Timestamp: start.Add(4 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 5, VersionIndex: 5, Timestamp: start.Add(5 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
@@ -178,9 +179,9 @@ func TestCompute_ChildUpdateAfterLastParentVersion(t *testing.T) {
 	// an update should be created.
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(2 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 2, VersionIndex: 2, Timestamp: start.Add(2 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
@@ -220,23 +221,23 @@ func TestCompute_ChildUpdateRightBeforeParentDelete(t *testing.T) {
 	dss := []*TestDS{}
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start, Visible: true},
 		// child is updated within threshold
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(30 * time.Second), Visible: true},
 	})
 	dss = append(dss, ds)
 	ds = &TestDS{}
 	ds.Set(child1, ChildList{
 		// initial child is created BEFORE parent
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(-time.Second), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(-time.Second), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(30 * time.Second), Visible: true},
 	})
 	dss = append(dss, ds)
 	ds = &TestDS{}
 	ds.Set(child1, ChildList{
 		// initial child is created AFTER parent
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(time.Second), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(30 * time.Second), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(time.Second), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(30 * time.Second), Visible: true},
 	})
 	dss = append(dss, ds)
 
@@ -279,9 +280,9 @@ func TestCompute_ChildUpdateRightBeforeParentUpdated(t *testing.T) {
 	// this should not trigger an updates.
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
 		// updated exactly 1 threshold before next parent does not create an update.
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1*time.Hour - time.Minute), visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1*time.Hour - time.Minute), Visible: true},
 	})
 
 	parents := []Parent{
@@ -319,14 +320,14 @@ func TestCompute_MultipleChildren(t *testing.T) {
 	// A parent with multiple children should handle each child independently.
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(5 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 2, VersionIndex: 2, Timestamp: start.Add(5 * time.Hour), Visible: true},
 	})
 	ds.Set(child2, ChildList{
-		&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
-		&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
+		&shared.Child{ID: child2, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child2, Version: 1, VersionIndex: 1, Timestamp: start.Add(2 * time.Hour), Visible: true},
+		&shared.Child{ID: child2, Version: 2, VersionIndex: 2, Timestamp: start.Add(4 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
@@ -373,14 +374,14 @@ func TestCompute_ChangedChildList(t *testing.T) {
 	// A change in the child list should be supported.
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(4 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 2, VersionIndex: 2, Timestamp: start.Add(4 * time.Hour), Visible: true},
 	})
 	ds.Set(child2, ChildList{
-		&testChild{childID: child2, versionIndex: 0, timestamp: start.Add(0 * time.Hour), visible: true},
-		&testChild{childID: child2, versionIndex: 1, timestamp: start.Add(2 * time.Hour), visible: true},
-		&testChild{childID: child2, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: true},
+		&shared.Child{ID: child2, Version: 0, VersionIndex: 0, Timestamp: start.Add(0 * time.Hour), Visible: true},
+		&shared.Child{ID: child2, Version: 1, VersionIndex: 1, Timestamp: start.Add(2 * time.Hour), Visible: true},
+		&shared.Child{ID: child2, Version: 2, VersionIndex: 2, Timestamp: start.Add(3 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
@@ -431,10 +432,10 @@ func TestCompute_MajorChildren(t *testing.T) {
 
 	ds := &TestDS{}
 	ds.Set(child1, ChildList{
-		&testChild{childID: child1, versionIndex: 0, timestamp: start, visible: true},
-		&testChild{childID: child1, versionIndex: 1, timestamp: start.Add(1 * time.Hour), visible: true},
-		&testChild{childID: child1, versionIndex: 2, timestamp: start.Add(3 * time.Hour), visible: false},
-		&testChild{childID: child1, versionIndex: 3, timestamp: start.Add(5 * time.Hour), visible: true},
+		&shared.Child{ID: child1, Version: 0, VersionIndex: 0, Timestamp: start, Visible: true},
+		&shared.Child{ID: child1, Version: 1, VersionIndex: 1, Timestamp: start.Add(1 * time.Hour), Visible: true},
+		&shared.Child{ID: child1, Version: 2, VersionIndex: 2, Timestamp: start.Add(3 * time.Hour), Visible: false},
+		&shared.Child{ID: child1, Version: 3, VersionIndex: 3, Timestamp: start.Add(5 * time.Hour), Visible: true},
 	})
 
 	parents := []Parent{
