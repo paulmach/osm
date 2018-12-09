@@ -9,6 +9,15 @@ import (
 	"github.com/paulmach/osm/annotate/shared"
 )
 
+// HistoryAsChildrenDatasourcer is an advanced data source that
+// returns the needed elements as children directly.
+type HistoryAsChildrenDatasourcer interface {
+	osm.HistoryDatasourcer
+	NodeHistoryAsChildren(context.Context, osm.NodeID) ([]*shared.Child, error)
+	WayHistoryAsChildren(context.Context, osm.WayID) ([]*shared.Child, error)
+	RelationHistoryAsChildren(context.Context, osm.RelationID) ([]*shared.Child, error)
+}
+
 // Relations computes the updates for the given relations
 // and annotate members with stuff like changeset and lon/lat data.
 // The input relations are modified to include this information.
@@ -33,7 +42,7 @@ func Relations(
 		parents[i] = &parentRelation{Relation: r}
 	}
 
-	rds := &relationDatasource{datasource}
+	rds := newRelationDatasourcer(datasource)
 	updatesForParents, err := core.Compute(ctx, parents, rds, computeOpts)
 	if err != nil {
 		return mapErrors(err)

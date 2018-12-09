@@ -15,6 +15,18 @@ type wayDatasource struct {
 	NodeHistoryDatasourcer
 }
 
+type wayChildDatasource struct {
+	NodeHistoryAsChildrenDatasourcer
+}
+
+func newWayDatasourcer(ds NodeHistoryDatasourcer) core.Datasourcer {
+	if d, ok := ds.(NodeHistoryAsChildrenDatasourcer); ok {
+		return &wayChildDatasource{d}
+	}
+
+	return &wayDatasource{ds}
+}
+
 func (wds *wayDatasource) Get(ctx context.Context, id osm.FeatureID) (core.ChildList, error) {
 	if id.Type() != osm.TypeNode {
 		panic("only node types supported")
@@ -28,8 +40,28 @@ func (wds *wayDatasource) Get(ctx context.Context, id osm.FeatureID) (core.Child
 	return nodesToChildList(nodes), nil
 }
 
+func (wds *wayChildDatasource) Get(ctx context.Context, id osm.FeatureID) (core.ChildList, error) {
+	if id.Type() != osm.TypeNode {
+		panic("only node types supported")
+	}
+
+	return wds.NodeHistoryAsChildren(ctx, id.NodeID())
+}
+
 type relationDatasource struct {
 	osm.HistoryDatasourcer
+}
+
+type relationChildDatasource struct {
+	HistoryAsChildrenDatasourcer
+}
+
+func newRelationDatasourcer(ds osm.HistoryDatasourcer) core.Datasourcer {
+	if d, ok := ds.(HistoryAsChildrenDatasourcer); ok {
+		return &relationChildDatasource{d}
+	}
+
+	return &relationDatasource{ds}
 }
 
 func (rds *relationDatasource) Get(ctx context.Context, id osm.FeatureID) (core.ChildList, error) {
@@ -56,6 +88,22 @@ func (rds *relationDatasource) Get(ctx context.Context, id osm.FeatureID) (core.
 		}
 
 		return relationsToChildList(relations), nil
+	}
+
+	return nil, &UnsupportedMemberTypeError{
+		MemberType: id.Type(),
+	}
+}
+
+func (rds *relationChildDatasource) Get(ctx context.Context, id osm.FeatureID) (core.ChildList, error) {
+
+	switch id.Type() {
+	case osm.TypeNode:
+		return rds.NodeHistoryAsChildren(ctx, id.NodeID())
+	case osm.TypeWay:
+		return rds.WayHistoryAsChildren(ctx, id.WayID())
+	case osm.TypeRelation:
+		return rds.RelationHistoryAsChildren(ctx, id.RelationID())
 	}
 
 	return nil, &UnsupportedMemberTypeError{

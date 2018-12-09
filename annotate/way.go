@@ -15,6 +15,13 @@ type NodeHistoryDatasourcer interface {
 	NotFound(error) bool
 }
 
+// NodeHistoryAsChildrenDatasourcer is an advanced data source that
+// returns the needed nodes as children directly.
+type NodeHistoryAsChildrenDatasourcer interface {
+	NodeHistoryDatasourcer
+	NodeHistoryAsChildren(context.Context, osm.NodeID) ([]*shared.Child, error)
+}
+
 var _ NodeHistoryDatasourcer = &osm.HistoryDatasource{}
 
 // Ways computes the updates for the given ways
@@ -41,7 +48,7 @@ func Ways(
 		parents[i] = &parentWay{Way: w}
 	}
 
-	wds := &wayDatasource{datasource}
+	wds := newWayDatasourcer(datasource)
 	updatesForParents, err := core.Compute(ctx, parents, wds, computeOpts)
 	if err != nil {
 		return mapErrors(err)
