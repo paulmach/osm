@@ -68,27 +68,27 @@ type parentWay struct {
 	Way *osm.Way
 }
 
-func (w parentWay) ID() osm.FeatureID {
+func (w *parentWay) ID() osm.FeatureID {
 	return w.Way.FeatureID()
 }
 
-func (w parentWay) ChangesetID() osm.ChangesetID {
+func (w *parentWay) ChangesetID() osm.ChangesetID {
 	return w.Way.ChangesetID
 }
 
-func (w parentWay) Version() int {
+func (w *parentWay) Version() int {
 	return w.Way.Version
 }
 
-func (w parentWay) Visible() bool {
+func (w *parentWay) Visible() bool {
 	return w.Way.Visible
 }
 
-func (w parentWay) Timestamp() time.Time {
+func (w *parentWay) Timestamp() time.Time {
 	return w.Way.Timestamp
 }
 
-func (w parentWay) Committed() time.Time {
+func (w *parentWay) Committed() time.Time {
 	if w.Way.Committed == nil {
 		return time.Time{}
 	}
@@ -96,7 +96,7 @@ func (w parentWay) Committed() time.Time {
 	return *w.Way.Committed
 }
 
-func (w parentWay) Refs() (osm.FeatureIDs, []bool) {
+func (w *parentWay) Refs() (osm.FeatureIDs, []bool) {
 	ids := make(osm.FeatureIDs, len(w.Way.Nodes))
 	annotated := make([]bool, len(w.Way.Nodes))
 

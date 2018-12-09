@@ -69,27 +69,27 @@ type parentRelation struct {
 	ways     map[osm.WayID]*osm.Way
 }
 
-func (r parentRelation) ID() osm.FeatureID {
+func (r *parentRelation) ID() osm.FeatureID {
 	return r.Relation.FeatureID()
 }
 
-func (r parentRelation) ChangesetID() osm.ChangesetID {
+func (r *parentRelation) ChangesetID() osm.ChangesetID {
 	return r.Relation.ChangesetID
 }
 
-func (r parentRelation) Version() int {
+func (r *parentRelation) Version() int {
 	return r.Relation.Version
 }
 
-func (r parentRelation) Visible() bool {
+func (r *parentRelation) Visible() bool {
 	return r.Relation.Visible
 }
 
-func (r parentRelation) Timestamp() time.Time {
+func (r *parentRelation) Timestamp() time.Time {
 	return r.Relation.Timestamp
 }
 
-func (r parentRelation) Committed() time.Time {
+func (r *parentRelation) Committed() time.Time {
 	if r.Relation.Committed == nil {
 		return time.Time{}
 	}
@@ -97,7 +97,7 @@ func (r parentRelation) Committed() time.Time {
 	return *r.Relation.Committed
 }
 
-func (r parentRelation) Refs() (osm.FeatureIDs, []bool) {
+func (r *parentRelation) Refs() (osm.FeatureIDs, []bool) {
 	ids := make(osm.FeatureIDs, len(r.Relation.Members))
 	annotated := make([]bool, len(r.Relation.Members))
 
