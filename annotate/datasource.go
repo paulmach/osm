@@ -139,7 +139,7 @@ func waysToChildList(ways osm.Ways) core.ChildList {
 		c.VersionIndex = i
 
 		if i != 0 {
-			c.ReverseOfPrevious = isReverse(w, ways[i-1])
+			c.ReverseOfPrevious = IsReverse(w, ways[i-1])
 		}
 
 		list[i] = c
@@ -148,11 +148,11 @@ func waysToChildList(ways osm.Ways) core.ChildList {
 	return list
 }
 
-// isReverse checks to see if this way update was a "reversal". It is very tricky
+// IsReverse checks to see if this way update was a "reversal". It is very tricky
 // to generally answer this question but easier for a relation minor update.
 // Since the relation wasn't updated we assume things are still connected and
 // can just check the endpoints.
-func isReverse(w1, w2 *osm.Way) bool {
+func IsReverse(w1, w2 *osm.Way) bool {
 	if len(w1.Nodes) < 2 || len(w2.Nodes) < 2 {
 		return false
 	}
