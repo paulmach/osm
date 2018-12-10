@@ -76,6 +76,7 @@ const (
 type FeatureID int64
 
 // Type returns the Type of the feature.
+// Returns empty string for invalid type.
 func (id FeatureID) Type() Type {
 	switch id & typeMask {
 	case nodeMask:
@@ -86,7 +87,7 @@ func (id FeatureID) Type() Type {
 		return TypeRelation
 	}
 
-	panic("unknown type")
+	return ""
 }
 
 // Ref return the ID reference for the feature. Not unique without the type.

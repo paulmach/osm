@@ -79,6 +79,13 @@ func TestFeatureID_ids(t *testing.T) {
 		id := WayID(1).FeatureID()
 		id.RelationID()
 	})
+
+	t.Run("should not panic if invalid type", func(t *testing.T) {
+		var id FeatureID
+		if v := id.Type(); v != "" {
+			t.Errorf("should return empty string for invalid type: %v", v)
+		}
+	})
 }
 
 func TestFeature_String(t *testing.T) {
