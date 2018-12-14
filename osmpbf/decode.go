@@ -112,6 +112,8 @@ func (dec *decoder) Start(n int) error {
 	blobBuf := make([]byte, maxBlobSize)
 
 	// read OSMHeader
+	// NOTE: if the first block is not a header, i.e. after a restart we need
+	// to decode that block. It gets pushed on the first "input" below.
 	blobHeader, blob, err := dec.readFileBlock(sizeBuf, headerBuf, blobBuf)
 	if err != nil {
 		return err
@@ -141,10 +143,6 @@ func (dec *decoder) Start(n int) error {
 		output := make(chan oPair, n)
 
 		dd := &dataDecoder{}
-		if i == 0 && blobHeader.GetType() != osmHeaderType {
-			objects, err := dd.Decode(blob)
-			output <- oPair{0, objects, err}
-		}
 
 		go func() {
 			defer close(output)
@@ -155,9 +153,9 @@ func (dec *decoder) Start(n int) error {
 				if p.Err == nil {
 					// send decoded objects or decoding error
 					objects, err := dd.Decode(p.Blob)
-					out = oPair{p.Offset, objects, err}
+					out = oPair{Offset: p.Offset, Objects: objects, Err: err}
 				} else {
-					out = oPair{0, nil, p.Err} // send input error as is
+					out = oPair{Err: p.Err} // send input error as is
 				}
 
 				select {
@@ -185,6 +183,14 @@ func (dec *decoder) Start(n int) error {
 			err error
 		)
 
+		// On restart the first block may not be a header and will need to be
+		// added to the first input.
+		if blobHeader.GetType() != osmHeaderType {
+			dec.inputs[0] <- iPair{Offset: 0, Blob: blob, Err: err}
+
+			i = (i + 1) % n
+		}
+
 		for dec.ctx.Err() == nil || err == nil {
 			input := dec.inputs[i]
 			i = (i + 1) % n
@@ -195,9 +201,9 @@ func (dec *decoder) Start(n int) error {
 				err = fmt.Errorf("unexpected fileblock of type %s", blobHeader.GetType())
 			}
 
-			pair := iPair{Offset: offset, Blob: blob, Err: nil}
+			pair := iPair{Offset: offset, Blob: blob}
 			if err != nil {
-				pair = iPair{Offset: 0, Blob: nil, Err: err}
+				pair = iPair{Err: err}
 			}
 
 			select {
