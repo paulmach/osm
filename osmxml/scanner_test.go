@@ -144,6 +144,21 @@ func TestScanner_userNote(t *testing.T) {
 	}
 }
 
+func TestScanner_bounds(t *testing.T) {
+	r := boundsReader()
+	scanner := New(context.Background(), r)
+	defer scanner.Close()
+
+	if v := scanner.Scan(); !v {
+		t.Fatalf("should read first scan: %v", scanner.Err())
+	}
+
+	b := scanner.Object().(*osm.Bounds)
+	if b.MinLat != 1 || b.MinLon != 2 || b.MaxLat != 3 || b.MaxLon != 4 {
+		t.Fatalf("did not scan correctly, got: %v", b)
+	}
+}
+
 func TestAndorra(t *testing.T) {
 	f, err := os.Open("../testdata/andorra-latest.osm.bz2")
 	if err != nil {
@@ -227,6 +242,15 @@ func userNoteReader() io.Reader {
 <osm>
   <user id="1"></user>
   <note><id>2</id></note>
+</osm>`)
+
+	return bytes.NewReader(data)
+}
+
+func boundsReader() io.Reader {
+	data := []byte(`<?xml version="1.0" encoding="UTF-8"?>
+<osm>
+	<bounds minlat="1" minlon="2" maxlat="3" maxlon="4"/>
 </osm>`)
 
 	return bytes.NewReader(data)

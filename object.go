@@ -92,6 +92,7 @@ type Object interface {
 	private()
 }
 
+func (n *Bounds) private()    {}
 func (n *Node) private()      {}
 func (w *Way) private()       {}
 func (r *Relation) private()  {}
