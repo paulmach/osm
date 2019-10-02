@@ -24,6 +24,8 @@ func (id ObjectID) Type() Type {
 		return TypeNote
 	case userMask:
 		return TypeUser
+	case boundsMask:
+		return TypeBounds
 	}
 
 	panic("unknown type")
@@ -92,13 +94,13 @@ type Object interface {
 	private()
 }
 
-func (n *Bounds) private()    {}
 func (n *Node) private()      {}
 func (w *Way) private()       {}
 func (r *Relation) private()  {}
 func (c *Changeset) private() {}
 func (n *Note) private()      {}
 func (u *User) private()      {}
+func (b *Bounds) private()    {}
 
 // Objects is a set of objects with some helpers
 type Objects []Object

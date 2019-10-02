@@ -44,6 +44,11 @@ func TestParseObjectID(t *testing.T) {
 			string: "node/100",
 			id:     NodeID(100).ObjectID(0),
 		},
+		{
+			name:   "bounds",
+			string: "bounds/0",
+			id:     (&Bounds{}).ObjectID(),
+		},
 	}
 
 	for _, tc := range cases {

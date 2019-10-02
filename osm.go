@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm/internal/osmpb"
+
+	"github.com/gogo/protobuf/proto"
 )
 
 // These values should be returned if the osm data is actual
@@ -69,6 +70,8 @@ func (o *OSM) Append(obj Object) {
 		o.Notes = append(o.Notes, obj.(*Note))
 	case TypeUser:
 		o.Users = append(o.Users, obj.(*User))
+	case TypeBounds:
+		o.Bounds = obj.(*Bounds)
 	default:
 		panic(fmt.Sprintf("unsupported type: %[1]T: %[1]v", obj))
 	}
@@ -104,7 +107,16 @@ func (o *OSM) Objects() Objects {
 		return nil
 	}
 
-	result := make(Objects, 0, len(o.Nodes)+len(o.Ways)+len(o.Relations)+len(o.Changesets)+len(o.Notes)+len(o.Users))
+	l := len(o.Nodes) + len(o.Ways) + len(o.Relations) + len(o.Changesets) + len(o.Notes) + len(o.Users)
+	if o.Bounds != nil {
+		l++
+	}
+
+	result := make(Objects, 0, l)
+	if o.Bounds != nil {
+		result = append(result, o.Bounds)
+	}
+
 	for _, o := range o.Nodes {
 		result = append(result, o)
 	}

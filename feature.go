@@ -19,6 +19,7 @@ const (
 	TypeChangeset Type = "changeset"
 	TypeNote      Type = "note"
 	TypeUser      Type = "user"
+	TypeBounds    Type = "bounds"
 )
 
 // objectID returns an object id from the given type.
@@ -36,6 +37,9 @@ func (t Type) objectID(ref int64, v int) (ObjectID, error) {
 		return NoteID(ref).ObjectID(), nil
 	case TypeUser:
 		return UserID(ref).ObjectID(), nil
+	case TypeBounds:
+		var b *Bounds
+		return b.ObjectID(), nil
 	}
 
 	return 0, fmt.Errorf("unknown type: %v", t)
@@ -69,6 +73,9 @@ const (
 	changesetMask = 0x4000000000000000
 	noteMask      = 0x5000000000000000
 	userMask      = 0x6000000000000000
+	boundsMask    = 0x7000000000000000
+
+	// TODO: we're running out of bits!?!?
 )
 
 // A FeatureID is a identifier for a feature in OSM.

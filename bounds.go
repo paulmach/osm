@@ -47,8 +47,9 @@ func (b *Bounds) ContainsNode(n *Node) bool {
 	return true
 }
 
-// ObjectID always returns 0 because bounds do not have an id.
-// It exists to implement the Object interface.
+// ObjectID returns the bounds type but with 0 id. Since id doesn't make sense.
+// This is here to implement the Object interface since it technically is an
+// osm object type. It also allows bounds to be returned via the osmxml.Scanner.
 func (b *Bounds) ObjectID() ObjectID {
-	return 0
+	return ObjectID(boundsMask)
 }
