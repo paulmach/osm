@@ -3,9 +3,10 @@ package osm
 import (
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm/internal/osmpb"
+
+	"github.com/gogo/protobuf/proto"
 )
 
 const locMultiple = 10000000.0

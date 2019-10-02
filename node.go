@@ -4,9 +4,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm/internal/osmpb"
+
+	"github.com/gogo/protobuf/proto"
 )
 
 // NodeID corresponds the primary key of a node.

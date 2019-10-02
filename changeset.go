@@ -4,8 +4,9 @@ import (
 	"encoding/xml"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm/internal/osmpb"
+
+	"github.com/gogo/protobuf/proto"
 )
 
 // ChangesetID is the primary key for a osm changeset.

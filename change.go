@@ -4,8 +4,9 @@ import (
 	"encoding/xml"
 	"strconv"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm/internal/osmpb"
+
+	"github.com/gogo/protobuf/proto"
 )
 
 // Change is the structure of a changeset to be
