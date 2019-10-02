@@ -46,3 +46,9 @@ func (b *Bounds) ContainsNode(n *Node) bool {
 
 	return true
 }
+
+// ObjectID always returns 0 because bounds do not have an id.
+// It exists to implement the Object interface.
+func (b *Bounds) ObjectID() ObjectID {
+	return 0
+}
