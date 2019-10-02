@@ -13,7 +13,7 @@ import (
 // and are used by osmtogeojson and overpass turbo.
 func (w *Way) Polygon() bool {
 	if len(w.Nodes) <= 3 {
-		// need more than 3 nodes to be polygon since first/last is repeated.
+		// need more than 3 nodes to be a polygon since first/last is repeated.
 		return false
 	}
 

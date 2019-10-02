@@ -9,10 +9,10 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
-// ChangesetID is the primary key for a osm changeset.
+// ChangesetID is the primary key for an osm changeset.
 type ChangesetID int64
 
-// ObjectID is a helper returning the object id for this relation id.
+// ObjectID is a helper returning the object id for this changeset id.
 func (id ChangesetID) ObjectID() ObjectID {
 	return ObjectID(changesetMask | (id << versionBits))
 }
@@ -143,7 +143,7 @@ func (c *Changeset) Marshal() ([]byte, error) {
 	return proto.Marshal(encoded)
 }
 
-// UnmarshalChangeset will unmarshal the data into a OSM object.
+// UnmarshalChangeset will unmarshal the data into an OSM object.
 func UnmarshalChangeset(data []byte) (*Changeset, error) {
 	encoded := &osmpb.Changeset{}
 	err := proto.Unmarshal(data, encoded)

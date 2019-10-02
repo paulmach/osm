@@ -97,7 +97,7 @@ func decodeChangesetState(data []byte) (*State, error) {
 	}, nil
 }
 
-// Changesets returns the complete list of changesets in for the given replication sequence.
+// Changesets returns the complete list of changesets for the given replication sequence.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
 func Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Changesets, error) {
 	return DefaultDatasource.Changesets(ctx, n)

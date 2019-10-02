@@ -78,7 +78,7 @@ const (
 	// TODO: we're running out of bits!?!?
 )
 
-// A FeatureID is a identifier for a feature in OSM.
+// A FeatureID is an identifier for a feature in OSM.
 // It is meant to represent all the versions of a given element.
 type FeatureID int64
 
@@ -113,7 +113,7 @@ func (id FeatureID) ElementID(v int) ElementID {
 }
 
 // NodeID returns the id of this feature as a node id.
-// The function will panic if this feature is not of NodeType.
+// The function will panic if this feature is not of TypeNode..
 func (id FeatureID) NodeID() NodeID {
 	if id&nodeMask != nodeMask {
 		panic(fmt.Sprintf("not a node: %v", id))
@@ -123,7 +123,7 @@ func (id FeatureID) NodeID() NodeID {
 }
 
 // WayID returns the id of this feature as a way id.
-// The function will panic if this feature is not of WayType.
+// The function will panic if this feature is not of TypeWay.
 func (id FeatureID) WayID() WayID {
 	if id&wayMask != wayMask {
 		panic(fmt.Sprintf("not a way: %v", id))
@@ -133,7 +133,7 @@ func (id FeatureID) WayID() WayID {
 }
 
 // RelationID returns the id of this feature as a relation id.
-// The function will panic if this feature is not of RelationType.
+// The function will panic if this feature is not of TypeRelation.
 func (id FeatureID) RelationID() RelationID {
 	if id&relationMask != relationMask {
 		panic(fmt.Sprintf("not a relation: %v", id))

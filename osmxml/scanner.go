@@ -54,10 +54,10 @@ func (s *Scanner) Close() error {
 }
 
 // Scan advances the Scanner to the next element, which will then be available
-// through the Element method. It returns false when the scan stops, either
+// through the Object method. It returns false when the scan stops, either
 // by reaching the end of the input, an io error, an xml error or the context
 // being cancelled. After Scan returns false, the Err method will return any
-// error that occurred during scanning, except that if it was io.EOF, Err will
+// error that occurred during scanning, except if it was io.EOF, Err will
 // return nil.
 func (s *Scanner) Scan() bool {
 	if s.err != nil {

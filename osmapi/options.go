@@ -12,7 +12,7 @@ type FeatureOption interface {
 	applyFeature([]string) ([]string, error)
 }
 
-// At indicates adds an `at=2006-01-02T15:04:05Z` parameter ot the request.
+// At adds an `at=2006-01-02T15:04:05Z` parameter to the request.
 // The osm.fyi supports requesting features and maps as they were at the given time.
 func At(t time.Time) FeatureOption {
 	return &at{t}

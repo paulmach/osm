@@ -21,12 +21,12 @@ Made available by the package are the following types:
 And the following “container” types:
 
 * OSM - container returned via API
-* Change - used by replication API.
-* Diff - correspond to [Overpass Augmented diffs](https://wiki.openstreetmap.org/wiki/Overpass_API/Augmented_Diffs)
+* Change - used by the replication API.
+* Diff - corresponds to [Overpass Augmented diffs](https://wiki.openstreetmap.org/wiki/Overpass_API/Augmented_Diffs)
 
 ## List of sub-package utilities
 
-* [`annotate`](annotate) - adds lat/lon, version, changeset and orientation data to way and relation members
+* [`annotate`](annotate) - adds lon/lat, version, changeset and orientation data to way and relation members
 * [`osmapi`](osmapi) - supports all the v0.6 read/data endpoints
 * [`osmgeojson`](osmgeojson) - OSM to GeoJSON conversion compatible with [osmtogeojson](https://github.com/tyrasd/osmtogeojson)
 * [`osmpbf`](osmpbf) - stream processing of `*.osm.pbf` files
@@ -48,7 +48,7 @@ Put another way, features represent a road and how it's changed over time and an
 element is a specific version of that feature.
 
 A number of helper methods are provided for dealing with features and elements.
-The idea is to make it easy to work with a Way and it's member nodes, for example.
+The idea is to make it easy to work with a Way and its member nodes, for example.
 
 ## Scanning large data files
 
@@ -84,7 +84,7 @@ Example usage:
 		o := scanner.Object()
 		// do something
 	}
-	
+
 	scanErr := scanner.Err()
 	if scanErr != nil {
 		panic(scanErr)

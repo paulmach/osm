@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-// ObjectID encodes the type and ref of an osm object, e.g. nodes, ways, relations, changesets, notes and users.
+// ObjectID encodes the type and ref of an osm object,
+// e.g. nodes, ways, relations, changesets, notes and users.
 type ObjectID int64
 
 // Type returns the Type of the object.
@@ -31,7 +32,7 @@ func (id ObjectID) Type() Type {
 	panic("unknown type")
 }
 
-// Ref return the ID reference for the object. Not unique without the type.
+// Ref returns the ID reference for the object. Not unique without the type.
 func (id ObjectID) Ref() int64 {
 	return int64((id & refMask) >> versionBits)
 }
@@ -122,7 +123,7 @@ func (os Objects) ObjectIDs() ObjectIDs {
 // ObjectIDs is a slice of ObjectIDs with some helpers on top.
 type ObjectIDs []ObjectID
 
-// Scanner allows osm data from dump files to be read.
+// A Scanner reads osm data from planet dump files.
 // It is based on the bufio.Scanner, common usage.
 // Scanners are not safe for parallel use. One should feed the
 // objects into their own channel and have workers read from that.
@@ -136,7 +137,7 @@ type ObjectIDs []ObjectID
 //	}
 //
 //	if s.Err() != nil {
-//		// scanner did no complete fully
+//		// scanner did not complete fully
 //	}
 type Scanner interface {
 	Scan() bool

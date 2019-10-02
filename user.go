@@ -5,7 +5,7 @@ import (
 )
 
 // UserID is the primary key for a user.
-// This is unique the display name may change.
+// This is unique as the display name may change.
 type UserID int64
 
 // ObjectID is a helper returning the object id for this user id.

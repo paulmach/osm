@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// NoteID is the unique identifier for a osm note.
+// NoteID is the unique identifier for an osm note.
 type NoteID int64
 
 // ObjectID is a helper returning the object id for this note id.

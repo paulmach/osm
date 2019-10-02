@@ -53,7 +53,7 @@ func (id ElementID) FeatureID() FeatureID {
 }
 
 // NodeID returns the id of this feature as a node id.
-// The function will panic if this feature is not of NodeType.
+// The function will panic if this element is not of TypeNode.
 func (id ElementID) NodeID() NodeID {
 	if id&nodeMask != nodeMask {
 		panic(fmt.Sprintf("not a node: %v", id))
@@ -63,7 +63,7 @@ func (id ElementID) NodeID() NodeID {
 }
 
 // WayID returns the id of this feature as a way id.
-// The function will panic if this feature is not of WayType.
+// The function will panic if this element is not of TypeWay.
 func (id ElementID) WayID() WayID {
 	if id&wayMask != wayMask {
 		panic(fmt.Sprintf("not a way: %v", id))
@@ -73,7 +73,7 @@ func (id ElementID) WayID() WayID {
 }
 
 // RelationID returns the id of this feature as a relation id.
-// The function will panic if this feature is not of RelationType.
+// The function will panic if this element is not of TypeRelation.
 func (id ElementID) RelationID() RelationID {
 	if int64(id)&relationMask != relationMask {
 		panic(fmt.Sprintf("not a relation: %v", id))

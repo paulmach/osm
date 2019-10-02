@@ -15,7 +15,7 @@ var CommitInfoStart = time.Date(2012, 9, 12, 9, 30, 3, 0, time.UTC)
 
 // An Update is a change to children of a way or relation.
 // The child type, id, ref and/or role are the same as the child
-// at the given index. Lat/Lng are only updated for ways.
+// at the given index. Lon/Lat are only updated for nodes.
 type Update struct {
 	Index   int `xml:"index,attr" json:"index"`
 	Version int `xml:"version,attr" json:"version"`

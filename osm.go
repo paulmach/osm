@@ -190,7 +190,7 @@ func (o *OSM) ElementIDs() ElementIDs {
 	return result
 }
 
-// HistoryDatasource converts the osm object a datasource accessible
+// HistoryDatasource converts the osm object to a datasource accessible
 // by the feature id.
 func (o *OSM) HistoryDatasource() *HistoryDatasource {
 	ds := &HistoryDatasource{}
@@ -199,7 +199,7 @@ func (o *OSM) HistoryDatasource() *HistoryDatasource {
 	return ds
 }
 
-// UnmarshalOSM will unmarshal the data into a OSM object.
+// UnmarshalOSM will unmarshal the data into an OSM object.
 func UnmarshalOSM(data []byte) (*OSM, error) {
 
 	pbf := &osmpb.OSM{}
@@ -212,7 +212,7 @@ func UnmarshalOSM(data []byte) (*OSM, error) {
 }
 
 // includeChangeset can be set to false to not repeat the changeset
-// info for every item, if this comes from osm change data.
+// info every item, if this comes from osm change data.
 func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 	encoded := &osmpb.OSM{}
 	if o == nil {

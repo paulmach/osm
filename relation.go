@@ -46,9 +46,9 @@ type Relation struct {
 	// and made visible in the central OSM database.
 	Committed *time.Time `xml:"committed,attr,omitempty" json:"committed,omitempty"`
 
-	// Updates are changes the members of this relation independent
+	// Updates are changes to the members of this relation independent
 	// of an update to the relation itself. The OSM api allows a child
-	// to be updatedwithout any changes to the parent.
+	// to be updated without any changes to the parent.
 	Updates Updates `xml:"update,omitempty" json:"updates,omitempty"`
 
 	// Bounds are included by overpass, and maybe others
@@ -66,6 +66,7 @@ type Member struct {
 
 	Version     int         `xml:"version,attr,omitempty" json:"version,omitempty"`
 	ChangesetID ChangesetID `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
+
 	// Node location if Type == Node
 	// Closest vertex to centroid if Type == Way
 	// Empty/invalid if Type == Relation

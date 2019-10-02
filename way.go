@@ -45,7 +45,7 @@ type Way struct {
 	// and made visible in the central OSM database.
 	Committed *time.Time `xml:"committed,attr,omitempty" json:"committed,omitempty"`
 
-	// Updates are changes the nodes of this way independent
+	// Updates are changes to the nodes of this way independent
 	// of an update to the way itself. The OSM api allows a child
 	// to be updated without any changes to the parent.
 	Updates Updates `xml:"update,omitempty" json:"updates,omitempty"`

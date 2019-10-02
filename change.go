@@ -10,7 +10,7 @@ import (
 )
 
 // Change is the structure of a changeset to be
-// uploaded or downloaded from the server.
+// uploaded or downloaded from the osm api server.
 // See: http://wiki.openstreetmap.org/wiki/OsmChange
 type Change struct {
 	Version   float64 `xml:"version,attr,omitempty"`
@@ -53,8 +53,8 @@ func (c *Change) AppendDelete(o Object) {
 	c.Delete.Append(o)
 }
 
-// HistoryDatasource converts the change object a datasource accessible
-// by the feature id. All the creates, modifies and deletes will be added
+// HistoryDatasource converts the change object to a datasource accessible
+// by feature id. All the creates, modifies and deletes will be added
 // in that order.
 func (c *Change) HistoryDatasource() *HistoryDatasource {
 	ds := &HistoryDatasource{}
