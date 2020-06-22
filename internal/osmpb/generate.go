@@ -7,4 +7,5 @@ package osmpb
 //    brew install protobuf
 //    go get github.com/gogo/protobuf/...
 //
-//go:generate protoc --proto_path=../../../../..:../../../../gogo/protobuf/protobuf:. --gogofaster_out=. osm.proto
+//go:generate protoc --proto_path=$GOPATH/src/:$GOPATH/src/github.com/gogo/protobuf/protobuf:. --gogofaster_out=. osm.proto
+
