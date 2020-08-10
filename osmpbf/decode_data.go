@@ -102,13 +102,13 @@ func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.De
 	}
 
 	var id, lat, lon int64
+	myNodes := make([]osm.Node, len(ids), len(ids))
 	for index := range ids {
 		id = ids[index] + id
 		lat = lats[index] + lat
 		lon = lons[index] + lon
 		info := state.Next()
-
-		dec.q = append(dec.q, &osm.Node{
+		myNodes[index] = osm.Node{
 			ID:          osm.NodeID(id),
 			Lat:         1e-9 * float64((latOffset + (granularity * lat))),
 			Lon:         1e-9 * float64((lonOffset + (granularity * lon))),
@@ -119,15 +119,17 @@ func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.De
 			ChangesetID: osm.ChangesetID(info.Changeset),
 			Timestamp:   info.Timestamp,
 			Tags:        tu.Next(),
-		})
+		}
+
+		dec.q = append(dec.q, &myNodes[index])
 	}
 }
 
 func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way) {
 	st := pb.GetStringtable().GetS()
 	dateGranularity := int64(pb.GetDateGranularity())
-
-	for _, way := range ways {
+	myWays := make([]osm.Way, len(ways))
+	for i, way := range ways {
 		var (
 			prev    int64
 			nodeIDs osm.WayNodes
@@ -141,8 +143,7 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 				nodeIDs[i] = osm.WayNode{ID: osm.NodeID(prev)}
 			}
 		}
-
-		dec.q = append(dec.q, &osm.Way{
+		myWays[i] = osm.Way{
 			ID:          osm.WayID(way.Id),
 			User:        info.User,
 			UserID:      osm.UserID(info.UID),
@@ -152,7 +153,8 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 			Timestamp:   info.Timestamp,
 			Nodes:       nodeIDs,
 			Tags:        extractTags(st, way.Keys, way.Vals),
-		})
+		}
+		dec.q = append(dec.q, &myWays[i])
 	}
 }
 
