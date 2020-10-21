@@ -59,7 +59,7 @@ type WayNodes []WayNode
 
 // WayNode is a short node used as part of ways and relations in the osm xml.
 type WayNode struct {
-	ID NodeID `xml:"ref,attr"`
+	ID NodeID `xml:"ref,attr,omitempty"`
 
 	// These attributes are populated for concrete versions of ways.
 	Version     int         `xml:"version,attr,omitempty"`

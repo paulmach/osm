@@ -76,6 +76,10 @@ type Member struct {
 	// Orientation is the direction of the way around a ring of a multipolygon.
 	// Only valid for multipolygon or boundary relations.
 	Orientation orb.Orientation `xml:"orienation,attr,omitempty" json:"orienation,omitempty"`
+
+	// Nodes are sometimes included in members of type way to include the lat/lon
+	// path of the way. Overpass returns xml like this.
+	Nodes WayNodes `xml:"nd" json:"nodes,omitempty"`
 }
 
 // ObjectID returns the object id of the relation.
