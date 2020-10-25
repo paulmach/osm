@@ -34,8 +34,15 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 
 		way := ctx.wayMap[osm.WayID(m.Ref)]
 		if way == nil {
-			tainted = true
-			continue
+			if len(m.Nodes) != 0 {
+				way = &osm.Way{
+					ID:    osm.WayID(m.Ref),
+					Nodes: m.Nodes,
+				}
+			} else {
+				tainted = true
+				continue
+			}
 		}
 
 		if m.Role == "outer" {

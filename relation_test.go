@@ -167,6 +167,17 @@ func TestRelation_MarshalXML(t *testing.T) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
+	// members with nodes
+	r.Members = Members{{Type: "way", Ref: 123, Role: "child", Nodes: WayNodes{{Lat: 1, Lon: 2}, {Lat: 3, Lon: 4}}}}
+	data, err = xml.Marshal(r)
+	if err != nil {
+		t.Fatalf("xml marshal error: %v", err)
+	}
+
+	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><member type="way" ref="123" role="child"><nd lat="1" lon="2"></nd><nd lat="3" lon="4"></nd></member></relation>`)) {
+		t.Errorf("not marshalled correctly: %s", string(data))
+	}
+
 	// minor relation
 	r.Members = nil
 	r.Updates = []Update{

@@ -253,13 +253,13 @@ func TestWay_MarshalXML(t *testing.T) {
 	}
 
 	// node with lat/lon
-	w.Nodes[0] = WayNode{Lat: 1, Lon: 2}
+	w.Nodes[0] = WayNode{ID: 4, Lat: 1, Lon: 2}
 	data, err = xml.Marshal(w)
 	if err != nil {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><nd ref="0" lat="1" lon="2"></nd></way>`)) {
+	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><nd ref="4" lat="1" lon="2"></nd></way>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 

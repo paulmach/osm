@@ -95,6 +95,48 @@ func TestConvert(t *testing.T) {
 		testConvert(t, xml, fc)
 	})
 
+	t.Run("relation with nodes in members", func(t *testing.T) {
+		xml := `
+		<osm>
+			<relation id='1'>
+				<tag k='type' v='multipolygon' />
+				<tag k="admin_level" v="8"/>
+				<tag k="boundary" v="administrative"/>
+				<member type='way' ref='2' role='outer'>
+					<nd lat='-1.0' lon='-1.0' />
+					<nd lat='-1.0' lon='1.0' />
+					<nd lat='1.0' lon='1.0' />
+					<nd lat='1.0' lon='-1.0' />
+					<nd lat='-1.0' lon='-1.0' />
+				</member>
+				<member type='way' ref='3' role='inner'>
+					<nd lat='-0.5' lon='0.0' />
+					<nd lat='0.5' lon='0.0' />
+					<nd lat='0.0' lon='0.5' />
+					<nd lat='-0.5' lon='0.0' />
+				</member>
+			</relation>
+		</osm>`
+
+		polygon := orb.Polygon{
+			{{-1, -1}, {1, -1}, {1, 1}, {-1, 1}, {-1, -1}},
+			{{0, -0.5}, {0, 0.5}, {0.5, 0}, {0, -0.5}},
+		}
+
+		feature := geojson.NewFeature(polygon)
+		feature.ID = "relation/1"
+		feature.Properties["type"] = "relation"
+		feature.Properties["id"] = 1
+		feature.Properties["tags"] = map[string]string{
+			"admin_level": "8",
+			"boundary":    "administrative",
+			"type":        "multipolygon",
+		}
+
+		fc := geojson.NewFeatureCollection().Append(feature)
+		testConvert(t, xml, fc)
+	})
+
 	t.Run("relation", func(t *testing.T) {
 		xml := `
 		<osm>
