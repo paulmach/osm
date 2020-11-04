@@ -1,4 +1,4 @@
-osm/osmapi [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/osmapi?status.png)](https://godoc.org/github.com/paulmach/osm/osmapi)
+osm/osmapi [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/osmapi?status.svg)](https://godoc.org/github.com/paulmach/osm/osmapi)
 ==========
 
 Package osmapi provides an interface to the [OSM v0.6 API](https://wiki.openstreetmap.org/wiki/API_v0.6).

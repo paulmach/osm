@@ -1,4 +1,4 @@
-osm/replication [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/replication?status.png)](https://godoc.org/github.com/paulmach/osm/replication)
+osm/replication [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/replication?status.svg)](https://godoc.org/github.com/paulmach/osm/replication)
 ===============
 
 Package `replication` handles fetching the Minute, Hour, Day and Changeset replication
