@@ -107,19 +107,18 @@ func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.De
 		id = ids[index] + id
 		lat = lats[index] + lat
 		lon = lons[index] + lon
-		info := state.Next()
-		myNodes[index] = osm.Node{
-			ID:          osm.NodeID(id),
-			Lat:         1e-9 * float64((latOffset + (granularity * lat))),
-			Lon:         1e-9 * float64((lonOffset + (granularity * lon))),
-			User:        info.User,
-			UserID:      osm.UserID(info.UID),
-			Visible:     info.Visible,
-			Version:     int(info.Version),
-			ChangesetID: osm.ChangesetID(info.Changeset),
-			Timestamp:   info.Timestamp,
-			Tags:        tu.Next(),
-		}
+		state.Next()
+
+		myNodes[index].ID = osm.NodeID(id)
+		myNodes[index].Lat = 1e-9 * float64((latOffset + (granularity * lat)))
+		myNodes[index].Lon = 1e-9 * float64((lonOffset + (granularity * lon)))
+		myNodes[index].User = state.info.User
+		myNodes[index].UserID = osm.UserID(state.info.UID)
+		myNodes[index].Visible = state.info.Visible
+		myNodes[index].Version = int(state.info.Version)
+		myNodes[index].ChangesetID = osm.ChangesetID(state.info.Changeset)
+		myNodes[index].Timestamp = state.info.Timestamp
+		myNodes[index].Tags = tu.Next()
 
 		dec.q = append(dec.q, &myNodes[index])
 	}
@@ -143,17 +142,17 @@ func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way)
 				nodeIDs[i] = osm.WayNode{ID: osm.NodeID(prev)}
 			}
 		}
-		myWays[i] = osm.Way{
-			ID:          osm.WayID(way.Id),
-			User:        info.User,
-			UserID:      osm.UserID(info.UID),
-			Visible:     info.Visible,
-			Version:     int(info.Version),
-			ChangesetID: osm.ChangesetID(info.Changeset),
-			Timestamp:   info.Timestamp,
-			Nodes:       nodeIDs,
-			Tags:        extractTags(st, way.Keys, way.Vals),
-		}
+
+		myWays[i].ID = osm.WayID(way.Id)
+		myWays[i].User = info.User
+		myWays[i].UserID = osm.UserID(info.UID)
+		myWays[i].Visible = info.Visible
+		myWays[i].Version = int(info.Version)
+		myWays[i].ChangesetID = osm.ChangesetID(info.Changeset)
+		myWays[i].Timestamp = info.Timestamp
+		myWays[i].Nodes = nodeIDs
+		myWays[i].Tags = extractTags(st, way.Keys, way.Vals)
+
 		dec.q = append(dec.q, &myWays[i])
 	}
 }
@@ -246,40 +245,41 @@ type denseInfoState struct {
 	changeset int64
 	uid       int32
 	userSid   int32
+
+	info elementInfo
 }
 
-func (s *denseInfoState) Next() elementInfo {
-	info := elementInfo{Visible: true}
+func (s *denseInfoState) Next() {
+	s.info = elementInfo{Visible: true}
 
 	if versions := s.DenseInfo.GetVersion(); len(versions) > 0 {
-		info.Version = versions[s.index]
+		s.info.Version = versions[s.index]
 	}
 
 	if timestamps := s.DenseInfo.GetTimestamp(); len(timestamps) > 0 {
 		s.timestamp = timestamps[s.index] + s.timestamp
 		millisec := time.Duration(s.timestamp*s.DateGranularity) * time.Millisecond
-		info.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
+		s.info.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
 	}
 
 	if changesets := s.DenseInfo.GetChangeset(); len(changesets) > 0 {
 		s.changeset = changesets[s.index] + s.changeset
-		info.Changeset = s.changeset
+		s.info.Changeset = s.changeset
 	}
 
 	if uids := s.DenseInfo.GetUid(); len(uids) > 0 {
 		s.uid = uids[s.index] + s.uid
-		info.UID = s.uid
+		s.info.UID = s.uid
 	}
 
 	if userSids := s.DenseInfo.GetUserSid(); len(userSids) > 0 {
 		s.userSid = userSids[s.index] + s.userSid
-		info.User = s.StringTable[s.userSid]
+		s.info.User = s.StringTable[s.userSid]
 	}
 
 	if visibles := s.DenseInfo.GetVisible(); len(visibles) > 0 {
-		info.Visible = visibles[s.index]
+		s.info.Visible = visibles[s.index]
 	}
 
 	s.index++
-	return info
 }
