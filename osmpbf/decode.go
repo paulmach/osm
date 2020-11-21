@@ -300,7 +300,7 @@ func (dec *decoder) readBlobHeaderSize(buf []byte) (uint32, error) {
 
 	size := binary.BigEndian.Uint32(buf)
 	if size >= maxBlobHeaderSize {
-		return 0, errors.New("BlobHeader size >= 64Kb")
+		return 0, errors.New("blobHeader size >= 64Kb")
 	}
 	return size, nil
 }
@@ -316,7 +316,7 @@ func (dec *decoder) readBlobHeader(buf []byte) (*osmpbf.BlobHeader, error) {
 	}
 
 	if blobHeader.GetDatasize() >= maxBlobSize {
-		return nil, errors.New("Blob size >= 32Mb")
+		return nil, errors.New("blob size >= 32Mb")
 	}
 	return blobHeader, nil
 }

@@ -65,8 +65,6 @@ func TestScanner_intermediateStart(t *testing.T) {
 	}
 	scanner.Close()
 
-	return
-
 	// move the file pointer past all the fully scanned bytes,
 	// to the start of the not-fully scanned block.
 	f.Seek(scanner.FullyScannedBytes(), 0)
