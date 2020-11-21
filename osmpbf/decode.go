@@ -333,7 +333,7 @@ func (dec *decoder) readBlob(blobHeader *osmpbf.BlobHeader, buf []byte) (*osmpbf
 	return blob, nil
 }
 
-func getData(blob *osmpbf.Blob) ([]byte, error) {
+func getData(blob *osmpbf.Blob, data []byte) ([]byte, error) {
 	switch {
 	case blob.Raw != nil:
 		return blob.GetRaw(), nil
@@ -345,7 +345,13 @@ func getData(blob *osmpbf.Blob) ([]byte, error) {
 		}
 
 		// using the bytes.Buffer allows for the preallocation of the necessary space.
-		buf := bytes.NewBuffer(make([]byte, 0, blob.GetRawSize()+bytes.MinRead))
+		l := blob.GetRawSize() + bytes.MinRead
+		if cap(data) < int(l) {
+			data = make([]byte, 0, l+l/10)
+		} else {
+			data = data[:0]
+		}
+		buf := bytes.NewBuffer(data)
 		if _, err = buf.ReadFrom(r); err != nil {
 			return nil, err
 		}
@@ -361,7 +367,7 @@ func getData(blob *osmpbf.Blob) ([]byte, error) {
 }
 
 func decodeOSMHeader(blob *osmpbf.Blob) (*Header, error) {
-	data, err := getData(blob)
+	data, err := getData(blob, nil)
 	if err != nil {
 		return nil, err
 	}

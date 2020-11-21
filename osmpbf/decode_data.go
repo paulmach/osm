@@ -3,7 +3,6 @@ package osmpbf
 import (
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
 )
@@ -19,19 +18,21 @@ type elementInfo struct {
 
 // dataDecoder is a decoder for Blob with OSMData (PrimitiveBlock).
 type dataDecoder struct {
-	q []osm.Object
+	data []byte
+	q    []osm.Object
 }
 
 func (dec *dataDecoder) Decode(blob *osmpbf.Blob) ([]osm.Object, error) {
 	dec.q = make([]osm.Object, 0, 8000) // typical PrimitiveBlock contains 8k OSM entities
 
-	data, err := getData(blob)
+	var err error
+	dec.data, err = getData(blob, dec.data)
 	if err != nil {
 		return nil, err
 	}
 
 	primitiveBlock := &osmpbf.PrimitiveBlock{}
-	if err := proto.Unmarshal(data, primitiveBlock); err != nil {
+	if err := primitiveBlock.Unmarshal(dec.data); err != nil {
 		return nil, err
 	}
 
