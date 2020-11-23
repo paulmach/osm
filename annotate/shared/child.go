@@ -18,7 +18,6 @@ type Child struct {
 	// VersionIndex is the index of the version if sorted from lowest to highest.
 	// This is necessary since version don't have to start at 1 or be sequential.
 	VersionIndex int
-	Visible      bool
 	Timestamp    time.Time
 	Committed    time.Time
 
@@ -28,6 +27,10 @@ type Child struct {
 	// for ways
 	Way               *osm.Way
 	ReverseOfPrevious bool
+
+	// moving the visible bool here decreases the struct size from
+	// size 120 (size class 128) to 112 (size class 112).
+	Visible bool
 }
 
 // Update generates an update from this child.
