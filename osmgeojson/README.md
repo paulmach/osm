@@ -5,10 +5,10 @@ Package `osmgeojson` converts OSM data to GeoJSON. It is a **full** port of the
 nodejs library [osmtogeojson](https://github.com/tyrasd/osmtogeojson) and sports
 the same features and tests (plus more):
 
-* real OSM polygon detection,
-* OSM multipolygon support, e.g. buildings with holes become proper multipolygons,
-* supports annotated geometries,
-* well tested.
+* real OSM polygon detection
+* OSM multipolygon support, e.g. buildings with holes become proper multipolygons
+* supports annotated geometries
+* well tested
 
 ### Usage
 
