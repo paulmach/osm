@@ -53,7 +53,7 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 //
 // A user can use this number of seek forward in a file
 // and begin reading mid-data. Note that while elements are usually sorted
-// by Type, ID, Version in OMS protobuf files, versions of given element may
+// by Type, ID, Version in OSM protobuf files, versions of given element may
 // span blocks.
 func (s *Scanner) FullyScannedBytes() int64 {
 	return atomic.LoadInt64(&s.decoder.cOffset)
