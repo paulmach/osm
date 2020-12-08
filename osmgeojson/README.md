@@ -12,7 +12,7 @@ the same features and tests (plus more):
 
 ### Usage
 
-```
+```go
 delta := 0.0001
 
 lon, lat := -83.5997038, 41.5923682

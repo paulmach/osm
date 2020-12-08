@@ -6,11 +6,15 @@ and the associated state value from [Planet OSM](http://planet.osm.org).
 
 For example, to fetch the current Minute replication state:
 
-	num, fullState, err := replication.CurrentMinuteState(ctx)
+```go
+num, fullState, err := replication.CurrentMinuteState(ctx)
+```
 
 This is the data in [http://planet.osm.org/replication/minute/state.txt](http://planet.osm.org/replication/minute/state.txt)
 updated every minute.
 
 Once you know the change number you want, fetch the change using:
 
-	change, err := replication.Minute(ctx, num)
+```go
+change, err := replication.Minute(ctx, num)
+```

@@ -59,36 +59,40 @@ Go standard library to marshal/unmarshal the data. This is typically done using 
 For large data the package defines the `Scanner` interface implemented in both the [osmxml](osmxml)
 and [osmpbf](osmpbf) sub-packages.
 
-	type osm.Scanner interface {
-		Scan() bool
-		Object() osm.Object
-		Err() error
-		Close() error
-	}
+```go
+type osm.Scanner interface {
+	Scan() bool
+	Object() osm.Object
+	Err() error
+	Close() error
+}
+```
 
 This interface is designed to mimic the [bufio.Scanner](https://golang.org/pkg/bufio/#Scanner)
 interface found in the Go standard library.
 
 Example usage:
 
-	f, err := os.Open("./delaware-latest.osm.pbf")
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
+```go
+f, err := os.Open("./delaware-latest.osm.pbf")
+if err != nil {
+	panic(err)
+}
+defer f.Close()
 
-	scanner := osmpbf.New(context.Background(), f, 3)
-	defer scanner.Close()
+scanner := osmpbf.New(context.Background(), f, 3)
+defer scanner.Close()
 
-	for scanner.Scan() {
-		o := scanner.Object()
-		// do something
-	}
+for scanner.Scan() {
+	o := scanner.Object()
+	// do something
+}
 
-	scanErr := scanner.Err()
-	if scanErr != nil {
-		panic(scanErr)
-	}
+scanErr := scanner.Err()
+if scanErr != nil {
+	panic(scanErr)
+}
+```
 
 **Note:** Scanners are **not** safe for parallel use. One should feed the
 objects into a channel and have workers read from that.
