@@ -21,7 +21,7 @@ Made available by the package are the following types:
 And the following “container” types:
 
 * OSM - container returned via API
-* Change - used by the replication API.
+* Change - used by the replication API
 * Diff - corresponds to [Overpass Augmented diffs](https://wiki.openstreetmap.org/wiki/Overpass_API/Augmented_Diffs)
 
 ## List of sub-package utilities
@@ -30,7 +30,7 @@ And the following “container” types:
 * [`osmapi`](osmapi) - supports all the v0.6 read/data endpoints
 * [`osmgeojson`](osmgeojson) - OSM to GeoJSON conversion compatible with [osmtogeojson](https://github.com/tyrasd/osmtogeojson)
 * [`osmpbf`](osmpbf) - stream processing of `*.osm.pbf` files
-* [`osmxml`](osmxml) - stream processing of `*.osm` xml files.
+* [`osmxml`](osmxml) - stream processing of `*.osm` xml files
 * [`replication`](replication) - fetch replication state and change files
 
 ## Concepts
