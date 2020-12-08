@@ -12,7 +12,7 @@ type Diff struct {
 // Actions is a set of diff actions.
 type Actions []Action
 
-// Action is a explicit create, modify or delete action with
+// Action is an explicit create, modify or delete action with
 // old and new data if applicable. Different properties of this
 // struct will be populated depending on the action.
 //	Create: da.OSM will contain the new element

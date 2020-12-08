@@ -2,7 +2,7 @@ osm/replication [![Godoc Reference](https://godoc.org/github.com/paulmach/osm/re
 ===============
 
 Package `replication` handles fetching the Minute, Hour, Day and Changeset replication
-and the assocated state value from [Planet OSM](http://planet.osm.org).
+and the associated state value from [Planet OSM](http://planet.osm.org).
 
 For example, to fetch the current Minute replication state:
 

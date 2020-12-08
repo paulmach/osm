@@ -53,7 +53,7 @@ The idea is to make it easy to work with a Way and its member nodes, for example
 ## Scanning large data files
 
 For small data it is possible to use the `encoding/xml` package in the
-Go standard libray to marshal/unmarshal the data. This is typically done using the
+Go standard library to marshal/unmarshal the data. This is typically done using the
 `osm.OSM` or `osm.Change` "container" structs.
 
 For large data the package defines the `Scanner` interface implemented in both the [osmxml](osmxml)
