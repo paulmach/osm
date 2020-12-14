@@ -15,6 +15,7 @@ type dataDecoder struct {
 	q    []osm.Object
 
 	// cache objects to save allocations
+	primitiveBlock *osmpbf.PrimitiveBlock
 
 	keys, vals *protoscan.Iterator
 
@@ -61,9 +62,19 @@ func (dec *dataDecoder) Decode(blob *osmpbf.Blob) ([]osm.Object, error) {
 func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
 	msg := protoscan.New(data)
 
-	primitiveBlock := &osmpbf.PrimitiveBlock{
-		Stringtable: &osmpbf.StringTable{},
+	if dec.primitiveBlock == nil {
+		dec.primitiveBlock = &osmpbf.PrimitiveBlock{
+			Stringtable: &osmpbf.StringTable{},
+		}
+	} else {
+		dec.primitiveBlock.Stringtable.S = dec.primitiveBlock.Stringtable.S[:0]
+		dec.primitiveBlock.Primitivegroup = dec.primitiveBlock.Primitivegroup[:0]
+		dec.primitiveBlock.Granularity = nil
+		dec.primitiveBlock.LatOffset = nil
+		dec.primitiveBlock.LonOffset = nil
+		dec.primitiveBlock.DateGranularity = nil
 	}
+
 	for msg.Next() {
 		switch msg.FieldNumber() {
 		case 1:
@@ -71,31 +82,31 @@ func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
 			if err != nil {
 				return err
 			}
-			err = primitiveBlock.Stringtable.Unmarshal(d)
+			err = dec.primitiveBlock.Stringtable.Unmarshal(d)
 			if err != nil {
 				return err
 			}
 		case 17:
 			v, err := msg.Int32()
-			primitiveBlock.Granularity = &v
+			dec.primitiveBlock.Granularity = &v
 			if err != nil {
 				return err
 			}
 		case 18:
 			v, err := msg.Int32()
-			primitiveBlock.DateGranularity = &v
+			dec.primitiveBlock.DateGranularity = &v
 			if err != nil {
 				return err
 			}
 		case 19:
 			v, err := msg.Int64()
-			primitiveBlock.LatOffset = &v
+			dec.primitiveBlock.LatOffset = &v
 			if err != nil {
 				return err
 			}
 		case 20:
 			v, err := msg.Int64()
-			primitiveBlock.LonOffset = &v
+			dec.primitiveBlock.LonOffset = &v
 			if err != nil {
 				return err
 			}
@@ -118,7 +129,7 @@ func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
 			if err != nil {
 				return err
 			}
-			err = dec.scanPrimitiveGroup(primitiveBlock, d)
+			err = dec.scanPrimitiveGroup(d)
 			if err != nil {
 				return err
 			}
@@ -130,7 +141,7 @@ func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
 	return msg.Err()
 }
 
-func (dec *dataDecoder) scanPrimitiveGroup(pb *osmpbf.PrimitiveBlock, data []byte) error {
+func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 	msg := protoscan.New(data)
 
 	for msg.Next() {
@@ -143,7 +154,7 @@ func (dec *dataDecoder) scanPrimitiveGroup(pb *osmpbf.PrimitiveBlock, data []byt
 				return err
 			}
 
-			err = dec.scanDenseNodes(pb, data)
+			err = dec.scanDenseNodes(data)
 			if err != nil {
 				return err
 			}
@@ -153,7 +164,7 @@ func (dec *dataDecoder) scanPrimitiveGroup(pb *osmpbf.PrimitiveBlock, data []byt
 				return err
 			}
 
-			err = dec.scanWays(pb, data)
+			err = dec.scanWays(data)
 			if err != nil {
 				return err
 			}
@@ -163,7 +174,7 @@ func (dec *dataDecoder) scanPrimitiveGroup(pb *osmpbf.PrimitiveBlock, data []byt
 				return err
 			}
 
-			err = dec.scanRelations(pb, data)
+			err = dec.scanRelations(data)
 			if err != nil {
 				return err
 			}
@@ -175,7 +186,7 @@ func (dec *dataDecoder) scanPrimitiveGroup(pb *osmpbf.PrimitiveBlock, data []byt
 	return msg.Err()
 }
 
-func (dec *dataDecoder) scanDenseNodes(pb *osmpbf.PrimitiveBlock, data []byte) error {
+func (dec *dataDecoder) scanDenseNodes(data []byte) error {
 	var foundIds, foundInfo, foundLats, foundLons, foundKeyVals bool
 
 	msg := protoscan.New(data)
@@ -272,16 +283,16 @@ func (dec *dataDecoder) scanDenseNodes(pb *osmpbf.PrimitiveBlock, data []byte) e
 		return errors.New("dense node does not include all required fields")
 	}
 
-	return dec.extractDenseNodes(pb)
+	return dec.extractDenseNodes()
 }
 
-func (dec *dataDecoder) extractDenseNodes(pb *osmpbf.PrimitiveBlock) error {
-	st := pb.GetStringtable().GetS()
-	granularity := int64(pb.GetGranularity())
-	dateGranularity := int64(pb.GetDateGranularity())
+func (dec *dataDecoder) extractDenseNodes() error {
+	st := dec.primitiveBlock.GetStringtable().GetS()
+	granularity := int64(dec.primitiveBlock.GetGranularity())
+	dateGranularity := int64(dec.primitiveBlock.GetDateGranularity())
 
-	latOffset := pb.GetLatOffset()
-	lonOffset := pb.GetLonOffset()
+	latOffset := dec.primitiveBlock.GetLatOffset()
+	lonOffset := dec.primitiveBlock.GetLonOffset()
 
 	// we also assume all the iterators have the same length....
 
@@ -396,9 +407,9 @@ func (dec *dataDecoder) extractDenseNodes(pb *osmpbf.PrimitiveBlock) error {
 	return nil
 }
 
-func (dec *dataDecoder) scanWays(pb *osmpbf.PrimitiveBlock, data []byte) error {
-	st := pb.GetStringtable().GetS()
-	dateGranularity := int64(pb.GetDateGranularity())
+func (dec *dataDecoder) scanWays(data []byte) error {
+	st := dec.primitiveBlock.GetStringtable().GetS()
+	dateGranularity := int64(dec.primitiveBlock.GetDateGranularity())
 
 	msg := protoscan.New(data)
 
@@ -558,9 +569,9 @@ func extractMembers(
 	return members, nil
 }
 
-func (dec *dataDecoder) scanRelations(pb *osmpbf.PrimitiveBlock, data []byte) error {
-	st := pb.GetStringtable().GetS()
-	dateGranularity := int64(pb.GetDateGranularity())
+func (dec *dataDecoder) scanRelations(data []byte) error {
+	st := dec.primitiveBlock.GetStringtable().GetS()
+	dateGranularity := int64(dec.primitiveBlock.GetDateGranularity())
 
 	msg := protoscan.New(data)
 
