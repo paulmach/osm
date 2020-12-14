@@ -20,6 +20,13 @@ var _ osm.Scanner = &Scanner{}
 // The Scanner API is based on bufio.Scanner
 // https://golang.org/pkg/bufio/#Scanner
 type Scanner struct {
+	// Skip element types that are not needed. The data is skipped
+	// at the encoded protobuf level, but each block still
+	// needs to be decompressed.
+	SkipNodes     bool
+	SkipWays      bool
+	SkipRelations bool
+
 	ctx    context.Context
 	closed bool
 
@@ -42,7 +49,7 @@ func New(ctx context.Context, r io.Reader, procs int) *Scanner {
 		ctx:   ctx,
 		procs: procs,
 	}
-	s.decoder = newDecoder(ctx, r)
+	s.decoder = newDecoder(ctx, s, r)
 	return s
 }
 

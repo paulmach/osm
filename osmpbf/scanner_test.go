@@ -305,6 +305,105 @@ func BenchmarkLondon(b *testing.B) {
 	}
 }
 
+func BenchmarkLondon_nodes(b *testing.B) {
+	f, err := os.Open(London)
+	if err != nil {
+		b.Fatalf("could not open file: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
+
+		scanner := New(context.Background(), f, 4)
+		scanner.SkipWays = true
+		scanner.SkipRelations = true
+
+		nodes, ways, relations := benchmarkScanner(b, scanner)
+
+		if nodes != 2729006 {
+			b.Errorf("wrong number of nodes, got %v", nodes)
+		}
+
+		if ways != 0 {
+			b.Errorf("wrong number of ways, got %v", ways)
+		}
+
+		if relations != 0 {
+			b.Errorf("wrong number of relations, got %v", relations)
+		}
+
+		scanner.Close()
+	}
+}
+
+func BenchmarkLondon_ways(b *testing.B) {
+	f, err := os.Open(London)
+	if err != nil {
+		b.Fatalf("could not open file: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
+
+		scanner := New(context.Background(), f, 4)
+		scanner.SkipNodes = true
+		scanner.SkipRelations = true
+
+		nodes, ways, relations := benchmarkScanner(b, scanner)
+
+		if nodes != 0 {
+			b.Errorf("wrong number of nodes, got %v", nodes)
+		}
+
+		if ways != 459055 {
+			b.Errorf("wrong number of ways, got %v", ways)
+		}
+
+		if relations != 0 {
+			b.Errorf("wrong number of relations, got %v", relations)
+		}
+
+		scanner.Close()
+	}
+}
+
+func BenchmarkLondon_relations(b *testing.B) {
+	f, err := os.Open(London)
+	if err != nil {
+		b.Fatalf("could not open file: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
+
+		scanner := New(context.Background(), f, 4)
+		scanner.SkipNodes = true
+		scanner.SkipWays = true
+
+		nodes, ways, relations := benchmarkScanner(b, scanner)
+
+		if nodes != 0 {
+			b.Errorf("wrong number of nodes, got %v", nodes)
+		}
+
+		if ways != 0 {
+			b.Errorf("wrong number of ways, got %v", ways)
+		}
+
+		if relations != 12833 {
+			b.Errorf("wrong number of relations, got %v", relations)
+		}
+
+		scanner.Close()
+	}
+}
+
 func benchmarkScanner(b *testing.B, scanner osm.Scanner) (int, int, int) {
 	var (
 		nodes     int

@@ -11,8 +11,9 @@ import (
 
 // dataDecoder is a decoder for Blob with OSMData (PrimitiveBlock).
 type dataDecoder struct {
-	data []byte
-	q    []osm.Object
+	scanner *Scanner
+	data    []byte
+	q       []osm.Object
 
 	// cache objects to save allocations
 	primitiveBlock *osmpbf.PrimitiveBlock
@@ -145,10 +146,12 @@ func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 	msg := protoscan.New(data)
 
 	for msg.Next() {
-		switch msg.FieldNumber() {
-		case 1:
+		fn := msg.FieldNumber()
+		if fn == 1 {
 			panic("nodes are not supported, currently untested")
-		case 2:
+		}
+
+		if fn == 2 && !dec.scanner.SkipNodes {
 			data, err := msg.MessageData()
 			if err != nil {
 				return err
@@ -158,7 +161,11 @@ func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 			if err != nil {
 				return err
 			}
-		case 3:
+
+			continue
+		}
+
+		if fn == 3 && !dec.scanner.SkipWays {
 			data, err := msg.MessageData()
 			if err != nil {
 				return err
@@ -168,7 +175,11 @@ func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 			if err != nil {
 				return err
 			}
-		case 4:
+
+			continue
+		}
+
+		if fn == 4 && !dec.scanner.SkipRelations {
 			data, err := msg.MessageData()
 			if err != nil {
 				return err
@@ -178,9 +189,11 @@ func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 			if err != nil {
 				return err
 			}
-		default:
-			msg.Skip()
+
+			continue
 		}
+
+		msg.Skip()
 	}
 
 	return msg.Err()
