@@ -284,7 +284,7 @@ func (dec *decoder) readFileBlock(sizeBuf, headerBuf, blobBuf []byte) (*osmpbf.B
 	}
 
 	blobBuf = blobBuf[:blobHeader.GetDatasize()]
-	blob, err := dec.readBlob(blobHeader, blobBuf)
+	blob, err := dec.readBlob(blobBuf)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -321,7 +321,7 @@ func (dec *decoder) readBlobHeader(buf []byte) (*osmpbf.BlobHeader, error) {
 	return blobHeader, nil
 }
 
-func (dec *decoder) readBlob(blobHeader *osmpbf.BlobHeader, buf []byte) (*osmpbf.Blob, error) {
+func (dec *decoder) readBlob(buf []byte) (*osmpbf.Blob, error) {
 	if _, err := io.ReadFull(dec.r, buf); err != nil {
 		return nil, err
 	}

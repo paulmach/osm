@@ -1,25 +1,45 @@
 package osmpbf
 
 import (
+	"errors"
 	"time"
 
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
+	"github.com/paulmach/protoscan"
 )
-
-type elementInfo struct {
-	Version   int32
-	UID       int32
-	Timestamp time.Time
-	Changeset int64
-	User      string
-	Visible   bool
-}
 
 // dataDecoder is a decoder for Blob with OSMData (PrimitiveBlock).
 type dataDecoder struct {
 	data []byte
 	q    []osm.Object
+
+	// cache objects to save allocations
+
+	keys, vals *protoscan.Iterator
+
+	// ways
+	nodes *protoscan.Iterator
+
+	// relations
+	roles  *protoscan.Iterator
+	memids *protoscan.Iterator
+	types  *protoscan.Iterator
+
+	// dense nodes
+	ids *protoscan.Iterator
+
+	versions   *protoscan.Iterator
+	timestamps *protoscan.Iterator
+	changesets *protoscan.Iterator
+	uids       *protoscan.Iterator
+	usids      *protoscan.Iterator
+	visibles   *protoscan.Iterator
+
+	lats *protoscan.Iterator
+	lons *protoscan.Iterator
+
+	keyvals *protoscan.Iterator
 }
 
 func (dec *dataDecoder) Decode(blob *osmpbf.Blob) ([]osm.Object, error) {
@@ -31,256 +51,654 @@ func (dec *dataDecoder) Decode(blob *osmpbf.Blob) ([]osm.Object, error) {
 		return nil, err
 	}
 
-	primitiveBlock := &osmpbf.PrimitiveBlock{}
-	if err := primitiveBlock.Unmarshal(dec.data); err != nil {
+	err = dec.scanPrimitiveBlock(dec.data)
+	if err != nil {
 		return nil, err
 	}
-
-	dec.parsePrimitiveBlock(primitiveBlock)
 	return dec.q, nil
 }
 
-func (dec *dataDecoder) parsePrimitiveBlock(pb *osmpbf.PrimitiveBlock) {
-	for _, pg := range pb.GetPrimitivegroup() {
-		dec.parsePrimitiveGroup(pb, pg)
+func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
+	msg := protoscan.New(data)
+
+	primitiveBlock := &osmpbf.PrimitiveBlock{
+		Stringtable: &osmpbf.StringTable{},
 	}
-}
-
-func (dec *dataDecoder) parsePrimitiveGroup(pb *osmpbf.PrimitiveBlock, pg *osmpbf.PrimitiveGroup) {
-	dec.parseNodes(pb, pg.GetNodes())
-	dec.parseDenseNodes(pb, pg.GetDense())
-	dec.parseWays(pb, pg.GetWays())
-	dec.parseRelations(pb, pg.GetRelations())
-}
-
-func (dec *dataDecoder) parseNodes(pb *osmpbf.PrimitiveBlock, nodes []*osmpbf.Node) {
-	if len(nodes) == 0 {
-		return
+	for msg.Next() {
+		switch msg.FieldNumber() {
+		case 1:
+			d, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+			err = primitiveBlock.Stringtable.Unmarshal(d)
+			if err != nil {
+				return err
+			}
+		case 17:
+			v, err := msg.Int32()
+			primitiveBlock.Granularity = &v
+			if err != nil {
+				return err
+			}
+		case 18:
+			v, err := msg.Int32()
+			primitiveBlock.DateGranularity = &v
+			if err != nil {
+				return err
+			}
+		case 19:
+			v, err := msg.Int64()
+			primitiveBlock.LatOffset = &v
+			if err != nil {
+				return err
+			}
+		case 20:
+			v, err := msg.Int64()
+			primitiveBlock.LonOffset = &v
+			if err != nil {
+				return err
+			}
+		default:
+			msg.Skip()
+		}
 	}
 
-	panic("nodes are not supported, currently untested")
-	// st := pb.GetStringtable().GetS()
-	// granularity := int64(pb.GetGranularity())
-	// dateGranularity := int64(pb.GetDateGranularity())
+	if msg.Err() != nil {
+		return msg.Err()
+	}
 
-	// latOffset := pb.GetLatOffset()
-	// lonOffset := pb.GetLonOffset()
+	// we need the offsets and granularities for the group decoding
 
-	// for _, node := range nodes {
-	// 	info := extractInfo(st, node.GetInfo(), dateGranularity)
-	// 	dec.q = append(dec.q, osm.Element{
-	// 		Node: &osm.Node{
-	// 			ID:          osm.NodeID(node.GetId()),
-	// 			Lat:         1e-9 * float64((latOffset + (granularity * node.GetLat()))),
-	// 			Lon:         1e-9 * float64((lonOffset + (granularity * node.GetLon()))),
-	// 			User:        info.User,
-	// 			UserID:      osm.UserID(info.UID),
-	// 			Visible:     info.Visible,
-	// 			ChangesetID: osm.ChangesetID(info.Changeset),
-	// 			Timestamp:   info.Timestamp,
-	// 			Tags:        extractOSMTags(st, node.GetKeys(), node.GetVals()),
-	// 		},
-	// 	})
-	// }
+	msg.Reset(nil)
+	for msg.Next() {
+		switch msg.FieldNumber() {
+		case 2:
+			d, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+			err = dec.scanPrimitiveGroup(primitiveBlock, d)
+			if err != nil {
+				return err
+			}
+		default:
+			msg.Skip()
+		}
+	}
+
+	return msg.Err()
 }
 
-func (dec *dataDecoder) parseDenseNodes(pb *osmpbf.PrimitiveBlock, dn *osmpbf.DenseNodes) {
+func (dec *dataDecoder) scanPrimitiveGroup(pb *osmpbf.PrimitiveBlock, data []byte) error {
+	msg := protoscan.New(data)
+
+	for msg.Next() {
+		switch msg.FieldNumber() {
+		case 1:
+			panic("nodes are not supported, currently untested")
+		case 2:
+			data, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+
+			err = dec.scanDenseNodes(pb, data)
+			if err != nil {
+				return err
+			}
+		case 3:
+			data, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+
+			err = dec.scanWays(pb, data)
+			if err != nil {
+				return err
+			}
+		case 4:
+			data, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+
+			err = dec.scanRelations(pb, data)
+			if err != nil {
+				return err
+			}
+		default:
+			msg.Skip()
+		}
+	}
+
+	return msg.Err()
+}
+
+func (dec *dataDecoder) scanDenseNodes(pb *osmpbf.PrimitiveBlock, data []byte) error {
+	var foundIds, foundInfo, foundLats, foundLons, foundKeyVals bool
+
+	msg := protoscan.New(data)
+	for msg.Next() {
+		var err error
+		switch msg.FieldNumber() {
+		case 1: // ids
+			dec.ids, err = msg.Iterator(dec.ids)
+			foundIds = true
+		case 5: // dense info
+			d, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+
+			// verify all the fields are "found" since we reuse object from last block
+			// and can't just check for nil
+			var foundVersions, foundTimestamps, foundChangesets,
+				foundUids, foundUsids, foundVisibles bool
+
+			info := protoscan.New(d)
+			for info.Next() {
+				var err error
+				switch info.FieldNumber() {
+				case 1: // version
+					dec.versions, err = info.Iterator(dec.versions)
+					foundVersions = true
+				case 2: // timestamp
+					dec.timestamps, err = info.Iterator(dec.timestamps)
+					foundTimestamps = true
+				case 3: // changeset
+					dec.changesets, err = info.Iterator(dec.changesets)
+					foundChangesets = true
+				case 4: // uid
+					dec.uids, err = info.Iterator(dec.uids)
+					foundUids = true
+				case 5: // user_sid
+					dec.usids, err = info.Iterator(dec.usids)
+					foundUsids = true
+				case 6: // visible, optional, default true
+					dec.visibles, err = info.Iterator(dec.visibles)
+					foundVisibles = true
+				default:
+					info.Skip()
+				}
+
+				if err != nil {
+					return err
+				}
+			}
+
+			if info.Err() != nil {
+				return info.Err()
+			}
+
+			// visibles are optional, default is true
+			if !foundVisibles {
+				dec.visibles = nil
+			}
+
+			if !foundVersions || !foundTimestamps || !foundChangesets || !foundUids || !foundUsids {
+				return errors.New("dense node does not include all required fields")
+			}
+
+			foundInfo = true
+		case 8: // lat
+			dec.lats, err = msg.Iterator(dec.lats)
+			foundLats = true
+		case 9: // lon
+			dec.lons, err = msg.Iterator(dec.lons)
+			foundLons = true
+		case 10: // keys_vals
+			dec.keyvals, err = msg.Iterator(dec.keyvals)
+			foundKeyVals = true
+		default:
+			msg.Skip()
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	if msg.Err() != nil {
+		return msg.Err()
+	}
+
+	// keyvals could be empty if all nodes are tagless
+	if !foundKeyVals {
+		dec.keyvals = nil
+	}
+
+	if !foundIds || !foundInfo || !foundLats || !foundLons {
+		return errors.New("dense node does not include all required fields")
+	}
+
+	return dec.extractDenseNodes(pb)
+}
+
+func (dec *dataDecoder) extractDenseNodes(pb *osmpbf.PrimitiveBlock) error {
 	st := pb.GetStringtable().GetS()
 	granularity := int64(pb.GetGranularity())
+	dateGranularity := int64(pb.GetDateGranularity())
 
 	latOffset := pb.GetLatOffset()
 	lonOffset := pb.GetLonOffset()
-	ids := dn.GetId()
-	lats := dn.GetLat()
-	lons := dn.GetLon()
-	di := dn.GetDenseinfo()
 
-	tu := tagUnpacker{st, dn.GetKeysVals(), 0}
-	state := &denseInfoState{
-		DenseInfo:       di,
-		StringTable:     st,
-		DateGranularity: int64(pb.GetDateGranularity()),
-	}
+	// we also assume all the iterators have the same length....
 
-	var id, lat, lon int64
-	myNodes := make([]osm.Node, len(ids), len(ids))
-	for index := range ids {
-		id = ids[index] + id
-		lat = lats[index] + lat
-		lon = lons[index] + lon
-		state.Next()
+	nodes := make([]osm.Node, dec.versions.Count(protoscan.WireTypeVarint))
 
-		myNodes[index].ID = osm.NodeID(id)
-		myNodes[index].Lat = 1e-9 * float64((latOffset + (granularity * lat)))
-		myNodes[index].Lon = 1e-9 * float64((lonOffset + (granularity * lon)))
-		myNodes[index].User = state.info.User
-		myNodes[index].UserID = osm.UserID(state.info.UID)
-		myNodes[index].Visible = state.info.Visible
-		myNodes[index].Version = int(state.info.Version)
-		myNodes[index].ChangesetID = osm.ChangesetID(state.info.Changeset)
-		myNodes[index].Timestamp = state.info.Timestamp
-		myNodes[index].Tags = tu.Next()
+	var id, lat, lon, timestamp, changeset int64
+	var uid, usid int32
+	var index int
+	for dec.versions.HasNext() {
+		n := &nodes[index]
+		n.Visible = true
+		index++
 
-		dec.q = append(dec.q, &myNodes[index])
-	}
-}
+		// ID
+		v1, err := dec.ids.Sint64()
+		if err != nil {
+			return err
+		}
+		id += v1
+		n.ID = osm.NodeID(id)
 
-func (dec *dataDecoder) parseWays(pb *osmpbf.PrimitiveBlock, ways []*osmpbf.Way) {
-	st := pb.GetStringtable().GetS()
-	dateGranularity := int64(pb.GetDateGranularity())
-	myWays := make([]osm.Way, len(ways))
-	for i, way := range ways {
-		var (
-			prev    int64
-			nodeIDs osm.WayNodes
-		)
+		// Version
+		v2, err := dec.versions.Int32()
+		if err != nil {
+			return err
+		}
+		n.Version = int(v2)
 
-		info := extractInfo(st, way.Info, dateGranularity)
-		if refs := way.GetRefs(); len(refs) > 0 {
-			nodeIDs = make(osm.WayNodes, len(refs))
-			for i, r := range refs {
-				prev = r + prev // delta encoding
-				nodeIDs[i] = osm.WayNode{ID: osm.NodeID(prev)}
+		// Timestamp
+		v3, err := dec.timestamps.Sint64()
+		if err != nil {
+			return err
+		}
+		timestamp += v3
+		millisec := time.Duration(timestamp*dateGranularity) * time.Millisecond
+		n.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
+
+		// Changeset
+		v4, err := dec.changesets.Sint64()
+		if err != nil {
+			return err
+		}
+		changeset += v4
+		n.ChangesetID = osm.ChangesetID(changeset)
+
+		// uid
+		v5, err := dec.uids.Sint32()
+		if err != nil {
+			return err
+		}
+		uid += v5
+		n.UserID = osm.UserID(uid)
+
+		// usid
+		v6, err := dec.usids.Sint32()
+		if err != nil {
+			return err
+		}
+		usid += v6
+		n.User = st[usid]
+
+		// Visible
+		if dec.visibles != nil {
+			v7, err := dec.visibles.Bool()
+			if err != nil {
+				return err
+			}
+			n.Visible = v7
+		}
+
+		// lat
+		v8, err := dec.lats.Sint64()
+		if err != nil {
+			return err
+		}
+		lat += v8
+		n.Lat = 1e-9 * float64((latOffset + (granularity * lat)))
+
+		// lon
+		v9, err := dec.lons.Sint64()
+		if err != nil {
+			return err
+		}
+		lon += v9
+		n.Lon = 1e-9 * float64((lonOffset + (granularity * lon)))
+
+		// tags, could be missing if all nodes are tagless
+		if dec.keyvals != nil {
+			// TODO: precompute length of tags to preallocate
+			for {
+				k, err := dec.keyvals.Int32()
+				if err != nil {
+					return err
+				}
+
+				if k == 0 {
+					break
+				}
+
+				v, err := dec.keyvals.Int32()
+				if err != nil {
+					return err
+				}
+
+				n.Tags = append(n.Tags, osm.Tag{Key: st[k], Value: st[v]})
 			}
 		}
 
-		myWays[i].ID = osm.WayID(way.Id)
-		myWays[i].User = info.User
-		myWays[i].UserID = osm.UserID(info.UID)
-		myWays[i].Visible = info.Visible
-		myWays[i].Version = int(info.Version)
-		myWays[i].ChangesetID = osm.ChangesetID(info.Changeset)
-		myWays[i].Timestamp = info.Timestamp
-		myWays[i].Nodes = nodeIDs
-		myWays[i].Tags = extractTags(st, way.Keys, way.Vals)
-
-		dec.q = append(dec.q, &myWays[i])
+		dec.q = append(dec.q, n)
 	}
+
+	return nil
 }
 
-// Make relation members from stringtable and three parallel arrays of IDs.
-func extractMembers(stringTable []string, rel *osmpbf.Relation) osm.Members {
-	memIDs := rel.GetMemids()
-	types := rel.GetTypes()
-	roleIDs := rel.GetRolesSid()
-
-	var memID int64
-	if len(memIDs) == 0 {
-		return nil
-	}
-
-	members := make(osm.Members, len(memIDs))
-	for index := range memIDs {
-		memID = memIDs[index] + memID // delta encoding
-
-		var memType osm.Type
-		switch types[index] {
-		case osmpbf.Relation_NODE:
-			memType = osm.TypeNode
-		case osmpbf.Relation_WAY:
-			memType = osm.TypeWay
-		case osmpbf.Relation_RELATION:
-			memType = osm.TypeRelation
-		}
-
-		members[index] = osm.Member{
-			Type: memType,
-			Ref:  memID,
-			Role: stringTable[roleIDs[index]],
-		}
-	}
-
-	return members
-}
-
-func (dec *dataDecoder) parseRelations(pb *osmpbf.PrimitiveBlock, relations []*osmpbf.Relation) {
+func (dec *dataDecoder) scanWays(pb *osmpbf.PrimitiveBlock, data []byte) error {
 	st := pb.GetStringtable().GetS()
 	dateGranularity := int64(pb.GetDateGranularity())
 
-	for _, rel := range relations {
-		members := extractMembers(st, rel)
-		info := extractInfo(st, rel.GetInfo(), dateGranularity)
+	msg := protoscan.New(data)
 
-		dec.q = append(dec.q, &osm.Relation{
-			ID:          osm.RelationID(rel.Id),
-			User:        info.User,
-			UserID:      osm.UserID(info.UID),
-			Visible:     info.Visible,
-			Version:     int(info.Version),
-			ChangesetID: osm.ChangesetID(info.Changeset),
-			Timestamp:   info.Timestamp,
-			Tags:        extractTags(st, rel.GetKeys(), rel.GetVals()),
-			Members:     members,
-		})
-	}
-}
+	way := &osm.Way{Visible: true}
+	var foundKeys, foundVals bool
+	for msg.Next() {
+		var i64 int64
+		var err error
 
-func extractInfo(stringTable []string, i *osmpbf.Info, dateGranularity int64) elementInfo {
-	info := elementInfo{Visible: true}
+		switch msg.FieldNumber() {
+		case 1:
+			i64, err = msg.Int64()
+			way.ID = osm.WayID(i64)
+		case 2:
+			dec.keys, err = msg.Iterator(dec.keys)
+			foundKeys = true
+		case 3:
+			dec.vals, err = msg.Iterator(dec.vals)
+			foundVals = true
+		case 4: // info
+			d, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
 
-	if i != nil {
-		info.Version = i.GetVersion()
+			info := protoscan.New(d)
+			for info.Next() {
+				switch info.FieldNumber() {
+				case 1:
+					v, err := info.Int32()
+					if err != nil {
+						return err
+					}
+					way.Version = int(v)
+				case 2:
+					v, err := info.Int64()
+					if err != nil {
+						return err
+					}
+					millisec := time.Duration(v*dateGranularity) * time.Millisecond
+					way.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
+				case 3:
+					v, err := info.Int64()
+					if err != nil {
+						return err
+					}
+					way.ChangesetID = osm.ChangesetID(v)
+				case 4:
+					v, err := info.Int32()
+					if err != nil {
+						return err
+					}
+					way.UserID = osm.UserID(v)
+				case 5:
+					v, err := info.Uint32()
+					if err != nil {
+						return err
+					}
+					way.User = st[v]
+				case 6:
+					v, err := info.Bool()
+					if err != nil {
+						return err
+					}
+					way.Visible = v
+				default:
+					info.Skip()
+				}
+			}
 
-		millisec := time.Duration(i.GetTimestamp()*dateGranularity) * time.Millisecond
-		info.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
+			if info.Err() != nil {
+				return info.Err()
+			}
+		case 8: // refs or nodes
+			dec.nodes, err = msg.Iterator(dec.nodes)
+			if err != nil {
+				return err
+			}
 
-		info.Changeset = i.GetChangeset()
-		info.UID = i.GetUid()
-		info.User = stringTable[i.GetUserSid()]
+			var prev, index int64
+			way.Nodes = make(osm.WayNodes, dec.nodes.Count(protoscan.WireTypeVarint))
+			for dec.nodes.HasNext() {
+				v, err := dec.nodes.Sint64()
+				if err != nil {
+					return err
+				}
+				prev = v + prev // delta encoding
+				way.Nodes[index].ID = osm.NodeID(prev)
+				index++
+			}
+		default:
+			msg.Skip()
+		}
 
-		if i.Visible != nil {
-			info.Visible = i.GetVisible()
+		if err != nil {
+			return err
 		}
 	}
 
-	return info
+	if msg.Err() != nil {
+		return msg.Err()
+	}
+
+	if foundKeys && foundVals {
+		var err error
+		way.Tags, err = scanTags(st, dec.keys, dec.vals)
+		if err != nil {
+			return err
+		}
+	}
+
+	dec.q = append(dec.q, way)
+	return nil
 }
 
-type denseInfoState struct {
-	DenseInfo       *osmpbf.DenseInfo
-	StringTable     []string
-	DateGranularity int64
+// Make relation members from stringtable and three parallel arrays of IDs.
+func extractMembers(
+	st []string,
+	roles *protoscan.Iterator,
+	memids *protoscan.Iterator,
+	types *protoscan.Iterator,
+) (osm.Members, error) {
+	var index, memID int64
 
-	index     int
-	timestamp int64
-	changeset int64
-	uid       int32
-	userSid   int32
+	members := make(osm.Members, types.Count(protoscan.WireTypeVarint))
+	for roles.HasNext() {
+		r, err := roles.Int32()
+		if err != nil {
+			return nil, err
+		}
+		members[index].Role = st[r]
 
-	info elementInfo
+		m, err := memids.Sint64()
+		if err != nil {
+			return nil, err
+		}
+		memID += m
+		members[index].Ref = memID
+
+		t, err := types.Int32()
+		if err != nil {
+			return nil, err
+		}
+
+		switch osmpbf.Relation_MemberType(t) {
+		case osmpbf.Relation_NODE:
+			members[index].Type = osm.TypeNode
+		case osmpbf.Relation_WAY:
+			members[index].Type = osm.TypeWay
+		case osmpbf.Relation_RELATION:
+			members[index].Type = osm.TypeRelation
+		}
+
+		index++
+	}
+
+	return members, nil
 }
 
-func (s *denseInfoState) Next() {
-	s.info = elementInfo{Visible: true}
+func (dec *dataDecoder) scanRelations(pb *osmpbf.PrimitiveBlock, data []byte) error {
+	st := pb.GetStringtable().GetS()
+	dateGranularity := int64(pb.GetDateGranularity())
 
-	if versions := s.DenseInfo.GetVersion(); len(versions) > 0 {
-		s.info.Version = versions[s.index]
+	msg := protoscan.New(data)
+
+	relation := &osm.Relation{Visible: true}
+	var foundKeys, foundVals, foundRoles, foundMemids, foundTypes bool
+	for msg.Next() {
+		var i64 int64
+		var err error
+
+		switch msg.FieldNumber() {
+		case 1:
+			i64, err = msg.Int64()
+			relation.ID = osm.RelationID(i64)
+		case 2:
+			dec.keys, err = msg.Iterator(dec.keys)
+			foundKeys = true
+		case 3:
+			dec.vals, err = msg.Iterator(dec.vals)
+			foundVals = true
+		case 4: // info
+			d, err := msg.MessageData()
+			if err != nil {
+				return err
+			}
+
+			info := protoscan.New(d)
+			for info.Next() {
+				switch info.FieldNumber() {
+				case 1:
+					v, err := info.Int32()
+					if err != nil {
+						return err
+					}
+					relation.Version = int(v)
+				case 2:
+					v, err := info.Int64()
+					if err != nil {
+						return err
+					}
+					millisec := time.Duration(v*dateGranularity) * time.Millisecond
+					relation.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
+				case 3:
+					v, err := info.Int64()
+					if err != nil {
+						return err
+					}
+					relation.ChangesetID = osm.ChangesetID(v)
+				case 4:
+					v, err := info.Int32()
+					if err != nil {
+						return err
+					}
+					relation.UserID = osm.UserID(v)
+				case 5:
+					v, err := info.Uint32()
+					if err != nil {
+						return err
+					}
+					relation.User = st[v]
+				case 6:
+					v, err := info.Bool()
+					if err != nil {
+						return err
+					}
+					relation.Visible = v
+				default:
+					info.Skip()
+				}
+			}
+
+			if info.Err() != nil {
+				return info.Err()
+			}
+		case 8: // refs or nodes
+			dec.roles, err = msg.Iterator(dec.roles)
+			foundRoles = true
+		case 9:
+			dec.memids, err = msg.Iterator(dec.memids)
+			foundMemids = true
+		case 10:
+			dec.types, err = msg.Iterator(dec.types)
+			foundTypes = true
+		default:
+			msg.Skip()
+		}
+
+		if err != nil {
+			return err
+		}
 	}
 
-	if timestamps := s.DenseInfo.GetTimestamp(); len(timestamps) > 0 {
-		s.timestamp = timestamps[s.index] + s.timestamp
-		millisec := time.Duration(s.timestamp*s.DateGranularity) * time.Millisecond
-		s.info.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
+	if msg.Err() != nil {
+		return msg.Err()
 	}
 
-	if changesets := s.DenseInfo.GetChangeset(); len(changesets) > 0 {
-		s.changeset = changesets[s.index] + s.changeset
-		s.info.Changeset = s.changeset
+	// possible for relation to not have tags
+	if foundKeys && foundVals {
+		var err error
+		relation.Tags, err = scanTags(st, dec.keys, dec.vals)
+		if err != nil {
+			return err
+		}
 	}
 
-	if uids := s.DenseInfo.GetUid(); len(uids) > 0 {
-		s.uid = uids[s.index] + s.uid
-		s.info.UID = s.uid
+	// possible for relation to not have any members
+	if foundRoles && foundMemids && foundTypes {
+		var err error
+		relation.Members, err = extractMembers(st, dec.roles, dec.memids, dec.types)
+		if err != nil {
+			return err
+		}
 	}
 
-	if userSids := s.DenseInfo.GetUserSid(); len(userSids) > 0 {
-		s.userSid = userSids[s.index] + s.userSid
-		s.info.User = s.StringTable[s.userSid]
+	dec.q = append(dec.q, relation)
+	return nil
+}
+
+func scanTags(stringTable []string, keys, vals *protoscan.Iterator) (osm.Tags, error) {
+	// note we assume keys and vals are the same length
+	// we also assume index are within range of the stringTable
+
+	index := 0
+	tags := make(osm.Tags, keys.Count(protoscan.WireTypeVarint))
+	for keys.HasNext() {
+		k, err := keys.Uint32()
+		if err != nil {
+			return nil, err
+		}
+		v, err := vals.Uint32()
+		if err != nil {
+			return nil, err
+		}
+		tags[index] = osm.Tag{
+			Key:   stringTable[k],
+			Value: stringTable[v],
+		}
+		index++
 	}
 
-	if visibles := s.DenseInfo.GetVisible(); len(visibles) > 0 {
-		s.info.Visible = visibles[s.index]
-	}
-
-	s.index++
+	return tags, nil
 }
