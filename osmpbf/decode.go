@@ -2,7 +2,6 @@ package osmpbf
 
 import (
 	"bytes"
-	"compress/zlib"
 	"context"
 	"encoding/binary"
 	"errors"
@@ -342,7 +341,7 @@ func getData(blob *osmpbf.Blob, data []byte) ([]byte, error) {
 		return blob.GetRaw(), nil
 
 	case blob.ZlibData != nil:
-		r, err := zlib.NewReader(bytes.NewReader(blob.GetZlibData()))
+		r, err := zlibReader(blob.GetZlibData())
 		if err != nil {
 			return nil, err
 		}
