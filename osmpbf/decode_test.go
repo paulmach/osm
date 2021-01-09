@@ -163,7 +163,7 @@ func TestDecode(t *testing.T) {
 	}
 	defer f.Close()
 
-	d := newDecoder(context.Background(), f)
+	d := newDecoder(context.Background(), &Scanner{}, f)
 	err = d.Start(runtime.GOMAXPROCS(-1))
 	if err != nil {
 		t.Fatal(err)
@@ -243,7 +243,7 @@ func TestDecode_Close(t *testing.T) {
 
 	// should close at start
 	f.Seek(0, 0)
-	d := newDecoder(context.Background(), f)
+	d := newDecoder(context.Background(), &Scanner{}, f)
 	d.Start(5)
 
 	err = d.Close()
@@ -253,7 +253,7 @@ func TestDecode_Close(t *testing.T) {
 
 	// should close after partial read
 	f.Seek(0, 0)
-	d = newDecoder(context.Background(), f)
+	d = newDecoder(context.Background(), &Scanner{}, f)
 	d.Start(5)
 
 	d.Next()
@@ -266,7 +266,7 @@ func TestDecode_Close(t *testing.T) {
 
 	// should close after full read
 	f.Seek(0, 0)
-	d = newDecoder(context.Background(), f)
+	d = newDecoder(context.Background(), &Scanner{}, f)
 	d.Start(5)
 
 	elements := 0
@@ -291,56 +291,5 @@ func TestDecode_Close(t *testing.T) {
 	err = d.Close()
 	if err != nil {
 		t.Errorf("close error: %v", err)
-	}
-
-}
-
-func BenchmarkDecode(b *testing.B) {
-	f, err := os.Open(London)
-	if err != nil {
-		b.Fatal(err)
-	}
-	defer f.Close()
-
-	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		f.Seek(0, 0)
-
-		d := newDecoder(context.Background(), f)
-		err = d.Start(4)
-		if err != nil {
-			b.Fatal(err)
-		}
-
-		var nc, wc, rc uint64
-		for {
-			if v, err := d.Next(); err == io.EOF {
-				break
-			} else if err != nil {
-				b.Fatal(err)
-			} else {
-				switch v.(type) {
-				case *osm.Node:
-					nc++
-				case *osm.Way:
-					wc++
-				case *osm.Relation:
-					rc++
-				}
-			}
-		}
-
-		if nc != 2729006 {
-			b.Errorf("wrong number of nodes, got %v", nc)
-		}
-
-		if wc != 459055 {
-			b.Errorf("wrong number of ways, got %v", wc)
-		}
-
-		if rc != 12833 {
-			b.Errorf("wrong number of relations, got %v", rc)
-		}
 	}
 }

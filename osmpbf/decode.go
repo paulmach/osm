@@ -65,6 +65,8 @@ type oPair struct {
 
 // A Decoder reads and decodes OpenStreetMap PBF data from an input stream.
 type decoder struct {
+	scanner *Scanner
+
 	header    *Header
 	r         io.Reader
 	bytesRead int64
@@ -85,12 +87,13 @@ type decoder struct {
 }
 
 // newDecoder returns a new decoder that reads from r.
-func newDecoder(ctx context.Context, r io.Reader) *decoder {
+func newDecoder(ctx context.Context, s *Scanner, r io.Reader) *decoder {
 	c, cancel := context.WithCancel(ctx)
 	return &decoder{
-		ctx:    c,
-		cancel: cancel,
-		r:      r,
+		scanner: s,
+		ctx:     c,
+		cancel:  cancel,
+		r:       r,
 	}
 }
 
@@ -142,7 +145,7 @@ func (dec *decoder) Start(n int) error {
 		input := make(chan iPair, n)
 		output := make(chan oPair, n)
 
-		dd := &dataDecoder{}
+		dd := &dataDecoder{scanner: dec.scanner}
 
 		go func() {
 			defer close(output)
@@ -284,7 +287,7 @@ func (dec *decoder) readFileBlock(sizeBuf, headerBuf, blobBuf []byte) (*osmpbf.B
 	}
 
 	blobBuf = blobBuf[:blobHeader.GetDatasize()]
-	blob, err := dec.readBlob(blobHeader, blobBuf)
+	blob, err := dec.readBlob(blobBuf)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -321,7 +324,7 @@ func (dec *decoder) readBlobHeader(buf []byte) (*osmpbf.BlobHeader, error) {
 	return blobHeader, nil
 }
 
-func (dec *decoder) readBlob(blobHeader *osmpbf.BlobHeader, buf []byte) (*osmpbf.Blob, error) {
+func (dec *decoder) readBlob(buf []byte) (*osmpbf.Blob, error) {
 	if _, err := io.ReadFull(dec.r, buf); err != nil {
 		return nil, err
 	}
