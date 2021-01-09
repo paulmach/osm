@@ -118,6 +118,8 @@ func (ns Nodes) ElementIDs() ElementIDs {
 }
 
 // Marshal encodes the nodes using protocol buffers.
+//
+// Deprecated: encoding could be improved, should be versioned separately.
 func (ns Nodes) Marshal() ([]byte, error) {
 	if len(ns) == 0 {
 		return nil, nil
@@ -131,6 +133,8 @@ func (ns Nodes) Marshal() ([]byte, error) {
 }
 
 // UnmarshalNodes will unmarshal the data into a list of nodes.
+//
+// Deprecated: encoding could be improved, should be versioned separately.
 func UnmarshalNodes(data []byte) (Nodes, error) {
 	if len(data) == 0 {
 		return nil, nil

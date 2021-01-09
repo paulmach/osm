@@ -94,6 +94,8 @@ func (c *Changeset) Bot() bool {
 
 // Marshal encodes the changeset data using protocol buffers.
 // Does not encode the changeset discussion.
+//
+// Deprecated: encoding could be improved, should be versioned separately.
 func (c *Changeset) Marshal() ([]byte, error) {
 	ss := &stringSet{}
 
@@ -144,6 +146,8 @@ func (c *Changeset) Marshal() ([]byte, error) {
 }
 
 // UnmarshalChangeset will unmarshal the data into an OSM object.
+//
+// Deprecated: encoding could be improved, should be versioned separately.
 func UnmarshalChangeset(data []byte) (*Changeset, error) {
 	encoded := &osmpb.Changeset{}
 	err := proto.Unmarshal(data, encoded)

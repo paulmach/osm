@@ -333,6 +333,8 @@ func (ws Ways) ElementIDs() ElementIDs {
 }
 
 // Marshal encodes the ways using protocol buffers.
+//
+// Deprecated: encoding could be improved, should be versioned separately.
 func (ws Ways) Marshal() ([]byte, error) {
 	o := OSM{
 		Ways: ws,
@@ -342,6 +344,8 @@ func (ws Ways) Marshal() ([]byte, error) {
 }
 
 // UnmarshalWays will unmarshal the data into a list of ways.
+//
+// Deprecated: encoding could be improved, should be versioned separately.
 func UnmarshalWays(data []byte) (Ways, error) {
 	o, err := UnmarshalOSM(data)
 	if err != nil {
