@@ -131,6 +131,9 @@ func (dec *decoder) Start(n int) error {
 
 	dec.wg.Add(n + 2)
 
+	//use roughly 10 chanel inputs
+	numChanels := 10 / n
+
 	// High level overview of the decoder:
 	// The decoder supports parallel unzipping and protobuf decoding of all
 	// the header blocks. On goroutine feeds the headerblocks round-robin into
@@ -141,8 +144,8 @@ func (dec *decoder) Start(n int) error {
 
 	// start data decoders
 	for i := 0; i < n; i++ {
-		input := make(chan iPair, n)
-		output := make(chan oPair, n)
+		input := make(chan iPair, numChanels)
+		output := make(chan oPair, numChanels)
 
 		dd := &dataDecoder{scanner: dec.scanner}
 
