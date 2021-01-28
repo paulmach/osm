@@ -343,5 +343,5 @@ func (ds *Datasource) baseSeqURL(sn SeqNum) string {
 		sn.Dir(),
 		n/1000000,
 		(n%1000000)/1000,
-		(n % 1000))
+		n % 1000)
 }
