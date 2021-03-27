@@ -1,4 +1,4 @@
-package osmpbf
+package OSMPBF
 
 // gogo protobuf seems to be about 10% faster
 // https://github.com/gogo/protobuf
