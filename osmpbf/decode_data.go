@@ -22,6 +22,8 @@ type dataDecoder struct {
 
 	// ways
 	nodes *protoscan.Iterator
+	wlats *protoscan.Iterator
+	wlons *protoscan.Iterator
 
 	// relations
 	roles  *protoscan.Iterator
@@ -422,7 +424,11 @@ func (dec *dataDecoder) extractDenseNodes() error {
 
 func (dec *dataDecoder) scanWays(data []byte) error {
 	st := dec.primitiveBlock.GetStringtable().GetS()
+	granularity := int64(dec.primitiveBlock.GetGranularity())
 	dateGranularity := int64(dec.primitiveBlock.GetDateGranularity())
+
+	latOffset := dec.primitiveBlock.GetLatOffset()
+	lonOffset := dec.primitiveBlock.GetLonOffset()
 
 	msg := protoscan.New(data)
 
@@ -511,6 +517,38 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 				}
 				prev = v + prev // delta encoding
 				way.Nodes[index].ID = osm.NodeID(prev)
+				index++
+			}
+		case 9: // lat
+			dec.wlats, err = msg.Iterator(dec.wlats)
+			if err != nil {
+				return err
+			}
+
+			var prev, index int64
+			for dec.wlats.HasNext() {
+				v, err := dec.wlats.Sint64()
+				if err != nil {
+					return err
+				}
+				prev = v + prev // delta encoding
+				way.Nodes[index].Lat = 1e-9 * float64(latOffset + (granularity * prev))
+				index++
+			}
+		case 10: // lon
+			dec.wlons, err = msg.Iterator(dec.wlons)
+			if err != nil {
+				return err
+			}
+
+			var prev, index int64
+			for dec.wlons.HasNext() {
+				v, err := dec.wlons.Sint64()
+				if err != nil {
+					return err
+				}
+				prev = v + prev // delta encoding
+				way.Nodes[index].Lon = 1e-9 * float64(lonOffset + (granularity * prev))
 				index++
 			}
 		default:
