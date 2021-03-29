@@ -53,6 +53,10 @@ type Scanner struct {
 }
 ```
 
+### OSM PBF files with node locations on ways
+
+This package supports reading OSM PBF files where the ways have been annotated with the coordinates of each node. Such files can be generated using [osmium](https://osmcode.org/osmium-tool), with the [add-locations-to-ways](https://docs.osmcode.org/osmium/latest/osmium-add-locations-to-ways.html) subcommand. This feature makes it possible to work with the ways and their geometries without having to keep all node locations in some index (which takes work and memory resources). Coordinates are stored in the `Lat` and `Lon` fields of each `WayNode`. For more info about the OSM PBF format extension, see [the original blog post](https://blog.jochentopf.com/2016-04-20-node-locations-on-ways.html).
+
 ### Using cgo/czlib for decompression
 
 OSM PBF files are a set of blocks that are zlib compressed. When using the pure golang
