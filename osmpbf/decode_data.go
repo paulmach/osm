@@ -509,7 +509,9 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			}
 
 			var prev, index int64
-			way.Nodes = make(osm.WayNodes, dec.nodes.Count(protoscan.WireTypeVarint))
+			if len(way.Nodes) == 0 {
+				way.Nodes = make(osm.WayNodes, dec.nodes.Count(protoscan.WireTypeVarint))
+			}
 			for dec.nodes.HasNext() {
 				v, err := dec.nodes.Sint64()
 				if err != nil {
@@ -526,6 +528,9 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			}
 
 			var prev, index int64
+			if len(way.Nodes) == 0 {
+				way.Nodes = make(osm.WayNodes, dec.wlats.Count(protoscan.WireTypeVarint))
+			}
 			for dec.wlats.HasNext() {
 				v, err := dec.wlats.Sint64()
 				if err != nil {
@@ -542,6 +547,9 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			}
 
 			var prev, index int64
+			if len(way.Nodes) == 0 {
+				way.Nodes = make(osm.WayNodes, dec.wlons.Count(protoscan.WireTypeVarint))
+			}
 			for dec.wlons.HasNext() {
 				v, err := dec.wlons.Sint64()
 				if err != nil {
