@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 syntax = "proto2";
 
 option java_package = "crosby.binary";
-package OSMPBF;
+package osmpbf;
 
 //protoc --java_out=../.. fileformat.proto
 
