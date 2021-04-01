@@ -12,7 +12,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm"
-	osmpbf "github.com/paulmach/osm/osmpbf/internal/OSMPBF"
+	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
 )
 
 const (

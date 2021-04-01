@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/paulmach/osm"
-	osmpbf "github.com/paulmach/osm/osmpbf/internal/OSMPBF"
+	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
 	"github.com/paulmach/protoscan"
 )
 
