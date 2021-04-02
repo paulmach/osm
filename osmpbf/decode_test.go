@@ -20,9 +20,9 @@ const (
 	London    = "greater-london-140324.osm.pbf"
 	LondonURL = "https://gist.githubusercontent.com/paulmach/853d57b83d408480d3b148b07954c110/raw/853f33f4dbe4246915134f1cde8edb30241ecc10/greater-london-140324.osm.pbf"
 	// Created based on the above file, by running `osmium add-locations-to-ways`.
-	LondonLocations = "greater-london-140324-low.osm.pbf"
-	LondonLocationsURL = "https://drive.google.com/u/0/uc?id=1S_Fuya6hUsejDx5YqAhGHpJ8mnRndcEC&export=download"
-	
+	LondonLocations    = "greater-london-140324-low.osm.pbf"
+	LondonLocationsURL = "https://gist.github.com/paulmach/853d57b83d408480d3b148b07954c110/raw/d3dd351fcb202e3db1c77b44313c1ba0d71b43b3/greater-london-140324-low.osm.pbf"
+
 	coordinatesPrecision = 1e7
 )
 
@@ -38,6 +38,7 @@ func stripCoordinates(w *osm.Way) *osm.Way {
 	if w == nil {
 		return nil
 	}
+
 	ws := new(osm.Way)
 	*ws = *w
 	ws.Nodes = make(osm.WayNodes, len(w.Nodes))
@@ -53,20 +54,20 @@ func roundCoordinates(w *osm.Way) {
 		return
 	}
 	for i := range w.Nodes {
-		w.Nodes[i].Lat = math.Round(w.Nodes[i].Lat * coordinatesPrecision) / coordinatesPrecision
-		w.Nodes[i].Lon = math.Round(w.Nodes[i].Lon * coordinatesPrecision) / coordinatesPrecision
+		w.Nodes[i].Lat = math.Round(w.Nodes[i].Lat*coordinatesPrecision) / coordinatesPrecision
+		w.Nodes[i].Lon = math.Round(w.Nodes[i].Lon*coordinatesPrecision) / coordinatesPrecision
 	}
 }
 
 type OSMFileTest struct {
 	*testing.T
-	FileName string
-	FileURL string
-	ExpNode *osm.Node
-	ExpWay *osm.Way
-	ExpRel *osm.Relation
+	FileName                               string
+	FileURL                                string
+	ExpNode                                *osm.Node
+	ExpWay                                 *osm.Way
+	ExpRel                                 *osm.Relation
 	ExpNodeCount, ExpWayCount, ExpRelCount uint64
-	IDsExpOrder []string
+	IDsExpOrder                            []string
 }
 
 var (
@@ -87,14 +88,14 @@ var (
 		"relation/3595798", "relation/3599126", "relation/3599127",
 	}
 	IDsExpectedOrderNoNodes = append(idsExpectedOrderWays, idsExpectedOrderRelations...)
-	IDsExpectedOrder = append(idsExpectedOrderNodes, IDsExpectedOrderNoNodes...)
+	IDsExpectedOrder        = append(idsExpectedOrderNodes, IDsExpectedOrderNoNodes...)
 
 	IDs map[string]bool
 
-	enc uint64 = 2729006
+	enc  uint64 = 2729006
 	encl uint64 = 244523
-	ewc uint64 = 459055
-	erc uint64 = 12833
+	ewc  uint64 = 459055
+	erc  uint64 = 12833
 
 	en = &osm.Node{
 		ID:  18088578,
@@ -279,32 +280,32 @@ func (ft *OSMFileTest) testDecode() {
 
 func TestDecode(t *testing.T) {
 	ft := &OSMFileTest{
-		T: t,
-		FileName: London,
-		FileURL: LondonURL,
-		ExpNode: en,
-		ExpWay: ew,
-		ExpRel: er,
+		T:            t,
+		FileName:     London,
+		FileURL:      LondonURL,
+		ExpNode:      en,
+		ExpWay:       ew,
+		ExpRel:       er,
 		ExpNodeCount: enc,
-		ExpWayCount: ewc,
-		ExpRelCount: erc,
-		IDsExpOrder: IDsExpectedOrder,
+		ExpWayCount:  ewc,
+		ExpRelCount:  erc,
+		IDsExpOrder:  IDsExpectedOrder,
 	}
 	ft.testDecode()
 }
 
 func TestDecodeLocations(t *testing.T) {
 	ft := &OSMFileTest{
-		T: t,
-		FileName: LondonLocations,
-		FileURL: LondonLocationsURL,
-		ExpNode: en,
-		ExpWay: ewl,
-		ExpRel: er,
+		T:            t,
+		FileName:     LondonLocations,
+		FileURL:      LondonLocationsURL,
+		ExpNode:      en,
+		ExpWay:       ewl,
+		ExpRel:       er,
 		ExpNodeCount: encl,
-		ExpWayCount: ewc,
-		ExpRelCount: erc,
-		IDsExpOrder: IDsExpectedOrderNoNodes,
+		ExpWayCount:  ewc,
+		ExpRelCount:  erc,
+		IDsExpOrder:  IDsExpectedOrderNoNodes,
 	}
 	ft.testDecode()
 }

@@ -384,7 +384,7 @@ func (dec *dataDecoder) extractDenseNodes() error {
 			return err
 		}
 		lat += v8
-		n.Lat = 1e-9 * float64(latOffset + (granularity * lat))
+		n.Lat = 1e-9 * float64(latOffset+(granularity*lat))
 
 		// lon
 		v9, err := dec.lons.Sint64()
@@ -392,7 +392,7 @@ func (dec *dataDecoder) extractDenseNodes() error {
 			return err
 		}
 		lon += v9
-		n.Lon = 1e-9 * float64(lonOffset + (granularity * lon))
+		n.Lon = 1e-9 * float64(lonOffset+(granularity*lon))
 
 		// tags, could be missing if all nodes are tagless
 		if dec.keyvals != nil {
@@ -537,7 +537,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 					return err
 				}
 				prev = v + prev // delta encoding
-				way.Nodes[index].Lat = 1e-9 * float64(latOffset + (granularity * prev))
+				way.Nodes[index].Lat = 1e-9 * float64(latOffset+(granularity*prev))
 				index++
 			}
 		case 10: // lon
@@ -556,7 +556,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 					return err
 				}
 				prev = v + prev // delta encoding
-				way.Nodes[index].Lon = 1e-9 * float64(lonOffset + (granularity * prev))
+				way.Nodes[index].Lon = 1e-9 * float64(lonOffset+(granularity*prev))
 				index++
 			}
 		default:
