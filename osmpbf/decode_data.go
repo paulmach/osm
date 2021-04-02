@@ -309,17 +309,12 @@ func (dec *dataDecoder) extractDenseNodes() error {
 	latOffset := dec.primitiveBlock.GetLatOffset()
 	lonOffset := dec.primitiveBlock.GetLonOffset()
 
-	// we also assume all the iterators have the same length....
-
-	nodes := make([]osm.Node, dec.versions.Count(protoscan.WireTypeVarint))
-
 	var id, lat, lon, timestamp, changeset int64
 	var uid, usid int32
-	var index int
 	for dec.versions.HasNext() {
-		n := &nodes[index]
-		n.Visible = true
-		index++
+		// NOTE: do not try pre-allocating an array of nodes because saving
+		// just one will stop the GC from cleaning up the whole pre-allocated array.
+		n := &osm.Node{Visible: true}
 
 		// ID
 		v1, err := dec.ids.Sint64()
