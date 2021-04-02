@@ -23,9 +23,12 @@ type Scanner struct {
 	// Skip element types that are not needed. The data is skipped
 	// at the encoded protobuf level, but each block still
 	// needs to be decompressed.
-	SkipNodes     bool
-	SkipWays      bool
-	SkipRelations bool
+	SkipNodes      bool
+	SkipWays       bool
+	SkipRelations  bool
+	NodeFilter     func(osm.Node) bool
+	WayFilter      func(osm.Way) bool
+	RelationFilter func(osm.Relation) bool
 
 	ctx    context.Context
 	closed bool

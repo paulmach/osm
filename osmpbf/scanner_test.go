@@ -275,6 +275,98 @@ func TestScanner_FullyScannedBytes(t *testing.T) {
 	})
 }
 
+func TestScanner_FilterNodes(t *testing.T) {
+	var (
+		nodesFiltered     int
+		waysFiltered      int
+		relationsFiltered int
+		nodes             int
+		ways              int
+		relations         int
+	)
+
+	f, err := os.Open(Delaware)
+	if err != nil {
+		t.Fatalf("unable to open file: %v", err)
+	}
+	defer f.Close()
+
+	scanner := New(context.Background(), f, 1)
+	nodeFilter := func(node osm.Node) bool {
+		for _, tag := range node.Tags {
+			if tag.Key == "amenity" && tag.Value == "drinking_water" {
+				return true
+			}
+		}
+		return false
+	}
+
+	scanner.NodeFilter = nodeFilter
+	wayFilter := func(way osm.Way) bool {
+		for _, tag := range way.Tags {
+			if tag.Key == "water" && tag.Value == "lake" {
+				return true
+			}
+		}
+		return false
+	}
+	scanner.WayFilter = wayFilter
+	relationFilter := func(relation osm.Relation) bool {
+		for _, tag := range relation.Tags { 
+			if tag.Key == "water" && tag.Value == "river" {
+				return true
+			}
+		}
+		return false
+	}
+	scanner.RelationFilter = relationFilter
+	for scanner.Scan() {
+		switch scanner.Object().(type) {
+		case *osm.Node:
+			nodesFiltered++
+		case *osm.Way:
+			waysFiltered++
+		case *osm.Relation:
+			relationsFiltered++
+		}
+	}
+
+	if err := scanner.Close(); err != nil {
+		t.Errorf("scanneer close returned error %v", err)
+	}
+	// read file again
+	if _, err := f.Seek(0, 0); err != nil {
+		t.Errorf("seek to begin of file failed %v", err)
+	}
+	// new scanner on same file w/o filter
+	scanner = New(context.Background(), f, 1)
+	for scanner.Scan() {
+		if node, ok := scanner.Object().(*osm.Node); ok {
+			if nodeFilter(*node) {
+				nodes++
+			}
+		} else if way, ok := scanner.Object().(*osm.Way); ok {
+			if wayFilter(*way) {
+				ways++
+			}
+		} else if relation, ok := scanner.Object().(*osm.Relation); ok {
+			if relationFilter(*relation) {
+				relations++
+			}
+		}
+	}
+
+	if nodes != nodesFiltered {
+		t.Errorf("incorrect results, expecting %d nodes, found %d", nodesFiltered, nodes)
+	}
+	if ways != waysFiltered {
+		t.Errorf("incorrect results, expecting %d way, found %d", waysFiltered, ways)
+	}
+	if relations != relationsFiltered {
+		t.Errorf("incorrect results, expecting %d relations, found %d", relationsFiltered, relations)
+	}
+}
+
 func BenchmarkLondon(b *testing.B) {
 	f, err := os.Open(London)
 	if err != nil {
