@@ -465,8 +465,22 @@ func (dec *dataDecoder) extractDenseNodes() error {
 				n.Tags = append(n.Tags, osm.Tag{Key: st[k], Value: st[v]})
 			}
 		}
-
-		dec.q = append(dec.q, n)
+		if dec.scanner.NodeFilter == nil || dec.scanner.NodeFilter(*n) {
+			// skip unwanted nodes
+			index++
+		}
+	}
+	if len(nodes) != index {
+		/* copy to an array just large enough */
+		tmp := make([]osm.Node, index)
+		copy(tmp, nodes)
+		for i := range tmp {
+			dec.q = append(dec.q, &tmp[i])
+		}
+	} else {
+		for i := range nodes {
+			dec.q = append(dec.q, &nodes[i])
+		}
 	}
 
 	return nil
@@ -629,8 +643,9 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			return err
 		}
 	}
-
-	dec.q = append(dec.q, way)
+	if dec.scanner.WayFilter == nil || dec.scanner.WayFilter(*way) {
+		dec.q = append(dec.q, way)
+	}
 	return nil
 }
 
@@ -793,8 +808,9 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 			return err
 		}
 	}
-
-	dec.q = append(dec.q, relation)
+	if dec.scanner.RelationFilter == nil || dec.scanner.RelationFilter(*relation) {
+		dec.q = append(dec.q, relation)
+	}
 	return nil
 }
 
