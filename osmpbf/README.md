@@ -1,5 +1,4 @@
-osm/osmpbf [![Go Reference](https://pkg.go.dev/badge/github.com/paulmach/osm.svg)](https://pkg.go.dev/github.com/paulmach/osm/osmpbf)
-==========
+# osm/osmpbf [![Go Reference](https://pkg.go.dev/badge/github.com/paulmach/osm.svg)](https://pkg.go.dev/github.com/paulmach/osm/osmpbf)
 
 Package osmpbf provides a scanner for decoding large [OSM PBF](https://wiki.openstreetmap.org/wiki/PBF_Format) files.
 They are typically found at [planet.osm.org](https://planet.openstreetmap.org/) or [Geofabrik Download](https://download.geofabrik.de/).
@@ -48,6 +47,28 @@ type Scanner struct {
 	SkipNodes     bool
 	SkipWays      bool
 	SkipRelations bool
+
+	// contains filtered or unexported fields
+}
+```
+
+### Filtering Elements
+
+The above skips all elements of a type. To filter based on the element's tags or
+other values, use the filter functions. These filter functions are called in parallel
+and not in a predefined order. If that is okay, they can be more performant than
+the "scanner" api.
+
+```
+type Scanner struct {
+	// If the Filter function is false, the element well be skipped
+	// at the decoding level. The functions should be fast, they block the
+	// decoder, there are `procs` number of concurrent decoders.
+	// Elements can be stored if the function returns true. Memory is
+	// reused if the filter returns false.
+	FilterNode     func(*osm.Node) bool
+	FilterWay      func(*osm.Way) bool
+	FilterRelation func(*osm.Relation) bool
 
 	// contains filtered or unexported fields
 }

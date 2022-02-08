@@ -29,6 +29,8 @@ type Scanner struct {
 	// If the Filter function is false, the element well be skipped
 	// at the decoding level. The functions should be fast, they block the
 	// decoder, there are `procs` number of concurrent decoders.
+	// Elements can be stored if the function returns true. Memory is
+	// reused if the filter returns false.
 	FilterNode     func(*osm.Node) bool
 	FilterWay      func(*osm.Way) bool
 	FilterRelation func(*osm.Relation) bool
