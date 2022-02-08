@@ -21,14 +21,17 @@ var _ osm.Scanner = &Scanner{}
 // https://golang.org/pkg/bufio/#Scanner
 type Scanner struct {
 	// Skip element types that are not needed. The data is skipped
-	// at the encoded protobuf level, but each block still
-	// needs to be decompressed.
-	SkipNodes      bool
-	SkipWays       bool
-	SkipRelations  bool
-	NodeFilter     func(osm.Node) bool
-	WayFilter      func(osm.Way) bool
-	RelationFilter func(osm.Relation) bool
+	// at the encoded protobuf level, but each block still needs to be decompressed.
+	SkipNodes     bool
+	SkipWays      bool
+	SkipRelations bool
+
+	// If the Filter function is false, the element well be skipped
+	// at the decoding level. The functions should be fast, they block the
+	// decoder, there are `procs` number of concurrent decoders.
+	FilterNode     func(*osm.Node) bool
+	FilterWay      func(*osm.Way) bool
+	FilterRelation func(*osm.Relation) bool
 
 	ctx    context.Context
 	closed bool
