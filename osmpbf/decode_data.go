@@ -391,7 +391,19 @@ func (dec *dataDecoder) extractDenseNodes() error {
 
 		// tags, could be missing if all nodes are tagless
 		if dec.keyvals != nil {
-			// TODO: precompute length of tags to preallocate
+			count := 0
+			for i := dec.keyvals.Index; i < len(dec.keyvals.Data); i++ {
+				b := dec.keyvals.Data[i]
+				if b == 0 {
+					break
+				}
+
+				if b < 128 {
+					count++
+				}
+			}
+
+			n.Tags = make(osm.Tags, 0, count/2)
 			for {
 				k, err := dec.keyvals.Int32()
 				if err != nil {
