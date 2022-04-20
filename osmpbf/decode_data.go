@@ -257,13 +257,29 @@ func (dec *dataDecoder) scanDenseNodes(data []byte) error {
 				return info.Err()
 			}
 
+			if !foundVersions {
+				dec.versions = nil
+			}
+
+			if !foundTimestamps {
+				dec.timestamps = nil
+			}
+
+			if !foundChangesets {
+				dec.changesets = nil
+			}
+
+			if !foundUids {
+				dec.uids = nil
+			}
+
+			if !foundUsids {
+				dec.usids = nil
+			}
+
 			// visibles are optional, default is true
 			if !foundVisibles {
 				dec.visibles = nil
-			}
-
-			if !foundVersions || !foundTimestamps || !foundChangesets || !foundUids || !foundUsids {
-				return errors.New("dense node does not include all required fields")
 			}
 
 			foundInfo = true
@@ -289,13 +305,30 @@ func (dec *dataDecoder) scanDenseNodes(data []byte) error {
 		return msg.Err()
 	}
 
+	if !foundIds {
+		return errors.New("osmpbf: dense node did not contain ids")
+	}
+
+	if !foundLats {
+		return errors.New("osmpbf: dense node did not contain latitudes")
+	}
+
+	if !foundLons {
+		return errors.New("osmpbf: dense node did not contain longitudes")
+	}
+
 	// keyvals could be empty if all nodes are tagless
 	if !foundKeyVals {
 		dec.keyvals = nil
 	}
 
-	if !foundIds || !foundInfo || !foundLats || !foundLons {
-		return errors.New("dense node does not include all required fields")
+	if !foundInfo {
+		dec.versions = nil
+		dec.timestamps = nil
+		dec.changesets = nil
+		dec.uids = nil
+		dec.usids = nil
+		dec.visibles = nil
 	}
 
 	return dec.extractDenseNodes()
@@ -325,44 +358,54 @@ func (dec *dataDecoder) extractDenseNodes() error {
 		n.ID = osm.NodeID(id)
 
 		// Version
-		v2, err := dec.versions.Int32()
-		if err != nil {
-			return err
+		if dec.versions != nil {
+			v2, err := dec.versions.Int32()
+			if err != nil {
+				return err
+			}
+			n.Version = int(v2)
 		}
-		n.Version = int(v2)
 
 		// Timestamp
-		v3, err := dec.timestamps.Sint64()
-		if err != nil {
-			return err
+		if dec.timestamps != nil {
+			v3, err := dec.timestamps.Sint64()
+			if err != nil {
+				return err
+			}
+			timestamp += v3
+			millisec := time.Duration(timestamp*dateGranularity) * time.Millisecond
+			n.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
 		}
-		timestamp += v3
-		millisec := time.Duration(timestamp*dateGranularity) * time.Millisecond
-		n.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
 
 		// Changeset
-		v4, err := dec.changesets.Sint64()
-		if err != nil {
-			return err
+		if dec.changesets != nil {
+			v4, err := dec.changesets.Sint64()
+			if err != nil {
+				return err
+			}
+			changeset += v4
+			n.ChangesetID = osm.ChangesetID(changeset)
 		}
-		changeset += v4
-		n.ChangesetID = osm.ChangesetID(changeset)
 
 		// uid
-		v5, err := dec.uids.Sint32()
-		if err != nil {
-			return err
+		if dec.uids != nil {
+			v5, err := dec.uids.Sint32()
+			if err != nil {
+				return err
+			}
+			uid += v5
+			n.UserID = osm.UserID(uid)
 		}
-		uid += v5
-		n.UserID = osm.UserID(uid)
 
 		// usid
-		v6, err := dec.usids.Sint32()
-		if err != nil {
-			return err
+		if dec.usids != nil {
+			v6, err := dec.usids.Sint32()
+			if err != nil {
+				return err
+			}
+			usid += v6
+			n.User = st[usid]
 		}
-		usid += v6
-		n.User = st[usid]
 
 		// Visible
 		if dec.visibles != nil {
