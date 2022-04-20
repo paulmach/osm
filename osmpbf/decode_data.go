@@ -363,13 +363,13 @@ func (dec *dataDecoder) extractDenseNodes() error {
 	latOffset := dec.primitiveBlock.GetLatOffset()
 	lonOffset := dec.primitiveBlock.GetLonOffset()
 
+	// NOTE: do not try pre-allocating an array of nodes because saving
+	// just one will stop the GC from cleaning up the whole pre-allocated array.
+	n := &osm.Node{Visible: true}
+
 	var id, lat, lon, timestamp, changeset int64
 	var uid, usid int32
-	for dec.versions.HasNext() {
-		// NOTE: do not try pre-allocating an array of nodes because saving
-		// just one will stop the GC from cleaning up the whole pre-allocated array.
-		n := &osm.Node{Visible: true}
-
+	for dec.ids.HasNext() {
 		// ID
 		v1, err := dec.ids.Sint64()
 		if err != nil {
@@ -467,7 +467,9 @@ func (dec *dataDecoder) extractDenseNodes() error {
 				}
 			}
 
-			n.Tags = make(osm.Tags, 0, count/2)
+			if cap(n.Tags) < count/2 {
+				n.Tags = make(osm.Tags, 0, count/2)
+			}
 			for {
 				k, err := dec.keyvals.Int32()
 				if err != nil {
@@ -492,8 +494,7 @@ func (dec *dataDecoder) extractDenseNodes() error {
 			n = &osm.Node{Visible: true}
 		} else {
 			// skip unwanted nodes
-			tags := n.Tags
-			*n = osm.Node{Visible: true, Tags: tags[:0]}
+			*n = osm.Node{Visible: true, Tags: n.Tags[:0]}
 		}
 	}
 
