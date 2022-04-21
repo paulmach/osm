@@ -3,7 +3,7 @@
 Package osmpbf provides a scanner for decoding large [OSM PBF](https://wiki.openstreetmap.org/wiki/PBF_Format) files.
 They are typically found at [planet.osm.org](https://planet.openstreetmap.org/) or [Geofabrik Download](https://download.geofabrik.de/).
 
-### Example:
+## Example:
 
 ```go
 file, err := os.Open("./delaware-latest.osm.pbf")
@@ -33,7 +33,7 @@ if err := scanner.Err(); err != nil {
 **Note:** Scanners are **not** safe for parallel use. One should feed the
 objects into a channel and have workers read from that.
 
-### Skipping Types
+## Skipping Types
 
 Sometimes only ways or relations are needed. In this case reading and creating
 those objects can be skipped completely. After creating the Scanner set the appropriate
@@ -52,12 +52,12 @@ type Scanner struct {
 }
 ```
 
-### Filtering Elements
+## Filtering Elements
 
 The above skips all elements of a type. To filter based on the element's tags or
 other values, use the filter functions. These filter functions are called in parallel
-and not in a predefined order. If that is okay, they can be more performant than
-the "scanner" api.
+and not in a predefined order. This can be a performant way to filter for elements
+with a certain set of tags.
 
 ```
 type Scanner struct {
@@ -74,7 +74,7 @@ type Scanner struct {
 }
 ```
 
-### OSM PBF files with node locations on ways
+## OSM PBF files with node locations on ways
 
 This package supports reading OSM PBF files where the ways have been annotated with the coordinates of each node. Such files can be generated using [osmium](https://osmcode.org/osmium-tool), with the [add-locations-to-ways](https://docs.osmcode.org/osmium/latest/osmium-add-locations-to-ways.html) subcommand. This feature makes it possible to work with the ways and their geometries without having to keep all node locations in some index (which takes work and memory resources).
 
