@@ -147,6 +147,9 @@ func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
 func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 	msg := protoscan.New(data)
 
+	way := &osm.Way{Visible: true}
+	relation := &osm.Relation{Visible: true}
+
 	for msg.Next() {
 		fn := msg.FieldNumber()
 		if fn == 1 {
@@ -173,9 +176,18 @@ func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 				return err
 			}
 
-			err = dec.scanWays(data)
+			way, err = dec.scanWays(data, way)
 			if err != nil {
 				return err
+			}
+
+			if dec.scanner.FilterWay == nil || dec.scanner.FilterWay(way) {
+				dec.q = append(dec.q, way)
+				way = &osm.Way{Visible: true}
+			} else {
+				tags := way.Tags
+				nodes := way.Nodes
+				*way = osm.Way{Visible: true, Nodes: nodes[:0], Tags: tags[:0]}
 			}
 
 			continue
@@ -187,9 +199,18 @@ func (dec *dataDecoder) scanPrimitiveGroup(data []byte) error {
 				return err
 			}
 
-			err = dec.scanRelations(data)
+			relation, err = dec.scanRelations(data, relation)
 			if err != nil {
 				return err
+			}
+
+			if dec.scanner.FilterRelation == nil || dec.scanner.FilterRelation(relation) {
+				dec.q = append(dec.q, relation)
+				relation = &osm.Relation{Visible: true}
+			} else {
+				tags := relation.Tags
+				members := relation.Members
+				*relation = osm.Relation{Visible: true, Members: members[:0], Tags: tags[:0]}
 			}
 
 			continue
@@ -342,13 +363,13 @@ func (dec *dataDecoder) extractDenseNodes() error {
 	latOffset := dec.primitiveBlock.GetLatOffset()
 	lonOffset := dec.primitiveBlock.GetLonOffset()
 
+	// NOTE: do not try pre-allocating an array of nodes because saving
+	// just one will stop the GC from cleaning up the whole pre-allocated array.
+	n := &osm.Node{Visible: true}
+
 	var id, lat, lon, timestamp, changeset int64
 	var uid, usid int32
-	for dec.versions.HasNext() {
-		// NOTE: do not try pre-allocating an array of nodes because saving
-		// just one will stop the GC from cleaning up the whole pre-allocated array.
-		n := &osm.Node{Visible: true}
-
+	for dec.ids.HasNext() {
 		// ID
 		v1, err := dec.ids.Sint64()
 		if err != nil {
@@ -446,7 +467,9 @@ func (dec *dataDecoder) extractDenseNodes() error {
 				}
 			}
 
-			n.Tags = make(osm.Tags, 0, count/2)
+			if cap(n.Tags) < count/2 {
+				n.Tags = make(osm.Tags, 0, count/2)
+			}
 			for {
 				k, err := dec.keyvals.Int32()
 				if err != nil {
@@ -466,13 +489,19 @@ func (dec *dataDecoder) extractDenseNodes() error {
 			}
 		}
 
-		dec.q = append(dec.q, n)
+		if dec.scanner.FilterNode == nil || dec.scanner.FilterNode(n) {
+			dec.q = append(dec.q, n)
+			n = &osm.Node{Visible: true}
+		} else {
+			// skip unwanted nodes
+			*n = osm.Node{Visible: true, Tags: n.Tags[:0]}
+		}
 	}
 
 	return nil
 }
 
-func (dec *dataDecoder) scanWays(data []byte) error {
+func (dec *dataDecoder) scanWays(data []byte, way *osm.Way) (*osm.Way, error) {
 	st := dec.primitiveBlock.GetStringtable().GetS()
 	granularity := int64(dec.primitiveBlock.GetGranularity())
 	dateGranularity := int64(dec.primitiveBlock.GetDateGranularity())
@@ -482,7 +511,10 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 
 	msg := protoscan.New(data)
 
-	way := &osm.Way{Visible: true}
+	if way == nil {
+		way = &osm.Way{Visible: true}
+	}
+
 	var foundKeys, foundVals bool
 	for msg.Next() {
 		var i64 int64
@@ -501,7 +533,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 		case 4: // info
 			d, err := msg.MessageData()
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			info := protoscan.New(d)
@@ -510,38 +542,38 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 				case 1:
 					v, err := info.Int32()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					way.Version = int(v)
 				case 2:
 					v, err := info.Int64()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					millisec := time.Duration(v*dateGranularity) * time.Millisecond
 					way.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
 				case 3:
 					v, err := info.Int64()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					way.ChangesetID = osm.ChangesetID(v)
 				case 4:
 					v, err := info.Int32()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					way.UserID = osm.UserID(v)
 				case 5:
 					v, err := info.Uint32()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					way.User = st[v]
 				case 6:
 					v, err := info.Bool()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					way.Visible = v
 				default:
@@ -550,12 +582,12 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			}
 
 			if info.Err() != nil {
-				return info.Err()
+				return nil, info.Err()
 			}
 		case 8: // refs or nodes
 			dec.nodes, err = msg.Iterator(dec.nodes)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			var prev, index int64
@@ -565,7 +597,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			for dec.nodes.HasNext() {
 				v, err := dec.nodes.Sint64()
 				if err != nil {
-					return err
+					return nil, err
 				}
 				prev = v + prev // delta encoding
 				way.Nodes[index].ID = osm.NodeID(prev)
@@ -574,7 +606,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 		case 9: // lat
 			dec.wlats, err = msg.Iterator(dec.wlats)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			var prev, index int64
@@ -584,7 +616,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			for dec.wlats.HasNext() {
 				v, err := dec.wlats.Sint64()
 				if err != nil {
-					return err
+					return nil, err
 				}
 				prev = v + prev // delta encoding
 				way.Nodes[index].Lat = 1e-9 * float64(latOffset+(granularity*prev))
@@ -593,7 +625,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 		case 10: // lon
 			dec.wlons, err = msg.Iterator(dec.wlons)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			var prev, index int64
@@ -603,7 +635,7 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 			for dec.wlons.HasNext() {
 				v, err := dec.wlons.Sint64()
 				if err != nil {
-					return err
+					return nil, err
 				}
 				prev = v + prev // delta encoding
 				way.Nodes[index].Lon = 1e-9 * float64(lonOffset+(granularity*prev))
@@ -614,24 +646,23 @@ func (dec *dataDecoder) scanWays(data []byte) error {
 		}
 
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	if msg.Err() != nil {
-		return msg.Err()
+		return nil, msg.Err()
 	}
 
 	if foundKeys && foundVals {
 		var err error
 		way.Tags, err = scanTags(st, dec.keys, dec.vals)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	dec.q = append(dec.q, way)
-	return nil
+	return way, nil
 }
 
 // Make relation members from stringtable and three parallel arrays of IDs.
@@ -678,13 +709,16 @@ func extractMembers(
 	return members, nil
 }
 
-func (dec *dataDecoder) scanRelations(data []byte) error {
+func (dec *dataDecoder) scanRelations(data []byte, relation *osm.Relation) (*osm.Relation, error) {
 	st := dec.primitiveBlock.GetStringtable().GetS()
 	dateGranularity := int64(dec.primitiveBlock.GetDateGranularity())
 
 	msg := protoscan.New(data)
 
-	relation := &osm.Relation{Visible: true}
+	if relation == nil {
+		relation = &osm.Relation{Visible: true}
+	}
+
 	var foundKeys, foundVals, foundRoles, foundMemids, foundTypes bool
 	for msg.Next() {
 		var i64 int64
@@ -703,7 +737,7 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 		case 4: // info
 			d, err := msg.MessageData()
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			info := protoscan.New(d)
@@ -712,38 +746,38 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 				case 1:
 					v, err := info.Int32()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					relation.Version = int(v)
 				case 2:
 					v, err := info.Int64()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					millisec := time.Duration(v*dateGranularity) * time.Millisecond
 					relation.Timestamp = time.Unix(0, millisec.Nanoseconds()).UTC()
 				case 3:
 					v, err := info.Int64()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					relation.ChangesetID = osm.ChangesetID(v)
 				case 4:
 					v, err := info.Int32()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					relation.UserID = osm.UserID(v)
 				case 5:
 					v, err := info.Uint32()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					relation.User = st[v]
 				case 6:
 					v, err := info.Bool()
 					if err != nil {
-						return err
+						return nil, err
 					}
 					relation.Visible = v
 				default:
@@ -752,7 +786,7 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 			}
 
 			if info.Err() != nil {
-				return info.Err()
+				return nil, info.Err()
 			}
 		case 8: // refs or nodes
 			dec.roles, err = msg.Iterator(dec.roles)
@@ -768,12 +802,12 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 		}
 
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	if msg.Err() != nil {
-		return msg.Err()
+		return nil, msg.Err()
 	}
 
 	// possible for relation to not have tags
@@ -781,7 +815,7 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 		var err error
 		relation.Tags, err = scanTags(st, dec.keys, dec.vals)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -790,12 +824,11 @@ func (dec *dataDecoder) scanRelations(data []byte) error {
 		var err error
 		relation.Members, err = extractMembers(st, dec.roles, dec.memids, dec.types)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	dec.q = append(dec.q, relation)
-	return nil
+	return relation, nil
 }
 
 func scanTags(stringTable []string, keys, vals *protoscan.Iterator) (osm.Tags, error) {

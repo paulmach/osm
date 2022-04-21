@@ -1,10 +1,9 @@
-osm/osmpbf [![Go Reference](https://pkg.go.dev/badge/github.com/paulmach/osm.svg)](https://pkg.go.dev/github.com/paulmach/osm/osmpbf)
-==========
+# osm/osmpbf [![Go Reference](https://pkg.go.dev/badge/github.com/paulmach/osm.svg)](https://pkg.go.dev/github.com/paulmach/osm/osmpbf)
 
 Package osmpbf provides a scanner for decoding large [OSM PBF](https://wiki.openstreetmap.org/wiki/PBF_Format) files.
 They are typically found at [planet.osm.org](https://planet.openstreetmap.org/) or [Geofabrik Download](https://download.geofabrik.de/).
 
-### Example:
+## Example:
 
 ```go
 file, err := os.Open("./delaware-latest.osm.pbf")
@@ -34,7 +33,7 @@ if err := scanner.Err(); err != nil {
 **Note:** Scanners are **not** safe for parallel use. One should feed the
 objects into a channel and have workers read from that.
 
-### Skipping Types
+## Skipping Types
 
 Sometimes only ways or relations are needed. In this case reading and creating
 those objects can be skipped completely. After creating the Scanner set the appropriate
@@ -53,7 +52,29 @@ type Scanner struct {
 }
 ```
 
-### OSM PBF files with node locations on ways
+## Filtering Elements
+
+The above skips all elements of a type. To filter based on the element's tags or
+other values, use the filter functions. These filter functions are called in parallel
+and not in a predefined order. This can be a performant way to filter for elements
+with a certain set of tags.
+
+```
+type Scanner struct {
+	// If the Filter function is false, the element well be skipped
+	// at the decoding level. The functions should be fast, they block the
+	// decoder, there are `procs` number of concurrent decoders.
+	// Elements can be stored if the function returns true. Memory is
+	// reused if the filter returns false.
+	FilterNode     func(*osm.Node) bool
+	FilterWay      func(*osm.Way) bool
+	FilterRelation func(*osm.Relation) bool
+
+	// contains filtered or unexported fields
+}
+```
+
+## OSM PBF files with node locations on ways
 
 This package supports reading OSM PBF files where the ways have been annotated with the coordinates of each node. Such files can be generated using [osmium](https://osmcode.org/osmium-tool), with the [add-locations-to-ways](https://docs.osmcode.org/osmium/latest/osmium-add-locations-to-ways.html) subcommand. This feature makes it possible to work with the ways and their geometries without having to keep all node locations in some index (which takes work and memory resources).
 

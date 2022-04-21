@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"reflect"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -275,6 +276,85 @@ func TestScanner_FullyScannedBytes(t *testing.T) {
 	})
 }
 
+func TestScanner_FilterNodes(t *testing.T) {
+	var (
+		nodesFiltered     int
+		waysFiltered      int
+		relationsFiltered int
+		nodes             int
+		ways              int
+		relations         int
+	)
+
+	f, err := os.Open(Delaware)
+	if err != nil {
+		t.Fatalf("unable to open file: %v", err)
+	}
+	defer f.Close()
+
+	scanner := New(context.Background(), f, 1)
+	filterNode := func(node *osm.Node) bool {
+		return node.Tags.Find("amenity") == "drinking_water"
+	}
+	scanner.FilterNode = filterNode
+
+	filterWay := func(way *osm.Way) bool {
+		return way.Tags.Find("water") == "lake"
+	}
+	scanner.FilterWay = filterWay
+
+	filterRelation := func(relation *osm.Relation) bool {
+		return relation.Tags.Find("water") == "river"
+	}
+	scanner.FilterRelation = filterRelation
+
+	for scanner.Scan() {
+		switch scanner.Object().(type) {
+		case *osm.Node:
+			nodesFiltered++
+		case *osm.Way:
+			waysFiltered++
+		case *osm.Relation:
+			relationsFiltered++
+		}
+	}
+
+	if err := scanner.Close(); err != nil {
+		t.Errorf("scanneer close returned error %v", err)
+	}
+	// read file again
+	if _, err := f.Seek(0, 0); err != nil {
+		t.Errorf("seek to begin of file failed %v", err)
+	}
+	// new scanner on same file w/o filter
+	scanner = New(context.Background(), f, 1)
+	for scanner.Scan() {
+		if node, ok := scanner.Object().(*osm.Node); ok {
+			if filterNode(node) {
+				nodes++
+			}
+		} else if way, ok := scanner.Object().(*osm.Way); ok {
+			if filterWay(way) {
+				ways++
+			}
+		} else if relation, ok := scanner.Object().(*osm.Relation); ok {
+			if filterRelation(relation) {
+				relations++
+			}
+		}
+	}
+
+	if nodes != nodesFiltered {
+		t.Errorf("incorrect results, expecting %d nodes, found %d", nodesFiltered, nodes)
+	}
+	if ways != waysFiltered {
+		t.Errorf("incorrect results, expecting %d way, found %d", waysFiltered, ways)
+	}
+	if relations != relationsFiltered {
+		t.Errorf("incorrect results, expecting %d relations, found %d", relationsFiltered, relations)
+	}
+}
+
 func BenchmarkLondon(b *testing.B) {
 	f, err := os.Open(London)
 	if err != nil {
@@ -298,6 +378,108 @@ func BenchmarkLondon(b *testing.B) {
 		}
 
 		if relations != 12833 {
+			b.Errorf("wrong number of relations, got %v", relations)
+		}
+
+		scanner.Close()
+	}
+}
+
+func BenchmarkLondon_withFiltersTrue(b *testing.B) {
+	f, err := os.Open(London)
+	if err != nil {
+		b.Fatalf("could not open file: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
+
+		scanner := New(context.Background(), f, 4)
+		scanner.FilterNode = func(*osm.Node) bool {
+			return true
+		}
+		scanner.FilterWay = func(*osm.Way) bool {
+			return true
+		}
+		scanner.FilterRelation = func(*osm.Relation) bool {
+			return true
+		}
+
+		nodes, ways, relations := benchmarkScanner(b, scanner)
+
+		if nodes != 2729006 {
+			b.Errorf("wrong number of nodes, got %v", nodes)
+		}
+
+		if ways != 459055 {
+			b.Errorf("wrong number of ways, got %v", ways)
+		}
+
+		if relations != 12833 {
+			b.Errorf("wrong number of relations, got %v", relations)
+		}
+
+		scanner.Close()
+	}
+}
+
+func BenchmarkLondon_withFiltersFalse(b *testing.B) {
+	f, err := os.Open(London)
+	if err != nil {
+		b.Fatalf("could not open file: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f.Seek(0, 0)
+
+		var (
+			fnodes     int64
+			fways      int64
+			frelations int64
+		)
+
+		scanner := New(context.Background(), f, 4)
+		scanner.FilterNode = func(*osm.Node) bool {
+			atomic.AddInt64(&fnodes, 1)
+			return false
+		}
+		scanner.FilterWay = func(*osm.Way) bool {
+			atomic.AddInt64(&fways, 1)
+			return false
+		}
+		scanner.FilterRelation = func(*osm.Relation) bool {
+			atomic.AddInt64(&frelations, 1)
+			return false
+		}
+
+		nodes, ways, relations := benchmarkScanner(b, scanner)
+
+		if fnodes != 2729006 {
+			b.Errorf("wrong number of nodes, got %v", fnodes)
+		}
+
+		if fways != 459055 {
+			b.Errorf("wrong number of ways, got %v", fways)
+		}
+
+		if frelations != 12833 {
+			b.Errorf("wrong number of relations, got %v", frelations)
+		}
+
+		// all filtered out
+		if nodes != 0 {
+			b.Errorf("wrong number of nodes, got %v", nodes)
+		}
+
+		if ways != 0 {
+			b.Errorf("wrong number of ways, got %v", ways)
+		}
+
+		if relations != 0 {
 			b.Errorf("wrong number of relations, got %v", relations)
 		}
 
