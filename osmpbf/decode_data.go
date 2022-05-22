@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"google.golang.org/protobuf/proto"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
 	"github.com/paulmach/protoscan"
@@ -85,7 +86,7 @@ func (dec *dataDecoder) scanPrimitiveBlock(data []byte) error {
 			if err != nil {
 				return err
 			}
-			err = dec.primitiveBlock.Stringtable.Unmarshal(d)
+			err = proto.Unmarshal(d, dec.primitiveBlock.Stringtable)
 			if err != nil {
 				return err
 			}

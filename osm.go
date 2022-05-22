@@ -9,7 +9,7 @@ import (
 
 	"github.com/paulmach/osm/internal/osmpb"
 
-	"github.com/gogo/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // These values should be returned if the osm data is actual
@@ -239,10 +239,10 @@ func marshalOSM(o *OSM, ss *stringSet, includeChangeset bool) *osmpb.OSM {
 
 	if o.Bounds != nil {
 		encoded.Bounds = &osmpb.Bounds{
-			MinLat: geoToInt64(o.Bounds.MinLat),
-			MaxLat: geoToInt64(o.Bounds.MaxLat),
-			MinLon: geoToInt64(o.Bounds.MinLon),
-			MaxLon: geoToInt64(o.Bounds.MaxLon),
+			MinLat: geoToPInt64(o.Bounds.MinLat),
+			MaxLat: geoToPInt64(o.Bounds.MaxLat),
+			MinLon: geoToPInt64(o.Bounds.MinLon),
+			MaxLon: geoToPInt64(o.Bounds.MaxLon),
 		}
 	}
 
