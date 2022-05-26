@@ -7,7 +7,7 @@ import (
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm/internal/osmpb"
 
-	"github.com/gogo/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // NodeID corresponds the primary key of a node.

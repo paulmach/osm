@@ -22,10 +22,9 @@ SOFTWARE.
 
 syntax = "proto2";
 
-import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-
 option java_package = "crosby.binary";
 package osmpbf;
+option go_package = "github.com/paulmach/osmpbf/internal/osmpbf";
 
 /* OSM Binary file format
 
@@ -154,7 +153,7 @@ message Info {
   // If this flag is not available for some object it MUST be assumed to be
   // true if the file has the required_features tag "HistoricalInformation"
   // set.
-  optional bool visible = 6 [(gogoproto.nullable) = true];
+  optional bool visible = 6;
 }
 
 /** Optional metadata that may be included into each primitive. Special dense format used in DenseNodes. */

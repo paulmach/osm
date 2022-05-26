@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -401,17 +401,17 @@ func decodeOSMHeader(blob *osmpbf.Blob) (*Header, error) {
 	}
 
 	// convert timestamp epoch seconds to golang time structure if it exists
-	if headerBlock.OsmosisReplicationTimestamp != 0 {
-		header.ReplicationTimestamp = time.Unix(headerBlock.OsmosisReplicationTimestamp, 0).UTC()
+	if headerBlock.OsmosisReplicationTimestamp != nil {
+		header.ReplicationTimestamp = time.Unix(*headerBlock.OsmosisReplicationTimestamp, 0).UTC()
 	}
 	// read bounding box if it exists
 	if headerBlock.Bbox != nil {
 		// Units are always in nanodegree and do not obey granularity rules. See osmformat.proto
 		header.Bounds = &osm.Bounds{
-			MinLon: 1e-9 * float64(headerBlock.Bbox.Left),
-			MaxLon: 1e-9 * float64(headerBlock.Bbox.Right),
-			MinLat: 1e-9 * float64(headerBlock.Bbox.Bottom),
-			MaxLat: 1e-9 * float64(headerBlock.Bbox.Top),
+			MinLon: 1e-9 * float64(*headerBlock.Bbox.Left),
+			MaxLon: 1e-9 * float64(*headerBlock.Bbox.Right),
+			MinLat: 1e-9 * float64(*headerBlock.Bbox.Bottom),
+			MaxLat: 1e-9 * float64(*headerBlock.Bbox.Top),
 		}
 	}
 

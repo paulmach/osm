@@ -6,7 +6,7 @@ import (
 
 	"github.com/paulmach/osm/internal/osmpb"
 
-	"github.com/gogo/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // ChangesetID is the primary key for an osm changeset.
@@ -129,10 +129,10 @@ func (c *Changeset) Marshal() ([]byte, error) {
 
 	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLon != 0 || c.MaxLon != 0 {
 		encoded.Bounds = &osmpb.Bounds{
-			MinLat: geoToInt64(c.MinLat),
-			MaxLat: geoToInt64(c.MaxLat),
-			MinLon: geoToInt64(c.MinLon),
-			MaxLon: geoToInt64(c.MaxLon),
+			MinLat: geoToPInt64(c.MinLat),
+			MaxLat: geoToPInt64(c.MaxLat),
+			MinLon: geoToPInt64(c.MinLon),
+			MaxLon: geoToPInt64(c.MaxLon),
 		}
 	}
 

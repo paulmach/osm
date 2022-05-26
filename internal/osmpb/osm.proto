@@ -1,27 +1,22 @@
 syntax = "proto2";
 
-import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-
 package osm;
 
-option go_package = "osmpb";
-
-option (gogoproto.sizer_all) = true;
-option (gogoproto.unmarshaler_all) = true;
+option go_package = "github.com/paulmach/osm/internal/osmpb";
 
 message Changeset {
-  optional int64 id = 1 [(gogoproto.nullable) = true];
+  optional int64 id = 1;
 
   // Parallel arrays.
   repeated uint32 keys = 2 [packed = true];
   repeated uint32 vals = 3 [packed = true];
 
 
-  optional int32 user_id = 5 [(gogoproto.nullable) = true];
-  optional uint32 user_sid = 6 [(gogoproto.nullable) = true];
-  optional int64 created_at = 7 [(gogoproto.nullable) = true]; // epoch time
-  optional int64 closed_at = 8 [(gogoproto.nullable) = true]; // epoch time
-  optional bool open = 9 [(gogoproto.nullable) = true];
+  optional int32 user_id = 5;
+  optional uint32 user_sid = 6;
+  optional int64 created_at = 7; // epoch time
+  optional int64 closed_at = 8; // epoch time
+  optional bool open = 9;
 
   optional Bounds bounds = 10;
   optional Change change = 11;
@@ -101,11 +96,12 @@ message Info {
   // the current object version has been created by a delete operation on the
   // OSM API. This info may be omitted if it can be inferred from its group
   // ie. create, modify, delete.
-  optional bool visible = 6 [(gogoproto.nullable) = true];
+  optional bool visible = 6;
 
   // the time this element was committed into the db. Could be much later than
   // timestamp for large uploads.
-  optional int64 committed = 7 [(gogoproto.nullable) = true]; // Epoch
+  optional int64 committed = 7
+  ; // Epoch
 }
 
 message DenseNodes {

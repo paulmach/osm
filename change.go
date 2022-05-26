@@ -6,7 +6,7 @@ import (
 
 	"github.com/paulmach/osm/internal/osmpb"
 
-	"github.com/gogo/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Change is the structure of a changeset to be

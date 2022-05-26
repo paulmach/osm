@@ -14,7 +14,7 @@ option java_package = "crosby.binary";
 package osmpbf;
 
 //protoc --java_out=../.. fileformat.proto
-
+option go_package = "github.com/paulmach/osmpbf/internal/osmpbf";
 
 //
 //  STORAGE LAYER: Storing primitives.

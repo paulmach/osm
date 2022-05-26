@@ -5,8 +5,6 @@ import (
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/osm/internal/osmpb"
-
-	"github.com/gogo/protobuf/proto"
 )
 
 const locMultiple = 10000000.0
@@ -150,14 +148,17 @@ func unmarshalNodes(encoded *osmpb.DenseNodes, ss []string, cs *Changeset) (Node
 
 func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 	keys, vals := way.Tags.keyValues(ss)
+	id := int64(way.ID)
+	version := int32(way.Version)
+	timestamp := timeToUnix(way.Timestamp)
 	encoded := &osmpb.Way{
-		Id:   int64(way.ID),
+		Id:   &id,
 		Keys: keys,
 		Vals: vals,
 		Info: &osmpb.Info{
-			Version:   int32(way.Version),
-			Timestamp: timeToUnix(way.Timestamp),
-			Visible:   proto.Bool(way.Visible),
+			Version:   &version,
+			Timestamp: &timestamp,
+			Visible:   &way.Visible,
 		},
 		Updates: marshalUpdates(way.Updates),
 	}
@@ -175,9 +176,12 @@ func marshalWay(way *Way, ss *stringSet, includeChangeset bool) *osmpb.Way {
 	}
 
 	if includeChangeset {
-		encoded.Info.ChangesetId = int64(way.ChangesetID)
-		encoded.Info.UserId = int32(way.UserID)
-		encoded.Info.UserSid = ss.Add(way.User)
+		changeSetId := int64(way.ChangesetID)
+		userId := int32(way.UserID)
+		userSid := ss.Add(way.User)
+		encoded.Info.ChangesetId = &changeSetId
+		encoded.Info.UserId = &userId
+		encoded.Info.UserSid = &userSid
 	}
 
 	return encoded
@@ -234,14 +238,17 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 	}
 
 	keys, vals := relation.Tags.keyValues(ss)
+	id := int64(relation.ID)
+	version := int32(relation.Version)
+	timestamp := timeToUnix(relation.Timestamp)
 	encoded := &osmpb.Relation{
-		Id:   int64(relation.ID),
+		Id:   &id,
 		Keys: keys,
 		Vals: vals,
 		Info: &osmpb.Info{
-			Version:   int32(relation.Version),
-			Timestamp: timeToUnix(relation.Timestamp),
-			Visible:   proto.Bool(relation.Visible),
+			Version:   &version,
+			Timestamp: &timestamp,
+			Visible:   &relation.Visible,
 		},
 		Roles:   roles,
 		Refs:    encodeInt64(refs),
@@ -260,9 +267,12 @@ func marshalRelation(relation *Relation, ss *stringSet, includeChangeset bool) *
 	}
 
 	if includeChangeset {
-		encoded.Info.ChangesetId = int64(relation.ChangesetID)
-		encoded.Info.UserId = int32(relation.UserID)
-		encoded.Info.UserSid = ss.Add(relation.User)
+		changeSetId := int64(relation.ChangesetID)
+		userId := int32(relation.UserID)
+		userSid := ss.Add(relation.User)
+		encoded.Info.ChangesetId = &changeSetId
+		encoded.Info.UserId = &userId
+		encoded.Info.UserSid = &userSid
 	}
 
 	return encoded
@@ -596,8 +606,12 @@ func geoToInt64(l float64) int64 {
 	if l < 0 {
 		sign = -0.5
 	}
-
 	return int64(l*locMultiple + sign)
+}
+
+func geoToPInt64(l float64) *int64 {
+	temp := geoToInt64(l)
+	return &temp
 }
 
 func timeToUnix(t time.Time) int64 {
