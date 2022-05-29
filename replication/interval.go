@@ -205,14 +205,18 @@ func (ds *Datasource) fetchState(ctx context.Context, n SeqNum) (*State, error) 
 		return nil, err
 	}
 
-	resp, err := ds.Client.Do(req.WithContext(ctx))
+	resp, err := ds.client().Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
+		resp.Body.Close()
+		return nil, &UnexpectedStatusCodeError{
+			Code: resp.StatusCode,
+			URL:  url,
+		}
 	}
 
 	data, err := ioutil.ReadAll(resp.Body)
@@ -306,19 +310,22 @@ func (ds *Datasource) Day(ctx context.Context, n DaySeqNum) (*osm.Change, error)
 }
 
 func (ds *Datasource) fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := ds.Client.Do(req.WithContext(ctx))
+	resp, err := ds.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("incorrect status code: %v", resp.StatusCode)
+		return nil, &UnexpectedStatusCodeError{
+			Code: resp.StatusCode,
+			URL:  url,
+		}
 	}
 
 	gzReader, err := gzip.NewReader(resp.Body)
@@ -343,5 +350,5 @@ func (ds *Datasource) baseSeqURL(sn SeqNum) string {
 		sn.Dir(),
 		n/1000000,
 		(n%1000000)/1000,
-		n % 1000)
+		n%1000)
 }

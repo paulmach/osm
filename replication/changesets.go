@@ -42,12 +42,12 @@ func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error)
 // CurrentChangesetState returns the current state of the changeset replication.
 func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error) {
 	url := ds.baseURL() + "/replication/changesets/state.yaml"
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	resp, err := ds.client().Do(req.WithContext(ctx))
+	resp, err := ds.client().Do(req)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -162,5 +162,5 @@ func (ds *Datasource) changesetURL(n ChangesetSeqNum) string {
 		ds.baseURL(),
 		n/1000000,
 		(n%1000000)/1000,
-		n % 1000)
+		n%1000)
 }

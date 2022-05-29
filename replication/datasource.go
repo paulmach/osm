@@ -60,6 +60,16 @@ func (e *UnexpectedStatusCodeError) Error() string {
 	return fmt.Sprintf("replication: unexpected status code of %d for url %s", e.Code, e.URL)
 }
 
+// NotFound will return try if the error from one of the methods was due
+// to the file not found on the remote host.
+func NotFound(err error) bool {
+	if e, ok := err.(*UnexpectedStatusCodeError); ok {
+		return e.Code == http.StatusNotFound
+	}
+
+	return false
+}
+
 // timeFormats contains the set of different formats we've see the time in.
 var timeFormats = []string{
 	"2006-01-02 15:04:05.999999999 Z",
