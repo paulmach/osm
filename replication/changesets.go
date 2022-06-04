@@ -151,6 +151,10 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 	}
 	defer r.Close()
 
+	return changesetDecoder(ctx, r)
+}
+
+func changesetDecoder(ctx context.Context, r io.Reader) (osm.Changesets, error) {
 	gzReader, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, err
@@ -175,7 +179,7 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 // It will be gzip compressed, so the caller must decompress.
 // It is the caller's responsibility to call Close on the Reader when done.
 func (ds *Datasource) changesetReader(ctx context.Context, n ChangesetSeqNum) (io.ReadCloser, error) {
-	url := ds.changesetURL(n)
+	url := ds.baseChangesetURL(n) + ".osm.gz"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -195,14 +199,6 @@ func (ds *Datasource) changesetReader(ctx context.Context, n ChangesetSeqNum) (i
 	}
 
 	return resp.Body, nil
-}
-
-func (ds *Datasource) changesetURL(n ChangesetSeqNum) string {
-	return fmt.Sprintf("%s/replication/changesets/%03d/%03d/%03d.osm.gz",
-		ds.baseURL(),
-		n/1000000,
-		(n%1000000)/1000,
-		n%1000)
 }
 
 func (ds *Datasource) baseChangesetURL(cn ChangesetSeqNum) string {
