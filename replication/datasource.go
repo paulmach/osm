@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// BaseURL defines the planet server to hit.
-const BaseURL = "http://planet.osm.org"
+// BaseURL defines the default planet server to hit.
+const BaseURL = "https://planet.osm.org"
 
 // Datasource defines context around replication data requests.
 type Datasource struct {
@@ -63,6 +63,10 @@ func (e *UnexpectedStatusCodeError) Error() string {
 // NotFound will return try if the error from one of the methods was due
 // to the file not found on the remote host.
 func NotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+
 	if e, ok := err.(*UnexpectedStatusCodeError); ok {
 		return e.Code == http.StatusNotFound
 	}

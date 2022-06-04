@@ -35,14 +35,4 @@ txnActiveList=836441203
 	if err != nil {
 		t.Errorf("got error: %v", err)
 	}
-
-	// to do some live testing
-	// ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	// defer cancel()
-
-	// log.Println(CurrentMinuteState(ctx))
-	// log.Println(MinuteState(ctx, 2139244))
-	// log.Println(CurrentHourState(ctx))
-	// log.Println(CurrentDayState(ctx))
-	// log.Println(Minute(ctx, 2010617))
 }
