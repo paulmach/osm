@@ -75,3 +75,34 @@ func TestChangesets(t *testing.T) {
 		t.Errorf("incorrect number of changesets: %v", l)
 	}
 }
+
+func TestChangesetState(t *testing.T) {
+	liveOnly(t)
+
+	ctx := context.Background()
+	state, err := ChangesetState(ctx, 5001990)
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+
+	if state.SeqNum != 5001990 {
+		t.Errorf("incorrect state: %+v", state)
+	}
+
+	// current state
+	n, state, err := CurrentChangesetState(ctx)
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+
+	changes, err := Changesets(ctx, n)
+	if err != nil {
+		t.Fatalf("request error: %v", err)
+	}
+
+	for _, c := range changes {
+		if c.CreatedAt.After(state.Timestamp) {
+			t.Errorf("data is after the state file?")
+		}
+	}
+}

@@ -15,7 +15,7 @@ import (
 )
 
 // ChangesetSeqNum indicates the sequence of the changeset replication found here:
-// http://planet.osm.org/replication/changesets/
+// https://planet.osm.org/replication/changesets/
 type ChangesetSeqNum uint64
 
 // String returns 'changeset/%d'.
@@ -41,20 +41,46 @@ func CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error)
 
 // CurrentChangesetState returns the current state of the changeset replication.
 func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNum, *State, error) {
-	url := ds.baseURL() + "/replication/changesets/state.yaml"
-	req, err := http.NewRequest("GET", url, nil)
+	s, err := ds.fetchChangesetState(ctx, 0)
 	if err != nil {
 		return 0, nil, err
 	}
 
-	resp, err := ds.client().Do(req.WithContext(ctx))
+	return ChangesetSeqNum(s.SeqNum), s, err
+}
+
+// ChangesetState returns the state for the given changeset replication.
+// Delegates to the DefaultDatasource and uses its http.Client to make the request.
+func ChangesetState(ctx context.Context, n ChangesetSeqNum) (*State, error) {
+	return DefaultDatasource.ChangesetState(ctx, n)
+}
+
+// ChangesetState returns the state for the given changeset replication.
+func (ds *Datasource) ChangesetState(ctx context.Context, n ChangesetSeqNum) (*State, error) {
+	return ds.fetchChangesetState(ctx, n)
+}
+
+func (ds *Datasource) fetchChangesetState(ctx context.Context, n ChangesetSeqNum) (*State, error) {
+	var url string
+	if n.Uint64() != 0 {
+		url = ds.baseChangesetURL(n) + ".state.txt"
+	} else {
+		url = fmt.Sprintf("%s/replication/%s/state.yaml", ds.baseURL(), n.Dir())
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return 0, nil, err
+		return nil, err
+	}
+
+	resp, err := ds.client().Do(req)
+	if err != nil {
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return 0, nil, &UnexpectedStatusCodeError{
+		return nil, &UnexpectedStatusCodeError{
 			Code: resp.StatusCode,
 			URL:  url,
 		}
@@ -62,11 +88,25 @@ func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNu
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return 0, nil, err
+		return nil, err
 	}
 
 	s, err := decodeChangesetState(data)
-	return ChangesetSeqNum(s.SeqNum), s, err
+	if err != nil {
+		return nil, err
+	}
+
+	// starting at 2008004 the changeset sequence number in the state file is
+	// one less than the name of the file. This is a consistent mistake.
+	// The correctly paired state and data files have the same name. The number
+	// in the state file is the one that is off.
+	if n == 0 {
+		s.SeqNum++
+	} else {
+		s.SeqNum = uint64(n)
+	}
+
+	return s, nil
 }
 
 func decodeChangesetState(data []byte) (*State, error) {
@@ -111,6 +151,10 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 	}
 	defer r.Close()
 
+	return changesetDecoder(ctx, r)
+}
+
+func changesetDecoder(ctx context.Context, r io.Reader) (osm.Changesets, error) {
 	gzReader, err := gzip.NewReader(r)
 	if err != nil {
 		return nil, err
@@ -135,7 +179,7 @@ func (ds *Datasource) Changesets(ctx context.Context, n ChangesetSeqNum) (osm.Ch
 // It will be gzip compressed, so the caller must decompress.
 // It is the caller's responsibility to call Close on the Reader when done.
 func (ds *Datasource) changesetReader(ctx context.Context, n ChangesetSeqNum) (io.ReadCloser, error) {
-	url := ds.changesetURL(n)
+	url := ds.baseChangesetURL(n) + ".osm.gz"
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -157,10 +201,12 @@ func (ds *Datasource) changesetReader(ctx context.Context, n ChangesetSeqNum) (i
 	return resp.Body, nil
 }
 
-func (ds *Datasource) changesetURL(n ChangesetSeqNum) string {
-	return fmt.Sprintf("%s/replication/changesets/%03d/%03d/%03d.osm.gz",
+func (ds *Datasource) baseChangesetURL(cn ChangesetSeqNum) string {
+	n := cn.Uint64()
+	return fmt.Sprintf("%s/replication/%s/%03d/%03d/%03d",
 		ds.baseURL(),
+		cn.Dir(),
 		n/1000000,
 		(n%1000000)/1000,
-		n % 1000)
+		n%1000)
 }
