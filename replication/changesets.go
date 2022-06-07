@@ -50,12 +50,14 @@ func (ds *Datasource) CurrentChangesetState(ctx context.Context) (ChangesetSeqNu
 }
 
 // ChangesetState returns the state for the given changeset replication.
+// There are no state files before 2007990. In that case a 404 error is returned.
 // Delegates to the DefaultDatasource and uses its http.Client to make the request.
 func ChangesetState(ctx context.Context, n ChangesetSeqNum) (*State, error) {
 	return DefaultDatasource.ChangesetState(ctx, n)
 }
 
 // ChangesetState returns the state for the given changeset replication.
+// There are no state files before 2007990. In that case a 404 error is returned.
 func (ds *Datasource) ChangesetState(ctx context.Context, n ChangesetSeqNum) (*State, error) {
 	return ds.fetchChangesetState(ctx, n)
 }
