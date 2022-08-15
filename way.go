@@ -1,7 +1,6 @@
 package osm
 
 import (
-	"encoding/json"
 	"math"
 	"sort"
 	"time"
@@ -278,14 +277,14 @@ func (wn WayNodes) MarshalJSON() ([]byte, error) {
 		a = append(a, int64(n.ID))
 	}
 
-	return json.Marshal(a)
+	return marshalJSON(a)
 }
 
 // UnmarshalJSON allows the tags to be unmarshalled from an array of ids,
 // as defined by the overpass osmjson.
 func (wn *WayNodes) UnmarshalJSON(data []byte) error {
 	var a []int64
-	err := json.Unmarshal(data, &a)
+	err := unmarshalJSON(data, &a)
 	if err != nil {
 		return err
 	}

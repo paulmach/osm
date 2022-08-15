@@ -1,7 +1,6 @@
 package osm
 
 import (
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -328,7 +327,7 @@ func (o OSM) MarshalJSON() ([]byte, error) {
 		Elements    Objects `json:"elements"`
 	}{o.Version, o.Generator, o.Copyright, o.Attribution, o.License, o.Objects()}
 
-	return json.Marshal(s)
+	return marshalJSON(s)
 }
 
 // MarshalXML implements the xml.Marshaller method to allow for the
@@ -426,7 +425,7 @@ func (o *OSM) UnmarshalJSON(data []byte) error {
 		Elements    []nocopyRawMessage `json:"elements"`
 	}{}
 
-	err := json.Unmarshal(data, &s)
+	err := unmarshalJSON(data, &s)
 	if err != nil {
 		return err
 	}
@@ -446,42 +445,42 @@ func (o *OSM) UnmarshalJSON(data []byte) error {
 		switch t {
 		case "node":
 			n := &Node{}
-			err = json.Unmarshal(data, n)
+			err = unmarshalJSON(data, n)
 			if err != nil {
 				return err
 			}
 			o.Nodes = append(o.Nodes, n)
 		case "way":
 			w := &Way{}
-			err = json.Unmarshal(data, w)
+			err = unmarshalJSON(data, w)
 			if err != nil {
 				return err
 			}
 			o.Ways = append(o.Ways, w)
 		case "relation":
 			r := &Relation{}
-			err = json.Unmarshal(data, r)
+			err = unmarshalJSON(data, r)
 			if err != nil {
 				return err
 			}
 			o.Relations = append(o.Relations, r)
 		case "changeset":
 			cs := &Changeset{}
-			err = json.Unmarshal(data, cs)
+			err = unmarshalJSON(data, cs)
 			if err != nil {
 				return err
 			}
 			o.Changesets = append(o.Changesets, cs)
 		case "note":
 			n := &Note{}
-			err = json.Unmarshal(data, n)
+			err = unmarshalJSON(data, n)
 			if err != nil {
 				return err
 			}
 			o.Notes = append(o.Notes, n)
 		case "user":
 			u := &User{}
-			err = json.Unmarshal(data, u)
+			err = unmarshalJSON(data, u)
 			if err != nil {
 				return err
 			}
@@ -503,11 +502,4 @@ func findType(index int, data []byte) (string, error) {
 	}
 
 	return "", fmt.Errorf("could not find type in element index %d", index)
-}
-
-type nocopyRawMessage []byte
-
-func (m *nocopyRawMessage) UnmarshalJSON(data []byte) error {
-	*m = data
-	return nil
 }

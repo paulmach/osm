@@ -1,7 +1,6 @@
 package osm
 
 import (
-	"encoding/json"
 	"sort"
 	"time"
 
@@ -203,7 +202,7 @@ func (ms Members) MarshalJSON() ([]byte, error) {
 		return []byte(`[]`), nil
 	}
 
-	return json.Marshal([]Member(ms))
+	return marshalJSON([]Member(ms))
 }
 
 // Relations is a list of relations with some helper functions attached.
