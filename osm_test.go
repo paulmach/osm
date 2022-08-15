@@ -183,7 +183,7 @@ func TestOSM_Marshal(t *testing.T) {
 
 func TestOSM_MarshalJSON(t *testing.T) {
 	o := &OSM{
-		Version:   0.6,
+		Version:   "0.6",
 		Generator: "osm-go",
 		Nodes: Nodes{
 			&Node{ID: 123},
@@ -197,6 +197,12 @@ func TestOSM_MarshalJSON(t *testing.T) {
 		Changesets: Changesets{
 			&Changeset{ID: 10},
 		},
+		Notes: Notes{
+			&Note{ID: 15},
+		},
+		Users: Users{
+			&User{ID: 16},
+		},
 	}
 
 	data, err := json.Marshal(o)
@@ -204,14 +210,65 @@ func TestOSM_MarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"version":0.6,"generator":"osm-go","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false}]}`)) {
+	if !bytes.Equal(data, []byte(`{"version":"0.6","generator":"osm-go","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false},{"type":"user","id":16,"name":"","img":{"href":""},"changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,"blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},"created_at":"0001-01-01T00:00:00Z"},{"type":"note","id":15,"lat":0,"lon":0,"date_created":null,"date_closed":null,"comments":null}]}`)) {
 		t.Errorf("incorrect json: %v", string(data))
+	}
+}
+
+func TestOSM_UnmarshalJSON(t *testing.T) {
+	data := []byte(`{
+		"version":"0.6","generator":"osm-go",
+		"elements":[
+		  {"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},
+		  {"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},
+		  {"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},
+		  {"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false},
+		  {"type":"user","id":16,"name":"","img":{"href":""},"changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,"blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},"created_at":"0001-01-01T00:00:00Z"},
+		  {"type":"note","id":15,"lat":0,"lon":0,"date_created":null,"date_closed":null,"comments":null}
+		]}`)
+
+	o := &OSM{}
+	err := json.Unmarshal(data, &o)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if v := o.Version; v != "0.6" {
+		t.Errorf("incorrect version, expected %v", v)
+	}
+
+	if v := o.Generator; v != "osm-go" {
+		t.Errorf("incorrect generator, expected %v", v)
+	}
+
+	if len(o.Nodes) != 1 || o.Nodes[0].ID != 123 {
+		t.Errorf("node unmarshalled incorrectly: %v", o.Nodes)
+	}
+
+	if len(o.Ways) != 1 || o.Ways[0].ID != 456 {
+		t.Errorf("way unmarshalled incorrectly: %v", o.Ways)
+	}
+
+	if len(o.Relations) != 1 || o.Relations[0].ID != 789 {
+		t.Errorf("relation unmarshalled incorrectly: %v", o.Relations)
+	}
+
+	if len(o.Changesets) != 1 || o.Changesets[0].ID != 10 {
+		t.Errorf("changeset unmarshalled incorrectly: %v", o.Changesets)
+	}
+
+	if len(o.Notes) != 1 || o.Notes[0].ID != 15 {
+		t.Errorf("note unmarshalled incorrectly: %v", o.Notes)
+	}
+
+	if len(o.Users) != 1 || o.Users[0].ID != 16 {
+		t.Errorf("user unmarshalled incorrectly: %v", o.Users)
 	}
 }
 
 func TestOSM_MarshalXML(t *testing.T) {
 	o := &OSM{
-		Version:     0.7,
+		Version:     "0.7",
 		Generator:   "osm-go-test",
 		Copyright:   "copyright1",
 		Attribution: "attribution1",
