@@ -1,7 +1,6 @@
 package osm
 
 import (
-	"encoding/json"
 	"encoding/xml"
 	"time"
 )
@@ -46,7 +45,7 @@ func (d Date) MarshalJSON() ([]byte, error) {
 	if d.IsZero() {
 		return []byte(`null`), nil
 	}
-	return json.Marshal(d.Time)
+	return marshalJSON(d.Time)
 }
 
 // Notes is a collection of notes with some helpers attached.

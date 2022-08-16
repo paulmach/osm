@@ -2,7 +2,6 @@ package osm
 
 import (
 	"encoding/xml"
-	"strconv"
 
 	"github.com/paulmach/osm/internal/osmpb"
 
@@ -13,17 +12,17 @@ import (
 // uploaded or downloaded from the osm api server.
 // See: http://wiki.openstreetmap.org/wiki/OsmChange
 type Change struct {
-	Version   float64 `xml:"version,attr,omitempty"`
-	Generator string  `xml:"generator,attr,omitempty"`
+	Version   string `xml:"version,attr,omitempty" json:"version,omitempty"`
+	Generator string `xml:"generator,attr,omitempty" json:"generator,omitempty"`
 
 	// to indicate the origin of the data
-	Copyright   string `xml:"copyright,attr,omitempty"`
-	Attribution string `xml:"attribution,attr,omitempty"`
-	License     string `xml:"license,attr,omitempty"`
+	Copyright   string `xml:"copyright,attr,omitempty" json:"copyright,omitempty"`
+	Attribution string `xml:"attribution,attr,omitempty" json:"attribution,omitempty"`
+	License     string `xml:"license,attr,omitempty" json:"license,omitempty"`
 
-	Create *OSM `xml:"create"`
-	Modify *OSM `xml:"modify"`
-	Delete *OSM `xml:"delete"`
+	Create *OSM `xml:"create" json:"create,omitempty"`
+	Modify *OSM `xml:"modify" json:"modify,omitempty"`
+	Delete *OSM `xml:"delete" json:"delete,omitempty"`
 }
 
 // AppendCreate will append the object to the Create OSM object.
@@ -127,11 +126,8 @@ func (c Change) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name.Local = "osmChange"
 	start.Attr = []xml.Attr{}
 
-	if c.Version != 0 {
-		start.Attr = append(start.Attr, xml.Attr{
-			Name:  xml.Name{Local: "version"},
-			Value: strconv.FormatFloat(c.Version, 'g', -1, 64),
-		})
+	if c.Version != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "version"}, Value: c.Version})
 	}
 
 	if c.Generator != "" {

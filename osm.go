@@ -1,11 +1,10 @@
 package osm
 
 import (
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"strconv"
+	"regexp"
 
 	"github.com/paulmach/osm/internal/osmpb"
 
@@ -23,8 +22,8 @@ const (
 // OSM represents the core osm data
 // designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
-	Version   float64 `xml:"version,attr,omitempty"`
-	Generator string  `xml:"generator,attr,omitempty"`
+	Version   string `xml:"version,attr,omitempty"`
+	Generator string `xml:"generator,attr,omitempty"`
 
 	// These three attributes are returned by the osm api.
 	// The Copyright, Attribution and License constants contain
@@ -320,16 +319,15 @@ func unmarshalOSM(encoded *osmpb.OSM, ss []string, cs *Changeset) (*OSM, error) 
 // http://overpass-api.de/output_formats.html#json
 func (o OSM) MarshalJSON() ([]byte, error) {
 	s := struct {
-		Version     float64 `json:"version,omitempty"`
+		Version     string  `json:"version,omitempty"`
 		Generator   string  `json:"generator,omitempty"`
 		Copyright   string  `json:"copyright,omitempty"`
 		Attribution string  `json:"attribution,omitempty"`
 		License     string  `json:"license,omitempty"`
 		Elements    Objects `json:"elements"`
-	}{o.Version, o.Generator, o.Copyright,
-		o.Attribution, o.License, o.Objects()}
+	}{o.Version, o.Generator, o.Copyright, o.Attribution, o.License, o.Objects()}
 
-	return json.Marshal(s)
+	return marshalJSON(s)
 }
 
 // MarshalXML implements the xml.Marshaller method to allow for the
@@ -338,11 +336,8 @@ func (o OSM) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name.Local = "osm"
 	start.Attr = make([]xml.Attr, 0, 5)
 
-	if o.Version != 0 {
-		start.Attr = append(start.Attr, xml.Attr{
-			Name:  xml.Name{Local: "version"},
-			Value: strconv.FormatFloat(o.Version, 'g', -1, 64),
-		})
+	if o.Version != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "version"}, Value: o.Version})
 	}
 
 	if o.Generator != "" {
@@ -414,4 +409,97 @@ func (o *OSM) marshalInnerElementsXML(e *xml.Encoder) error {
 	}
 
 	return e.Encode(o.Relations)
+}
+
+// UnmarshalJSON will decode osm json representation
+// as defined by the overpass osmjson. This format can
+// also by returned by the official OSM API.
+// http://overpass-api.de/output_formats.html#json
+func (o *OSM) UnmarshalJSON(data []byte) error {
+	s := struct {
+		Version     string             `json:"version"`
+		Generator   string             `json:"generator"`
+		Copyright   string             `json:"copyright"`
+		Attribution string             `json:"attribution"`
+		License     string             `json:"license"`
+		Elements    []nocopyRawMessage `json:"elements"`
+	}{}
+
+	err := unmarshalJSON(data, &s)
+	if err != nil {
+		return err
+	}
+
+	o.Version = s.Version
+	o.Generator = s.Generator
+	o.Copyright = s.Copyright
+	o.Attribution = s.Attribution
+	o.License = s.License
+
+	for index, data := range s.Elements {
+		t, err := findType(index, data)
+		if err != nil {
+			return err
+		}
+
+		switch t {
+		case "node":
+			n := &Node{}
+			err = unmarshalJSON(data, n)
+			if err != nil {
+				return err
+			}
+			o.Nodes = append(o.Nodes, n)
+		case "way":
+			w := &Way{}
+			err = unmarshalJSON(data, w)
+			if err != nil {
+				return err
+			}
+			o.Ways = append(o.Ways, w)
+		case "relation":
+			r := &Relation{}
+			err = unmarshalJSON(data, r)
+			if err != nil {
+				return err
+			}
+			o.Relations = append(o.Relations, r)
+		case "changeset":
+			cs := &Changeset{}
+			err = unmarshalJSON(data, cs)
+			if err != nil {
+				return err
+			}
+			o.Changesets = append(o.Changesets, cs)
+		case "note":
+			n := &Note{}
+			err = unmarshalJSON(data, n)
+			if err != nil {
+				return err
+			}
+			o.Notes = append(o.Notes, n)
+		case "user":
+			u := &User{}
+			err = unmarshalJSON(data, u)
+			if err != nil {
+				return err
+			}
+			o.Users = append(o.Users, u)
+		default:
+			return fmt.Errorf("unknown type of '%s' for element index %d", t, index)
+		}
+	}
+
+	return nil
+}
+
+var jsonTypeRegexp = regexp.MustCompile(`"type"\s*:\s*"([^"]*)"`)
+
+func findType(index int, data []byte) (string, error) {
+	matches := jsonTypeRegexp.FindAllSubmatch(data, -1)
+	if len(matches) > 0 {
+		return string(matches[0][1]), nil
+	}
+
+	return "", fmt.Errorf("could not find type in element index %d", index)
 }

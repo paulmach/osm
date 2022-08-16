@@ -157,7 +157,7 @@ func TestChange(t *testing.T) {
 func TestChange_MarshalXML(t *testing.T) {
 	// correct case of name
 	c := Change{
-		Version:     0.6,
+		Version:     "0.6",
 		Generator:   "osm-go",
 		Copyright:   "copyright1",
 		Attribution: "attribution1",
@@ -305,7 +305,7 @@ func TestChange_HistoryDatasource(t *testing.T) {
 }
 
 func cleanXMLNameFromChange(c *Change) {
-	c.Version = 0
+	c.Version = ""
 	c.Generator = ""
 	c.Copyright = ""
 	c.Attribution = ""

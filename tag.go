@@ -68,7 +68,7 @@ func (ts Tags) AnyInteresting() bool {
 // MarshalJSON allows the tags to be marshalled as a key/value object,
 // as defined by the overpass osmjson.
 func (ts Tags) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ts.Map())
+	return marshalJSON(ts.Map())
 }
 
 // UnmarshalJSON allows the tags to be unmarshalled from a key/value object,

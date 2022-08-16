@@ -3,6 +3,7 @@ package osm
 import (
 	"bytes"
 	"compress/gzip"
+	"encoding/json"
 	"encoding/xml"
 	"io/ioutil"
 	"os"
@@ -156,6 +157,69 @@ func BenchmarkChange_MarshalXML(b *testing.B) {
 		_, err := xml.Marshal(c)
 		if err != nil {
 			b.Fatalf("unable to marshal: %v", err)
+		}
+	}
+}
+
+// uncomment to test/benchmark custom json marshalling
+// func init() {
+// 	var c = jsoniter.Config{
+// 		EscapeHTML:              true,
+// 		SortMapKeys:             false,
+// 		ValidateJsonRawMessage:  false,
+// 		MarshalFloatWith6Digits: true,
+// 	}.Froze()
+
+// 	CustomJSONMarshaler = c
+// 	CustomJSONUnmarshaler = c
+// }
+
+func BenchmarkChange_MarshalJSON(b *testing.B) {
+	data, err := ioutil.ReadFile("testdata/minute_871.osc")
+	if err != nil {
+		b.Fatalf("could not read file: %v", err)
+	}
+
+	c := &Change{}
+	err = xml.Unmarshal(data, c)
+	if err != nil {
+		b.Fatalf("could not unmarshal: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		_, err := json.Marshal(c)
+		if err != nil {
+			b.Fatalf("could not marshal: %v", err)
+		}
+	}
+}
+
+func BenchmarkChange_UnmarshalJSON(b *testing.B) {
+	data, err := ioutil.ReadFile("testdata/minute_871.osc")
+	if err != nil {
+		b.Fatalf("could not read file: %v", err)
+	}
+
+	c := &Change{}
+	err = xml.Unmarshal(data, c)
+	if err != nil {
+		b.Fatalf("could not unmarshal: %v", err)
+	}
+
+	data, err = json.Marshal(c)
+	if err != nil {
+		b.Fatalf("could not marshal: %v", err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		c := &Change{}
+		err := json.Unmarshal(data, c)
+		if err != nil {
+			b.Fatalf("could not unmarshal: %v", err)
 		}
 	}
 }
