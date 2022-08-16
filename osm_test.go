@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -136,48 +138,6 @@ func TestOSM_ElementIDs(t *testing.T) {
 
 	if ids := o.ElementIDs(); !reflect.DeepEqual(ids, expected) {
 		t.Errorf("incorrect ids: %v", ids)
-	}
-}
-
-func TestOSM_Marshal(t *testing.T) {
-	c := loadChange(t, "testdata/changeset_38162206.osc")
-	o1 := flattenOSM(c)
-	o1.Bounds = &Bounds{1.1, 2.2, 3.3, 4.4}
-
-	data, err := o1.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	o2, err := UnmarshalOSM(data)
-	if err != nil {
-		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(o1, o2) {
-		t.Errorf("osm are not equal")
-		t.Logf("%+v", o1)
-		t.Logf("%+v", o2)
-	}
-
-	// second changeset
-	c = loadChange(t, "testdata/changeset_38162210.osc")
-	o1 = flattenOSM(c)
-
-	data, err = o1.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	o2, err = UnmarshalOSM(data)
-	if err != nil {
-		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(o1, o2) {
-		t.Errorf("osm are not equal")
-		t.Logf("%+v", o1)
-		t.Logf("%+v", o2)
 	}
 }
 
@@ -336,4 +296,19 @@ func cleanXMLNameFromOSM(o *OSM) {
 		// r.XMLName = xml.Name{}
 		r.XMLName = xmlNameJSONTypeRel{}
 	}
+}
+
+func readFile(t testing.TB, filename string) []byte {
+	f, err := os.Open(filename)
+	if err != nil {
+		t.Fatalf("unable to open %s: %v", filename, err)
+	}
+	defer f.Close()
+
+	data, err := ioutil.ReadAll(f)
+	if err != nil {
+		t.Fatalf("unable to read file %s: %v", filename, err)
+	}
+
+	return data
 }

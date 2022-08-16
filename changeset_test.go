@@ -81,56 +81,6 @@ func TestChangesets(t *testing.T) {
 	}
 }
 
-func TestChangeset(t *testing.T) {
-	data := []byte(`
-<changeset id="38162206" user="grah735" uid="2744209" created_at="2016-03-30T09:25:31Z" closed_at="2016-03-30T09:25:36Z" open="false" min_lat="44.5540891" min_lon="33.5261473" max_lat="44.5614501" max_lon="33.5302043" comments_count="0">
-  <tag k="comment" v="двойная сплошная"/>
-  <tag k="locale" v="ru"/>
-  <tag k="host" v="https://www.openstreetmap.org/id"/>
-  <tag k="imagery_used" v="Bing"/>
-  <tag k="created_by" v="iD 1.9.2"/>
-</changeset>`)
-	c := loadChange(t, "testdata/changeset_38162206.osc")
-
-	cs1 := &Changeset{}
-	err := xml.Unmarshal(data, cs1)
-	if err != nil {
-		t.Fatalf("unable to unmarshal changeset: %v", err)
-	}
-
-	cs1.XMLName = xmlNameJSONTypeCS{}
-	cs1.Change = c
-
-	data, err = cs1.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	cs2, err := UnmarshalChangeset(data)
-	if err != nil {
-		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(cs1, cs2) {
-		t.Errorf("changesets are not equal")
-		t.Logf("%+v", cs1)
-		t.Logf("%+v", cs2)
-	}
-
-	// empty change
-	cs3 := &Changeset{
-		Change: &Change{},
-	}
-	data, err = cs3.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	if l := len(data); l != 0 {
-		t.Errorf("empty should be empty, got %v", l)
-	}
-}
-
 func TestChangeset_open(t *testing.T) {
 	data := []byte(`
 <changeset id="40309372" user="Bahntech" uid="3619264" created_at="2016-06-26T21:26:41Z" open="true" min_lat="51.484563" min_lon="12.0995042" max_lat="51.484563" max_lon="12.0995042" comments_count="0">

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/xml"
-	"reflect"
 	"testing"
 )
 
@@ -189,75 +188,6 @@ func TestChange_MarshalXML(t *testing.T) {
 	expected = `<osmChange></osmChange>`
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
-	}
-}
-
-func TestChange_Marshal(t *testing.T) {
-	c1 := loadChange(t, "testdata/changeset_38162206.osc")
-	cleanXMLNameFromChange(c1)
-	data, err := c1.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	c2, err := UnmarshalChange(data)
-	if err != nil {
-		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(c1, c2) {
-		t.Errorf("changes are not equal")
-		t.Logf("%+v", c1)
-		t.Logf("%+v", c2)
-	}
-
-	// second changeset
-	c1 = loadChange(t, "testdata/changeset_38162210.osc")
-	cleanXMLNameFromChange(c1)
-	data, err = c1.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	c2, err = UnmarshalChange(data)
-	if err != nil {
-		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(c1, c2) {
-		t.Errorf("changes are not equal")
-		t.Logf("%+v", c1)
-		t.Logf("%+v", c2)
-	}
-
-	// minute diff change
-	c1 = loadChange(t, "testdata/minute_871.osc")
-	cleanXMLNameFromChange(c1)
-	data, err = c1.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	c2, err = UnmarshalChange(data)
-	if err != nil {
-		t.Fatalf("unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(c1, c2) {
-		t.Errorf("changes are not equal")
-		t.Logf("%+v", c1)
-		t.Logf("%+v", c2)
-	}
-
-	// empty change
-	c3 := &Change{}
-	data, err = c3.Marshal()
-	if err != nil {
-		t.Fatalf("marshal error: %v", err)
-	}
-
-	if l := len(data); l != 0 {
-		t.Errorf("empty should be empty, got %v", l)
 	}
 }
 

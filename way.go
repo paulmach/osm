@@ -331,29 +331,6 @@ func (ws Ways) ElementIDs() ElementIDs {
 	return r
 }
 
-// Marshal encodes the ways using protocol buffers.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func (ws Ways) Marshal() ([]byte, error) {
-	o := OSM{
-		Ways: ws,
-	}
-
-	return o.Marshal()
-}
-
-// UnmarshalWays will unmarshal the data into a list of ways.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func UnmarshalWays(data []byte) (Ways, error) {
-	o, err := UnmarshalOSM(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return o.Ways, nil
-}
-
 type waysSort Ways
 
 // SortByIDVersion will sort the set of ways first by id and then version

@@ -238,29 +238,6 @@ func (rs Relations) ElementIDs() ElementIDs {
 	return result
 }
 
-// Marshal encodes the relations using protocol buffers.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func (rs Relations) Marshal() ([]byte, error) {
-	o := OSM{
-		Relations: rs,
-	}
-
-	return o.Marshal()
-}
-
-// UnmarshalRelations will unmarshal the data into a list of relations.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func UnmarshalRelations(data []byte) (Relations, error) {
-	o, err := UnmarshalOSM(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return o.Relations, nil
-}
-
 type relationsSort Relations
 
 // SortByIDVersion will sort the set of relations first by id and then version
