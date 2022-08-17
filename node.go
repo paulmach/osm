@@ -5,9 +5,6 @@ import (
 	"time"
 
 	"github.com/paulmach/orb"
-	"github.com/paulmach/osm/internal/osmpb"
-
-	"google.golang.org/protobuf/proto"
 )
 
 // NodeID corresponds the primary key of a node.
@@ -115,38 +112,6 @@ func (ns Nodes) ElementIDs() ElementIDs {
 	}
 
 	return r
-}
-
-// Marshal encodes the nodes using protocol buffers.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func (ns Nodes) Marshal() ([]byte, error) {
-	if len(ns) == 0 {
-		return nil, nil
-	}
-
-	ss := &stringSet{}
-	encoded := marshalNodes(ns, ss, true)
-	encoded.Strings = ss.Strings()
-
-	return proto.Marshal(encoded)
-}
-
-// UnmarshalNodes will unmarshal the data into a list of nodes.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func UnmarshalNodes(data []byte) (Nodes, error) {
-	if len(data) == 0 {
-		return nil, nil
-	}
-
-	pbf := &osmpb.DenseNodes{}
-	err := proto.Unmarshal(data, pbf)
-	if err != nil {
-		return nil, err
-	}
-
-	return unmarshalNodes(pbf, pbf.GetStrings(), nil)
 }
 
 type nodesSort Nodes

@@ -86,50 +86,6 @@ func TestNode_MarshalXML(t *testing.T) {
 	}
 }
 
-func TestUnmarshalNodes(t *testing.T) {
-	ns := Nodes{
-		{ID: 123},
-		{ID: 321},
-	}
-
-	data, err := ns.Marshal()
-	if err != nil {
-		t.Fatalf("nodes marshal error: %v", err)
-	}
-
-	ns2, err := UnmarshalNodes(data)
-	if err != nil {
-		t.Fatalf("nodes unmarshal error: %v", err)
-	}
-
-	if !reflect.DeepEqual(ns, ns2) {
-		t.Errorf("nodes not equal")
-		t.Logf("%+v", ns)
-		t.Logf("%+v", ns2)
-	}
-
-	// empty nodes
-	ns = Nodes{}
-
-	data, err = ns.Marshal()
-	if err != nil {
-		t.Fatalf("nodes marshal error: %v", err)
-	}
-
-	if l := len(data); l != 0 {
-		t.Errorf("length of node data should be 0, got %v", l)
-	}
-
-	ns2, err = UnmarshalNodes(data)
-	if err != nil {
-		t.Fatalf("nodes unmarshal error: %v", err)
-	}
-
-	if ns2 != nil {
-		t.Errorf("should return nil Nodes for empty data, got %v", ns2)
-	}
-}
-
 func TestNodes_ids(t *testing.T) {
 	ns := Nodes{
 		{ID: 1, Version: 3},

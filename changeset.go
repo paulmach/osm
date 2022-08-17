@@ -3,10 +3,6 @@ package osm
 import (
 	"encoding/xml"
 	"time"
-
-	"github.com/paulmach/osm/internal/osmpb"
-
-	"google.golang.org/protobuf/proto"
 )
 
 // ChangesetID is the primary key for an osm changeset.
@@ -90,105 +86,6 @@ func (c *Changeset) Source() string {
 func (c *Changeset) Bot() bool {
 	// As of July 5, 2015: 300k yes, 123 no, 8 other
 	return c.Tags.Find("bot") == "yes"
-}
-
-// Marshal encodes the changeset data using protocol buffers.
-// Does not encode the changeset discussion.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func (c *Changeset) Marshal() ([]byte, error) {
-	ss := &stringSet{}
-
-	var userSid *uint32
-	if c.User != "" {
-		v := ss.Add(c.User)
-		userSid = &v
-	}
-	keys, vals := c.Tags.keyValues(ss)
-
-	encoded := &osmpb.Changeset{
-		Keys:      keys,
-		Vals:      vals,
-		UserSid:   userSid,
-		CreatedAt: timeToUnixPointer(c.CreatedAt),
-		ClosedAt:  timeToUnixPointer(c.ClosedAt),
-	}
-
-	// only set these values if they make any sense.
-	if c.ID != 0 {
-		encoded.Id = proto.Int64(int64(c.ID))
-	}
-
-	if c.Open {
-		encoded.Open = proto.Bool(c.Open)
-	}
-
-	if c.UserID != 0 {
-		encoded.UserId = proto.Int32(int32(c.UserID))
-	}
-
-	if c.MinLat != 0 || c.MaxLat != 0 || c.MinLon != 0 || c.MaxLon != 0 {
-		encoded.Bounds = &osmpb.Bounds{
-			MinLat: geoToPInt64(c.MinLat),
-			MaxLat: geoToPInt64(c.MaxLat),
-			MinLon: geoToPInt64(c.MinLon),
-			MaxLon: geoToPInt64(c.MaxLon),
-		}
-	}
-
-	if c.Change != nil &&
-		(c.Change.Create != nil || c.Change.Modify != nil || c.Change.Delete != nil) {
-		encoded.Change = marshalChange(c.Change, ss, false)
-	}
-
-	encoded.Strings = ss.Strings()
-	return proto.Marshal(encoded)
-}
-
-// UnmarshalChangeset will unmarshal the data into an OSM object.
-//
-// Deprecated: encoding could be improved, should be versioned separately.
-func UnmarshalChangeset(data []byte) (*Changeset, error) {
-	encoded := &osmpb.Changeset{}
-	err := proto.Unmarshal(data, encoded)
-	if err != nil {
-		return nil, err
-	}
-
-	ss := encoded.GetStrings()
-	tags, err := tagsFromStrings(ss, encoded.GetKeys(), encoded.GetVals())
-	if err != nil {
-		return nil, err
-	}
-
-	cs := &Changeset{
-		ID:        ChangesetID(encoded.GetId()),
-		UserID:    UserID(encoded.GetUserId()),
-		CreatedAt: unixToTime(encoded.GetCreatedAt()),
-		ClosedAt:  unixToTime(encoded.GetClosedAt()),
-		Open:      encoded.GetOpen(),
-		Tags:      tags,
-	}
-
-	if encoded.UserSid != nil {
-		cs.User = ss[encoded.GetUserSid()]
-	}
-
-	if encoded.Bounds != nil {
-		cs.MinLat = float64(encoded.Bounds.GetMinLat()) / locMultiple
-		cs.MaxLat = float64(encoded.Bounds.GetMaxLat()) / locMultiple
-		cs.MinLon = float64(encoded.Bounds.GetMinLon()) / locMultiple
-		cs.MaxLon = float64(encoded.Bounds.GetMaxLon()) / locMultiple
-	}
-
-	if encoded.Change != nil {
-		cs.Change, err = unmarshalChange(encoded.Change, ss, cs)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return cs, nil
 }
 
 // IDs returns the ids of the changesets in the slice.
