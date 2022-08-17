@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.7.0](https://github.com/paulmach/osm/compare/v0.6.0...v0.7.0) - 2022-08-17
+
+### Changed
+
+-   remove node/ways/relations marshaling into this packages custom binary format by [@paulmach](https://github.com/paulmach) in https://github.com/paulmach/osm/pull/40
+
 ## [v0.6.0](https://github.com/paulmach/osm/compare/v0.5.0...v0.6.0) - 2022-08-16
 
 ### Added
