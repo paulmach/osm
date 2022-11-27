@@ -226,6 +226,24 @@ func TestOSM_UnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestOSM_UnmarshalJSON_Version(t *testing.T) {
+	data := []byte(`{
+		"version":0.6,"generator":"osm-go",
+		"elements":[
+		  {"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"}
+		]}`)
+
+	o := &OSM{}
+	err := json.Unmarshal(data, &o)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if o.Version != "0.6" {
+		t.Errorf("incorrect version %v != 0.6", o.Version)
+	}
+}
+
 func TestOSM_MarshalXML(t *testing.T) {
 	o := &OSM{
 		Version:     "0.7",
