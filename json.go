@@ -27,7 +27,7 @@ import (
 // Note that any errors encountered during marshaling will be different.
 var CustomJSONMarshaler interface {
 	Marshal(v interface{}) ([]byte, error)
-} = nil
+}
 
 // CustomJSONUnmarshaler can be set to have the code use a different
 // json unmarshaler than the default in the standard library.
@@ -51,7 +51,7 @@ var CustomJSONMarshaler interface {
 // Note that any errors encountered during unmarshaling will be different.
 var CustomJSONUnmarshaler interface {
 	Unmarshal(data []byte, v interface{}) error
-} = nil
+}
 
 func marshalJSON(v interface{}) ([]byte, error) {
 	if CustomJSONMarshaler == nil {
