@@ -6,6 +6,94 @@ import (
 	"testing"
 )
 
+func TestTags_FindTag(t *testing.T) {
+	cases := []struct {
+		name string
+		tags Tags
+		key  string
+		tag  *Tag
+	}{
+		{
+			name: "find tag",
+			tags: Tags{
+				{Key: "area", Value: "true"},
+				{Key: "building", Value: "yes"},
+			},
+			key: "building",
+			tag: &Tag{Key: "building", Value: "yes"},
+		},
+		{
+			name: "not found",
+			tags: Tags{
+				{Key: "building", Value: "yes"},
+			},
+			key: "not found",
+			tag: nil,
+		},
+		{
+			name: "empty value",
+			tags: Tags{
+				{Key: "present", Value: ""},
+			},
+			key: "present",
+			tag: &Tag{Key: "present", Value: ""},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			v := tc.tags.FindTag(tc.key)
+			if !reflect.DeepEqual(v, tc.tag) {
+				t.Errorf("incorrect find tag: %v != %v", v, tc.tag)
+			}
+		})
+	}
+}
+
+func TestTags_HasTag(t *testing.T) {
+	cases := []struct {
+		name string
+		tags Tags
+		key  string
+		has  bool
+	}{
+		{
+			name: "has tag",
+			tags: Tags{
+				{Key: "area", Value: "true"},
+				{Key: "building", Value: "yes"},
+			},
+			key: "building",
+			has: true,
+		},
+		{
+			name: "not found",
+			tags: Tags{
+				{Key: "building", Value: "yes"},
+			},
+			key: "not found",
+			has: false,
+		},
+		{
+			name: "empty value",
+			tags: Tags{
+				{Key: "present", Value: ""},
+			},
+			key: "present",
+			has: true,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			v := tc.tags.HasTag(tc.key)
+			if v != tc.has {
+				t.Errorf("incorrect has tag: %v != %v", v, tc.has)
+			}
+		})
+	}
+}
+
 func TestTags_AnyInteresting(t *testing.T) {
 	cases := []struct {
 		name        string
