@@ -370,7 +370,7 @@ func (o *OSM) UnmarshalJSON(data []byte) error {
 var jsonTypeRegexp = regexp.MustCompile(`"type"\s*:\s*"([^"]*)"`)
 
 func findType(index int, data []byte) (string, error) {
-	matches := jsonTypeRegexp.FindAllSubmatch(data, -1)
+	matches := jsonTypeRegexp.FindAllSubmatch(data, 1)
 	if len(matches) > 0 {
 		return string(matches[0][1]), nil
 	}
