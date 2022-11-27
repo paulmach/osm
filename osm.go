@@ -17,6 +17,8 @@ const (
 // OSM represents the core osm data
 // designed to parse http://wiki.openstreetmap.org/wiki/OSM_XML
 type OSM struct {
+	// JSON APIs can return version as a string or number, converted to string
+	// for consistency.
 	Version   string `xml:"version,attr,omitempty"`
 	Generator string `xml:"generator,attr,omitempty"`
 
@@ -286,7 +288,10 @@ func (o *OSM) marshalInnerElementsXML(e *xml.Encoder) error {
 // http://overpass-api.de/output_formats.html#json
 func (o *OSM) UnmarshalJSON(data []byte) error {
 	s := struct {
-		Version     string             `json:"version"`
+		// Version can be string or number,
+		// openstreetmap.org returns string
+		// overpass returns number
+		Version     interface{}        `json:"version"`
 		Generator   string             `json:"generator"`
 		Copyright   string             `json:"copyright"`
 		Attribution string             `json:"attribution"`
@@ -299,7 +304,7 @@ func (o *OSM) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	o.Version = s.Version
+	o.Version = fmt.Sprintf("%v", s.Version)
 	o.Generator = s.Generator
 	o.Copyright = s.Copyright
 	o.Attribution = s.Attribution
