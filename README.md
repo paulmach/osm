@@ -138,3 +138,16 @@ benchmark                            old bytes     new bytes     delta
 BenchmarkChange_MarshalJSON-12       180583        162727        -9.89%
 BenchmarkChange_UnmarshalJSON-12     287707        317723        +10.43%
 ```
+
+## CGO and zlib
+
+OSM PBF data comes in blocks, each block is zlib compressed. Decompressing this
+data takes about 33% of the total read time. [DataDog/czlib](https://github.com/DataDog/czlib) is
+used to speed this process.
+See [osmpbf/README.md](osmpbf#using-cgoczlib-for-decompression) for more details.
+
+As a result, a C compiler is necessary to install this module. On macOS this may require
+installing pkg-config using something like `brew install pkg-config`
+
+CGO can be disabled at build time using the `CGO_ENABLED` ENV variable.
+For example, `CGO_ENABLED=0 go build`. The code will fallback to the stdlib implementation of zlib.
