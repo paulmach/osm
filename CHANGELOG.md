@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.7.1](https://github.com/paulmach/osm/compare/v0.7.0...v0.7.1) - 2022-11-29
+
+### Added
+
+-   osm: add Tags.FindTag and Tags.HasTag methods by [@paulmach](https://github.com/paulmach) in https://github.com/paulmach/osm/pull/45
+
+### Fixed
+
+-   osm: support version as json number or string by [@paulmach](https://github.com/paulmach) in https://github.com/paulmach/osm/pull/46
+
 ## [v0.7.0](https://github.com/paulmach/osm/compare/v0.6.0...v0.7.0) - 2022-08-17
 
 ### Changed
