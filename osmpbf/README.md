@@ -80,7 +80,7 @@ This package supports reading OSM PBF files where the ways have been annotated w
 
 Coordinates are stored in the `Lat` and `Lon` fields of each `WayNode`. There is no need to specify an explicit option; when the node locations are present on the ways, they are loaded automatically. For more info about the OSM PBF format extension, see [the original blog post](https://blog.jochentopf.com/2016-04-20-node-locations-on-ways.html).
 
-### Using cgo/czlib for decompression
+## Using cgo/czlib for decompression
 
 OSM PBF files are a set of blocks that are zlib compressed. When using the pure golang
 implementation this can account for about 1/3 of the read time. When cgo is enabled
