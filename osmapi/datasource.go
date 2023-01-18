@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/paulmach/osm"
+	"github.com/onXmaps/osm"
 )
 
 // BaseURL defines the api host. This can be change to hit

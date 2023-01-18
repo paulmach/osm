@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/paulmach/osm"
+	"github.com/onXmaps/osm"
 )
 
 func TestWays(t *testing.T) {

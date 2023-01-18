@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/paulmach/osm"
+	"github.com/onXmaps/osm"
 )
 
 func BenchmarkConvert(b *testing.B) {

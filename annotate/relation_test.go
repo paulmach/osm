@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/paulmach/orb"
-	"github.com/paulmach/osm"
+	"github.com/onXmaps/osm"
 )
 
 func TestRelation(t *testing.T) {

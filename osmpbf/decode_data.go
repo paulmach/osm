@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"google.golang.org/protobuf/proto"
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
+	"github.com/onXmaps/osm"
+	"github.com/onXmaps/osm/osmpbf/internal/osmpbf"
 	"github.com/paulmach/protoscan"
 )
 

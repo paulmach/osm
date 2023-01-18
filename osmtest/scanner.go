@@ -1,6 +1,6 @@
 package osmtest
 
-import "github.com/paulmach/osm"
+import "github.com/onXmaps/osm"
 
 // Scanner implements the osm.Scanner interface with
 // just a list of objects.
