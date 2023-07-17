@@ -3,9 +3,9 @@ package annotate
 import (
 	"context"
 
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/annotate/internal/core"
-	"github.com/paulmach/osm/annotate/shared"
+	"github.com/onXmaps/osm"
+	"github.com/onXmaps/osm/annotate/internal/core"
+	"github.com/onXmaps/osm/annotate/shared"
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/planar"
