@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 // Note returns the note from the osm rest api.

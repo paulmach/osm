@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/paulmach/orb"
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 // Segment is a section of a multipolygon with some extra information

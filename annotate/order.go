@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 // RelationHistoryDatasourcer is an more strict interface for when we only need the relation history.

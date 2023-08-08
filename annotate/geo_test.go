@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/paulmach/orb"
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestWayPointOnSurface(t *testing.T) {

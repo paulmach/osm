@@ -6,7 +6,7 @@ import (
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geojson"
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestConvert_polygon(t *testing.T) {

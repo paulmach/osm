@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestScanner(t *testing.T) {

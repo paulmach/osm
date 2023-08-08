@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/paulmach/orb/geojson"
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 var nodeXML = `

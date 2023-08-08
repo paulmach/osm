@@ -1,6 +1,10 @@
-module github.com/onXmaps/osm
+module github.com/paulmach/osm
 
 go 1.13
+
+replace (
+	github.com/paulmach/osm => github.com/onXmaps/osm v0.0.0
+)
 
 require (
 	github.com/datadog/czlib v0.0.0-20160811164712-4bc9a24e37f2

@@ -6,8 +6,8 @@ import (
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
-	"github.com/onXmaps/osm"
-	"github.com/onXmaps/osm/internal/mputil"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/internal/mputil"
 )
 
 func wayPointOnSurface(w *osm.Way) orb.Point {
