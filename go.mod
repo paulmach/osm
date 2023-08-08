@@ -1,4 +1,4 @@
-module github.com/onXmaps/osm
+module github.com/paulmach/osm
 
 go 1.13
 

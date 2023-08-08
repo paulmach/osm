@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestNote_urls(t *testing.T) {

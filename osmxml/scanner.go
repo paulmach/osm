@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 var _ osm.Scanner = &Scanner{}

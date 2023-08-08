@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 // Relation returns the latest version of the relation from the osm rest api.

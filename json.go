@@ -12,7 +12,7 @@ import (
 //
 //	import (
 //	  jsoniter "github.com/json-iterator/go"
-//	  "github.com/onXmaps/osm"
+//	  "github.com/paulmach/osm"
 //	)
 //
 //	var c = jsoniter.Config{
@@ -36,7 +36,7 @@ var CustomJSONMarshaler interface {
 //
 //	import (
 //	  jsoniter "github.com/json-iterator/go"
-//	  "github.com/onXmaps/osm"
+//	  "github.com/paulmach/osm"
 //	)
 //
 //	var c = jsoniter.Config{

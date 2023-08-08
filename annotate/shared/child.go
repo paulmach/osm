@@ -5,7 +5,7 @@ package shared
 import (
 	"time"
 
-	"github.com/onXmaps/osm"
+	"github.com/paulmach/osm"
 )
 
 // A Child represents a node, way or relation that is a dependent for

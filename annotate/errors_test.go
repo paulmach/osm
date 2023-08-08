@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/onXmaps/osm/annotate/internal/core"
+	"github.com/paulmach/osm/annotate/internal/core"
 )
 
 func TestMapErrors(t *testing.T) {
