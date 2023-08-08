@@ -35,7 +35,7 @@ type Way struct {
 	UserID      UserID             `xml:"uid,attr" json:"uid,omitempty"`
 	Visible     bool               `xml:"visible,attr" json:"visible"`
 	Version     int                `xml:"version,attr,omitempty" json:"version,omitempty"`
-	ChangesetID ChangesetID        `xml:"changeset,attr,omitempty" json:"changeset,omitempty"`
+	ChangesetID ChangesetID        `xml:"changeset,attr" json:"changeset"`
 	Timestamp   time.Time          `xml:"timestamp,attr" json:"timestamp"`
 	Nodes       WayNodes           `xml:"nd" json:"nodes"`
 	Tags        Tags               `xml:"tag" json:"tags,omitempty"`
