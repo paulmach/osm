@@ -2,6 +2,7 @@ package osmpbf
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"time"
 
@@ -74,6 +75,7 @@ func (e *encoder) flush() error {
 func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 	blob := &osmpbf.Blob{}
 	blob.RawSize = proto.Int32(int32(len(data)))
+	fmt.Println("blob.RawSize", blob.RawSize)
 	if e.compress {
 		target := &bytes.Buffer{}
 		// compress the data
@@ -94,6 +96,8 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 		Datasize: proto.Int32(int32(len(blobData))),
 		Type:     proto.String(osmType),
 	}
+
+	fmt.Println("blobHeader.Datasize", blobHeader.Datasize)
 
 	blobHeaderData, err := proto.Marshal(blobHeader)
 	if err != nil {
