@@ -2,7 +2,7 @@ package osmpbf
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/binary"
 	"io"
 	"time"
 
@@ -33,14 +33,10 @@ func NewWriter(w io.Writer) (Writer, error) {
 		return nil, err
 	}
 
-	fmt.Println("blockHeaderData:", len(blockHeaderData))
-
-	n, err := encoder.write(blockHeaderData, osmHeaderType)
+	_, err = encoder.write(blockHeaderData, osmHeaderType)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("n:", n)
 
 	return encoder, nil
 }
@@ -102,6 +98,13 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 
 	blobHeaderData, err := proto.Marshal(blobHeader)
 	if err != nil {
+		return 0, nil
+	}
+
+	size := make([]byte, 4)
+	binary.BigEndian.PutUint32(size, uint32(len(blobHeaderData)))
+
+	if _, err = e.stream.Write(size); err != nil {
 		return 0, nil
 	}
 
