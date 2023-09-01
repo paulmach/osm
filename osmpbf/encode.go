@@ -222,11 +222,11 @@ func encode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int, osm
 func EncodeDenseNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int, groupDense *osmpbf.DenseNodes, current, previous *osm.Node) {
 	groupDense.Id = append(groupDense.Id, int64(current.ID-previous.ID))
 	// cast block.Granularity to int64
-	granularity := int64(*block.Granularity)
-	currentLat := EncodeLatLon(current.Lat, int64(*block.LatOffset), granularity)
-	currentLon := EncodeLatLon(current.Lon, int64(*block.LonOffset), granularity)
-	previousLat := EncodeLatLon(previous.Lat, int64(*block.LatOffset), granularity)
-	previousLon := EncodeLatLon(previous.Lon, int64(*block.LonOffset), granularity)
+	granularity := block.GetGranularity()
+	currentLat := EncodeLatLon(current.Lat, block.GetLatOffset(), granularity)
+	currentLon := EncodeLatLon(current.Lon, block.GetLonOffset(), granularity)
+	previousLat := EncodeLatLon(previous.Lat, block.GetLatOffset(), granularity)
+	previousLon := EncodeLatLon(previous.Lon, block.GetLonOffset(), granularity)
 	latDiff := currentLat - previousLat
 	lonDiff := currentLon - previousLon
 	groupDense.Lat = append(groupDense.Lat, latDiff)
@@ -242,7 +242,7 @@ func EncodeDenseNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string
 
 	if groupDense.Denseinfo != nil {
 		groupDense.Denseinfo.Changeset = append(groupDense.Denseinfo.Changeset, int64(current.ChangesetID-previous.ChangesetID))
-		dateGranularity := int64(*block.DateGranularity)
+		dateGranularity := block.GetDateGranularity()
 		currentTimeStamp := EncodeTimestamp(current.Timestamp, dateGranularity)
 		previousTimeStamp := EncodeTimestamp(previous.Timestamp, dateGranularity)
 		groupDense.Denseinfo.Timestamp = append(groupDense.Denseinfo.Timestamp, currentTimeStamp-previousTimeStamp)
@@ -269,7 +269,7 @@ func EncodeNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int,
 		pbfNode.Info.Changeset = &changesetId
 	}
 	if !node.Timestamp.IsZero() {
-		timeStamp := EncodeTimestamp(node.Timestamp, int64(*block.DateGranularity))
+		timeStamp := EncodeTimestamp(node.Timestamp, block.GetDateGranularity())
 		pbfNode.Info.Timestamp = &timeStamp
 	}
 	if node.UserID != 0 {
@@ -282,9 +282,9 @@ func EncodeNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int,
 		nodeVersion := int32(node.Version)
 		pbfNode.Info.Version = &nodeVersion
 	}
-	lat := EncodeLatLon(node.Lat, *block.LatOffset, int64(*block.Granularity))
+	lat := EncodeLatLon(node.Lat, *block.LatOffset, block.GetGranularity())
 	pbfNode.Lat = &lat
-	lon := EncodeLatLon(node.Lon, *block.LonOffset, int64(*block.Granularity))
+	lon := EncodeLatLon(node.Lon, *block.LonOffset, block.GetGranularity())
 	pbfNode.Lon = &lon
 
 	if len(node.Tags) > 0 {
@@ -308,7 +308,7 @@ func EncodeWay(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int, 
 		pbfWay.Info.Changeset = (*int64)(&way.ChangesetID)
 	}
 	if !way.Timestamp.IsZero() {
-		timestamp := EncodeTimestamp(way.Timestamp, int64(*block.DateGranularity))
+		timestamp := EncodeTimestamp(way.Timestamp, block.GetDateGranularity())
 		pbfWay.Info.Timestamp = &timestamp
 	}
 	if way.UserID != 0 {
@@ -346,7 +346,7 @@ func EncodeRelation(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]
 		},
 	}
 	if !relation.Timestamp.IsZero() {
-		timestamp := EncodeTimestamp(relation.Timestamp, int64(*block.DateGranularity))
+		timestamp := EncodeTimestamp(relation.Timestamp, block.GetDateGranularity())
 		pbfRelation.Info.Timestamp = &timestamp
 	}
 	if relation.UserID != 0 {
@@ -392,12 +392,12 @@ func EncodeRelation(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]
 	return pbfRelation
 }
 
-func EncodeLatLon(value float64, offset, granularity int64) int64 {
-	return (int64(value/.000000001) - offset) / granularity
+func EncodeLatLon(value float64, offset int64, granularity int32) int64 {
+	return (int64(value/.000000001) - offset) / int64(granularity)
 }
 
-func EncodeTimestamp(timestamp time.Time, dateGranularity int64) int64 {
-	return timestamp.Unix() / dateGranularity
+func EncodeTimestamp(timestamp time.Time, dateGranularity int32) int64 {
+	return timestamp.Unix() / int64(dateGranularity)
 }
 
 func EncodeString(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int, value string) int32 {
