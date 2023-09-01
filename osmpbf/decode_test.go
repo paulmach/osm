@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/paulmach/osm"
+	"github.com/nextmv-io/osm"
 )
 
 const (

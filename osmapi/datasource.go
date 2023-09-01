@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/paulmach/osm"
+	"github.com/nextmv-io/osm"
 )
 
 // BaseURL defines the api host. This can be change to hit
@@ -18,8 +18,9 @@ const BaseURL = "http://api.openstreetmap.org/api/0.6"
 // A RateLimiter is something that can wait until its next allowed request.
 // This interface is met by `golang.org/x/time/rate.Limiter` and is meant
 // to be used with it. For example:
-//		// 10 qps
-//		osmapi.DefaultDatasource.Limiter = rate.NewLimiter(10, 1)
+//
+//	// 10 qps
+//	osmapi.DefaultDatasource.Limiter = rate.NewLimiter(10, 1)
 type RateLimiter interface {
 	Wait(context.Context) error
 }

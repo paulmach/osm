@@ -1,4 +1,4 @@
-module github.com/paulmach/osm
+module github.com/nextmv-io/osm
 
 go 1.13
 

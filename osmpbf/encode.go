@@ -5,8 +5,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
+	"github.com/nextmv-io/osm"
+	"github.com/nextmv-io/osm/osmpbf/internal/osmpbf"
 	"google.golang.org/protobuf/proto"
 )
 

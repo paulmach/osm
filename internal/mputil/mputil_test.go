@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/nextmv-io/osm"
 	"github.com/paulmach/orb"
-	"github.com/paulmach/osm"
 )
 
 func TestMultiSegment_LineString(t *testing.T) {
