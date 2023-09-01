@@ -32,7 +32,7 @@ func NewWriter(w io.Writer) (Writer, error) {
 		return nil, err
 	}
 
-	_, err = encoder.write(blockHeaderData)
+	_, err = encoder.write(blockHeaderData, osmHeaderType)
 	if err != nil {
 		return nil, err
 	}
@@ -67,11 +67,11 @@ func (e *encoder) flush() error {
 	if err != nil {
 		return nil
 	}
-	_, err = e.write(blockData)
+	_, err = e.write(blockData, osmDataType)
 	return err
 }
 
-func (e *encoder) write(data []byte) (n int, err error) {
+func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 	blob := &osmpbf.Blob{}
 	blob.RawSize = proto.Int32(int32(len(data)))
 	if e.compress {
@@ -92,7 +92,7 @@ func (e *encoder) write(data []byte) (n int, err error) {
 
 	blobHeader := &osmpbf.BlobHeader{
 		Datasize: proto.Int32(int32(len(blobData))),
-		Type:     proto.String(osmDataType),
+		Type:     proto.String(osmType),
 	}
 
 	blobHeaderData, err := proto.Marshal(blobHeader)
