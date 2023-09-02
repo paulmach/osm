@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
+	"sync"
 	"time"
 
 	"github.com/nextmv-io/osm"
@@ -45,6 +46,7 @@ type encoder struct {
 	stream             io.Writer
 	reverseStringTable map[string]int
 	entities           []osm.Object
+	mu                 sync.Mutex
 	compress           bool
 }
 
@@ -73,6 +75,8 @@ func (e *encoder) flush() error {
 }
 
 func (e *encoder) write(data []byte, osmType string) (n int, err error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	blob := &osmpbf.Blob{}
 	blob.RawSize = proto.Int32(int32(len(data)))
 	if e.compress {
