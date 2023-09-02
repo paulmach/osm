@@ -261,21 +261,21 @@ func EncodeDenseNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string
 	}
 	groupDense.KeysVals = append(groupDense.KeysVals, 0)
 
-	// if groupDense.Denseinfo != nil {
-	// 	groupDense.Denseinfo.Changeset = append(groupDense.Denseinfo.Changeset, int64(current.ChangesetID-previous.ChangesetID))
-	// 	dateGranularity := block.GetDateGranularity()
-	// 	currentTimeStamp := EncodeTimestamp(current.Timestamp, dateGranularity)
-	// 	previousTimeStamp := EncodeTimestamp(previous.Timestamp, dateGranularity)
-	// 	groupDense.Denseinfo.Timestamp = append(groupDense.Denseinfo.Timestamp, currentTimeStamp-previousTimeStamp)
-	// 	groupDense.Denseinfo.Uid = append(groupDense.Denseinfo.Uid, int32(current.UserID-previous.UserID))
-	// 	groupDense.Denseinfo.Version = append(groupDense.Denseinfo.Version, int32(current.Version-previous.Version))
-	// 	var previousUserNameId int32 = 0
-	// 	if previous.User != "" {
-	// 		previousUserNameId = EncodeString(block, reverseStringTable, previous.User)
-	// 	}
-	// 	currentUserNameId := EncodeString(block, reverseStringTable, current.User)
-	// 	groupDense.Denseinfo.UserSid = append(groupDense.Denseinfo.UserSid, currentUserNameId-previousUserNameId)
-	// }
+	if groupDense.Denseinfo != nil {
+		groupDense.Denseinfo.Changeset = append(groupDense.Denseinfo.Changeset, int64(current.ChangesetID-previous.ChangesetID))
+		dateGranularity := block.GetDateGranularity()
+		currentTimeStamp := EncodeTimestamp(current.Timestamp, dateGranularity)
+		previousTimeStamp := EncodeTimestamp(previous.Timestamp, dateGranularity)
+		groupDense.Denseinfo.Timestamp = append(groupDense.Denseinfo.Timestamp, currentTimeStamp-previousTimeStamp)
+		groupDense.Denseinfo.Uid = append(groupDense.Denseinfo.Uid, int32(current.UserID-previous.UserID))
+		groupDense.Denseinfo.Version = append(groupDense.Denseinfo.Version, int32(current.Version-previous.Version))
+		var previousUserNameId int32 = 0
+		if previous.User != "" {
+			previousUserNameId = EncodeString(block, reverseStringTable, previous.User)
+		}
+		currentUserNameId := EncodeString(block, reverseStringTable, current.User)
+		groupDense.Denseinfo.UserSid = append(groupDense.Denseinfo.UserSid, currentUserNameId-previousUserNameId)
+	}
 }
 
 func EncodeNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int, pbfNode *osmpbf.Node, node *osm.Node) *osmpbf.Node {
