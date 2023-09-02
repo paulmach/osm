@@ -45,9 +45,9 @@ func NewWriter(w io.Writer) (Writer, error) {
 type encoder struct {
 	stream             io.Writer
 	reverseStringTable map[string]int
+	lastWrittenType    osm.Type
 	entities           []osm.Object
 	mu                 sync.Mutex
-	lastWrittenType    osm.Type
 	compress           bool
 }
 
