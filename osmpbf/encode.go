@@ -92,8 +92,8 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 	}
 
 	blobHeader := &osmpbf.BlobHeader{
-		Datasize: proto.Int32(int32(len(blobData))),
 		Type:     proto.String(osmType),
+		Datasize: proto.Int32(int32(len(blobData))),
 	}
 
 	blobHeaderData, err := proto.Marshal(blobHeader)
@@ -405,7 +405,7 @@ func EncodeLatLon(value float64, offset int64, granularity int32) int64 {
 }
 
 func EncodeTimestamp(timestamp time.Time, dateGranularity int32) int64 {
-	return timestamp.Unix() / int64(dateGranularity)
+	return timestamp.UnixMilli() / int64(dateGranularity)
 }
 
 func EncodeString(block *osmpbf.PrimitiveBlock, reverseStringTable map[string]int, value string) int32 {
