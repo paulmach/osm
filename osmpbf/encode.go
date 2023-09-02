@@ -47,6 +47,7 @@ type encoder struct {
 	reverseStringTable map[string]int
 	entities           []osm.Object
 	mu                 sync.Mutex
+	lastWrittenType    osm.Type
 	compress           bool
 }
 
@@ -120,6 +121,14 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 func (e *encoder) WriteObject(obj osm.Object) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
+
+	if e.lastWrittenType != obj.ObjectID().Type() {
+		if err := e.flush(); err != nil {
+			return err
+		}
+		e.lastWrittenType = obj.ObjectID().Type()
+	}
+
 	e.entities = append(e.entities, obj)
 	if len(e.entities) >= 8000 {
 		return e.flush()
