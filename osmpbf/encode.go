@@ -253,13 +253,13 @@ func EncodeDenseNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string
 	groupDense.Lat = append(groupDense.Lat, latDiff)
 	groupDense.Lon = append(groupDense.Lon, lonDiff)
 
-	// if current.Tags != nil {
-	// 	for _, nodeTag := range current.Tags {
-	// 		groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Key))
-	// 		groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Value))
-	// 	}
-	// 	groupDense.KeysVals = append(groupDense.KeysVals, 0)
-	// }
+	if current.Tags != nil {
+		for _, nodeTag := range current.Tags {
+			groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Key))
+			groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Value))
+		}
+		groupDense.KeysVals = append(groupDense.KeysVals, 0)
+	}
 
 	// if groupDense.Denseinfo != nil {
 	// 	groupDense.Denseinfo.Changeset = append(groupDense.Denseinfo.Changeset, int64(current.ChangesetID-previous.ChangesetID))
