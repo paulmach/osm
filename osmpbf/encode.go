@@ -253,7 +253,7 @@ func EncodeDenseNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string
 	groupDense.Lat = append(groupDense.Lat, latDiff)
 	groupDense.Lon = append(groupDense.Lon, lonDiff)
 
-	if current.Tags != nil {
+	if len(current.Tags) > 0 {
 		for _, nodeTag := range current.Tags {
 			groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Key))
 			groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Value))
