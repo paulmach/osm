@@ -75,8 +75,6 @@ func (e *encoder) flush() error {
 }
 
 func (e *encoder) write(data []byte, osmType string) (n int, err error) {
-	e.mu.Lock()
-	defer e.mu.Unlock()
 	blob := &osmpbf.Blob{}
 	blob.RawSize = proto.Int32(int32(len(data)))
 	if e.compress {
@@ -120,6 +118,8 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 }
 
 func (e *encoder) WriteObject(obj osm.Object) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	e.entities = append(e.entities, obj)
 	if len(e.entities) >= 8000 {
 		return e.flush()
