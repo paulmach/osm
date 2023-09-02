@@ -258,8 +258,8 @@ func EncodeDenseNode(block *osmpbf.PrimitiveBlock, reverseStringTable map[string
 			groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Key))
 			groupDense.KeysVals = append(groupDense.KeysVals, EncodeString(block, reverseStringTable, nodeTag.Value))
 		}
-		groupDense.KeysVals = append(groupDense.KeysVals, 0)
 	}
+	groupDense.KeysVals = append(groupDense.KeysVals, 0)
 
 	// if groupDense.Denseinfo != nil {
 	// 	groupDense.Denseinfo.Changeset = append(groupDense.Denseinfo.Changeset, int64(current.ChangesetID-previous.ChangesetID))
