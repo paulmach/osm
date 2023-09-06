@@ -13,23 +13,23 @@ import (
 
 func TestEncodeDecode(t *testing.T) {
 	buffer := bytes.Buffer{}
-	writer, err := NewWriter(&buffer)
+	writer, err := NewEncoder(&buffer)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// write node
-	err = writer.WriteObject(en)
+	err = writer.Encode(en)
 	if err != nil {
 		t.Fatal(err)
 	}
 	// write way
-	err = writer.WriteObject(ew)
+	err = writer.Encode(ew)
 	if err != nil {
 		t.Fatal(err)
 	}
 	// write relation
-	err = writer.WriteObject(er)
+	err = writer.Encode(er)
 	if err != nil {
 		t.Fatal(err)
 	}

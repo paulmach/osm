@@ -12,16 +12,16 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// Writer is an interface for writing osm data. The format written is the osm
+// Encoder is an interface for encoding osm data. The format written is the osm
 // pbf format.
-type Writer interface {
+type Encoder interface {
 	io.Closer
-	WriteObject(obj osm.Object) error
+	Encode(obj osm.Object) error
 }
 
-func NewWriter(w io.Writer) (Writer, error) {
+func NewEncoder(w io.Writer) (Encoder, error) {
 	encoder := &encoder{
-		stream:             w,
+		writer:             w,
 		reverseStringTable: make(map[string]int),
 		compress:           true,
 	}
@@ -43,7 +43,7 @@ func NewWriter(w io.Writer) (Writer, error) {
 }
 
 type encoder struct {
-	stream             io.Writer
+	writer             io.Writer
 	reverseStringTable map[string]int
 	lastWrittenType    osm.Type
 	entities           []osm.Object
@@ -107,18 +107,18 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 	size := make([]byte, 4)
 	binary.BigEndian.PutUint32(size, uint32(len(blobHeaderData)))
 
-	if _, err = e.stream.Write(size); err != nil {
+	if _, err = e.writer.Write(size); err != nil {
 		return 0, nil
 	}
 
-	if _, err = e.stream.Write(blobHeaderData); err != nil {
+	if _, err = e.writer.Write(blobHeaderData); err != nil {
 		return 0, nil
 	}
 
-	return e.stream.Write(blobData)
+	return e.writer.Write(blobData)
 }
 
-func (e *encoder) WriteObject(obj osm.Object) error {
+func (e *encoder) Encode(obj osm.Object) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
