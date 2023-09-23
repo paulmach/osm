@@ -1,7 +1,6 @@
 package osmpbf
 
 import (
-	"bytes"
 	"context"
 	"encoding/binary"
 	"errors"
@@ -344,28 +343,8 @@ func getData(blob *osmpbf.Blob, data []byte) ([]byte, error) {
 		return blob.GetRaw(), nil
 
 	case blob.ZlibData != nil:
-		r, err := zlibReader(blob.GetZlibData())
-		if err != nil {
-			return nil, err
-		}
+		return decompress(blob.GetZlibData(), (int)(blob.GetRawSize()), data)
 
-		// using the bytes.Buffer allows for the preallocation of the necessary space.
-		l := blob.GetRawSize() + bytes.MinRead
-		if cap(data) < int(l) {
-			data = make([]byte, 0, l+l/10)
-		} else {
-			data = data[:0]
-		}
-		buf := bytes.NewBuffer(data)
-		if _, err = buf.ReadFrom(r); err != nil {
-			return nil, err
-		}
-
-		if buf.Len() != int(blob.GetRawSize()) {
-			return nil, fmt.Errorf("raw blob data size %d but expected %d", buf.Len(), blob.GetRawSize())
-		}
-
-		return buf.Bytes(), nil
 	default:
 		return nil, errors.New("unknown blob data")
 	}

@@ -80,31 +80,39 @@ This package supports reading OSM PBF files where the ways have been annotated w
 
 Coordinates are stored in the `Lat` and `Lon` fields of each `WayNode`. There is no need to specify an explicit option; when the node locations are present on the ways, they are loaded automatically. For more info about the OSM PBF format extension, see [the original blog post](https://blog.jochentopf.com/2016-04-20-node-locations-on-ways.html).
 
-## Using cgo/czlib for decompression
+## Using cgo libdeflate for decompression
 
 OSM PBF files are a set of blocks that are zlib compressed. When using the pure golang
 implementation this can account for about 1/3 of the read time. When cgo is enabled
-the package will used [czlib](https://github.com/DataDog/czlib).
+the package [go-libdeflate](https://github.com/4kills/libdeflate) will used.
+
+Previous versions used the lib czlib based on zlib. libdeflate is more performant
+and more memory efficient for uncompressing.
 
 ```
 $ CGO_ENABLED=0 go test -bench . > disabled.txt
 $ CGO_ENABLED=1 go test -bench . > enabled.txt
 $ benchcmp disabled.txt enabled.txt
-benchmark                        old ns/op     new ns/op     delta
-BenchmarkLondon-12               312294630     229927205     -26.37%
-BenchmarkLondon_nodes-12         246562457     160021768     -35.10%
-BenchmarkLondon_ways-12          216803544     134747327     -37.85%
-BenchmarkLondon_relations-12     158722633     80560144      -49.24%
+benchmark                              old ns/op     new ns/op     delta
+BenchmarkLondon-8                      361519289     275254714     -23.86%
+BenchmarkLondon_withFiltersTrue-8      392469042     263935960     -32.75%
+BenchmarkLondon_withFiltersFalse-8     310824940     200477972     -35.50%
+BenchmarkLondon_nodes-8                295277528     180614979     -38.83%
+BenchmarkLondon_ways-8                 257494509     140700970     -45.36%
+BenchmarkLondon_relations-8            189490128     75263200      -60.28%
 
-benchmark                        old allocs     new allocs     delta
-BenchmarkLondon-12               2469128        2416804        -2.12%
-BenchmarkLondon_nodes-12         1056166        1003850        -4.95%
-BenchmarkLondon_ways-12          1845032        1792716        -2.84%
-BenchmarkLondon_relations-12     509090         456772         -10.28%
+benchmark                              old allocs     new allocs     delta
+BenchmarkLondon-8                      4863784        4808526        -1.14%
+BenchmarkLondon_withFiltersTrue-8      4863786        4808515        -1.14%
+BenchmarkLondon_withFiltersFalse-8     1419995        1364724        -3.89%
+BenchmarkLondon_nodes-8                3450825        3395559        -1.60%
+BenchmarkLondon_ways-8                 1851359        1796099        -2.98%
+BenchmarkLondon_relations-8            515422         460152         -10.72%
 
-benchmark                        old bytes     new bytes     delta
-BenchmarkLondon-12               963734544     954877896     -0.92%
-BenchmarkLondon_nodes-12         658337435     649482060     -1.35%
-BenchmarkLondon_ways-12          441674734     432819378     -2.00%
-BenchmarkLondon_relations-12     187941609     179086389     -4.71%
-```
+benchmark                              old bytes     new bytes     delta
+BenchmarkLondon-8                      947061317     924789892     -2.35%
+BenchmarkLondon_withFiltersTrue-8      947061146     924787588     -2.35%
+BenchmarkLondon_withFiltersFalse-8     388725836     366452840     -5.73%
+BenchmarkLondon_nodes-8                641663624     619391213     -3.47%
+BenchmarkLondon_ways-8                 460631859     438360054     -4.84%
+BenchmarkLondon_relations-8            206899749     184626277     -10.77%

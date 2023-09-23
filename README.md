@@ -142,9 +142,9 @@ BenchmarkChange_UnmarshalJSON-12     287707        317723        +10.43%
 ## CGO and zlib
 
 OSM PBF data comes in blocks, each block is zlib compressed. Decompressing this
-data takes about 33% of the total read time. [DataDog/czlib](https://github.com/DataDog/czlib) is
-used to speed this process.
-See [osmpbf/README.md](osmpbf#using-cgoczlib-for-decompression) for more details.
+data takes about 33% of the total read time. [4kills/go-libdeflate](https://github.com/4kills/go-libdeflate) is
+used to speed up decompressing.
+See [osmpbf/README.md](osmpbf#using-libdeflate-for-decompression) for more details.
 
 As a result, a C compiler is necessary to install this module. On macOS this may require
 installing pkg-config using something like `brew install pkg-config`
