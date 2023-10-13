@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/paulmach/osm"
+	"github.com/nextmv-io/osm"
 )
 
 func TestRelation_urls(t *testing.T) {

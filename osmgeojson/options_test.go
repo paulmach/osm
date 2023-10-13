@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 	"testing"
 
+	"github.com/nextmv-io/osm"
 	"github.com/paulmach/orb/geojson"
-	"github.com/paulmach/osm"
 )
 
 var nodeXML = `

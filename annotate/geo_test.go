@@ -4,8 +4,8 @@ import (
 	"encoding/xml"
 	"testing"
 
+	"github.com/nextmv-io/osm"
 	"github.com/paulmach/orb"
-	"github.com/paulmach/osm"
 )
 
 func TestWayPointOnSurface(t *testing.T) {
