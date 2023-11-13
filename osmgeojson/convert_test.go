@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/nextmv-io/osm"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geojson"
+	"github.com/paulmach/osm"
 )
 
 func TestConvert(t *testing.T) {

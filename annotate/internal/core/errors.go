@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nextmv-io/osm"
+	"github.com/paulmach/osm"
 )
 
 // NoHistoryError is returned if there is no entry in the history

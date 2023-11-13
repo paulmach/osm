@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/annotate/shared"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 var (

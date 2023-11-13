@@ -3,9 +3,9 @@ package annotate
 import (
 	"context"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/annotate/internal/core"
-	"github.com/nextmv-io/osm/annotate/shared"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/internal/core"
+	"github.com/paulmach/osm/annotate/shared"
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/planar"

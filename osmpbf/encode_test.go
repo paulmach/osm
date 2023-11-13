@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/nextmv-io/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestEncodeDecode(t *testing.T) {

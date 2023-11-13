@@ -8,9 +8,9 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/osmpbf"
-	"github.com/nextmv-io/osm/osmxml"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/osmpbf"
+	"github.com/paulmach/osm/osmxml"
 )
 
 func main() {

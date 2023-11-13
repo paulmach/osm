@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/nextmv-io/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestWays(t *testing.T) {

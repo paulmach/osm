@@ -3,8 +3,8 @@ package annotate
 import (
 	"time"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/annotate/internal/core"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/internal/core"
 )
 
 // Option is a parameter that can be used for annotating.

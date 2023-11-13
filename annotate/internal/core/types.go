@@ -3,8 +3,8 @@ package core
 import (
 	"time"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/annotate/shared"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/annotate/shared"
 )
 
 // A Parent is something that holds children. ie. ways have nodes as children

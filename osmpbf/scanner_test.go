@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nextmv-io/osm"
+	"github.com/paulmach/osm"
 )
 
 var (

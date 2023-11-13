@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nextmv-io/osm"
+	"github.com/paulmach/osm"
 )
 
 func TestEdgeCase_childCreatedAfterParent(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/nextmv-io/osm"
+	"github.com/paulmach/osm"
 )
 
 // Way returns the latest version of the way from the osm rest api.

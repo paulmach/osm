@@ -4,10 +4,10 @@ import (
 	"math"
 	"time"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/internal/mputil"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geo"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/internal/mputil"
 )
 
 func wayPointOnSurface(w *osm.Way) orb.Point {

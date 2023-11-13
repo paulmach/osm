@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/osmpbf/internal/osmpbf"
+	"github.com/paulmach/osm"
+	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
 	"github.com/paulmach/protoscan"
 	"google.golang.org/protobuf/proto"
 )
