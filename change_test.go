@@ -236,23 +236,6 @@ func TestChange_HistoryDatasource(t *testing.T) {
 	}
 }
 
-func cleanXMLNameFromChange(c *Change) {
-	c.Version = ""
-	c.Generator = ""
-	c.Copyright = ""
-	c.Attribution = ""
-	c.License = ""
-	if c.Create != nil {
-		cleanXMLNameFromOSM(c.Create)
-	}
-	if c.Modify != nil {
-		cleanXMLNameFromOSM(c.Modify)
-	}
-	if c.Delete != nil {
-		cleanXMLNameFromOSM(c.Delete)
-	}
-}
-
 func BenchmarkChange_MarshalXML(b *testing.B) {
 	filename := "testdata/changeset_38162206.osc"
 	data := readFile(b, filename)

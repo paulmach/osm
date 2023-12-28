@@ -14,7 +14,10 @@ func BenchmarkConvert(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o)
+		_, err := Convert(o)
+		if err != nil {
+			b.Fatalf("convert error: %v", err)
+		}
 	}
 }
 
@@ -25,7 +28,10 @@ func BenchmarkConvertAnnotated(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o)
+		_, err := Convert(o)
+		if err != nil {
+			b.Fatalf("convert error: %v", err)
+		}
 	}
 }
 
@@ -35,7 +41,10 @@ func BenchmarkConvert_NoID(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoID(true))
+		_, err := Convert(o, NoID(true))
+		if err != nil {
+			b.Fatalf("convert error: %v", err)
+		}
 	}
 }
 
@@ -45,7 +54,10 @@ func BenchmarkConvert_NoMeta(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoMeta(true))
+		_, err := Convert(o, NoMeta(true))
+		if err != nil {
+			b.Fatalf("convert error: %v", err)
+		}
 	}
 }
 
@@ -55,7 +67,10 @@ func BenchmarkConvert_NoRelationMembership(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoRelationMembership(true))
+		_, err := Convert(o, NoRelationMembership(true))
+		if err != nil {
+			b.Fatalf("convert error: %v", err)
+		}
 	}
 }
 
@@ -65,7 +80,10 @@ func BenchmarkConvert_NoIDsMetaMembership(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		Convert(o, NoID(true), NoMeta(true), NoRelationMembership(true))
+		_, err := Convert(o, NoID(true), NoMeta(true), NoRelationMembership(true))
+		if err != nil {
+			b.Fatalf("convert error: %v", err)
+		}
 	}
 }
 

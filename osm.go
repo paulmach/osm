@@ -3,7 +3,6 @@ package osm
 import (
 	"encoding/xml"
 	"fmt"
-	"regexp"
 )
 
 // These values should be returned if the osm data is actual
@@ -367,13 +366,21 @@ func (o *OSM) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-var jsonTypeRegexp = regexp.MustCompile(`"type"\s*:\s*"([^"]*)"`)
+type typeStruct struct {
+	Type string `json:"type"`
+}
 
 func findType(index int, data []byte) (string, error) {
-	matches := jsonTypeRegexp.FindAllSubmatch(data, 1)
-	if len(matches) > 0 {
-		return string(matches[0][1]), nil
+	ts := typeStruct{}
+	err := unmarshalJSON(data, &ts)
+	if err != nil {
+		// should not happened due to previous decoding succeeded
+		return "", err
 	}
 
-	return "", fmt.Errorf("could not find type in element index %d", index)
+	if ts.Type == "" {
+		return "", fmt.Errorf("could not find type in element index %d", index)
+	}
+
+	return ts.Type, nil
 }
