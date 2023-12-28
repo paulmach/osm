@@ -1,6 +1,6 @@
 module github.com/paulmach/osm
 
-go 1.13
+go 1.16
 
 require (
 	github.com/datadog/czlib v0.0.0-20160811164712-4bc9a24e37f2

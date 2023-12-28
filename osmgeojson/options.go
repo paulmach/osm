@@ -20,7 +20,7 @@ func NoMeta(yes bool) Option {
 	}
 }
 
-// NoRelationMembership will omit the the list of relations
+// NoRelationMembership will omit the list of relations
 // an element is a member of from the output geojson features.
 func NoRelationMembership(yes bool) Option {
 	return func(ctx *context) error {

@@ -52,7 +52,7 @@ func wayCentroid(w *osm.Way) orb.Point {
 	return point
 }
 
-// orientation will annotate the the orientation of multipolygon relation members.
+// orientation will annotate the orientation of multipolygon relation members.
 // This makes it possible to reconstruct relations with partial data in the right direction.
 // Return value indicates if the result is 'tainted', e.g. not all way members were present.
 func orientation(members osm.Members, ways map[osm.WayID]*osm.Way, at time.Time) bool {

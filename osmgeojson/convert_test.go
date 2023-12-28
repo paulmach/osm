@@ -674,7 +674,7 @@ type rawFC struct {
 func jsonLoop(t *testing.T, fc *geojson.FeatureCollection) *rawFC {
 	data, err := json.Marshal(fc)
 	if err != nil {
-		t.Fatalf("unabled to marshal fc: %v", err)
+		t.Fatalf("unable to marshal fc: %v", err)
 	}
 
 	result := &rawFC{}

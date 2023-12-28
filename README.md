@@ -120,7 +120,7 @@ var c = jsoniter.Config{
   MarshalFloatWith6Digits: true,
 }.Froze()
 
-osmm.CustomJSONMarshaler = c
+osm.CustomJSONMarshaler = c
 osm.CustomJSONUnmarshaler = c
 ```
 

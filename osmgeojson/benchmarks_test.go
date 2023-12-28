@@ -2,7 +2,7 @@ package osmgeojson
 
 import (
 	"encoding/xml"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/paulmach/osm"
@@ -88,7 +88,7 @@ func BenchmarkConvert_NoIDsMetaMembership(b *testing.B) {
 }
 
 func parseFile(t testing.TB, filename string) *osm.OSM {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		t.Fatalf("could not read file: %v", err)
 	}

@@ -61,7 +61,7 @@ func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {
 		}
 
 		if len(ls) == 0 {
-			// we have the way but none the the node members
+			// we have the way but none of the node members
 			continue
 		}
 
