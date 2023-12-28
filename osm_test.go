@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
-	"io"
-	"os"
 	"reflect"
 	"testing"
 )
@@ -300,19 +298,4 @@ func TestOSM_MarshalXML(t *testing.T) {
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
-}
-
-func readFile(t testing.TB, filename string) []byte {
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatalf("unable to open %s: %v", filename, err)
-	}
-	defer f.Close()
-
-	data, err := io.ReadAll(f)
-	if err != nil {
-		t.Fatalf("unable to read file %s: %v", filename, err)
-	}
-
-	return data
 }

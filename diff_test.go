@@ -2,6 +2,7 @@ package osm
 
 import (
 	"encoding/xml"
+	"os"
 	"reflect"
 	"testing"
 )
@@ -72,10 +73,13 @@ func TestDiff_MarshalXML(t *testing.T) {
 }
 
 func TestDiff(t *testing.T) {
-	data := readFile(t, "testdata/annotated_diff.xml")
+	data, err := os.ReadFile("testdata/annotated_diff.xml")
+	if err != nil {
+		t.Fatalf("unable to read file: %v", err)
+	}
 
 	diff := &Diff{}
-	err := xml.Unmarshal(data, &diff)
+	err = xml.Unmarshal(data, &diff)
 	if err != nil {
 		t.Errorf("unable to unmarshal: %v", err)
 	}
@@ -137,10 +141,13 @@ func TestDiff(t *testing.T) {
 }
 
 func BenchmarkDiff_Marshal(b *testing.B) {
-	data := readFile(b, "testdata/annotated_diff.xml")
+	data, err := os.ReadFile("testdata/annotated_diff.xml")
+	if err != nil {
+		b.Fatalf("unable to read file: %v", err)
+	}
 
 	diff := &Diff{}
-	err := xml.Unmarshal(data, &diff)
+	err = xml.Unmarshal(data, &diff)
 	if err != nil {
 		b.Fatalf("unmarshal error: %v", err)
 	}
@@ -156,7 +163,10 @@ func BenchmarkDiff_Marshal(b *testing.B) {
 }
 
 func BenchmarkDiff_Unmarshal(b *testing.B) {
-	data := readFile(b, "testdata/annotated_diff.xml")
+	data, err := os.ReadFile("testdata/annotated_diff.xml")
+	if err != nil {
+		b.Fatalf("unable to read file: %v", err)
+	}
 
 	b.ReportAllocs()
 	b.ResetTimer()

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -284,7 +285,10 @@ func TestWay_MarshalXML(t *testing.T) {
 	}
 
 	// blanket xml test
-	data = readFile(t, "testdata/way-updates.osm")
+	data, err = os.ReadFile("testdata/way-updates.osm")
+	if err != nil {
+		t.Fatalf("unable to read file: %v", err)
+	}
 
 	osm := &OSM{}
 	err = xml.Unmarshal(data, &osm)
