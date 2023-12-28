@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -36,7 +37,10 @@ func TestWays(t *testing.T) {
 			t.Errorf("expected way not equal, file saved to %s", filename)
 
 			data, _ := xml.MarshalIndent(&osm.OSM{Ways: o.Ways}, "", " ")
-			ioutil.WriteFile(filename, data, 0644)
+			err := os.WriteFile(filename, data, 0644)
+			if err != nil {
+				t.Fatalf("write error: %v", err)
+			}
 		}
 	}
 }
