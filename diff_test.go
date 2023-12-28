@@ -148,7 +148,10 @@ func BenchmarkDiff_Marshal(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		xml.Marshal(diff)
+		_, err := xml.Marshal(diff)
+		if err != nil {
+			b.Fatalf("marshal error: %v", err)
+		}
 	}
 }
 
@@ -159,6 +162,9 @@ func BenchmarkDiff_Unmarshal(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		diff := &Diff{}
-		xml.Unmarshal(data, &diff)
+		err := xml.Unmarshal(data, &diff)
+		if err != nil {
+			b.Fatalf("unmarshal error: %v", err)
+		}
 	}
 }

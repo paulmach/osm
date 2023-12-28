@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
-	"io/ioutil"
+	"io"
 	"os"
 	"reflect"
 	"testing"
@@ -280,42 +280,6 @@ func TestOSM_MarshalXML(t *testing.T) {
 	}
 }
 
-func flattenOSM(c *Change) *OSM {
-	o := c.Create
-	if o == nil {
-		o = &OSM{}
-	}
-
-	if c.Modify != nil {
-		o.Nodes = append(o.Nodes, c.Modify.Nodes...)
-		o.Ways = append(o.Ways, c.Modify.Ways...)
-		o.Relations = append(o.Relations, c.Modify.Relations...)
-	}
-
-	if c.Delete != nil {
-		o.Nodes = append(o.Nodes, c.Delete.Nodes...)
-		o.Ways = append(o.Ways, c.Delete.Ways...)
-		o.Relations = append(o.Relations, c.Delete.Relations...)
-	}
-
-	return o
-}
-
-func cleanXMLNameFromOSM(o *OSM) {
-	for _, n := range o.Nodes {
-		n.XMLName = xmlNameJSONTypeNode{}
-	}
-
-	for _, w := range o.Ways {
-		w.XMLName = xmlNameJSONTypeWay{}
-	}
-
-	for _, r := range o.Relations {
-		// r.XMLName = xml.Name{}
-		r.XMLName = xmlNameJSONTypeRel{}
-	}
-}
-
 func readFile(t testing.TB, filename string) []byte {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -323,7 +287,7 @@ func readFile(t testing.TB, filename string) []byte {
 	}
 	defer f.Close()
 
-	data, err := ioutil.ReadAll(f)
+	data, err := io.ReadAll(f)
 	if err != nil {
 		t.Fatalf("unable to read file %s: %v", filename, err)
 	}
