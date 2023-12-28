@@ -76,9 +76,15 @@ type Scanner struct {
 
 ## OSM PBF files with node locations on ways
 
-This package supports reading OSM PBF files where the ways have been annotated with the coordinates of each node. Such files can be generated using [osmium](https://osmcode.org/osmium-tool), with the [add-locations-to-ways](https://docs.osmcode.org/osmium/latest/osmium-add-locations-to-ways.html) subcommand. This feature makes it possible to work with the ways and their geometries without having to keep all node locations in some index (which takes work and memory resources).
+This package supports reading OSM PBF files where the ways have been annotated with the coordinates of each node.
+Such files can be generated using [osmium](https://osmcode.org/osmium-tool),
+with the [add-locations-to-ways](https://docs.osmcode.org/osmium/latest/osmium-add-locations-to-ways.html) subcommand.
+This feature makes it possible to work with the ways and their geometries without having to keep all node locations
+in some index (which takes work and memory resources).
 
-Coordinates are stored in the `Lat` and `Lon` fields of each `WayNode`. There is no need to specify an explicit option; when the node locations are present on the ways, they are loaded automatically. For more info about the OSM PBF format extension, see [the original blog post](https://blog.jochentopf.com/2016-04-20-node-locations-on-ways.html).
+Coordinates are stored in the `Lat` and `Lon` fields of each `WayNode`. There is no need to specify an explicit option;
+when the node locations are present on the ways, they are loaded automatically. For more info about the OSM PBF format extension,
+see [the original blog post](https://blog.jochentopf.com/2016-04-20-node-locations-on-ways.html).
 
 ## Using cgo libdeflate for decompression
 
@@ -87,7 +93,7 @@ implementation this can account for about 1/3 of the read time. When cgo is enab
 the package [go-libdeflate](https://github.com/4kills/libdeflate) will used.
 
 Previous versions used the lib czlib based on zlib. libdeflate is more performant
-and more memory efficient for uncompressing.
+and more memory efficient for decompression.
 
 ```
 $ CGO_ENABLED=0 go test -bench . > disabled.txt
