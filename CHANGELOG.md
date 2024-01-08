@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.8.0](https://github.com/paulmach/osm/compare/v0.7.1...v0.8.0) - 2024-01-08
+
+### Changed
+
+-   go 1.16 is required, updated usages of `ioutil` for similar functions in `io` and `os`
+
+### Fixed
+
+-   correctly JSON unmarshal elements with a type tag by [@paulmach](https://github.com/paulmach) in https://github.com/paulmach/osm/pull/53
+
 ## [v0.7.1](https://github.com/paulmach/osm/compare/v0.7.0...v0.7.1) - 2022-11-29
 
 ### Added
