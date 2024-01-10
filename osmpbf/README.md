@@ -19,7 +19,7 @@ defer scanner.Close()
 for scanner.Scan() {
 	switch o := scanner.Object().(type) {
 	case *osm.Node:
-	
+
 	case *osm.Way:
 
 	case *osm.Relation:
