@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/paulmach/osm"
+	"github.com/onXmaps/osm"
 )
 
 var _ SeqNum = MinuteSeqNum(0)
@@ -197,7 +197,7 @@ func (ds *Datasource) fetchState(ctx context.Context, n SeqNum) (*State, error) 
 	if n.Uint64() != 0 {
 		url = ds.baseSeqURL(n) + ".state.txt"
 	} else {
-		url = fmt.Sprintf("%s/replication/%s/state.txt", ds.baseURL(), n.Dir())
+		url = fmt.Sprintf("%s/%s/state.txt", ds.baseURL(), n.Dir())
 	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -345,7 +345,7 @@ func (ds *Datasource) changeURL(n SeqNum) string {
 
 func (ds *Datasource) baseSeqURL(sn SeqNum) string {
 	n := sn.Uint64()
-	return fmt.Sprintf("%s/replication/%s/%03d/%03d/%03d",
+	return fmt.Sprintf("%s/%s/%03d/%03d/%03d",
 		ds.baseURL(),
 		sn.Dir(),
 		n/1000000,
