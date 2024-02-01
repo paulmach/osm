@@ -3,10 +3,10 @@ package osmgeojson
 import (
 	"fmt"
 
+	"github.com/onMaps/osm"
+	"github.com/onMaps/osm/internal/mputil"
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/geojson"
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/internal/mputil"
 )
 
 func (ctx *context) buildPolygon(relation *osm.Relation) *geojson.Feature {

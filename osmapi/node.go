@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/paulmach/osm"
+	"github.com/onMaps/osm"
 )
 
 // Node returns the latest version of the node from the osm rest api.

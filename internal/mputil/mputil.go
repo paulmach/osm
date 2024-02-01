@@ -3,8 +3,8 @@ package mputil
 import (
 	"time"
 
+	"github.com/onMaps/osm"
 	"github.com/paulmach/orb"
-	"github.com/paulmach/osm"
 )
 
 // Segment is a section of a multipolygon with some extra information

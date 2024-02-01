@@ -3,8 +3,8 @@ package annotate
 import (
 	"context"
 
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/annotate/internal/core"
+	"github.com/onMaps/osm"
+	"github.com/onMaps/osm/annotate/internal/core"
 )
 
 // Change will annotate a change into a diff. It will use the

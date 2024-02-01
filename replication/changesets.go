@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/osmxml"
+	"github.com/onMaps/osm"
+	"github.com/onMaps/osm/osmxml"
 )
 
 // ChangesetSeqNum indicates the sequence of the changeset replication found here:

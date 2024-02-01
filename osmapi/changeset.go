@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/paulmach/osm"
+	"github.com/onMaps/osm"
 )
 
 // Changeset returns a given changeset from the osm rest api.

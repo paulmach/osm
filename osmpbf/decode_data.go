@@ -4,10 +4,10 @@ import (
 	"errors"
 	"time"
 
-	"google.golang.org/protobuf/proto"
-	"github.com/paulmach/osm"
-	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
+	"github.com/onMaps/osm"
+	"github.com/onMaps/osm/osmpbf/internal/osmpbf"
 	"github.com/paulmach/protoscan"
+	"google.golang.org/protobuf/proto"
 )
 
 // dataDecoder is a decoder for Blob with OSMData (PrimitiveBlock).
