@@ -6,47 +6,26 @@ import (
 	"time"
 )
 
-// BaseURL defines the default planet server to hit.
-const BaseURL = "https://planet.osm.org"
-
 // Datasource defines context around replication data requests.
 type Datasource struct {
 	BaseURL string // will use package level BaseURL if empty
 	Client  *http.Client
 }
 
-// DefaultDatasource is the Datasource used by the package level convenience functions.
-var DefaultDatasource = &Datasource{
-	Client: &http.Client{
-		Timeout: 30 * time.Minute,
-	},
-}
-
 // NewDatasource creates a Datasource using the given client.
-func NewDatasource(client *http.Client) *Datasource {
+func NewDatasource(baseURL string, client *http.Client) *Datasource {
 	return &Datasource{
-		Client: client,
+		BaseURL: baseURL,
+		Client:  client,
 	}
 }
 
 func (ds Datasource) baseURL() string {
-	if ds.BaseURL != "" {
-		return ds.BaseURL
-	}
-
-	return BaseURL
+	return ds.BaseURL
 }
 
 func (ds Datasource) client() *http.Client {
-	if ds.Client != nil {
-		return ds.Client
-	}
-
-	if DefaultDatasource.Client != nil {
-		return DefaultDatasource.Client
-	}
-
-	return http.DefaultClient
+	return ds.Client
 }
 
 // UnexpectedStatusCodeError is return for a non 200 or 404 status code.
