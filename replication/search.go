@@ -24,6 +24,18 @@ type stater struct {
 //
 // This call can do 20+ requests to the binary search the replication states.
 // Use sparingly or use a mirror.
+func StateAt(ctx context.Context, timestamp time.Time) (uint64, *State, error) {
+	return DefaultDatasource.StateAt(ctx, timestamp)
+}
+
+// StateAt will return the replication state/sequence number that contains
+// data for the given timestamp. This would be the first replication state written
+// after the timestamp. If the timestamp is after all current replication state
+// the most recent will be returned. The caller can check for this case using
+// state.Before(givenTimestamp).
+//
+// This call can do 20+ requests to the binary search the replication states.
+// Use sparingly or use a mirror.
 func (ds *Datasource) StateAt(ctx context.Context, timestamp time.Time) (uint64, *State, error) {
 	s := &stater{
 		Min: minSeqNum,

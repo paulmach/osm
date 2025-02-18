@@ -6,10 +6,21 @@ import (
 	"time"
 )
 
+// BaseURL defines the default replication server to hit.
+const BaseURL = "https://planet.osm.org/replication/minute"
+
 // Datasource defines context around replication data requests.
 type Datasource struct {
 	BaseURL string // will use package level BaseURL if empty
 	Client  *http.Client
+}
+
+// DefaultDatasource is the Datasource used by the package level convenience functions.
+var DefaultDatasource = &Datasource{
+	BaseURL: BaseURL,
+	Client: &http.Client{
+		Timeout: 30 * time.Minute,
+	},
 }
 
 // NewDatasource creates a Datasource using the given client.

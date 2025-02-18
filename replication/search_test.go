@@ -143,7 +143,7 @@ func TestFindBound(t *testing.T) {
 	}
 }
 
-func TestMinuteStateAt(t *testing.T) {
+func TestStateAt(t *testing.T) {
 	liveOnly(t)
 
 	ctx := context.Background()
@@ -159,13 +159,13 @@ func TestMinuteStateAt(t *testing.T) {
 		timestamp := base.Add(time.Duration(secs) * time.Second)
 
 		t.Logf("n: %d  timestamp: %v", i, timestamp)
-		_, state, err := MinuteStateAt(ctx, timestamp)
+		_, state, err := StateAt(ctx, timestamp)
 		if err != nil {
 			t.Fatalf("failed to get state: %v", err)
 		}
 
 		if timestamp.After(state.Timestamp) {
-			_, current, err := CurrentMinuteState(ctx)
+			_, current, err := CurrentState(ctx)
 			if err != nil {
 				t.Fatalf("could not get current state: %v", err)
 			}
@@ -178,71 +178,14 @@ func TestMinuteStateAt(t *testing.T) {
 			continue
 		}
 
-		if state.SeqNum == minMinute {
+		if state.SeqNum == minSeqNum {
 			// timestamp was before the first state
 			continue
 		}
 
 		// state's timestamp is after what we want
 		// get previous to make sure it before what we want
-		previous, err := MinuteState(ctx, MinuteSeqNum(state.SeqNum-1))
-		if err != nil {
-			t.Fatalf("could not get previous state: %v", err)
-		}
-
-		if !previous.Timestamp.Before(timestamp) {
-			t.Logf("prev:  %+v", previous)
-			t.Logf("state: %+v", state)
-			t.Fatalf("previus state not before timestamp")
-		}
-
-		t.Logf("found: %+v", state)
-	}
-}
-
-func TestChangesetStateAt(t *testing.T) {
-	liveOnly(t)
-
-	ctx := context.Background()
-
-	base := time.Date(2016, 9, 15, 0, 0, 0, 0, time.UTC)
-	now := time.Date(2022, 9, 1, 0, 0, 0, 0, time.UTC)
-	diff := int64(now.Sub(base)/time.Second + 10)
-
-	r := rand.New(rand.NewSource(42))
-
-	for i := 0; i < 10; i++ {
-		secs := r.Int63n(diff)
-		timestamp := base.Add(time.Duration(secs) * time.Second)
-
-		t.Logf("n: %d  timestamp: %v", i, timestamp)
-		_, state, err := ChangesetStateAt(ctx, timestamp)
-		if err != nil {
-			t.Fatalf("failed to get state: %v", err)
-		}
-
-		if timestamp.After(state.Timestamp) {
-			_, current, err := CurrentChangesetState(ctx)
-			if err != nil {
-				t.Fatalf("could not get current state: %v", err)
-			}
-
-			if current.SeqNum != state.SeqNum {
-				t.Logf("state: %+v", state)
-				t.Fatalf("if timstamp is before, it must be the current timestamp")
-			}
-
-			continue
-		}
-
-		if state.SeqNum == minChangeset {
-			// timestamp was before the first state
-			continue
-		}
-
-		// state's timestamp is after what we want
-		// get previous to make sure it before what we want
-		previous, err := ChangesetState(ctx, ChangesetSeqNum(state.SeqNum-1))
+		previous, err := GetState(ctx, state.SeqNum-1)
 		if err != nil {
 			t.Fatalf("could not get previous state: %v", err)
 		}

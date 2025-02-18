@@ -32,9 +32,18 @@ func (ds *Datasource) CurrentState(ctx context.Context) (uint64, *State, error) 
 	return s.SeqNum, s, err
 }
 
+// CurrentState returns the current state of the replication.
+func CurrentState(ctx context.Context) (uint64, *State, error) {
+	return DefaultDatasource.CurrentState(ctx)
+}
+
 // State returns the state of the given replication.
 func (ds *Datasource) State(ctx context.Context, seqNum uint64) (*State, error) {
 	return ds.fetchState(ctx, seqNum)
+}
+
+func GetState(ctx context.Context, seqNum uint64) (*State, error) {
+	return DefaultDatasource.State(ctx, seqNum)
 }
 
 func (ds *Datasource) fetchState(ctx context.Context, seqNum uint64) (*State, error) {
@@ -121,8 +130,14 @@ func decodeIntervalState(data []byte) (*State, error) {
 	return state, nil
 }
 
+// GetDiff returns the change diff for the given replication sequence number.
 func (ds *Datasource) GetDiff(ctx context.Context, seqNum uint64) (*osm.Change, error) {
 	return ds.fetchIntervalData(ctx, ds.changeURL(seqNum))
+}
+
+// GetDiff returns the change diff for the given replication sequence number.
+func GetDiff(ctx context.Context, seqNum uint64) (*osm.Change, error) {
+	return DefaultDatasource.GetDiff(ctx, seqNum)
 }
 
 func (ds *Datasource) fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
