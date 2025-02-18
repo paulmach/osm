@@ -121,6 +121,10 @@ func decodeIntervalState(data []byte) (*State, error) {
 	return state, nil
 }
 
+func (ds *Datasource) GetDiff(ctx context.Context, seqNum uint64) (*osm.Change, error) {
+	return ds.fetchIntervalData(ctx, ds.changeURL(seqNum))
+}
+
 func (ds *Datasource) fetchIntervalData(ctx context.Context, url string) (*osm.Change, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
