@@ -7,12 +7,7 @@ import (
 
 // the valid minimum state number on planet.osm.org
 const (
-	minMinute = 1 // up to 2012-09-12T08:15:45Z
-	minHour   = 1 // up to 2013-07-14T12:00:00Z
-	minDay    = 1 // up to 2012-09-13T00:00:00Z
-
-	// There are changes before this, but no state.
-	minChangeset = 2007990 // 2016-09-07 10:45:02.148547780 Z
+	minSeqNum = 1 // up to 2012-09-12T08:15:45Z
 )
 
 type stater struct {
@@ -21,7 +16,7 @@ type stater struct {
 	State   func(context.Context, uint64) (*State, error)
 }
 
-// MinuteStateAt will return the replication state/sequence number that contains
+// StateAt will return the replication state/sequence number that contains
 // data for the given timestamp. This would be the first replication state written
 // after the timestamp. If the timestamp is after all current replication state
 // the most recent will be returned. The caller can check for this case using
@@ -29,12 +24,11 @@ type stater struct {
 //
 // This call can do 20+ requests to the binary search the replication states.
 // Use sparingly or use a mirror.
-// Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func MinuteStateAt(ctx context.Context, timestamp time.Time) (MinuteSeqNum, *State, error) {
-	return DefaultDatasource.MinuteStateAt(ctx, timestamp)
+func StateAt(ctx context.Context, timestamp time.Time) (uint64, *State, error) {
+	return DefaultDatasource.StateAt(ctx, timestamp)
 }
 
-// MinuteStateAt will return the replication state/sequence number that contains
+// StateAt will return the replication state/sequence number that contains
 // data for the given timestamp. This would be the first replication state written
 // after the timestamp. If the timestamp is after all current replication state
 // the most recent will be returned. The caller can check for this case using
@@ -42,15 +36,15 @@ func MinuteStateAt(ctx context.Context, timestamp time.Time) (MinuteSeqNum, *Sta
 //
 // This call can do 20+ requests to the binary search the replication states.
 // Use sparingly or use a mirror.
-func (ds *Datasource) MinuteStateAt(ctx context.Context, timestamp time.Time) (MinuteSeqNum, *State, error) {
+func (ds *Datasource) StateAt(ctx context.Context, timestamp time.Time) (uint64, *State, error) {
 	s := &stater{
-		Min: minMinute,
+		Min: minSeqNum,
 		Current: func(ctx context.Context) (*State, error) {
-			_, s, err := ds.CurrentMinuteState(ctx)
+			_, s, err := ds.CurrentState(ctx)
 			return s, err
 		},
-		State: func(ctx context.Context, n uint64) (*State, error) {
-			return ds.MinuteState(ctx, MinuteSeqNum(n))
+		State: func(ctx context.Context, seqNum uint64) (*State, error) {
+			return ds.State(ctx, seqNum)
 		},
 	}
 	state, err := searchTimestamp(ctx, s, timestamp)
@@ -58,127 +52,7 @@ func (ds *Datasource) MinuteStateAt(ctx context.Context, timestamp time.Time) (M
 		return 0, nil, err
 	}
 
-	return MinuteSeqNum(state.SeqNum), state, nil
-}
-
-// HourStateAt will return the replication state/sequence number that contains
-// data for the given timestamp. This would be the first replication state written
-// after the timestamp. If the timestamp is after all current replication state
-// the most recent will be returned. The caller can check for this case using
-// state.Before(givenTimestamp).
-//
-// This call can do 20+ requests to the binary search the replication states.
-// Use sparingly or use a mirror.
-// Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func HourStateAt(ctx context.Context, timestamp time.Time) (HourSeqNum, *State, error) {
-	return DefaultDatasource.HourStateAt(ctx, timestamp)
-}
-
-// HourStateAt will return the replication state/sequence number that contains
-// data for the given timestamp. This would be the first replication state written
-// after the timestamp. If the timestamp is after all current replication state
-// the most recent will be returned. The caller can check for this case using
-// state.Before(givenTimestamp).
-//
-// This call can do 20+ requests to the binary search the replication states.
-// Use sparingly or use a mirror.
-func (ds *Datasource) HourStateAt(ctx context.Context, timestamp time.Time) (HourSeqNum, *State, error) {
-	s := &stater{
-		Min: minHour,
-		Current: func(ctx context.Context) (*State, error) {
-			_, s, err := ds.CurrentHourState(ctx)
-			return s, err
-		},
-		State: func(ctx context.Context, n uint64) (*State, error) {
-			return ds.HourState(ctx, HourSeqNum(n))
-		},
-	}
-	state, err := searchTimestamp(ctx, s, timestamp)
-	if err != nil {
-		return 0, nil, err
-	}
-
-	return HourSeqNum(state.SeqNum), state, nil
-}
-
-// DayStateAt will return the replication state/sequence number that contains
-// data for the given timestamp. This would be the first replication state written
-// after the timestamp. If the timestamp is after all current replication state
-// the most recent will be returned. The caller can check for this case using
-// state.Before(givenTimestamp).
-//
-// This call can do 20+ requests to the binary search the replication states.
-// Use sparingly or use a mirror.
-// Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func DayStateAt(ctx context.Context, timestamp time.Time) (DaySeqNum, *State, error) {
-	return DefaultDatasource.DayStateAt(ctx, timestamp)
-}
-
-// DayStateAt will return the replication state/sequence number that contains
-// data for the given timestamp. This would be the first replication state written
-// after the timestamp. If the timestamp is after all current replication state
-// the most recent will be returned. The caller can check for this case using
-// state.Before(givenTimestamp).
-//
-// This call can do 20+ requests to the binary search the replication states.
-// Use sparingly or use a mirror.
-func (ds *Datasource) DayStateAt(ctx context.Context, timestamp time.Time) (DaySeqNum, *State, error) {
-	s := &stater{
-		Min: minDay,
-		Current: func(ctx context.Context) (*State, error) {
-			_, s, err := ds.CurrentDayState(ctx)
-			return s, err
-		},
-		State: func(ctx context.Context, n uint64) (*State, error) {
-			return ds.DayState(ctx, DaySeqNum(n))
-		},
-	}
-	state, err := searchTimestamp(ctx, s, timestamp)
-	if err != nil {
-		return 0, nil, err
-	}
-
-	return DaySeqNum(state.SeqNum), state, nil
-}
-
-// ChangesetStateAt will return the replication state/sequence number that contains
-// data for the given timestamp. This would be the first replication state written
-// after the timestamp. If the timestamp is after all current replication state
-// the most recent will be returned. The caller can check for this case using
-// state.Before(givenTimestamp).
-//
-// This call can do 20+ requests to the binary search the replication states.
-// Use sparingly or use a mirror.
-// Delegates to the DefaultDatasource and uses its http.Client to make the request.
-func ChangesetStateAt(ctx context.Context, timestamp time.Time) (ChangesetSeqNum, *State, error) {
-	return DefaultDatasource.ChangesetStateAt(ctx, timestamp)
-}
-
-// ChangesetStateAt will return the replication state/sequence number that contains
-// data for the given timestamp. This would be the first replication state written
-// after the timestamp. If the timestamp is after all current replication state
-// the most recent will be returned. The caller can check for this case using
-// state.Before(givenTimestamp).
-//
-// This call can do 20+ requests to the binary search the replication states.
-// Use sparingly or use a mirror.
-func (ds *Datasource) ChangesetStateAt(ctx context.Context, timestamp time.Time) (ChangesetSeqNum, *State, error) {
-	s := &stater{
-		Min: minDay,
-		Current: func(ctx context.Context) (*State, error) {
-			_, s, err := ds.CurrentChangesetState(ctx)
-			return s, err
-		},
-		State: func(ctx context.Context, n uint64) (*State, error) {
-			return ds.ChangesetState(ctx, ChangesetSeqNum(n))
-		},
-	}
-	state, err := searchTimestamp(ctx, s, timestamp)
-	if err != nil {
-		return 0, nil, err
-	}
-
-	return ChangesetSeqNum(state.SeqNum), state, nil
+	return state.SeqNum, state, nil
 }
 
 func searchTimestamp(ctx context.Context, s *stater, timestamp time.Time) (*State, error) {
