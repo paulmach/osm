@@ -113,13 +113,15 @@ import (
   jsoniter "github.com/json-iterator/go"
   "github.com/paulmach/osm"
 )
+
 var c = jsoniter.Config{
   EscapeHTML:              true,
   SortMapKeys:             false,
   MarshalFloatWith6Digits: true,
 }.Froze()
-CustomJSONMarshaler = c
-CustomJSONUnmarshaler = c
+
+osm.CustomJSONMarshaler = c
+osm.CustomJSONUnmarshaler = c
 ```
 
 The above change can have dramatic performance implications, see the benchmarks below

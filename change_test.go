@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -236,29 +236,14 @@ func TestChange_HistoryDatasource(t *testing.T) {
 	}
 }
 
-func cleanXMLNameFromChange(c *Change) {
-	c.Version = ""
-	c.Generator = ""
-	c.Copyright = ""
-	c.Attribution = ""
-	c.License = ""
-	if c.Create != nil {
-		cleanXMLNameFromOSM(c.Create)
-	}
-	if c.Modify != nil {
-		cleanXMLNameFromOSM(c.Modify)
-	}
-	if c.Delete != nil {
-		cleanXMLNameFromOSM(c.Delete)
-	}
-}
-
 func BenchmarkChange_MarshalXML(b *testing.B) {
-	filename := "testdata/changeset_38162206.osc"
-	data := readFile(b, filename)
+	data, err := os.ReadFile("testdata/changeset_38162206.osc")
+	if err != nil {
+		b.Fatalf("unable to read file: %v", err)
+	}
 
 	c := &Change{}
-	err := xml.Unmarshal(data, c)
+	err = xml.Unmarshal(data, c)
 	if err != nil {
 		b.Fatalf("unable to unmarshal: %v", err)
 	}
@@ -287,7 +272,7 @@ func BenchmarkChange_MarshalXML(b *testing.B) {
 // }
 
 func BenchmarkChange_MarshalJSON(b *testing.B) {
-	data, err := ioutil.ReadFile("testdata/minute_871.osc")
+	data, err := os.ReadFile("testdata/minute_871.osc")
 	if err != nil {
 		b.Fatalf("could not read file: %v", err)
 	}
@@ -309,7 +294,7 @@ func BenchmarkChange_MarshalJSON(b *testing.B) {
 }
 
 func BenchmarkChange_UnmarshalJSON(b *testing.B) {
-	data, err := ioutil.ReadFile("testdata/minute_871.osc")
+	data, err := os.ReadFile("testdata/minute_871.osc")
 	if err != nil {
 		b.Fatalf("could not read file: %v", err)
 	}
@@ -337,8 +322,10 @@ func BenchmarkChange_UnmarshalJSON(b *testing.B) {
 }
 
 func BenchmarkChangeset_UnmarshalXML(b *testing.B) {
-	filename := "testdata/changeset_38162206.osc"
-	data := readFile(b, filename)
+	data, err := os.ReadFile("testdata/changeset_38162206.osc")
+	if err != nil {
+		b.Fatalf("unable to read file: %v", err)
+	}
 
 	b.ReportAllocs()
 	b.ResetTimer()

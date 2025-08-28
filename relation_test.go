@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -199,7 +200,10 @@ func TestRelation_MarshalXML(t *testing.T) {
 	}
 
 	// blanket xml test
-	data = readFile(t, "testdata/relation-updates.osm")
+	data, err = os.ReadFile("testdata/relation-updates.osm")
+	if err != nil {
+		t.Fatalf("could not read file: %v", err)
+	}
 
 	osm := &OSM{}
 	err = xml.Unmarshal(data, &osm)

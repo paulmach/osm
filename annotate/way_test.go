@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 
@@ -36,7 +36,10 @@ func TestWays(t *testing.T) {
 			t.Errorf("expected way not equal, file saved to %s", filename)
 
 			data, _ := xml.MarshalIndent(&osm.OSM{Ways: o.Ways}, "", " ")
-			ioutil.WriteFile(filename, data, 0644)
+			err := os.WriteFile(filename, data, 0644)
+			if err != nil {
+				t.Fatalf("write error: %v", err)
+			}
 		}
 	}
 }
@@ -128,7 +131,7 @@ func BenchmarkWays(b *testing.B) {
 }
 
 func loadTestdata(tb testing.TB, filename string) *osm.OSM {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		tb.Fatalf("unable to open file: %v", err)
 	}

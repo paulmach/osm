@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -42,7 +42,10 @@ func TestRelation(t *testing.T) {
 			t.Errorf("expected relations not equal, file saved to %s", filename)
 
 			data, _ := xml.MarshalIndent(&osm.OSM{Relations: relations}, "", " ")
-			ioutil.WriteFile(filename, data, 0644)
+			err := os.WriteFile(filename, data, 0644)
+			if err != nil {
+				t.Fatalf("write error: %v", err)
+			}
 		}
 	}
 }

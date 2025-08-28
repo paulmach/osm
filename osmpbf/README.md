@@ -10,19 +10,21 @@ file, err := os.Open("./delaware-latest.osm.pbf")
 if err != nil {
 	panic(err)
 }
-defer f.Close()
+defer file.Close()
 
 // The third parameter is the number of parallel decoders to use.
 scanner := osmpbf.New(context.Background(), file, runtime.GOMAXPROCS(-1))
 defer scanner.Close()
 
 for scanner.Scan() {
-	switch o := scanner.Object().(type)
+	switch o := scanner.Object().(type) {
 	case *osm.Node:
 
 	case *osm.Way:
 
 	case *osm.Relation:
+
+	}
 }
 
 if err := scanner.Err(); err != nil {

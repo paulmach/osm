@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
-	"io/ioutil"
-	"os"
 	"reflect"
 	"testing"
 )
@@ -183,7 +181,10 @@ func TestOSM_UnmarshalJSON(t *testing.T) {
 		  {"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},
 		  {"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},
 		  {"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false},
-		  {"type":"user","id":16,"name":"","img":{"href":""},"changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,"blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},"created_at":"0001-01-01T00:00:00Z"},
+		  {"type":"user","id":16,"name":"","img":{"href":""},
+		   "changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,
+		   "blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},
+		   "created_at":"0001-01-01T00:00:00Z"},
 		  {"type":"note","id":15,"lat":0,"lon":0,"date_created":null,"date_closed":null,"comments":null}
 		]}`)
 
@@ -244,6 +245,25 @@ func TestOSM_UnmarshalJSON_Version(t *testing.T) {
 	}
 }
 
+func TestOSM_UnmarshalJSON_Type(t *testing.T) {
+	data := []byte(`{
+		"version":0.6,"generator":"osm-go",
+		"elements":[
+			{"type":"relation","id":120,"timestamp":"0001-01-01T00:00:00Z","tags":{"type":"route"}},
+			{"tags":{"type":"route","other":"asdf"},"type":"relation","id":121,"timestamp":"0001-01-01T00:00:00Z"}
+		]}`)
+
+	o := &OSM{}
+	err := json.Unmarshal(data, &o)
+	if err != nil {
+		t.Fatalf("unmarshal error: %v", err)
+	}
+
+	if l := len(o.Relations); l != 2 {
+		t.Errorf("incorrect number of relations: %v", l)
+	}
+}
+
 func TestOSM_MarshalXML(t *testing.T) {
 	o := &OSM{
 		Version:     "0.7",
@@ -278,55 +298,4 @@ func TestOSM_MarshalXML(t *testing.T) {
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
-}
-
-func flattenOSM(c *Change) *OSM {
-	o := c.Create
-	if o == nil {
-		o = &OSM{}
-	}
-
-	if c.Modify != nil {
-		o.Nodes = append(o.Nodes, c.Modify.Nodes...)
-		o.Ways = append(o.Ways, c.Modify.Ways...)
-		o.Relations = append(o.Relations, c.Modify.Relations...)
-	}
-
-	if c.Delete != nil {
-		o.Nodes = append(o.Nodes, c.Delete.Nodes...)
-		o.Ways = append(o.Ways, c.Delete.Ways...)
-		o.Relations = append(o.Relations, c.Delete.Relations...)
-	}
-
-	return o
-}
-
-func cleanXMLNameFromOSM(o *OSM) {
-	for _, n := range o.Nodes {
-		n.XMLName = xmlNameJSONTypeNode{}
-	}
-
-	for _, w := range o.Ways {
-		w.XMLName = xmlNameJSONTypeWay{}
-	}
-
-	for _, r := range o.Relations {
-		// r.XMLName = xml.Name{}
-		r.XMLName = xmlNameJSONTypeRel{}
-	}
-}
-
-func readFile(t testing.TB, filename string) []byte {
-	f, err := os.Open(filename)
-	if err != nil {
-		t.Fatalf("unable to open %s: %v", filename, err)
-	}
-	defer f.Close()
-
-	data, err := ioutil.ReadAll(f)
-	if err != nil {
-		t.Fatalf("unable to read file %s: %v", filename, err)
-	}
-
-	return data
 }

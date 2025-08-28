@@ -24,8 +24,6 @@ func (o *at) applyFeature(p []string) ([]string, error) {
 	return append(p, "at="+o.t.UTC().Format("2006-01-02T15:04:05Z")), nil
 }
 
-func (o *at) feature() {}
-
 // NotesOption defines a valid option for the osmapi.Notes by bounding box api.
 type NotesOption interface {
 	applyNotes([]string) ([]string, error)
