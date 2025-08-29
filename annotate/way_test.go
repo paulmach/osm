@@ -131,7 +131,7 @@ func BenchmarkWays(b *testing.B) {
 }
 
 func loadTestdata(tb testing.TB, filename string) *osm.OSM {
-	data, err := os.ReadFile(filename)
+	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		tb.Fatalf("unable to open file: %v", err)
 	}
