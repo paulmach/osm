@@ -168,7 +168,7 @@ func TestOSM_MarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"version":"0.6","generator":"osm-go","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false},{"type":"user","id":16,"name":"","img":{"href":""},"changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,"blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},"created_at":"0001-01-01T00:00:00Z"},{"type":"note","id":15,"lat":0,"lon":0,"date_created":null,"date_closed":null,"comments":null}]}`)) {
+	if !bytes.Equal(data, []byte(`{"version":"0.6","generator":"osm-go","elements":[{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z"},{"type":"way","id":456,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z","nodes":[]},{"type":"relation","id":789,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z","members":[]},{"type":"changeset","id":10,"created_at":"0001-01-01T00:00:00Z","closed_at":"0001-01-01T00:00:00Z","open":false},{"type":"user","id":16,"name":"","img":{"href":""},"changesets":{"count":0},"traces":{"count":0},"home":{"lat":0,"lon":0,"zoom":0},"languages":null,"blocks":{"received":{"count":0,"active":0}},"messages":{"received":{"count":0,"unread":0},"sent":{"count":0}},"created_at":"0001-01-01T00:00:00Z"},{"type":"note","id":15,"lat":0,"lon":0,"date_created":null,"date_closed":null,"comments":null}]}`)) {
 		t.Errorf("incorrect json: %v", string(data))
 	}
 }
@@ -281,7 +281,7 @@ func TestOSM_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<osm version="0.7" generator="osm-go-test" copyright="copyright1" attribution="attribution1" license="license1"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
+	expected := `<osm version="0.7" generator="osm-go-test" copyright="copyright1" attribution="attribution1" license="license1"><node id="123" lat="0" lon="0" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></osm>`
 
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))

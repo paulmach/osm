@@ -175,7 +175,7 @@ func TestChange_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<osmChange version="0.6" generator="osm-go" copyright="copyright1" attribution="attribution1" license="license1"><create><node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></create></osmChange>`
+	expected := `<osmChange version="0.6" generator="osm-go" copyright="copyright1" attribution="attribution1" license="license1"><create><node id="123" lat="0" lon="0" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"></node></create></osmChange>`
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}

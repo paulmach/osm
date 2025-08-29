@@ -34,7 +34,7 @@ func TestRelation_MarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"type":"relation","id":123,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[]}`)) {
+	if !bytes.Equal(data, []byte(`{"type":"relation","id":123,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z","members":[]}`)) {
 		t.Errorf("incorrect json: %v", string(data))
 	}
 
@@ -49,7 +49,7 @@ func TestRelation_MarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"type":"relation","id":123,"visible":false,"timestamp":"0001-01-01T00:00:00Z","members":[{"type":"node","ref":123,"role":"outer","version":1}]}`)) {
+	if !bytes.Equal(data, []byte(`{"type":"relation","id":123,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z","members":[{"type":"node","ref":123,"role":"outer","version":1}]}`)) {
 		t.Errorf("incorrect json: %v", string(data))
 	}
 }
@@ -152,7 +152,7 @@ func TestRelation_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></relation>`
+	expected := `<relation id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"></relation>`
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
@@ -164,7 +164,7 @@ func TestRelation_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><member type="node" ref="123" role="child"></member></relation>`)) {
+	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"><member type="node" ref="123" role="child"></member></relation>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
@@ -175,7 +175,7 @@ func TestRelation_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><member type="way" ref="123" role="child"><nd lat="1" lon="2"></nd><nd lat="3" lon="4"></nd></member></relation>`)) {
+	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"><member type="way" ref="123" role="child"><nd lat="1" lon="2"></nd><nd lat="3" lon="4"></nd></member></relation>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
@@ -195,7 +195,7 @@ func TestRelation_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="1" timestamp="2012-01-01T00:00:00Z" changeset="123"></update></relation>`)) {
+	if !bytes.Equal(data, []byte(`<relation id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="1" timestamp="2012-01-01T00:00:00Z" changeset="123"></update></relation>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 

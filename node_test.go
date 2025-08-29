@@ -65,7 +65,7 @@ func TestNode_MarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"timestamp":"0001-01-01T00:00:00Z"}`)) {
+	if !bytes.Equal(data, []byte(`{"type":"node","id":123,"lat":0,"lon":0,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z"}`)) {
 		t.Errorf("incorrect json: %v", string(data))
 	}
 }
@@ -80,7 +80,7 @@ func TestNode_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<node id="123" lat="0" lon="0" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>`
+	expected := `<node id="123" lat="0" lon="0" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"></node>`
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}

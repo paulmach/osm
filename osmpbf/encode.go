@@ -82,9 +82,9 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 		target := &bytes.Buffer{}
 		// compress the data
 		writer := zlibWriter(target)
-		err := writer.Write(data)
+		_, err := writer.Write(data)
 		if err != nil {
-			return err
+			return 0, err
 		}
 		writer.Close()
 		blob.ZlibData = target.Bytes()

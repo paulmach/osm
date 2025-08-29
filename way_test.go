@@ -222,7 +222,7 @@ func TestWay_MarshalJSON(t *testing.T) {
 		t.Fatalf("marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`{"type":"way","id":123,"visible":false,"timestamp":"0001-01-01T00:00:00Z","nodes":[1,2,4]}`)) {
+	if !bytes.Equal(data, []byte(`{"type":"way","id":123,"visible":false,"changeset":0,"timestamp":"0001-01-01T00:00:00Z","nodes":[1,2,4]}`)) {
 		t.Errorf("incorrect json: %v", string(data))
 	}
 }
@@ -237,7 +237,7 @@ func TestWay_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	expected := `<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"></way>`
+	expected := `<way id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"></way>`
 	if !bytes.Equal(data, []byte(expected)) {
 		t.Errorf("incorrect marshal, got: %s", string(data))
 	}
@@ -249,7 +249,7 @@ func TestWay_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><nd ref="123"></nd></way>`)) {
+	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"><nd ref="123"></nd></way>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
@@ -260,7 +260,7 @@ func TestWay_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><nd ref="4" lat="1" lon="2"></nd></way>`)) {
+	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"><nd ref="4" lat="1" lon="2"></nd></way>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
@@ -280,7 +280,7 @@ func TestWay_MarshalXML(t *testing.T) {
 		t.Fatalf("xml marshal error: %v", err)
 	}
 
-	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" version="0" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="2" timestamp="2012-01-01T00:00:00Z" lat="100" lon="200"></update></way>`)) {
+	if !bytes.Equal(data, []byte(`<way id="123" user="" uid="0" visible="false" changeset="0" timestamp="0001-01-01T00:00:00Z"><update index="0" version="2" timestamp="2012-01-01T00:00:00Z" lat="100" lon="200"></update></way>`)) {
 		t.Errorf("not marshalled correctly: %s", string(data))
 	}
 
