@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nextmv-io/osm"
-	"github.com/nextmv-io/osm/osmpbf/internal/osmpbf"
+	"github.com/onXmaps/osm"
+	"github.com/onXmaps/osm/osmpbf/internal/osmpbf"
 	"google.golang.org/protobuf/proto"
 )
 
