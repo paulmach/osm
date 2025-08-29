@@ -82,7 +82,10 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 		target := &bytes.Buffer{}
 		// compress the data
 		writer := zlibWriter(target)
-		writer.Write(data)
+		err := writer.Write(data)
+		if err != nil {
+			return err
+		}
 		writer.Close()
 		blob.ZlibData = target.Bytes()
 	} else {
@@ -91,7 +94,7 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 
 	blobData, err := proto.Marshal(blob)
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	blobHeader := &osmpbf.BlobHeader{
@@ -101,18 +104,18 @@ func (e *encoder) write(data []byte, osmType string) (n int, err error) {
 
 	blobHeaderData, err := proto.Marshal(blobHeader)
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	size := make([]byte, 4)
 	binary.BigEndian.PutUint32(size, uint32(len(blobHeaderData)))
 
 	if _, err = e.writer.Write(size); err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	if _, err = e.writer.Write(blobHeaderData); err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	return e.writer.Write(blobData)
