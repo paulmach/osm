@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"runtime"
 	"testing"
 
@@ -71,6 +72,87 @@ func TestEncodeDecode(t *testing.T) {
 	d.Close()
 }
 
+func TestEncodeDecodeDelware(t *testing.T) {
+	testEncodeDecodeNonTrivial(t, Delaware)
+}
+func TestEncodeDecodeLondon(t *testing.T) {
+	testEncodeDecodeNonTrivial(t, London)
+}
+func testEncodeDecodeNonTrivial(t *testing.T, filename string) {
+	file, err := os.Open(filename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+
+	input := osm.OSM{Nodes: osm.Nodes{}, Ways: osm.Ways{}, Relations: osm.Relations{}}
+	scanner := New(context.Background(), file, runtime.GOMAXPROCS(-1))
+	defer scanner.Close()
+	for scanner.Scan() {
+		input.Append(scanner.Object())
+	}
+	err = scanner.Err()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	buffer := bytes.Buffer{}
+	writer, err := NewEncoder(&buffer)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// write all
+	for _, obj := range input.Objects() {
+		err = writer.Encode(obj)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	writer.Close()
+
+	d := newDecoder(context.Background(), &Scanner{}, &buffer)
+	err = d.Start(runtime.GOMAXPROCS(-1))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	in := 0
+	iw := 0
+	ir := 0
+	for {
+		e, err := d.Next()
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			t.Fatal(err)
+		}
+
+		switch v := e.(type) {
+		case *osm.Node:
+			err = nodeEquals(input.Nodes[in], v)
+			if err != nil {
+				t.Fatal(err)
+			}
+			in++
+		case *osm.Way:
+			err = wayEquals(input.Ways[iw], v)
+			if err != nil {
+				t.Fatal(err)
+				iw++
+			}
+		case *osm.Relation:
+			err = relationEquals(input.Relations[ir], v)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ir++
+		}
+	}
+	d.Close()
+}
+
 func nodeEquals(en, node *osm.Node) error {
 	if node.ID != en.ID {
 		return fmt.Errorf("node id mismatch: %d != %d", node.ID, en.ID)
@@ -91,7 +173,7 @@ func nodeEquals(en, node *osm.Node) error {
 		return fmt.Errorf("node visible mismatch: %v != %v", node.Visible, en.Visible)
 	}
 	if node.Version != en.Version {
-		return fmt.Errorf("node version mismatch: %d != %d", node.Version, en.Version)
+		return fmt.Errorf("node version(id=%d) mismatch: %d != %d", node.ID, node.Version, en.Version)
 	}
 	if node.ChangesetID != en.ChangesetID {
 		return fmt.Errorf("node changeset id mismatch: %d != %d", node.ChangesetID, en.ChangesetID)
