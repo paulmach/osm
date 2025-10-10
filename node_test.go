@@ -90,19 +90,28 @@ func TestNodes_ids(t *testing.T) {
 	ns := Nodes{
 		{ID: 1, Version: 3},
 		{ID: 2, Version: 4},
+		{ID: -3, Version: 5},
 	}
 
-	eids := ElementIDs{NodeID(1).ElementID(3), NodeID(2).ElementID(4)}
+	eids := ElementIDs{
+		NodeID(1).ElementID(3),
+		NodeID(2).ElementID(4),
+		NodeID(-3).ElementID(5),
+	}
 	if ids := ns.ElementIDs(); !reflect.DeepEqual(ids, eids) {
 		t.Errorf("incorrect element ids: %v", ids)
 	}
 
-	fids := FeatureIDs{NodeID(1).FeatureID(), NodeID(2).FeatureID()}
+	fids := FeatureIDs{
+		NodeID(1).FeatureID(),
+		NodeID(2).FeatureID(),
+		NodeID(-3).FeatureID(),
+	}
 	if ids := ns.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
 		t.Errorf("incorrect feature ids: %v", ids)
 	}
 
-	nids := []NodeID{1, 2}
+	nids := []NodeID{1, 2, -3}
 	if ids := ns.IDs(); !reflect.DeepEqual(ids, nids) {
 		t.Errorf("incorrect node ids: %v", nids)
 	}
@@ -113,7 +122,7 @@ func TestNodes_SortByIDVersion(t *testing.T) {
 		{ID: 7, Version: 3},
 		{ID: 2, Version: 4},
 		{ID: 5, Version: 2},
-		{ID: 5, Version: 3},
+		{ID: -1, Version: 3},
 		{ID: 5, Version: 4},
 		{ID: 3, Version: 4},
 		{ID: 4, Version: 4},
@@ -123,11 +132,11 @@ func TestNodes_SortByIDVersion(t *testing.T) {
 	ns.SortByIDVersion()
 
 	eids := ElementIDs{
+		NodeID(-1).ElementID(3),
 		NodeID(2).ElementID(4),
 		NodeID(3).ElementID(4),
 		NodeID(4).ElementID(4),
 		NodeID(5).ElementID(2),
-		NodeID(5).ElementID(3),
 		NodeID(5).ElementID(4),
 		NodeID(7).ElementID(3),
 		NodeID(9).ElementID(4),

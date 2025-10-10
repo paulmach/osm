@@ -35,11 +35,23 @@ func TestFeatureID_ids(t *testing.T) {
 		t.Errorf("incorrect version: %v", v)
 	}
 
+	if v := NodeID(-1).FeatureID().NodeID(); v != -1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
 	if v := NodeID(1).FeatureID().NodeID(); v != 1 {
 		t.Errorf("incorrect id: %v", v)
 	}
 
+	if v := WayID(-1).FeatureID().WayID(); v != -1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
 	if v := WayID(1).FeatureID().WayID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := RelationID(-1).FeatureID().RelationID(); v != -1 {
 		t.Errorf("incorrect id: %v", v)
 	}
 
@@ -94,6 +106,11 @@ func TestFeature_String(t *testing.T) {
 		id       FeatureID
 		expected string
 	}{
+		{
+			name:     "node",
+			id:       NodeID(-1).FeatureID(),
+			expected: "node/-1",
+		},
 		{
 			name:     "node",
 			id:       NodeID(1).FeatureID(),
@@ -200,12 +217,14 @@ func TestFeatureIDs_Counts(t *testing.T) {
 func TestFeatureIDs_Sort(t *testing.T) {
 	ids := FeatureIDs{
 		RelationID(1).FeatureID(),
+		NodeID(-1).FeatureID(),
 		NodeID(1).FeatureID(),
 		WayID(2).FeatureID(),
 		WayID(1).FeatureID(),
 	}
 
 	expected := FeatureIDs{
+		NodeID(-1).FeatureID(),
 		NodeID(1).FeatureID(),
 		WayID(1).FeatureID(),
 		WayID(2).FeatureID(),

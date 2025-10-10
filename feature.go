@@ -67,6 +67,9 @@ const (
 	featureMask = 0x7FFFFFFFFFFF0000
 	typeMask    = 0x7F00000000000000
 
+	refVersionMask = refMask | versionMask
+
+	typeBits      = 8
 	boundsMask    = 0x0800000000000000
 	nodeMask      = 0x1000000000000000
 	wayMask       = 0x2000000000000000
@@ -74,6 +77,8 @@ const (
 	changesetMask = 0x4000000000000000
 	noteMask      = 0x5000000000000000
 	userMask      = 0x6000000000000000
+
+	typeVersionBits = typeBits + versionBits
 )
 
 // A FeatureID is an identifier for a feature in OSM.
@@ -97,7 +102,12 @@ func (id FeatureID) Type() Type {
 
 // Ref return the ID reference for the feature. Not unique without the type.
 func (id FeatureID) Ref() int64 {
-	return int64((id & refMask) >> versionBits)
+	// handle negative ids correctly, if negative top 24 bits need to be set as 1
+	// want to do this in a non-branching way
+	// - shift left until 25th bit is now at first position
+	// - shift right back to original position,
+	//   this option fill with same as the first position
+	return (int64((id&refMask)>>versionBits) << typeVersionBits) >> typeVersionBits
 }
 
 // ObjectID is a helper to convert the id to an object id.
@@ -205,5 +215,8 @@ func (ids FeatureIDs) Sort() {
 func (ids featureIDsSort) Len() int      { return len(ids) }
 func (ids featureIDsSort) Swap(i, j int) { ids[i], ids[j] = ids[j], ids[i] }
 func (ids featureIDsSort) Less(i, j int) bool {
-	return ids[i] < ids[j]
+	if ids[i]&typeMask != ids[j]&typeMask {
+		return ids[i]&typeMask < ids[j]&typeMask
+	}
+	return ids[i].Ref() < ids[j].Ref()
 }
