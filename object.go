@@ -34,7 +34,12 @@ func (id ObjectID) Type() Type {
 
 // Ref returns the ID reference for the object. Not unique without the type.
 func (id ObjectID) Ref() int64 {
-	return int64((id & refMask) >> versionBits)
+	// handle negative ids correctly, if negative top 24 bits need to be set as 1
+	// want to do this in a non-branching way
+	// - shift left until 25th bit is now at first position
+	// - shift right back to original position,
+	//   this option fill with same as the first position
+	return (int64((id&refMask)>>versionBits) << typeVersionBits) >> typeVersionBits
 }
 
 // Version returns the version of the object.

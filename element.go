@@ -34,7 +34,12 @@ func (id ElementID) Type() Type {
 
 // Ref return the ID reference for the element. Not unique without the type.
 func (id ElementID) Ref() int64 {
-	return int64((id & refMask) >> versionBits)
+	// handle negative ids correctly, if negative top 24 bits need to be set as 1
+	// want to do this in a non-branching way
+	// - shift left until 25th bit is now at first position
+	// - shift right back to original position,
+	//   this option fill with same as the first position
+	return (int64((id&refMask)>>versionBits) << typeVersionBits) >> typeVersionBits
 }
 
 // Version returns the version of the element.
@@ -180,7 +185,14 @@ type elementsSort Elements
 func (es elementsSort) Len() int      { return len(es) }
 func (es elementsSort) Swap(i, j int) { es[i], es[j] = es[j], es[i] }
 func (es elementsSort) Less(i, j int) bool {
-	return es[i].ElementID() < es[j].ElementID()
+	iid := es[i].ElementID()
+	jid := es[j].ElementID()
+
+	if iid&typeMask != jid&typeMask {
+		return iid&typeMask < jid&typeMask
+	}
+
+	return ((iid << typeVersionBits) >> typeVersionBits) < ((jid << typeVersionBits) >> typeVersionBits)
 }
 
 // ElementIDs is a list of element ids with helper functions on top.
@@ -213,5 +225,8 @@ func (ids ElementIDs) Sort() {
 func (ids elementIDsSort) Len() int      { return len(ids) }
 func (ids elementIDsSort) Swap(i, j int) { ids[i], ids[j] = ids[j], ids[i] }
 func (ids elementIDsSort) Less(i, j int) bool {
-	return ids[i] < ids[j]
+	if ids[i]&typeMask != ids[j]&typeMask {
+		return ids[i]&typeMask < ids[j]&typeMask
+	}
+	return ((ids[i] << typeVersionBits) >> typeVersionBits) < ((ids[j] << typeVersionBits) >> typeVersionBits)
 }

@@ -20,6 +20,10 @@ func TestParseObjectID(t *testing.T) {
 			id:   NodeID(3).ObjectID(0),
 		},
 		{
+			name: "negative id",
+			id:   NodeID(-3).ObjectID(10),
+		},
+		{
 			name: "way",
 			id:   WayID(10).ObjectID(2),
 		},
@@ -103,6 +107,7 @@ func TestParseObjectID(t *testing.T) {
 func TestObjects_ObjectIDs(t *testing.T) {
 	es := Objects{
 		&Node{ID: 1, Version: 5},
+		&Node{ID: -1, Version: 5},
 		&Way{ID: 2, Version: 6},
 		&Relation{ID: 3, Version: 7},
 		&Node{ID: 4, Version: 8},
@@ -112,6 +117,7 @@ func TestObjects_ObjectIDs(t *testing.T) {
 
 	expected := ObjectIDs{
 		NodeID(1).ObjectID(5),
+		NodeID(-1).ObjectID(5),
 		WayID(2).ObjectID(6),
 		RelationID(3).ObjectID(7),
 		NodeID(4).ObjectID(8),

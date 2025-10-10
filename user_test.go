@@ -132,7 +132,19 @@ func TestUser_ObjectID(t *testing.T) {
 	}
 
 	if v := id.Ref(); v != 123 {
-		t.Errorf("incorrect ref: %v", 123)
+		t.Errorf("incorrect ref: %v", v)
+	}
+
+	// negative id
+	u = User{ID: -123}
+	id = u.ObjectID()
+
+	if v := id.Type(); v != TypeUser {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := id.Ref(); v != -123 {
+		t.Errorf("incorrect ref: %v", v)
 	}
 }
 

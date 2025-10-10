@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-25490' action='modify' visible='true' lat='-8.07731878077' lon='-34.89726501704' />
+  <node id='2503966846' timestamp='2015-09-29T18:24:39Z' uid='1772173' user='plguedes' visible='true' version='2' changeset='34332332' lat='-8.0769279' lon='-34.8973969' />
+  <node id='2503966854' timestamp='2020-02-26T15:56:11Z' uid='9535235' user='Metaxourgeio' visible='true' version='4' changeset='81511274' lat='-8.0776001' lon='-34.8971701' />
+  <way id='242959928' action='modify' timestamp='2024-10-17T23:06:04Z' uid='4102129' user='raphaelmirc' visible='true' version='6' changeset='158029161'>
+    <nd ref='2503966854' />
+    <nd ref='-25490' />
+    <nd ref='2503966846' />
+    <tag k='highway' v='residential' />
+    <tag k='name' v='Rua Pacatuba' />
+    <tag k='oneway' v='yes' />
+    <tag k='postal_code' v='50090-570' />
+    <tag k='source:postal_code' v='CNEFE' />
+    <tag k='surface' v='asphalt' />
+  </way>
+</osm>

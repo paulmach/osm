@@ -10,7 +10,7 @@ type ChangesetID int64
 
 // ObjectID is a helper returning the object id for this changeset id.
 func (id ChangesetID) ObjectID() ObjectID {
-	return ObjectID(changesetMask | (id << versionBits))
+	return ObjectID(changesetMask | ((id << versionBits) & refVersionMask))
 }
 
 // Changesets is a collection with some helper functions attached.

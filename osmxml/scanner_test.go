@@ -159,6 +159,31 @@ func TestScanner_bounds(t *testing.T) {
 	}
 }
 
+func TestScanner_negativeId(t *testing.T) {
+	f, err := os.Open("testdata/error.xml")
+	if err != nil {
+		t.Fatalf("could not open file: %v", err)
+	}
+	defer f.Close()
+
+	scanner := New(context.Background(), f)
+	defer scanner.Close()
+
+	// just check the first node
+	scanner.Scan()
+
+	o := scanner.Object()
+	oid := o.ObjectID()
+
+	if v := oid.Type(); v != "node" {
+		t.Errorf("type should be node, got %v", v)
+	}
+
+	if v := oid.Ref(); v != -25490 {
+		t.Errorf("id incorrect, got %0x ", v)
+	}
+}
+
 func TestAndorra(t *testing.T) {
 	f, err := os.Open("../testdata/andorra-latest.osm.bz2")
 	if err != nil {

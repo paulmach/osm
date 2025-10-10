@@ -10,7 +10,7 @@ type UserID int64
 
 // ObjectID is a helper returning the object id for this user id.
 func (id UserID) ObjectID() ObjectID {
-	return ObjectID(userMask | (id << versionBits))
+	return ObjectID(userMask | ((id << versionBits) & refVersionMask))
 }
 
 // Users is a collection of users with some helpers attached.

@@ -167,6 +167,18 @@ func TestNote_ObjectID(t *testing.T) {
 	}
 
 	if v := id.Ref(); v != 123 {
-		t.Errorf("incorrect ref: %v", 123)
+		t.Errorf("incorrect ref: %v", v)
+	}
+
+	// negative id
+	n = Note{ID: -123}
+	id = n.ObjectID()
+
+	if v := id.Type(); v != TypeNote {
+		t.Errorf("incorrect type: %v", v)
+	}
+
+	if v := id.Ref(); v != -123 {
+		t.Errorf("incorrect ref: %v", v)
 	}
 }

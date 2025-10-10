@@ -27,11 +27,23 @@ func TestElementID_ids(t *testing.T) {
 		t.Errorf("incorrect id: %v", v)
 	}
 
+	if v := NodeID(-1).ElementID(1).NodeID(); v != -1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
 	if v := NodeID(1).ElementID(1).NodeID(); v != 1 {
 		t.Errorf("incorrect id: %v", v)
 	}
 
+	if v := WayID(-1).ElementID(1).WayID(); v != -1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
 	if v := WayID(1).ElementID(1).WayID(); v != 1 {
+		t.Errorf("incorrect id: %v", v)
+	}
+
+	if v := RelationID(-1).ElementID(1).RelationID(); v != -1 {
 		t.Errorf("incorrect id: %v", v)
 	}
 
@@ -79,6 +91,10 @@ func TestParseElementID(t *testing.T) {
 		string string
 		id     ElementID
 	}{
+		{
+			name: "negative id",
+			id:   NodeID(-1).ElementID(1),
+		},
 		{
 			name: "node",
 			id:   NodeID(0).ElementID(1),
@@ -232,6 +248,7 @@ func TestElements_Sort(t *testing.T) {
 	es := Elements{
 		&Node{ID: 1, Version: 4},
 		&Node{ID: 1, Version: 5},
+		&Node{ID: -1, Version: 5},
 		&Way{ID: 2, Version: 6},
 		&Relation{ID: 3, Version: 7},
 		&Way{ID: 2, Version: 5},
@@ -240,6 +257,7 @@ func TestElements_Sort(t *testing.T) {
 	es.Sort()
 
 	expected := ElementIDs{
+		NodeID(-1).ElementID(5),
 		NodeID(1).ElementID(4),
 		NodeID(1).ElementID(5),
 		NodeID(4).ElementID(8),
@@ -279,12 +297,16 @@ func TestElementIDs_Sort(t *testing.T) {
 	ids := ElementIDs{
 		RelationID(1).ElementID(1),
 		NodeID(1).ElementID(2),
+		NodeID(-1).ElementID(3),
+		NodeID(-1).ElementID(2),
 		WayID(2).ElementID(3),
 		WayID(1).ElementID(2),
 		WayID(1).ElementID(1),
 	}
 
 	expected := ElementIDs{
+		NodeID(-1).ElementID(2),
+		NodeID(-1).ElementID(3),
 		NodeID(1).ElementID(2),
 		WayID(1).ElementID(1),
 		WayID(1).ElementID(2),

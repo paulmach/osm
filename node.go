@@ -18,7 +18,7 @@ func (id NodeID) ObjectID(v int) ObjectID {
 
 // FeatureID is a helper returning the feature id for this node id.
 func (id NodeID) FeatureID() FeatureID {
-	return FeatureID(nodeMask | (id << versionBits))
+	return FeatureID(nodeMask | ((id << versionBits) & refVersionMask))
 }
 
 // ElementID is a helper to convert the id to an element id.

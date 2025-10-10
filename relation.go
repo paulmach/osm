@@ -18,7 +18,7 @@ func (id RelationID) ObjectID(v int) ObjectID {
 
 // FeatureID is a helper returning the feature id for this relation id.
 func (id RelationID) FeatureID() FeatureID {
-	return FeatureID(relationMask | id<<versionBits)
+	return FeatureID(relationMask | ((id << versionBits) & refVersionMask))
 }
 
 // ElementID is a helper to convert the id to an element id.

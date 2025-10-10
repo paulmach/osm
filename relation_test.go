@@ -305,19 +305,28 @@ func TestRelations_ids(t *testing.T) {
 	rs := Relations{
 		{ID: 1, Version: 3},
 		{ID: 2, Version: 4},
+		{ID: -3, Version: 5},
 	}
 
-	eids := ElementIDs{RelationID(1).ElementID(3), RelationID(2).ElementID(4)}
+	eids := ElementIDs{
+		RelationID(1).ElementID(3),
+		RelationID(2).ElementID(4),
+		RelationID(-3).ElementID(5),
+	}
 	if ids := rs.ElementIDs(); !reflect.DeepEqual(ids, eids) {
 		t.Errorf("incorrect element ids: %v", ids)
 	}
 
-	fids := FeatureIDs{RelationID(1).FeatureID(), RelationID(2).FeatureID()}
+	fids := FeatureIDs{
+		RelationID(1).FeatureID(),
+		RelationID(2).FeatureID(),
+		RelationID(-3).FeatureID(),
+	}
 	if ids := rs.FeatureIDs(); !reflect.DeepEqual(ids, fids) {
 		t.Errorf("incorrect feature ids: %v", ids)
 	}
 
-	rids := []RelationID{1, 2}
+	rids := []RelationID{1, 2, -3}
 	if ids := rs.IDs(); !reflect.DeepEqual(ids, rids) {
 		t.Errorf("incorrect node id: %v", rids)
 	}
