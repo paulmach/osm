@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.9.0](https://github.com/paulmach/osm/compare/v0.8.0...v0.9.0) - 2025-10-13
+
+### Changed
+
+-   support negative object/feature/element ids by [@paulmach](https://github.com/paulmach) in https://github.com/paulmach/osm/pull/64
+-   update dependencies, go to 1.23 by [@paulmach](https://github.com/paulmach) in https://github.com/paulmach/osm/pull/65
+
+### Fixed
+
+-   osmpbf examples: fix small typos by [@bdon](https://github.com/bdon) in https://github.com/paulmach/osm/pull/56
+-   Fix dependency case sensitivity by [@tdewolff](https://github.com/tdewolff) in https://github.com/paulmach/osm/pull/61
+
 ## [v0.8.0](https://github.com/paulmach/osm/compare/v0.7.1...v0.8.0) - 2024-01-08
 
 ### Changed
