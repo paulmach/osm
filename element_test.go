@@ -324,7 +324,7 @@ func TestElementIDs_Sort(t *testing.T) {
 }
 
 func BenchmarkElementID_Sort(b *testing.B) {
-	rand.Seed(1024)
+	rand.New(rand.NewSource(1024))
 
 	tests := make([]ElementIDs, b.N)
 	for i := range tests {

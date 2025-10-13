@@ -241,7 +241,7 @@ func TestFeatureIDs_Sort(t *testing.T) {
 }
 
 func BenchmarkFeatureIDs_Sort(b *testing.B) {
-	rand.Seed(1024)
+	rand.New(rand.NewSource(1024))
 
 	tests := make([]FeatureIDs, b.N)
 	for i := range tests {
