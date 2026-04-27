@@ -27,6 +27,6 @@ jobs:
         run: go test -v -coverprofile=profile.cov ./...
 
       - name: codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v6
         with:
           file: ./profile.cov
