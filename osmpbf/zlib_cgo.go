@@ -13,3 +13,7 @@ import (
 func zlibReader(data []byte) (io.ReadCloser, error) {
 	return czlib.NewReader(bytes.NewReader(data))
 }
+
+func zlibWriter(w io.Writer) io.WriteCloser {
+	return czlib.NewWriter(w)
+}
