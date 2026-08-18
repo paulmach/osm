@@ -2,12 +2,13 @@ package osmpbf
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
-	"google.golang.org/protobuf/proto"
 	"github.com/paulmach/osm"
 	"github.com/paulmach/osm/osmpbf/internal/osmpbf"
 	"github.com/paulmach/protoscan"
+	"google.golang.org/protobuf/proto"
 )
 
 // dataDecoder is a decoder for Blob with OSMData (PrimitiveBlock).
@@ -426,7 +427,11 @@ func (dec *dataDecoder) extractDenseNodes() error {
 				return err
 			}
 			usid += v6
-			n.User = st[usid]
+			user, err := stringTableString(st, int(usid))
+			if err != nil {
+				return err
+			}
+			n.User = user
 		}
 
 		// Visible
@@ -486,7 +491,15 @@ func (dec *dataDecoder) extractDenseNodes() error {
 					return err
 				}
 
-				n.Tags = append(n.Tags, osm.Tag{Key: st[k], Value: st[v]})
+				key, err := stringTableString(st, int(k))
+				if err != nil {
+					return err
+				}
+				val, err := stringTableString(st, int(v))
+				if err != nil {
+					return err
+				}
+				n.Tags = append(n.Tags, osm.Tag{Key: key, Value: val})
 			}
 		}
 
@@ -570,7 +583,11 @@ func (dec *dataDecoder) scanWays(data []byte, way *osm.Way) (*osm.Way, error) {
 					if err != nil {
 						return nil, err
 					}
-					way.User = st[v]
+					user, err := stringTableString(st, int(v))
+					if err != nil {
+						return nil, err
+					}
+					way.User = user
 				case 6:
 					v, err := info.Bool()
 					if err != nil {
@@ -681,7 +698,11 @@ func extractMembers(
 		if err != nil {
 			return nil, err
 		}
-		members[index].Role = st[r]
+		role, err := stringTableString(st, int(r))
+		if err != nil {
+			return nil, err
+		}
+		members[index].Role = role
 
 		m, err := memids.Sint64()
 		if err != nil {
@@ -774,7 +795,11 @@ func (dec *dataDecoder) scanRelations(data []byte, relation *osm.Relation) (*osm
 					if err != nil {
 						return nil, err
 					}
-					relation.User = st[v]
+					user, err := stringTableString(st, int(v))
+					if err != nil {
+						return nil, err
+					}
+					relation.User = user
 				case 6:
 					v, err := info.Bool()
 					if err != nil {
@@ -834,7 +859,6 @@ func (dec *dataDecoder) scanRelations(data []byte, relation *osm.Relation) (*osm
 
 func scanTags(stringTable []string, keys, vals *protoscan.Iterator) (osm.Tags, error) {
 	// note we assume keys and vals are the same length
-	// we also assume index are within range of the stringTable
 
 	index := 0
 	tags := make(osm.Tags, keys.Count(protoscan.WireTypeVarint))
@@ -847,12 +871,31 @@ func scanTags(stringTable []string, keys, vals *protoscan.Iterator) (osm.Tags, e
 		if err != nil {
 			return nil, err
 		}
+		key, err := stringTableString(stringTable, int(k))
+		if err != nil {
+			return nil, err
+		}
+		val, err := stringTableString(stringTable, int(v))
+		if err != nil {
+			return nil, err
+		}
 		tags[index] = osm.Tag{
-			Key:   stringTable[k],
-			Value: stringTable[v],
+			Key:   key,
+			Value: val,
 		}
 		index++
 	}
 
 	return tags, nil
+}
+
+// stringTableString returns stringTable[i], guarding against an out-of-range
+// index. In a PrimitiveBlock the key, value, role and user fields are indexes
+// into the block's string table; a corrupt or malicious file can reference an
+// index past the end of the table, which would otherwise panic the decoder.
+func stringTableString(stringTable []string, i int) (string, error) {
+	if i < 0 || i >= len(stringTable) {
+		return "", fmt.Errorf("osmpbf: string table index %d out of range [0, %d)", i, len(stringTable))
+	}
+	return stringTable[i], nil
 }
