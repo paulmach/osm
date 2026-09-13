@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -82,25 +83,31 @@ func (ds *Datasource) getFromAPI(ctx context.Context, url string, item interface
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
-		return &NotFoundError{URL: url}
+		details, _ := io.ReadAll(resp.Body)
+		return &NotFoundError{URL: url, Details: string(details)}
 	}
 
 	if resp.StatusCode == http.StatusForbidden {
-		return &ForbiddenError{URL: url}
+		details, _ := io.ReadAll(resp.Body)
+		return &ForbiddenError{URL: url, Details: string(details)}
 	}
 
 	if resp.StatusCode == http.StatusGone {
-		return &GoneError{URL: url}
+		details, _ := io.ReadAll(resp.Body)
+		return &GoneError{URL: url, Details: string(details)}
 	}
 
 	if resp.StatusCode == http.StatusRequestURITooLong {
-		return &RequestURITooLongError{URL: url}
+		details, _ := io.ReadAll(resp.Body)
+		return &RequestURITooLongError{URL: url, Details: string(details)}
 	}
 
 	if resp.StatusCode != http.StatusOK {
+		details, _ := io.ReadAll(resp.Body)
 		return &UnexpectedStatusCodeError{
-			Code: resp.StatusCode,
-			URL:  url,
+			Code:    resp.StatusCode,
+			URL:     url,
+			Details: string(details),
 		}
 	}
 
@@ -127,53 +134,58 @@ func (ds *Datasource) NotFound(err error) bool {
 
 // NotFoundError means 404 from the api.
 type NotFoundError struct {
-	URL string
+	URL     string
+	Details string
 }
 
 // Error returns an error message with the url causing the problem.
 func (e *NotFoundError) Error() string {
-	return fmt.Sprintf("osmapi: not found at %s", e.URL)
+	return fmt.Sprintf("osmapi: not found at %s: %s", e.URL, e.Details)
 }
 
 // ForbiddenError means 403 from the api.
 // Returned whenever the version of the element is not available (due to redaction).
 type ForbiddenError struct {
-	URL string
+	URL     string
+	Details string
 }
 
 // Error returns an error message with the url causing the problem.
 func (e *ForbiddenError) Error() string {
-	return fmt.Sprintf("osmapi: forbidden at %s", e.URL)
+	return fmt.Sprintf("osmapi: forbidden at %s: %s", e.URL, e.Details)
 }
 
 // GoneError is returned for deleted elements that get 410 from the api.
 type GoneError struct {
-	URL string
+	URL     string
+	Details string
 }
 
 // Error returns an error message with the url causing the problem.
 func (e *GoneError) Error() string {
-	return fmt.Sprintf("osmapi: gone at %s", e.URL)
+	return fmt.Sprintf("osmapi: gone at %s: %s", e.URL, e.Details)
 }
 
 // RequestURITooLongError is returned when requesting too many ids in
 // a multi id request, ie. Nodes, Ways, Relations functions.
 type RequestURITooLongError struct {
-	URL string
+	URL     string
+	Details string
 }
 
 // Error returns an error message with the url causing the problem.
 func (e *RequestURITooLongError) Error() string {
-	return fmt.Sprintf("osmapi: uri too long at %s", e.URL)
+	return fmt.Sprintf("osmapi: uri too long at %s: %s", e.URL, e.Details)
 }
 
 // UnexpectedStatusCodeError is return for a non 200 or 404 status code.
 type UnexpectedStatusCodeError struct {
-	Code int
-	URL  string
+	Code    int
+	URL     string
+	Details string
 }
 
 // Error returns an error message with some information.
 func (e *UnexpectedStatusCodeError) Error() string {
-	return fmt.Sprintf("osmapi: unexpected status code of %d for url %s", e.Code, e.URL)
+	return fmt.Sprintf("osmapi: unexpected status code of %d for url %s: %s", e.Code, e.URL, e.Details)
 }
